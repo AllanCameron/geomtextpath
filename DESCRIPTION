@@ -6,8 +6,11 @@ Author: Allan Cameron
 Maintainer: Allan Cameron <Allan.Cameron@nhs.scot>
 Description: Allows text to follow curved paths in ggplot2.
     This allows for neat labelling of curves and of plots in polar co-ordinates.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: ggplot2, grid
+Depends:
+    ggplot2
+Imports:
+    grid
 RoxygenNote: 7.1.1

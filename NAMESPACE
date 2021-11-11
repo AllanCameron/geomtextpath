@@ -1,1 +1,6 @@
 exportPattern("^[[:alpha:]]+")
+importFrom("grDevices", "col2rgb", "rgb")
+importFrom("graphics", "strwidth")
+importFrom("stats", "approx")
+importFrom("utils", "head", "tail")
+importFrom("ggplot2", "ggplot", "aes")
