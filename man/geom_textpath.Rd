@@ -12,7 +12,6 @@ geom_textpath(
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE,
-  start_proportion = 0.45,
   ...
 )
 }
@@ -56,9 +55,6 @@ rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 
-\item{start_proportion}{how far along the path should the text start?
-This is useful for situations with longer paths and shorter strings.}
-
 \item{...}{other arguments passed on to \code{\link{layer}}. These are often
 aesthetics, used to set an aesthetic to a fixed value, like \code{color =
 "red"} or \code{size = 3}. They may also be parameters to the paired
@@ -94,7 +90,7 @@ too much space between the letters for the label to remain legible. A single
 text string is therefore kept "together" according to the point size of the
 text in \code{geom_textpath}. This then leaves the problem of where on the
 path the text should be placed. This can be dealt with by the aesthetic
-mapping \code{start_proportion}, which allows the user to place the labels
+mapping \code{hjusr}, which allows the user to place the labels
 at the desired position along the path, including separate positions for
 each label.
 
@@ -121,12 +117,15 @@ particularly those using the built-in \code{iris} data set.)
   \item \code{hjust}
   \item \code{size}
   \item \code{vjust}
+  \item \code{hjust}
+  \item \code{linetype}
+  \item \code{linewidth}
 }
 }
 
 \examples{
 
-# Plot text along a spiral path
+# Plot text along an arbitrary path
 
 spiral <- data.frame(x = rev(sin(seq(0, 5*pi, length.out = 1000)) * 1000:1),
                      y = rev(cos(seq(0, 5*pi, length.out = 1000)) * 1000:1),
@@ -136,42 +135,45 @@ spiral <- data.frame(x = rev(sin(seq(0, 5*pi, length.out = 1000)) * 1000:1),
                                "or beginning on an ever spinning reel"))
 
 ggplot(spiral, aes(x, y, label = z)) +
-  geom_textpath(start_proportion = 0.2, size = 5.9, vjust=-0.4) +
-  geom_path(color = "gray90") +
-  coord_equal() +
-  theme_void()
+  geom_textpath(size = 7.1, vjust = 2, linewidth = 0) +
+  coord_equal(xlim = c(-1500, 1500), ylim = c(-1500, 1500))
 
+
+# Produce labelled density lines:
+
+# By default the paths are broken to allow the names in-line
+
+ ggplot(iris, aes(x = Sepal.Length, color = Species)) +
+  geom_textpath(aes(label = Species),
+                size = 8, stat = "density",
+                fontface = 2, hjust = 0.2)
+
+# If the vjust parameter moves the text above or below the line,
+# the line is automatically filled in:
+
+ggplot(iris, aes(x = Sepal.Length, color = Species)) +
+  geom_textpath(aes(label = Species), vjust = -0.1,
+                size = 8, stat = "density",
+                fontface = 2, hjust = 0.2)
+
+# label groups of points along their trend line:
+
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point(alpha = 0.1) +
+  geom_textpath(aes(label = Species, color = Species),
+                size = 8, stat = "smooth", linetype = 3,
+                fontface = 2, linewidth = 3) +
+  scale_color_manual(values = c("forestgreen", "deepskyblue4", "tomato4")) +
+  theme_bw()
 
 # Straight text paths in Cartesian Co-ordinates curve in Polar Co-ordinates
 
 df <- data.frame(x = 1:1000, y = 1, z = "This is a perfectly flat label")
 
 p <- ggplot(df, aes(x, y, label = z)) +
-     geom_textpath(start_proportion = 0.25, size = 6)
+   geom_textpath(size = 6)
 
 p
 
 p + coord_polar()
-
-
-# Plot labels within groups of points using stat = "smooth"
-
-ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
-  geom_point(alpha = 0.5) +
-  geom_textpath(aes(label = Species,
-                color = stage(Species, after_scale = darken(color, 1.5))),
-                size = 5, stat = "smooth",
-                start_proportion = 0.25, fontface = 2)
-
-
-# Plot labels along density curves using stat = "density"
-
-ggplot(iris, aes(x = Sepal.Length, color = Species)) +
-  geom_density(alpha = 0.5) +
-  geom_textpath(aes(label = as.character(Species),
-                    color = stage(Species, after_scale = darken(color, 1.5)),
-                    vjust = -0.1),
-                size = 5, stat = "density",
-                start_proportion = 0.12, fontface = 2)
-
 }
