@@ -42,7 +42,7 @@
 #' text string is therefore kept "together" according to the point size of the
 #' text in \code{geom_textpath}. This then leaves the problem of where on the
 #' path the text should be placed. This can be dealt with by the aesthetic
-#' mapping \code{hjusr}, which allows the user to place the labels
+#' mapping \code{hjust}, which allows the user to place the labels
 #' at the desired position along the path, including separate positions for
 #' each label.
 #'
@@ -57,7 +57,7 @@
 #'
 #' @inheritParams ggplot2::layer
 #' @param ... other arguments passed on to \code{\link{layer}}. These are often
-#' aesthetics, used to set an aesthetic to a fixed value, like \code{color =
+#' aesthetics, used to set an aesthetic to a fixed value, like \code{colour =
 #' "red"} or \code{size = 3}. They may also be parameters to the paired
 #'  geom/stat.
 #' @param na.rm Removes missing points or labels from the text path.
@@ -352,7 +352,7 @@ GeomTextPath <- ggplot2::ggproto("GeomTextPath", ggplot2::Geom,
 
     #---- Data manipulation ---------------------------------#
 
-    # Now we can sort the dara by group
+    # Now we can sort the data by group
     data <- data[order(data$group), , drop = FALSE]
 
     # All our transformations occur after the coord transform:
