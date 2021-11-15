@@ -410,10 +410,11 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     data <- coord$transform(data, panel_params)
 
     # Get gradients, angles and path lengths for each group
-    data <- do.call(rbind, lapply(split(data, data$group), .add_path_data))
+    data <- lapply(split(data, data$group), .add_path_data)
 
     # Get the actual text string positions & angles for each group
-    data_points <- do.call(rbind, lapply(split(data, data$group), .get_path_points))
+    data_points <- do.call(rbind, lapply(data, .get_path_points))
+    data <- do.call(rbind, data)
 
     # Trim path if it intersects text
     data_lines <- .get_surrounding_lines(data, data_points)
