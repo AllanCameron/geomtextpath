@@ -149,8 +149,7 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
 
 # Helpers -----------------------------------------------------------------
 
-## Adding path data -------------------------------------------------------
-
+## -----------------------------------------------------------------------------
 # This function does the work of calculating the gradient of the path at each
 # x, y value along its length, and the angle this implies that text should sit
 # on the path (measured in degrees, not rads). It takes a group-subset of
@@ -194,9 +193,16 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
   # the spacing between characters when vjust is used, otherwise the spacing
   # will change
 
-  curvature <- diff(atan(.data$grad))/diff(.data$length)
-  .data$curvature <- approx(seq_along(curvature), grad,
-                 seq(1, length(curvature), length = length(curvature) + 1))$y
+  rad_diff <- diff(atan(.data$grad))
+  rad_diff <- rad_diff[abs(rad_diff) < pi/2]
+  rad_diff <- approx(seq_along(rad_diff), rad_diff,
+                     seq(1, length(rad_diff), length.out = nrow(.data) - 1))$y
+  curvature <- rad_diff/diff(.data$length)
+
+  effective_length <- diff(.data$length) * (1 + (.data$vjust[1] - 0.5) * 0.04 *curvature)
+
+  .data$adj_length <- c(0, cumsum(effective_length))
+
 
   # It will be useful to keep a record of the total length of the string we
   # wish to write. This will be used to normalise the width of the component
@@ -206,9 +212,7 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
   .data
 }
 
-
-## Getting path points ----------------------------------------------------
-
+## -----------------------------------------------------------------------------
 # This is another helper function for the draw_panel function. This is where
 # the text gets split into its component parts and assigned x, y and angle
 # components. This function also takes one group subset of the main panel data
@@ -248,7 +252,7 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
 
   # This calculates the starting distance along the path where we place
   # the first letter
-  start_dist <- path$hjust[1] * (max(path$length) - max(letterwidths))
+  start_dist <- path$hjust[1] * (max(path$adj_length) - max(letterwidths))
 
   # Now we just add on the letterwidths and we have the correct distances
   dist_points <- letterwidths + start_dist
@@ -258,7 +262,7 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
   # be identical, so these are just kept as-is
   df <- as.data.frame(lapply(path, function(i) {
     if(is.numeric(i))
-      approx(x = path$length, y = i, xout = dist_points, ties = mean)$y
+      approx(x = path$adj_length, y = i, xout = dist_points, ties = mean)$y
     else
       rep(i[1], length(dist_points))
     }))

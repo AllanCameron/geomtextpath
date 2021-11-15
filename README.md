@@ -51,7 +51,7 @@ spiral <- data.frame(
 )
 
 ggplot(spiral, aes(x, y, label = text)) +
-  geom_textpath(size = 7.1, vjust = 2, linewidth = 0) +
+  geom_textpath(size = 7, vjust = 2, linewidth = 0) +
   coord_equal(xlim = c(-1500, 1500), ylim = c(-1500, 1500))
 ```
 
@@ -75,7 +75,7 @@ line is automatically filled in.
 ``` r
 ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
   geom_textpath(aes(label = Species), stat = "density",
-                size = 8, fontface = 2, hjust = 0.2)
+                size = 8, fontface = 2, hjust = 0.2, vjust = -0.1)
 ```
 
 <img src="man/figures/README-density_vjust-1.png" width="100%" style="display: block; margin: auto;" />
