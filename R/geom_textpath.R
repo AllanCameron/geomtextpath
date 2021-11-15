@@ -236,9 +236,7 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
   # equivalent spacing of geom_text
 
   ## TODO: 1) Incorporate curvature and vjust into line spacing
-  ##       2) Try to work out if we can get rid of the magic constant
-  ##          - what is its significance and why is it needed?
-  ##       3) Consider more accurate alternatives to strwidth
+  ##       2) Consider more accurate alternatives to strwidth
 
   letters      <- strsplit(path$label[1], "")[[1]]
   letterwidths <- cumsum(c(0, strwidth(letters, font = path$fontface[1],
@@ -296,6 +294,16 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
 
   path_data[path_data$section != "", ]
 }
+
+# Magic constant
+#
+# This magic constant is the number of points per millimetre. We need this to
+# parametrise font size in the equivalent manner as `geom_text()`, which
+# uses millimetres instead of points (unlike e.g. `element_text()`).
+# The grid system only understands points for fonts, so we need to multiply
+# the text size in the geom with the magic constant to get the usual expected
+# font size. In ggplot2, this is the `ggplot2::.pt` object.
+.pt <- grid::convertUnit(unit(1, "mm"), "pt")
 
 # ggproto class -----------------------------------------------------------
 
