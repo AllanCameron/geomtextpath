@@ -23,3 +23,6 @@ Imports:
     grid,
     scales
 RoxygenNote: 7.1.1
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
