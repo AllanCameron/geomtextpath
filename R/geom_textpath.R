@@ -138,13 +138,23 @@
 #' p + coord_polar()
 
 
-geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
-                          position = "identity", na.rm = FALSE, show.legend = NA,
-                          inherit.aes = TRUE,  ...)
+geom_textpath <- function(
+  mapping = NULL, data = NULL, stat = "identity",
+  position = "identity", na.rm = FALSE, show.legend = NA,
+  inherit.aes = TRUE,  ...,
+  lineend = "butt", linejoin = "round", linemitre = 10
+  )
 {
   layer(geom = GeomTextPath, mapping = mapping, data = data, stat = stat,
-        position = position, show.legend = show.legend, inherit.aes = inherit.aes,
-        params = list(na.rm = na.rm, ...))
+        position = position, show.legend = show.legend,
+        inherit.aes = inherit.aes,
+        params = list(
+          na.rm     = na.rm,
+          lineend   = lineend,
+          linejoin  = linejoin,
+          linemitre = linemitre,
+          ...
+        ))
 }
 
 # Helpers -----------------------------------------------------------------
@@ -331,7 +341,10 @@ GeomTextPath <- ggproto("GeomTextPath", Geom,
 
   # The main draw_panel function is where we process our aesthetic data frame
   # into a tree of grobs for plotting.
-  draw_panel = function(data, panel_params, coord) {
+  draw_panel = function(
+    data, panel_params, coord,
+    lineend = "butt", linejoin = "round", linemitre = 10
+  ) {
 
     #---- type conversion, checks & warnings ---------------------------#
 
@@ -387,10 +400,11 @@ GeomTextPath <- ggproto("GeomTextPath", Geom,
         SIMPLIFY = FALSE
       )
     )
+
     # Get first point of individual paths (for graphical parameters)
     path_id <- paste0(data_lines$group, "&", data_lines$section)
     path_id <- match(path_id, unique(path_id))
-    start <- c(TRUE, path_id[-1] != path_id[-length(path_id)])
+    start   <- c(TRUE, path_id[-1] != path_id[-length(path_id)])
 
     #---- Grob writing --------------------------------------#
 
@@ -425,9 +439,9 @@ GeomTextPath <- ggproto("GeomTextPath", Geom,
           fill = alpha(data_lines$colour, data_lines$alpha)[start],
           lwd  = data_lines$linewidth[start] * .pt,
           lty  = data_lines$linetype[start],
-          lineend   = "butt",
-          linejoin  = "round",
-          linemitre = 10
+          lineend   = lineend,
+          linejoin  = linejoin,
+          linemitre = linemitre
         )
       )
     )
