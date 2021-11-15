@@ -379,10 +379,18 @@ GeomTextPath <- ggproto("GeomTextPath", Geom,
     data_points <- do.call(rbind, lapply(split(data, data$group), .get_path_points))
 
     # Calculate the bookending lines
-    data_lines <- mapply(function(d1, d2) .get_surrounding_lines(d1, d2),
-                          d1 = split(data, data$group),
-                          d2 = split(data_points, data_points$group),
-                         SIMPLIFY = FALSE)
+    data_lines <- do.call(
+      rbind, mapply(
+        .get_surrounding_lines,
+        path_data   = split(data, data$group),
+        letter_data = split(data_points, data_points$group),
+        SIMPLIFY = FALSE
+      )
+    )
+    # Get first point of individual paths (for graphical parameters)
+    path_id <- paste0(data_lines$group, "&", data_lines$section)
+    path_id <- match(path_id, unique(path_id))
+    start <- c(TRUE, path_id[-1] != path_id[-length(path_id)])
 
     #---- Grob writing --------------------------------------#
 
@@ -407,23 +415,22 @@ GeomTextPath <- ggproto("GeomTextPath", Geom,
     )
 
     # Create the linegrobs
-    for(i in seq_along(data_lines))
-    {
-      d <- data_lines[[i]]
-      d_list <- split(d, d$section)
-      for(j in seq_along(d_list))
-      {
-        seg <- d_list[[j]]
-        my_tree <- addGrob(my_tree, linesGrob(
-          x = seg$x,
-          y = seg$y,
-          default.units = "native",
-          gp = gpar(
-            lty = seg$linetype,
-            lwd = seg$linewidth,
-            col = alpha(seg$colour[1], seg$alpha[1]))))
-      }
-    }
+    my_tree <- addGrob(
+      my_tree, polylineGrob(
+        x = data_lines$x,
+        y = data_lines$y,
+        id = path_id,
+        gp = gpar(
+          col  = alpha(data_lines$colour, data_lines$alpha)[start],
+          fill = alpha(data_lines$colour, data_lines$alpha)[start],
+          lwd  = data_lines$linewidth[start] * .pt,
+          lty  = data_lines$linetype[start],
+          lineend   = "butt",
+          linejoin  = "round",
+          linemitre = 10
+        )
+      )
+    )
 
     return(my_tree)
   }
