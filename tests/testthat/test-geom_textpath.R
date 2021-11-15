@@ -1,5 +1,21 @@
-# This is just a skeleton of a test to act as placeholder until actual tests
-# are being written.
-test_that("multiplication works", {
-  expect_equal(2 * 2, 4)
+
+test_that("The geom_textpath() constructor works", {
+
+  x <- geom_textpath(stat = "density")
+
+  expect_s3_class(x, "LayerInstance")
+  expect_s3_class(x$geom, "GeomTextpath")
+  expect_s3_class(x$stat, "StatDensity")
+})
+
+test_that("Text path grob has correct types", {
+
+  p <- ggplot(iris, aes(Sepal.Width)) +
+    geom_textpath(aes(label = Species, group = Species), stat = "density")
+
+  grobs <- layer_grob(p)[[1]]
+
+  expect_s3_class(grobs, "gTree")
+  expect_s3_class(grobs$children[[1]], "polyline")
+  expect_s3_class(grobs$children[[2]], "text")
 })
