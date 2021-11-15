@@ -56,6 +56,7 @@
 #'
 #'
 #' @inheritParams ggplot2::layer
+#' @inheritParams ggplot2::geom_path
 #' @param ... other arguments passed on to \code{\link{layer}}. These are often
 #' aesthetics, used to set an aesthetic to a fixed value, like \code{colour =
 #' "red"} or \code{size = 3}. They may also be parameters to the paired
@@ -410,24 +411,6 @@ GeomTextPath <- ggproto("GeomTextPath", Geom,
 
     my_tree <- gTree()
 
-    # Create the textgrobs
-    my_tree <- addGrob(
-      my_tree,  textGrob(
-        label = data_points$label,
-        x     = data_points$x,
-        y     = data_points$y,
-        vjust = data_points$vjust,
-        hjust = data_points$hjust,
-        rot   = data_points$angle,
-        gp    = gpar(
-          col = alpha(data_points$colour, data_points$alpha),
-          fontsize   = data_points$size * .pt,
-          fontface   = data_points$fontface,
-          fontfamily = data_points$fontfamily
-        )
-      )
-    )
-
     # Create the linegrobs
     my_tree <- addGrob(
       my_tree, polylineGrob(
@@ -442,6 +425,24 @@ GeomTextPath <- ggproto("GeomTextPath", Geom,
           lineend   = lineend,
           linejoin  = linejoin,
           linemitre = linemitre
+        )
+      )
+    )
+
+    # Create the textgrobs
+    my_tree <- addGrob(
+      my_tree,  textGrob(
+        label = data_points$label,
+        x     = data_points$x,
+        y     = data_points$y,
+        vjust = data_points$vjust,
+        hjust = data_points$hjust,
+        rot   = data_points$angle,
+        gp    = gpar(
+          col = alpha(data_points$colour, data_points$alpha),
+          fontsize   = data_points$size * .pt,
+          fontface   = data_points$fontface,
+          fontfamily = data_points$fontfamily
         )
       )
     )
