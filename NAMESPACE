@@ -2,3 +2,8 @@
 
 export(GeomTextPath)
 export(geom_textpath)
+importFrom(ggplot2,Geom)
+importFrom(ggplot2,aes)
+importFrom(ggplot2,draw_key_text)
+importFrom(ggplot2,ggproto)
+importFrom(ggplot2,layer)

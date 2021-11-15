@@ -142,7 +142,7 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
                           position = "identity", na.rm = FALSE, show.legend = NA,
                           inherit.aes = TRUE,  ...)
 {
-  ggplot2::layer(geom = GeomTextPath, mapping = mapping, data = data, stat = stat,
+  layer(geom = GeomTextPath, mapping = mapping, data = data, stat = stat,
         position = position, show.legend = show.legend, inherit.aes = inherit.aes,
         params = list(...))
 }
@@ -302,18 +302,18 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
 #' @usage NULL
 #' @export
 
-GeomTextPath <- ggplot2::ggproto("GeomTextPath", ggplot2::Geom,
+GeomTextPath <- ggproto("GeomTextPath", Geom,
   required_aes = c("x", "y", "label"),
 
   # These aesthetics will all be available to the draw_panel function
-  default_aes = ggplot2::aes(colour = "black", size = 3.88, hjust = 0.5, vjust = 0.5,
+  default_aes = aes(colour = "black", size = 3.88, hjust = 0.5, vjust = 0.5,
                              family = "", fontface = 1, lineheight = 1.2, alpha = 1,
                              linewidth = 2, linetype = 1),
 
   extra_params = c("na.rm"),
 
   # Do we want this draw_key?
-  draw_key = ggplot2::draw_key_text,
+  draw_key = draw_key_text,
 
   # The main draw_panel function is where we process our aesthetic data frame
   # into a tree of grobs for plotting.
