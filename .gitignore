@@ -2,4 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
+.DS_Store
+.httr-oauth
 geomtextpath.Rproj
