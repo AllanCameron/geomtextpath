@@ -321,8 +321,8 @@ GeomTextPath <- ggproto("GeomTextPath", Geom,
 
   # These aesthetics will all be available to the draw_panel function
   default_aes = aes(colour = "black", size = 3.88, hjust = 0.5, vjust = 0.5,
-                             family = "", fontface = 1, lineheight = 1.2, alpha = 1,
-                             linewidth = 2, linetype = 1),
+                    family = "", fontface = 1, lineheight = 1.2, alpha = 1,
+                    linewidth = 0.5, linetype = 1),
 
   extra_params = c("na.rm"),
 
