@@ -312,8 +312,8 @@ geom_textpath <- function(
 # uses millimetres instead of points (unlike e.g. `element_text()`).
 # The grid system only understands points for fonts, so we need to multiply
 # the text size in the geom with the magic constant to get the usual expected
-# font size. In ggplot2, this is the `ggplot2::.pt` object.
-.pt <- grid::convertUnit(unit(1, "mm"), "pt")
+# font size. In ggplot2, this is the `ggplot2::.pt` object. As a sanity check:
+# .pt <- grid::convertUnit(unit(1, "mm"), "pt")
 
 # ggproto class -----------------------------------------------------------
 
