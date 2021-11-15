@@ -144,7 +144,7 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
 {
   layer(geom = GeomTextPath, mapping = mapping, data = data, stat = stat,
         position = position, show.legend = show.legend, inherit.aes = inherit.aes,
-        params = list(...))
+        params = list(na.rm = na.rm, ...))
 }
 
 # Helpers -----------------------------------------------------------------
