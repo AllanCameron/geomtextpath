@@ -146,7 +146,7 @@ geom_textpath <- function(
   lineend = "butt", linejoin = "round", linemitre = 10
   )
 {
-  layer(geom = GeomTextPath, mapping = mapping, data = data, stat = stat,
+  layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
         position = position, show.legend = show.legend,
         inherit.aes = inherit.aes,
         params = list(
@@ -327,7 +327,7 @@ geom_textpath <- function(
 #' @usage NULL
 #' @export
 
-GeomTextPath <- ggproto("GeomTextPath", Geom,
+GeomTextpath <- ggproto("GeomTextpath", Geom,
   required_aes = c("x", "y", "label"),
 
   # These aesthetics will all be available to the draw_panel function
