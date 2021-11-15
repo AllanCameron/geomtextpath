@@ -378,12 +378,12 @@ GeomTextPath <- ggproto("GeomTextPath", Geom,
 
     #---- Grob writing --------------------------------------#
 
-    my_tree <- grid::gTree()
+    my_tree <- gTree()
 
     # Create the textgrobs
     for(i in seq(nrow(data_points)))
     {
-      my_tree <- grid::addGrob(my_tree, grid::textGrob(
+      my_tree <- addGrob(my_tree, textGrob(
         label = data_points$label[i],
         x = data_points$x[i],
         y = data_points$y[i],
@@ -391,7 +391,7 @@ GeomTextPath <- ggproto("GeomTextPath", Geom,
         hjust = 0.5,
         rot = data_points$angle[i],
         default.units = "native",
-        gp = grid::gpar(
+        gp = gpar(
           col = scales::alpha(data_points$colour[i], data_points$alpha[i]),
           fontsize = data_points$size[i] * 2.85,
           fontface = data_points$fontface[i],
@@ -407,11 +407,11 @@ GeomTextPath <- ggproto("GeomTextPath", Geom,
       for(j in seq_along(d_list))
       {
         seg <- d_list[[j]]
-        my_tree <- grid::addGrob(my_tree, grid::linesGrob(
+        my_tree <- addGrob(my_tree, linesGrob(
           x = seg$x,
           y = seg$y,
           default.units = "native",
-          gp = grid::gpar(
+          gp = gpar(
             lty = seg$linetype,
             lwd = seg$linewidth,
             col = scales::alpha(seg$colour[1], seg$alpha[1]))))
