@@ -75,7 +75,7 @@ line is automatically filled in.
 ``` r
 ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
   geom_textpath(aes(label = Species), stat = "density",
-                size = 8, fontface = 2, hjust = 0.2)
+                size = 8, fontface = 2, hjust = 0.2, vjust = -0.1)
 ```
 
 <img src="man/figures/README-density_vjust-1.png" width="100%" style="display: block; margin: auto;" />
