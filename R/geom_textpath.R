@@ -389,23 +389,22 @@ GeomTextPath <- ggproto("GeomTextPath", Geom,
     my_tree <- gTree()
 
     # Create the textgrobs
-    for(i in seq(nrow(data_points)))
-    {
-      my_tree <- addGrob(my_tree, textGrob(
-        label = data_points$label[i],
-        x = data_points$x[i],
-        y = data_points$y[i],
-        vjust = data_points$vjust[i],
-        hjust = 0.5,
-        rot = data_points$angle[i],
-        default.units = "native",
-        gp = gpar(
-          col = alpha(data_points$colour[i], data_points$alpha[i]),
-          fontsize = data_points$size[i] * 2.85,
-          fontface = data_points$fontface[i],
-          fontfamily = data_points$fontfamily[i])))
-    }
-
+    my_tree <- addGrob(
+      my_tree,  textGrob(
+        label = data_points$label,
+        x     = data_points$x,
+        y     = data_points$y,
+        vjust = data_points$vjust,
+        hjust = data_points$hjust,
+        rot   = data_points$angle,
+        gp    = gpar(
+          col = alpha(data_points$colour, data_points$alpha),
+          fontsize   = data_points$size * .pt,
+          fontface   = data_points$fontface,
+          fontfamily = data_points$fontfamily
+        )
+      )
+    )
 
     # Create the linegrobs
     for(i in seq_along(data_lines))
