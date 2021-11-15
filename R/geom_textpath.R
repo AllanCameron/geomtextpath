@@ -291,19 +291,42 @@ geom_textpath <- function(
 
 ## TODO: Do we want to add a parameter to switch the lines on and off,
 ##       inside geom_textpath(), or simply set a default linewidth of 0?
+## RE: We could separate it into two geoms, one with a path by default and one
+##     without. I think some graphics devices interpret 0-linewidth differently,
+##     so the safer option would be to use `linetype = 0`, I think.
 
-.get_surrounding_lines <- function(path_data, letter_data)
-{
+## TODO: Below, we're using `vjust` to determine where to cut the path if it
+##       intersects text, but that doesn't take ascenders and descenders into
+##       account.
 
-  path_data$section <- character(nrow(path_data))
-  path_data$section[path_data$length < head(letter_data$length, 1) ] <- "pre"
-  path_data$section[path_data$length > tail(letter_data$length, 1) ] <- "post"
+## Can we rename this function to `.paths_bookends()`? I like the term bookend
+## you used earlier in a comment!
+.get_surrounding_lines <- function(path, letters) {
 
-  if(letter_data$vjust[1] < 0 | letter_data$vjust[1] > 1) {
-    path_data$section <- "all"
+  # Early exit if text isn't exactly on path
+  if (all(letters$vjust < 0) || all(letters$vjust > 1)) {
+    path$section <- "all"
+    return(path)
   }
 
-  path_data[path_data$section != "", ]
+  # Lengths of group runs (assumed to be sorted)
+  # The `rle()` function handles NAs inelegantly,
+  # but I'm assuming `group` cannot be NA.
+  letter_lens <- rle(letters$group)$lengths
+  curve_lens  <- rle(path$group)$lengths
+
+  # Get locations where strings start and end
+  starts <- {ends <- cumsum(letter_lens)} - letter_lens + 1
+  mins <- letters$length[starts]
+  maxs <- letters$length[ends]
+
+  # Assign sections to before and after string
+  path$section <- ""
+  path$section[path$length < rep(mins, curve_lens)] <- "pre"
+  path$section[path$length > rep(maxs, curve_lens)] <- "post"
+
+  # Filter empty sections (i.e., the part where the string is)
+  path[path$section != "", , drop = FALSE]
 }
 
 # Magic constant
@@ -392,15 +415,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     # Get the actual text string positions & angles for each group
     data_points <- do.call(rbind, lapply(split(data, data$group), .get_path_points))
 
-    # Calculate the bookending lines
-    data_lines <- do.call(
-      rbind, mapply(
-        .get_surrounding_lines,
-        path_data   = split(data, data$group),
-        letter_data = split(data_points, data_points$group),
-        SIMPLIFY = FALSE
-      )
-    )
+    # Trim path if it intersects text
+    data_lines <- .get_surrounding_lines(data, data_points)
 
     # Get first point of individual paths (for graphical parameters)
     path_id <- paste0(data_lines$group, "&", data_lines$section)
