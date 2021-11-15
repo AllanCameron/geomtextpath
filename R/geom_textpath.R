@@ -9,8 +9,8 @@
 ##                                                                           ##
 ##---------------------------------------------------------------------------##
 
+# Constructor -------------------------------------------------------------
 
-## -----------------------------------------------------------------------------
 #' Add Curved Text Along Paths in \code{ggplot2}
 #'
 #' @description The existing text-based geom layers in ggplot2
@@ -147,7 +147,10 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
         params = list(...))
 }
 
-## -----------------------------------------------------------------------------
+# Helpers -----------------------------------------------------------------
+
+## Adding path data -------------------------------------------------------
+
 # This function does the work of calculating the gradient of the path at each
 # x, y value along its length, and the angle this implies that text should sit
 # on the path (measured in degrees, not rads). It takes a group-subset of
@@ -203,7 +206,9 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
   .data
 }
 
-## -----------------------------------------------------------------------------
+
+## Getting path points ----------------------------------------------------
+
 # This is another helper function for the draw_panel function. This is where
 # the text gets split into its component parts and assigned x, y and angle
 # components. This function also takes one group subset of the main panel data
@@ -267,7 +272,8 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
   df[!is.na(df$angle), ]
 }
 
-## -----------------------------------------------------------------------------
+## Getting surrounding lines -----------------------------------------------
+
 # We probably want the option to draw the path itself, since this will be less
 # work for the end-user. If the vjust is between 0 and 1 then the path will
 # clash with the text, so we want to remove the segment where the text is.
@@ -291,7 +297,7 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
   path_data[path_data$section != "", ]
 }
 
-## -----------------------------------------------------------------------------
+# ggproto class -----------------------------------------------------------
 
 #' The Geom object for a textpath
 #'
