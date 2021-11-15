@@ -3,6 +3,7 @@
 
 #' @importFrom ggplot2 layer ggproto Geom aes draw_key_text
 #' @importFrom grid gTree addGrob textGrob gpar linesGrob
+#' @importFrom scales alpha
 NULL
 
 # The following block is used by usethis to automatically manage

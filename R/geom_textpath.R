@@ -392,7 +392,7 @@ GeomTextPath <- ggproto("GeomTextPath", Geom,
         rot = data_points$angle[i],
         default.units = "native",
         gp = gpar(
-          col = scales::alpha(data_points$colour[i], data_points$alpha[i]),
+          col = alpha(data_points$colour[i], data_points$alpha[i]),
           fontsize = data_points$size[i] * 2.85,
           fontface = data_points$fontface[i],
           fontfamily = data_points$fontfamily[i])))
@@ -414,7 +414,7 @@ GeomTextPath <- ggproto("GeomTextPath", Geom,
           gp = gpar(
             lty = seg$linetype,
             lwd = seg$linewidth,
-            col = scales::alpha(seg$colour[1], seg$alpha[1]))))
+            col = alpha(seg$colour[1], seg$alpha[1]))))
       }
     }
 
