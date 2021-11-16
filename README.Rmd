@@ -57,7 +57,7 @@ spiral <- data.frame(
 )
 
 ggplot(spiral, aes(x, y, label = text)) +
-  geom_textpath(size = 7.1, vjust = 2, linewidth = 0) +
+  geom_textpath(size = 7, vjust = 2, linewidth = 0) +
   coord_equal(xlim = c(-1500, 1500), ylim = c(-1500, 1500))
 ```
 
