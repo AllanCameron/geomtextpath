@@ -56,6 +56,7 @@
 #'
 #'
 #' @inheritParams ggplot2::layer
+#' @inheritParams ggplot2::geom_path
 #' @param ... other arguments passed on to \code{\link{layer}}. These are often
 #' aesthetics, used to set an aesthetic to a fixed value, like \code{colour =
 #' "red"} or \code{size = 3}. They may also be parameters to the paired
@@ -138,18 +139,29 @@
 #' p + coord_polar()
 
 
-geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
-                          position = "identity", na.rm = FALSE, show.legend = NA,
-                          inherit.aes = TRUE,  ...)
+geom_textpath <- function(
+  mapping = NULL, data = NULL, stat = "identity",
+  position = "identity", na.rm = FALSE, show.legend = NA,
+  inherit.aes = TRUE,  ...,
+  lineend = "butt", linejoin = "round", linemitre = 10
+  )
 {
-  layer(geom = GeomTextPath, mapping = mapping, data = data, stat = stat,
-        position = position, show.legend = show.legend, inherit.aes = inherit.aes,
-        params = list(...))
+  layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
+        position = position, show.legend = show.legend,
+        inherit.aes = inherit.aes,
+        params = list(
+          na.rm     = na.rm,
+          lineend   = lineend,
+          linejoin  = linejoin,
+          linemitre = linemitre,
+          ...
+        ))
 }
 
 # Helpers -----------------------------------------------------------------
 
-## -----------------------------------------------------------------------------
+## Adding path data -------------------------------------------------------
+
 # This function does the work of calculating the gradient of the path at each
 # x, y value along its length, and the angle this implies that text should sit
 # on the path (measured in degrees, not rads). It takes a group-subset of
@@ -212,7 +224,9 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
   .data
 }
 
-## -----------------------------------------------------------------------------
+
+## Getting path points ----------------------------------------------------
+
 # This is another helper function for the draw_panel function. This is where
 # the text gets split into its component parts and assigned x, y and angle
 # components. This function also takes one group subset of the main panel data
@@ -240,9 +254,7 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
   # equivalent spacing of geom_text
 
   ## TODO: 1) Incorporate curvature and vjust into line spacing
-  ##       2) Try to work out if we can get rid of the magic constant
-  ##          - what is its significance and why is it needed?
-  ##       3) Consider more accurate alternatives to strwidth
+  ##       2) Consider more accurate alternatives to strwidth
 
   letters      <- strsplit(path$label[1], "")[[1]]
   letterwidths <- cumsum(c(0, strwidth(letters, font = path$fontface[1],
@@ -286,20 +298,53 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
 
 ## TODO: Do we want to add a parameter to switch the lines on and off,
 ##       inside geom_textpath(), or simply set a default linewidth of 0?
+## RE: We could separate it into two geoms, one with a path by default and one
+##     without. I think some graphics devices interpret 0-linewidth differently,
+##     so the safer option would be to use `linetype = 0`, I think.
 
-.get_surrounding_lines <- function(path_data, letter_data)
-{
+## TODO: Below, we're using `vjust` to determine where to cut the path if it
+##       intersects text, but that doesn't take ascenders and descenders into
+##       account.
 
-  path_data$section <- character(nrow(path_data))
-  path_data$section[path_data$length < head(letter_data$length, 1) ] <- "pre"
-  path_data$section[path_data$length > tail(letter_data$length, 1) ] <- "post"
+## Can we rename this function to `.paths_bookends()`? I like the term bookend
+## you used earlier in a comment!
+.get_surrounding_lines <- function(path, letters) {
 
-  if(letter_data$vjust[1] < 0 | letter_data$vjust[1] > 1) {
-    path_data$section <- "all"
+  # Early exit if text isn't exactly on path
+  if (all(letters$vjust < 0) || all(letters$vjust > 1)) {
+    path$section <- "all"
+    return(path)
   }
 
-  path_data[path_data$section != "", ]
+  # Lengths of group runs (assumed to be sorted)
+  # The `rle()` function handles NAs inelegantly,
+  # but I'm assuming `group` cannot be NA.
+  letter_lens <- rle(letters$group)$lengths
+  curve_lens  <- rle(path$group)$lengths
+
+  # Get locations where strings start and end
+  starts <- {ends <- cumsum(letter_lens)} - letter_lens + 1
+  mins <- letters$length[starts]
+  maxs <- letters$length[ends]
+
+  # Assign sections to before and after string
+  path$section <- ""
+  path$section[path$length < rep(mins, curve_lens)] <- "pre"
+  path$section[path$length > rep(maxs, curve_lens)] <- "post"
+
+  # Filter empty sections (i.e., the part where the string is)
+  path[path$section != "", , drop = FALSE]
 }
+
+# Magic constant
+#
+# This magic constant is the number of points per millimetre. We need this to
+# parametrise font size in the equivalent manner as `geom_text()`, which
+# uses millimetres instead of points (unlike e.g. `element_text()`).
+# The grid system only understands points for fonts, so we need to multiply
+# the text size in the geom with the magic constant to get the usual expected
+# font size. In ggplot2, this is the `ggplot2::.pt` object. As a sanity check:
+# .pt <- grid::convertUnit(unit(1, "mm"), "pt")
 
 # ggproto class -----------------------------------------------------------
 
@@ -312,13 +357,13 @@ geom_textpath <- function(mapping = NULL, data = NULL, stat = "identity",
 #' @usage NULL
 #' @export
 
-GeomTextPath <- ggproto("GeomTextPath", Geom,
+GeomTextpath <- ggproto("GeomTextpath", Geom,
   required_aes = c("x", "y", "label"),
 
   # These aesthetics will all be available to the draw_panel function
   default_aes = aes(colour = "black", size = 3.88, hjust = 0.5, vjust = 0.5,
-                             family = "", fontface = 1, lineheight = 1.2, alpha = 1,
-                             linewidth = 2, linetype = 1),
+                    family = "", fontface = 1, lineheight = 1.2, alpha = 1,
+                    linewidth = 0.5, linetype = 1),
 
   extra_params = c("na.rm"),
 
@@ -327,7 +372,10 @@ GeomTextPath <- ggproto("GeomTextPath", Geom,
 
   # The main draw_panel function is where we process our aesthetic data frame
   # into a tree of grobs for plotting.
-  draw_panel = function(data, panel_params, coord) {
+  draw_panel = function(
+    data, panel_params, coord,
+    lineend = "butt", linejoin = "round", linemitre = 10
+  ) {
 
     #---- type conversion, checks & warnings ---------------------------#
 
@@ -369,58 +417,59 @@ GeomTextPath <- ggproto("GeomTextPath", Geom,
     data <- coord$transform(data, panel_params)
 
     # Get gradients, angles and path lengths for each group
-    data <- do.call(rbind, lapply(split(data, data$group), .add_path_data))
+    data <- lapply(split(data, data$group), .add_path_data)
 
     # Get the actual text string positions & angles for each group
-    data_points <- do.call(rbind, lapply(split(data, data$group), .get_path_points))
+    data_points <- do.call(rbind, lapply(data, .get_path_points))
+    data <- do.call(rbind, data)
 
-    # Calculate the bookending lines
-    data_lines <- mapply(function(d1, d2) .get_surrounding_lines(d1, d2),
-                          d1 = split(data, data$group),
-                          d2 = split(data_points, data_points$group),
-                         SIMPLIFY = FALSE)
+    # Trim path if it intersects text
+    data_lines <- .get_surrounding_lines(data, data_points)
+
+    # Get first point of individual paths (for graphical parameters)
+    path_id <- paste0(data_lines$group, "&", data_lines$section)
+    path_id <- match(path_id, unique(path_id))
+    start   <- c(TRUE, path_id[-1] != path_id[-length(path_id)])
 
     #---- Grob writing --------------------------------------#
 
     my_tree <- gTree()
 
-    # Create the textgrobs
-    for(i in seq(nrow(data_points)))
-    {
-      my_tree <- addGrob(my_tree, textGrob(
-        label = data_points$label[i],
-        x = data_points$x[i],
-        y = data_points$y[i],
-        vjust = data_points$vjust[i],
-        hjust = 0.5,
-        rot = data_points$angle[i],
-        default.units = "native",
-        gp = gpar(
-          col = alpha(data_points$colour[i], data_points$alpha[i]),
-          fontsize = data_points$size[i] * 2.85,
-          fontface = data_points$fontface[i],
-          fontfamily = data_points$fontfamily[i])))
-    }
-
-
     # Create the linegrobs
-    for(i in seq_along(data_lines))
-    {
-      d <- data_lines[[i]]
-      d_list <- split(d, d$section)
-      for(j in seq_along(d_list))
-      {
-        seg <- d_list[[j]]
-        my_tree <- addGrob(my_tree, linesGrob(
-          x = seg$x,
-          y = seg$y,
-          default.units = "native",
-          gp = gpar(
-            lty = seg$linetype,
-            lwd = seg$linewidth,
-            col = alpha(seg$colour[1], seg$alpha[1]))))
-      }
-    }
+    my_tree <- addGrob(
+      my_tree, polylineGrob(
+        x = data_lines$x,
+        y = data_lines$y,
+        id = path_id,
+        gp = gpar(
+          col  = alpha(data_lines$colour, data_lines$alpha)[start],
+          fill = alpha(data_lines$colour, data_lines$alpha)[start],
+          lwd  = data_lines$linewidth[start] * .pt,
+          lty  = data_lines$linetype[start],
+          lineend   = lineend,
+          linejoin  = linejoin,
+          linemitre = linemitre
+        )
+      )
+    )
+
+    # Create the textgrobs
+    my_tree <- addGrob(
+      my_tree,  textGrob(
+        label = data_points$label,
+        x     = data_points$x,
+        y     = data_points$y,
+        vjust = data_points$vjust,
+        hjust = data_points$hjust,
+        rot   = data_points$angle,
+        gp    = gpar(
+          col = alpha(data_points$colour, data_points$alpha),
+          fontsize   = data_points$size * .pt,
+          fontface   = data_points$fontface,
+          fontfamily = data_points$fontfamily
+        )
+      )
+    )
 
     return(my_tree)
   }

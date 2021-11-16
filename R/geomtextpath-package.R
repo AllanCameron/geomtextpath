@@ -1,8 +1,8 @@
 #' @keywords internal
 "_PACKAGE"
 
-#' @importFrom ggplot2 layer ggproto Geom aes draw_key_text
-#' @importFrom grid gTree addGrob textGrob gpar linesGrob
+#' @import ggplot2
+#' @import grid
 #' @importFrom scales alpha
 #' @importFrom stats approx
 #' @importFrom utils head tail

@@ -12,7 +12,10 @@ geom_textpath(
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE,
-  ...
+  ...,
+  lineend = "butt",
+  linejoin = "round",
+  linemitre = 10
 )
 }
 \arguments{
@@ -59,6 +62,12 @@ the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 aesthetics, used to set an aesthetic to a fixed value, like \code{colour =
 "red"} or \code{size = 3}. They may also be parameters to the paired
  geom/stat.}
+
+\item{lineend}{Line end style (round, butt, square).}
+
+\item{linejoin}{Line join style (round, mitre, bevel).}
+
+\item{linemitre}{Line mitre limit (number greater than 1).}
 }
 \description{
 The existing text-based geom layers in ggplot2
