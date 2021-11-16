@@ -249,18 +249,22 @@ geom_textpath <- function(
   # The easiest way to do this is to add spaces around the text string
   path$label <- paste0("  ", path$label, "  ")
 
-  # Split the string for this group, get its cumulative strwidth and multiply
-  # it by the font size plus a "magic constant" to get it in line with the
-  # equivalent spacing of geom_text
+  # Using the shape_string function from package "systemfonts" allows fast
+  # and accurate calculation of letter spacing
 
-  ## TODO: 1) Incorporate curvature and vjust into line spacing
-  ##       2) Consider more accurate alternatives to strwidth
+  letters <- shape_string(strings    = path$label[1],
+                          family     = path$family[1],
+                          italic     = path$fontace[1] %in% c(3, 4),
+                          bold       = path$fontface[1] %in% c(2, 4),
+                          size       = path$size[1],
+                          lineheight = path$lineheight[1])
 
-  letters      <- strsplit(path$label[1], "")[[1]]
-  letterwidths <- cumsum(c(0, strwidth(letters, font = path$fontface[1],
-                                       units = "figure")))
-  letterwidths <- path$size[1] * 0.3 * letterwidths
-  letterwidths <- (head(letterwidths, -1) + tail(letterwidths, -1))/2
+
+  # We need to define a proportionality constant between mm and npc space
+  k <- as.numeric(convertWidth(unit(1, "npc"), "mm"))
+
+  # This gives us an accurate size for the letter placement in npc space
+  letterwidths <- (letters$shape$x_offset + letters$shape$x_midpoint)/(k * 0.8)
 
   # This calculates the starting distance along the path where we place
   # the first letter
@@ -280,7 +284,7 @@ geom_textpath <- function(
     }))
 
   # Now we assign each letter to its correct point on the path
-  df$label <- letters
+  df$label <- letters$shape$glyph
 
   # This ensures that we don't try to return any invalid letters
   # (those letters that fall off the path on either side will have
@@ -379,9 +383,6 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
 
     #---- type conversion, checks & warnings ---------------------------#
 
-    # strsplit doesn't like factors, so we need to ensure characters are used
-    if(is.factor(data$label)) data$label <- as.character(data$label)
-
     # We want to be able to convert factors and strings into numbers to apply
     # the linetype aesthetic. It feels like thus is the wrong way to do it.
     # Presumably ggplot has a function to map strings/factors to scales
@@ -460,7 +461,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
         x     = data_points$x,
         y     = data_points$y,
         vjust = data_points$vjust,
-        hjust = data_points$hjust,
+        hjust = 0.5, # this must be kept constant; we are implementing
+                     # hjust per string, not per letter
         rot   = data_points$angle,
         gp    = gpar(
           col = alpha(data_points$colour, data_points$alpha),
