@@ -2,6 +2,7 @@
 
 export(GeomTextpath)
 export(geom_textpath)
+export(textpathGrob)
 import(ggplot2)
 import(grid)
 importFrom(graphics,strwidth)
