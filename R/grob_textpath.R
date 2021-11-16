@@ -63,25 +63,26 @@ textpathGrob <- function(
   )
 
   # Match justification to labels length
-  vjust <- rep_len(resolveVJust(just, vjust), n_label)
-  hjust <- rep_len(resolveHJust(just, hjust), n_label)
-  fontsize <- gp_text$fontsize / .pt
-  fontsize <- if (length(fontsize) == 0) NULL else fontsize
+  vjust   <- rep_len(resolveVJust(just, vjust), n_label)
+  hjust   <- rep_len(resolveHJust(just, hjust), n_label)
 
   # Reconstitute data
+  gp_text <- gp_fill_defaults(gp_text, fontsize = 3.88 * .pt)
   path <- data.frame(
     x = x, y = y,
     group    = rep(seq_along(id_lens), id_lens),
     label    = rep(label, id_lens),
-    fontface = rep(gp_text$fontface     %||% rep_len(1,   n_label), id_lens),
-    family   = rep(gp_text$fontfamily   %||% rep_len("",  n_label), id_lens),
-    lineheight = rep(gp_text$lineheight %||% rep_len(1.2, n_label), id_lens),
+    fontface = rep(rep_len(gp_text$font,           n_label), id_lens),
+    family   = rep(rep_len(gp_text$fontfamily,     n_label), id_lens),
+    size     = rep(rep_len(gp_text$fontsize / .pt, n_label), id_lens),
+    lineheight = rep(rep_len(gp_text$lineheight,   n_label), id_lens),
     hjust    = rep(hjust, id_lens),
-    vjust    = rep(vjust, id_lens),
-    size     = rep(fontsize  %||% rep_len(3.88, n_label), id_lens)
+    vjust    = rep(vjust, id_lens)
   )
 
   ## ---- Data manipulation -------------------------------------------- #
+
+  # TODO: Make sure that helper functions accept static label parameters
 
   # Get gradients, angles and path lengths for each group
   path <- lapply(split(path, path$group), .add_path_data)
@@ -135,6 +136,15 @@ recycle_gp <- function(gp, fun, ...) {
   # Never ever have zero-length objects in the gpar
   gp[lengths(gp) == 0] <- list(NULL)
   return(gp)
+}
+
+# Helper function to fill in missing parameters by defaults
+# Based on ggplot2:::modify_list
+gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {
+  extra <- list(...)
+  for (i in names(extra)) defaults[[i]] <- extra[[i]]
+  for (i in names(gp))    defaults[[i]] <- gp[[i]]
+  defaults
 }
 
 # Similar to rlang::`%||%` or utils:::`%||%`
