@@ -417,62 +417,43 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     # All our transformations occur after the coord transform:
     data <- coord$transform(data, panel_params)
 
-    # Get gradients, angles and path lengths for each group
-    data <- lapply(split(data, data$group), .add_path_data)
+    #---- Set graphical parameters --------------------------#
 
-    # Get the actual text string positions & angles for each group
-    data_points <- do.call(rbind, lapply(data, .get_path_points))
-    data <- do.call(rbind, data)
+    # browser()
 
-    # Trim path if it intersects text
-    data_lines <- .get_surrounding_lines(data, data_points)
+    # Get first observation of each group
+    first <- c(TRUE, data$group[-1] != data$group[-nrow(data)])
 
-    # Get first point of individual paths (for graphical parameters)
-    path_id <- paste0(data_lines$group, "&", data_lines$section)
-    path_id <- match(path_id, unique(path_id))
-    start   <- c(TRUE, path_id[-1] != path_id[-length(path_id)])
-
-    #---- Grob writing --------------------------------------#
-
-    my_tree <- gTree()
-
-    # Create the linegrobs
-    my_tree <- addGrob(
-      my_tree, polylineGrob(
-        x = data_lines$x,
-        y = data_lines$y,
-        id = path_id,
-        gp = gpar(
-          col  = alpha(data_lines$colour, data_lines$alpha)[start],
-          fill = alpha(data_lines$colour, data_lines$alpha)[start],
-          lwd  = data_lines$linewidth[start] * .pt,
-          lty  = data_lines$linetype[start],
-          lineend   = lineend,
-          linejoin  = linejoin,
-          linemitre = linemitre
-        )
-      )
+    text_gp <- gpar(
+      col  = alpha(data$colour, data$alpha)[first],
+      fontsize   = data$size[first] * .pt,
+      fontface   = data$fontface[first],
+      fontfamily = data$family[first],
+      lineheight = data$lineheight[first]
     )
 
-    # Create the textgrobs
-    my_tree <- addGrob(
-      my_tree,  textGrob(
-        label = data_points$label,
-        x     = data_points$x,
-        y     = data_points$y,
-        vjust = data_points$vjust,
-        hjust = 0.5, # this must be kept constant; we are implementing
-                     # hjust per string, not per letter
-        rot   = data_points$angle,
-        gp    = gpar(
-          col = alpha(data_points$colour, data_points$alpha),
-          fontsize   = data_points$size * .pt,
-          fontface   = data_points$fontface,
-          fontfamily = data_points$fontfamily
-        )
-      )
+    path_gp <- gpar(
+      col  = alpha(data$colour, data$alpha)[first],
+      fill = alpha(data$colour, data$alpha)[first],
+      lwd  = data$linewidth[first] * .pt,
+      lty  = data$linetype[first],
+      lineend   = lineend,
+      linejoin  = linejoin,
+      linemitre = linemitre
     )
 
-    return(my_tree)
+    #---- Dispatch data to grob -----------------------------#
+
+    textpathGrob(
+      label = data$label[first],
+      x = data$x,
+      y = data$y,
+      id = data$group,
+      hjust = data$hjust[first],
+      vjust = data$vjust[first],
+      gp_text = text_gp,
+      gp_path = path_gp,
+      default.units = "native"
+    )
   }
 )
