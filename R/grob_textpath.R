@@ -76,7 +76,8 @@ textpathGrob <- function(
     lineheight = rep(gp_text$lineheight %||% "", id_lens),
     hjust    = rep(hjust, id_lens),
     vjust    = rep(vjust, id_lens),
-    size     = rep(gp_text$fontsize %||% rep_len(3.88 * .pt, n_label), id_lens)
+    size     = rep(gp_text$fontsize / .pt %||% rep_len(3.88 * .pt, n_label),
+                   id_lens)
   )
 
   ## ---- Data manipulation -------------------------------------------- #
