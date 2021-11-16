@@ -72,6 +72,8 @@ textpathGrob <- function(
     group    = rep(seq_along(id_lens), id_lens),
     label    = rep(label, id_lens),
     fontface = rep(gp_text$fontface %||% rep_len(1, n_label), id_lens),
+    family   = rep(gp_text$fontfamily %||% "", id_lens),
+    lineheight = rep(gp_text$lineheight %||% "", id_lens),
     hjust    = rep(hjust, id_lens),
     vjust    = rep(vjust, id_lens),
     size     = rep(gp_text$fontsize %||% rep_len(3.88 * .pt, n_label), id_lens)
