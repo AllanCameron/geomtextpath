@@ -65,19 +65,20 @@ textpathGrob <- function(
   # Match justification to labels length
   vjust <- rep_len(resolveVJust(just, vjust), n_label)
   hjust <- rep_len(resolveHJust(just, hjust), n_label)
+  fontsize <- gp_text$fontsize / .pt
+  fontsize <- if (length(fontsize) == 0) NULL else fontsize
 
   # Reconstitute data
   path <- data.frame(
     x = x, y = y,
     group    = rep(seq_along(id_lens), id_lens),
     label    = rep(label, id_lens),
-    fontface = rep(gp_text$fontface %||% rep_len(1, n_label), id_lens),
-    family   = rep(gp_text$fontfamily %||% "", id_lens),
-    lineheight = rep(gp_text$lineheight %||% "", id_lens),
+    fontface = rep(gp_text$fontface     %||% rep_len(1,   n_label), id_lens),
+    family   = rep(gp_text$fontfamily   %||% rep_len("",  n_label), id_lens),
+    lineheight = rep(gp_text$lineheight %||% rep_len(1.2, n_label), id_lens),
     hjust    = rep(hjust, id_lens),
     vjust    = rep(vjust, id_lens),
-    size     = rep(gp_text$fontsize / .pt %||% rep_len(3.88 * .pt, n_label),
-                   id_lens)
+    size     = rep(fontsize  %||% rep_len(3.88, n_label), id_lens)
   )
 
   ## ---- Data manipulation -------------------------------------------- #
