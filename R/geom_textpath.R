@@ -179,21 +179,22 @@ geom_textpath <- function(
 
 .add_path_data <- function(.data)
 {
-  # Simple calculation of the gradient
+  # Gradient is found and converted to angle here. Since we use approx
+  # to interpolate angles later, we can't have any sudden transitions
+  # where angles "wrap around" from +180 to -180, otherwise we might
+  # interpolate in this transition and get letters with an angle of
+  # around 0. When combined with a vjust, this also makes the letters
+  # jump out of alignment. This little algorithm makes sure the changes
+  # in angle never wrap around.
   grad <- diff(.data$y) / diff(.data$x)
+  rads <- atan(grad)
+  diff_rads <- diff(rads)
+  diff_rads <- ifelse(diff_rads < - pi / 2, diff_rads + pi, diff_rads)
+  diff_rads <- ifelse(diff_rads > pi / 2, diff_rads - pi, diff_rads)
+  rads <- cumsum(c(rads[1], 0, diff_rads))
 
-  # The gradient vector needs to be the same length as input vectors. There are
-  # various ways to do this, but interpolation is probably best:
-  .data$grad <- approx(seq_along(grad), grad,
-                  seq(1, length(grad), length.out = length(grad) + 1))$y
-
-  # Gradient is converted to angle (in degrees) here:
-  .data$angle <- atan(.data$grad) * 180 / pi
-
-  # Since atan always outputs an angle between 0 and 180 degrees, we need to
-  # subtract 180 degrees in cases where x is moving right to left
-  .data$angle <- ifelse(sign(c(0, diff(.data$x))) < 0,
-                        .data$angle - 180, .data$angle)
+  # Now we can safely convert to degrees
+  .data$angle <- rads * 180 / pi
 
   # Letters need to be spaced according to their distance along the path, so
   # we need a column to measure the distance of each point along the path
@@ -205,21 +206,17 @@ geom_textpath <- function(
   # the spacing between characters when vjust is used, otherwise the spacing
   # will change
 
-  rad_diff <- diff(atan(.data$grad))
-  rad_diff <- rad_diff[abs(rad_diff) < pi/2]
-  rad_diff <- approx(seq_along(rad_diff), rad_diff,
-                     seq(1, length(rad_diff), length.out = nrow(.data) - 1))$y
-  curvature <- rad_diff/diff(.data$length)
+  diff_rads <- approx(seq_along(diff_rads), diff_rads,
+                     seq(1, length(diff_rads), length.out = nrow(.data) - 1))$y
+
+  curvature <- diff_rads/diff(.data$length)
+
+
+  #curvature <- predict(loess(curvature ~ seq_along(curvature)))
 
   effective_length <- diff(.data$length) * (1 + (.data$vjust[1] - 0.5) * 0.04 *curvature)
 
   .data$adj_length <- c(0, cumsum(effective_length))
-
-
-  # It will be useful to keep a record of the total length of the string we
-  # wish to write. This will be used to normalise the width of the component
-  # characters later on.
-  .data$string_length <- sapply(.data$label, strwidth, units = "figure")
 
   .data
 }
@@ -276,12 +273,15 @@ geom_textpath <- function(
   # We now need to interpolate all the numeric values along the path so we
   # get the appropriate values at each point. Non-numeric values should all
   # be identical, so these are just kept as-is
+
+
   df <- as.data.frame(lapply(path, function(i) {
     if(is.numeric(i))
       approx(x = path$adj_length, y = i, xout = dist_points, ties = mean)$y
     else
       rep(i[1], length(dist_points))
     }))
+
 
   # Now we assign each letter to its correct point on the path
   df$label <- letters$shape$glyph
