@@ -19,8 +19,9 @@
 #' information about the shape of the curve.
 #'
 #' @param .data A `data.frame` with `x` and `y` numeric columns.
+#' @param vjust A `numeric` vector specifying vertical justification.
 #'
-#' @return A `data.frame` with additional column `angle`, `length` and
+#' @return A `data.frame` with additional columns `angle`, `length` and
 #'   `adj_length`.
 #' @noRd
 #'
@@ -47,6 +48,7 @@
 #' )
 #'
 #' .add_path_data(xy)
+.add_path_data <- function(.data, vjust = 0.5)
 {
   # Gradient is found and converted to angle here. Since we use approx
   # to interpolate angles later, we can't have any sudden transitions
@@ -80,10 +82,8 @@
 
   curvature <- diff_rads/diff(.data$length)
 
-
-  #curvature <- predict(loess(curvature ~ seq_along(curvature)))
-
-  effective_length <- diff(.data$length) * (1 + (.data$vjust[1] - 0.5) * 0.04 *curvature)
+  effective_length <- diff(.data$length) *
+    (1 + (vjust[1] - 0.5) * 0.04 * curvature)
 
   .data$adj_length <- c(0, cumsum(effective_length))
 

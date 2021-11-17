@@ -85,7 +85,8 @@ textpathGrob <- function(
   # TODO: Make sure that helper functions accept static label parameters
 
   # Get gradients, angles and path lengths for each group
-  path <- lapply(split(path, path$group), .add_path_data)
+  path <- Map(.add_path_data, .data = split(path, path$group), vjust = vjust)
+  # path <- lapply(split(path, path$group), .add_path_data)
 
   # Get the actual text string positions and angles for each group
   strings <- do.call(rbind.data.frame, c(lapply(path, .get_path_points),
