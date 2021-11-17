@@ -68,24 +68,12 @@ textpathGrob <- function(
 
   # Reconstitute data
   gp_text <- gp_fill_defaults(gp_text)
-  path <- data.frame(
-    x = x, y = y,
-    group    = rep(seq_along(id_lens), id_lens),
-    label    = rep(label, id_lens),
-    fontface = rep(rep_len(gp_text$font,           n_label), id_lens),
-    family   = rep(rep_len(gp_text$fontfamily,     n_label), id_lens),
-    size     = rep(rep_len(gp_text$fontsize / .pt, n_label), id_lens),
-    lineheight = rep(rep_len(gp_text$lineheight,   n_label), id_lens),
-    hjust    = rep(hjust, id_lens),
-    vjust    = rep(vjust, id_lens)
-  )
+  path <- data.frame(x = x, y = y, id = rep(seq_along(id_lens), id_lens))
 
   ## ---- Data manipulation -------------------------------------------- #
 
-  # TODO: Make sure that helper functions accept static label parameters
-
   # Get gradients, angles and path lengths for each group
-  path <- Map(.add_path_data, .data = split(path, path$group), vjust = vjust)
+  path <- Map(.add_path_data, .data = split(path, path$id), vjust = vjust)
 
   # Get the actual text string positions and angles for each group
   text <- Map(.get_path_points, path = path, label = label, hjust = hjust,
@@ -99,13 +87,13 @@ textpathGrob <- function(
   path <- .get_surrounding_lines(path, text, vjust)
 
   # Get first point of individual paths for recycling
-  path_id <- paste0(path$group, "&", path$section)
+  path_id <- paste0(path$id, "&", path$section)
   path_id <- match(path_id, unique(path_id))
   path_start   <- c(TRUE, path_id[-1] != path_id[-length(path_id)])
 
   # Recycle graphical parameters to match lengths of strings / path
   gp_text <- recycle_gp(gp_text, rep, times = text_lens)
-  gp_path <- recycle_gp(gp_path, `[`, i = path$group[path_start])
+  gp_path <- recycle_gp(gp_path, `[`, i = path$id[path_start])
 
   # ---- Grob writing --------------------------------------------------- #
 
