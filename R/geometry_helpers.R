@@ -13,22 +13,40 @@
 
 ## Adding path data -------------------------------------------------------
 
-# This function does the work of calculating the gradient of the path at each
-# x, y value along its length, and the angle this implies that text should sit
-# on the path (measured in degrees, not rads). It takes a group-subset of
-# the layer data frame as input, so this function needs to be lapply-ed to the
-# list formed by splitting the layer data frame by group. This has to be done
-# _after_ transforming the data to co-ordinate space with coord$transform(),
-# otherwise the angles will be wrong. This function could be moved into the
-# body of draw_panel, but I have kept it as a separate non-exported function at
-# the moment to keep the logic of this step separate.
-#
-# This function will be called after plot.new (or grid.newpage), so it will
-# have access to the current device dimensions, etc. This is where we should do
-# any calculations that take the aspect ratio into account to improve the angle
-# of rotation for the letters.
-
-.add_path_data <- function(.data)
+#' Supplement path data
+#'
+#' This function supplements a single path given as x and y coordinates with
+#' information about the shape of the curve.
+#'
+#' @param .data A `data.frame` with `x` and `y` numeric columns.
+#'
+#' @return A `data.frame` with additional column `angle`, `length` and
+#'   `adj_length`.
+#' @noRd
+#'
+#' @details This function does the work of calculating the gradient of the path
+#'   at each `x, y` value along its length, and the angle this implies that text
+#'   should sit on the path (measured in degrees, not radians). It takes a
+#'   group-subset of the layer data frame as input, so this function needs to
+#'   be `lapply()`-ed to the list formed by splitting the layer data frame by
+#'   group. This has to be done *after* transforming the data to co-ordinate
+#'   space with `coord$transform()`, otherwise the angles will be wrong. This
+#'   function could be moved into the body of draw_panel, but I have kept it as
+#'   a separate non-exported function at the moment to keep the logic of this
+#'   step separate.
+#'
+#'   This function will be called after plot.new (or grid.newpage), so it will
+#'   have access to the current device dimensions, etc. This is where we should
+#'   do any calculations that take the aspect ratio into account to improve the
+#'   angle of rotation for the letters.
+#'
+#' @examples
+#' xy <- data.frame(
+#'   x =  1:10,
+#'   y = (1:10)^2
+#' )
+#'
+#' .add_path_data(xy)
 {
   # Gradient is found and converted to angle here. Since we use approx
   # to interpolate angles later, we can't have any sudden transitions
