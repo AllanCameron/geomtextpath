@@ -96,7 +96,7 @@ textpathGrob <- function(
   path <- do.call(rbind.data.frame, c(path, make.row.names = FALSE))
 
   # Get bookends by trimming paths when it intersects text
-  path <- .get_surrounding_lines(path, text)
+  path <- .get_surrounding_lines(path, text, vjust)
 
   # Get first point of individual paths for recycling
   path_id <- paste0(path$group, "&", path$section)

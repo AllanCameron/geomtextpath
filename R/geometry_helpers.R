@@ -230,9 +230,20 @@
 #'   after ("post") clipping.
 #' @noRd
 #'
+#' @examples
+#' xy <- data.frame(
+#'   x =  1:10,
+#'   y = (1:10)^2,
+#'   id = 1
+#' )
+#'
+#' xy <- .add_path_data(xy)
+#' glyphs <- .get_path_points(xy)
+#' .get_surrounding_lines(xy, glyphs)
+.get_surrounding_lines <- function(path, letters, vjust = 0.5) {
 
   # Early exit if text isn't exactly on path
-  if (all(letters$vjust < 0) || all(letters$vjust > 1)) {
+  if (all(vjust < 0) || all(vjust > 1)) {
     path$section <- "all"
     return(path)
   }
@@ -240,8 +251,10 @@
   # Lengths of group runs (assumed to be sorted)
   # The `rle()` function handles NAs inelegantly,
   # but I'm assuming `group` cannot be NA.
-  letter_lens <- rle(letters$group)$lengths
-  curve_lens  <- rle(path$group)$lengths
+  letter_lens <- rle(letters$id)$lengths
+  curve_lens  <- rle(path$id)$lengths
+  trim <- rep_len(!(vjust < 0 | vjust > 1), length(letter_lens))
+  trim <- rep(trim, curve_lens)
 
   # Get locations where strings start and end
   starts <- {ends <- cumsum(letter_lens)} - letter_lens + 1
@@ -252,6 +265,7 @@
   path$section <- ""
   path$section[path$length < rep(mins, curve_lens)] <- "pre"
   path$section[path$length > rep(maxs, curve_lens)] <- "post"
+  path$section[!trim] <- "all"
 
   # Filter empty sections (i.e., the part where the string is)
   path[path$section != "", , drop = FALSE]
