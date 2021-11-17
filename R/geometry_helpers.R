@@ -142,6 +142,13 @@
 .get_path_points <- function(path, label = "placeholder",
                              gp = get.gpar(), hjust = 0.5)
 {
+  # Get pixels per inch (72 is default screen resolution). For some reason text
+  # renders weirdly if this is adapted to the device. For raster graphics,
+  # one would typically use the following:
+  # ppi <- dev.size("px")[1] / dev.size("in")[1]
+  # But that gives the wrong spacing here.
+  ppi <- 72
+
   # The text needs some breathing space on either side if we are adding lines.
   # The easiest way to do this is to add spaces around the text string
   label <- paste0("  ", label[1], "  ")
@@ -155,14 +162,9 @@
                           bold       = gp$font[1] %in% c(2, 4),
                           size       = gp$fontsize[1],
                           lineheight = gp$lineheight[1],
-                          res = 72)
+                          res = ppi)
 
-
-  # We need to define a proportionality constant between mm and npc space
-  k <- as.numeric(convertWidth(unit(1, "npc"), "mm"))
-
-  # This gives us an accurate size for the letter placement in npc space
-  letterwidths <- (letters$shape$x_offset + letters$shape$x_midpoint) / (k * 1.8)
+  letterwidths <- (letters$shape$x_offset + letters$shape$x_midpoint) / ppi
 
   # This calculates the starting distance along the path where we place
   # the first letter
