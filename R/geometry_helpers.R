@@ -194,12 +194,6 @@
 
 ## Getting surrounding lines -----------------------------------------------
 
-# We probably want the option to draw the path itself, since this will be less
-# work for the end-user. If the vjust is between 0 and 1 then the path will
-# clash with the text, so we want to remove the segment where the text is.
-# This function will get the correct segments in either case, but it needs
-# the whole path data AND the calculated string data to do it.
-
 ## TODO: Do we want to add a parameter to switch the lines on and off,
 ##       inside geom_textpath(), or simply set a default linewidth of 0?
 ## RE: We could separate it into two geoms, one with a path by default and one
@@ -210,9 +204,32 @@
 ##       intersects text, but that doesn't take ascenders and descenders into
 ##       account.
 
-## Can we rename this function to `.paths_bookends()`? I like the term bookend
-## you used earlier in a comment!
-.get_surrounding_lines <- function(path, letters) {
+#' Trim text area from path
+#'
+#' This function splits a path when a string is predicted to intersect with
+#' the path.
+#'
+#' @param path A `data.frame` with at least a numeric `length` column and
+#'   integer `id` column. The `id` column must match that in the `letters`
+#'   argument.
+#' @param letters A `data.frame` with at least a numeric `length` column and
+#'   integer `id` column. The `id` column must match that in the `path`
+#'   argument.
+#' @param vjust A `numeric` vector specifying vertical justification. Will be
+#'   recycled to match the length of the unique `id` values in the `path` and
+#'   `letters` arguments.
+#'
+#' @details We probably want the option to draw the path itself, since this will
+#'   be less work for the end-user. If the `vjust` is between 0 and 1 then the
+#'   path will clash with the text, so we want to remove the segment where the
+#'   text is. This function will get the correct segments in either case,
+#'   but it needs the whole path data *and* the calculated string data to do it.
+#'
+#' @return The `path` data.frame filtered for clashing segments and including
+#'   a `section` column indicated it was not clipped ("all"), before ("pre") or
+#'   after ("post") clipping.
+#' @noRd
+#'
 
   # Early exit if text isn't exactly on path
   if (all(letters$vjust < 0) || all(letters$vjust > 1)) {
