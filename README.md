@@ -42,7 +42,7 @@ library(geomtextpath)
 ### Plotting text along an arbitrary path
 
 ``` r
-t <- seq(0, 5 * pi, length.out = 1000)
+t <- seq(-1, 5, length.out = 1000) * pi
 spiral <- data.frame(
   x = rev(sin(t) * 1000:1),
   y = rev(cos(t) * 1000:1),
@@ -124,11 +124,7 @@ There are limitations inherent in the plotting of text elements in
 ggplot due to the way that the underlying `grid` graphics handles text.
 A text string is dealt with as a zero-width object, and therefore the
 rotation and spacing of the letters making up the string can only be
-dealt with by treating each letter separately. Inevitably, this means
-that curved text paths have to be calculated based on the size and
-aspect ratio of the plotting device. Resizing the device after drawing a
-curved text path will therefore cause artefacts of spacing and rotation
-in the text.
+dealt with by treating each letter separately.
 
 It is important to realise that the letters are only rotated, and do not
 undergo any change in shape. Thus, for example, large text appearing on
