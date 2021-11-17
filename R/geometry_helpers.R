@@ -242,31 +242,40 @@
 #' .get_surrounding_lines(xy, glyphs)
 .get_surrounding_lines <- function(path, letters, vjust = 0.5) {
 
-  # Early exit if text isn't exactly on path
+  # Simplify if text isn't exactly on path
   if (all(vjust < 0) || all(vjust > 1)) {
     path$section <- "all"
-    return(path)
+  } else {
+    # Lengths of group runs (assumed to be sorted)
+    # The `rle()` function handles NAs inelegantly,
+    # but I'm assuming `group` cannot be NA.
+    letter_lens <- rle(letters$id)$lengths
+    curve_lens  <- rle(path$id)$lengths
+    trim <- rep_len(!(vjust < 0 | vjust > 1), length(letter_lens))
+    trim <- rep(trim, curve_lens)
+
+    # Get locations where strings start and end
+    starts <- {ends <- cumsum(letter_lens)} - letter_lens + 1
+    mins <- letters$length[starts]
+    maxs <- letters$length[ends]
+
+    # Assign sections to before and after string
+    path$section <- ""
+    path$section[path$length < rep(mins, curve_lens)] <- "pre"
+    path$section[path$length > rep(maxs, curve_lens)] <- "post"
+    path$section[!trim] <- "all"
+
+    # Filter empty sections (i.e., the part where the string is)
+    path <- path[path$section != "", , drop = FALSE]
   }
 
-  # Lengths of group runs (assumed to be sorted)
-  # The `rle()` function handles NAs inelegantly,
-  # but I'm assuming `group` cannot be NA.
-  letter_lens <- rle(letters$id)$lengths
-  curve_lens  <- rle(path$id)$lengths
-  trim <- rep_len(!(vjust < 0 | vjust > 1), length(letter_lens))
-  trim <- rep(trim, curve_lens)
+  # Get first point of individual paths
+  new_id <- paste0(path$id, "&", path$section)
+  new_id <- match(new_id, unique(new_id))
+  start  <- c(TRUE, new_id[-1] != new_id[-length(new_id)])
 
-  # Get locations where strings start and end
-  starts <- {ends <- cumsum(letter_lens)} - letter_lens + 1
-  mins <- letters$length[starts]
-  maxs <- letters$length[ends]
+  path$new_id <- new_id
+  path$start  <- start
 
-  # Assign sections to before and after string
-  path$section <- ""
-  path$section[path$length < rep(mins, curve_lens)] <- "pre"
-  path$section[path$length > rep(maxs, curve_lens)] <- "post"
-  path$section[!trim] <- "all"
-
-  # Filter empty sections (i.e., the part where the string is)
-  path[path$section != "", , drop = FALSE]
+  return(path)
 }

@@ -86,14 +86,9 @@ textpathGrob <- function(
   # Get bookends by trimming paths when it intersects text
   path <- .get_surrounding_lines(path, text, vjust)
 
-  # Get first point of individual paths for recycling
-  path_id <- paste0(path$id, "&", path$section)
-  path_id <- match(path_id, unique(path_id))
-  path_start   <- c(TRUE, path_id[-1] != path_id[-length(path_id)])
-
   # Recycle graphical parameters to match lengths of strings / path
   gp_text <- recycle_gp(gp_text, rep, times = text_lens)
-  gp_path <- recycle_gp(gp_path, `[`, i = path$id[path_start])
+  gp_path <- recycle_gp(gp_path, `[`, i = path$id[path$start])
 
   # ---- Grob writing --------------------------------------------------- #
 
@@ -101,7 +96,7 @@ textpathGrob <- function(
 
   my_tree <- addGrob(
     my_tree, polylineGrob(
-      x = path$x, y = path$y, id = path_id, gp = gp_path,
+      x = path$x, y = path$y, id = path$new_id, gp = gp_path,
       default.units = default.units
     )
   )
