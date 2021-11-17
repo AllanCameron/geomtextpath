@@ -1,3 +1,5 @@
+# Grob --------------------------------------------------------------------
+
 #' Draw text on a path.
 #'
 #' This function creates (curved) text on a path.
@@ -68,50 +70,83 @@ textpathGrob <- function(
 
   # Reconstitute data
   gp_text <- gp_fill_defaults(gp_text)
-  path <- data.frame(x = x, y = y, id = rep(seq_along(id_lens), id_lens))
+
+  if (!is.unit(x)) {
+    x <- unit(x, default.units)
+  }
+  if (!is.unit(y)) {
+    y <- unit(y, default.units)
+  }
+
+  gTree(
+    textpath = list(
+      label = label,
+      x = x, y = y,
+      id = rep(seq_along(id_lens), id_lens),
+      vjust = vjust, hjust = hjust,
+      gp_text = gp_text,
+      gp_path = gp_path
+    ),
+    name = name, vp = vp,
+    cl = "textpath"
+  )
+}
+
+# makeContent -------------------------------------------------------------
+
+#' @export
+makeContent.textpath <- function(x) {
+  v <- x$textpath
+  x$textpath <- NULL
+
+  xx <- convertX(v$x, "inches", valueOnly = TRUE)
+  yy <- convertY(v$y, "inches", valueOnly = TRUE)
+
+  path <- data.frame(x = xx, y = yy, id = v$id)
 
   ## ---- Data manipulation -------------------------------------------- #
 
   # Get gradients, angles and path lengths for each group
-  path <- Map(.add_path_data, .data = split(path, path$id), vjust = vjust)
+  path <- Map(.add_path_data, .data = split(path, path$id), vjust = v$vjust)
 
   # Get the actual text string positions and angles for each group
-  text <- Map(.get_path_points, path = path, label = label, hjust = hjust,
-                 gp = split_gp(gp_text, seq_along(label)))
+  text <- Map(.get_path_points, path = path, label = v$label, hjust = v$hjust,
+              gp = split_gp(v$gp_text, seq_along(v$label)))
   text_lens <- vapply(text, nrow, integer(1))
 
   text <- do.call(rbind.data.frame, c(text, make.row.names = FALSE))
   path <- do.call(rbind.data.frame, c(path, make.row.names = FALSE))
 
   # Get bookends by trimming paths when it intersects text
-  path <- .get_surrounding_lines(path, text, vjust)
+  path <- .get_surrounding_lines(path, text, v$vjust)
 
   # Recycle graphical parameters to match lengths of strings / path
-  gp_text <- recycle_gp(gp_text, rep, times = text_lens)
-  gp_path <- recycle_gp(gp_path, `[`, i = path$id[path$start])
+  gp_text <- recycle_gp(v$gp_text, rep, times = text_lens)
+  gp_path <- recycle_gp(v$gp_path, `[`, i = path$id[path$start])
 
   # ---- Grob writing --------------------------------------------------- #
 
-  my_tree <- gTree(name = name, vp = vp)
-
-  my_tree <- addGrob(
-    my_tree, polylineGrob(
+  x <- addGrob(
+    x, polylineGrob(
       x = path$x, y = path$y, id = path$new_id, gp = gp_path,
-      default.units = default.units
+      default.units = "inches"
     )
   )
 
-  my_tree <- addGrob(
-    my_tree, textGrob(
+  x <- addGrob(
+    x, textGrob(
       label = text$label,
       x = text$x, y = text$y, rot = text$angle,
-      vjust = vjust, hjust = 0.5, gp = gp_text,
-      default.units = default.units
+      vjust = v$vjust, hjust = 0.5, gp = gp_text,
+      default.units = "inches"
     )
   )
-
-  my_tree
+  x
 }
+
+
+
+# Helpers -----------------------------------------------------------------
 
 # Helper function to do safe(r) recycling on "gpar" class objects.
 recycle_gp <- function(gp, fun, ...) {
