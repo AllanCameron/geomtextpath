@@ -19,7 +19,7 @@
 #' information about the shape of the curve.
 #'
 #' @param .data A `data.frame` with `x` and `y` numeric columns.
-#' @param vjust A `numeric` vector specifying vertical justification.
+#' @param vjust A `numeric(1)` scalar specifying vertical justification.
 #'
 #' @return A `data.frame` with additional columns `angle`, `length` and
 #'   `adj_length`.
@@ -100,6 +100,13 @@
 #'
 #' @param path A `data.frame` with the numeric columns `x`, `y`, `angle`,
 #'   `length` and `adj_length`.
+#' @param label A `character(1)` scalar with a string to place.
+#' @param gp An object of class `"gpar"`, typically the output from a call to
+#'   the `grid::gpar()` function. Note that parameters related to fonts *must*
+#'   be present. To be exact, the following parameters cannot be missing:
+#'   `fontfamily`, `font`, `fontsize` and `lineheight`.
+#' @param hjust A `numeric(1)` scalar specifying horizontal justification along
+#'   the path.
 #'
 #' @return A `data.frame` with numerical values interpolated at the points where
 #'   the letters in `label` argument should be placed, along with a `label`
@@ -123,31 +130,43 @@
 #' It determines how far along the path the string will be placed. The
 #' individual letters all have an hjust of 0.5.
 #'
+#' @examples
+#' xy <- data.frame(
+#'   x =  1:10,
+#'   y = (1:10)^2
+#' )
+#'
+#' xy <- .add_path_data(xy)
+#'
+#' .get_path_points(xy)
+.get_path_points <- function(path, label = "placeholder",
+                             gp = get.gpar(), hjust = 0.5)
 {
   # The text needs some breathing space on either side if we are adding lines.
   # The easiest way to do this is to add spaces around the text string
-  path$label <- paste0("  ", path$label, "  ")
+  label <- paste0("  ", label[1], "  ")
 
   # Using the shape_string function from package "systemfonts" allows fast
   # and accurate calculation of letter spacing
 
-  letters <- shape_string(strings    = path$label[1],
-                          family     = path$family[1],
-                          italic     = path$fontace[1] %in% c(3, 4),
-                          bold       = path$fontface[1] %in% c(2, 4),
-                          size       = path$size[1],
-                          lineheight = path$lineheight[1])
+  letters <- shape_string(strings    = label[1],
+                          family     = gp$fontfamily[1],
+                          italic     = gp$font[1] %in% c(3, 4),
+                          bold       = gp$font[1] %in% c(2, 4),
+                          size       = gp$fontsize[1],
+                          lineheight = gp$lineheight[1],
+                          res = 72)
 
 
   # We need to define a proportionality constant between mm and npc space
   k <- as.numeric(convertWidth(unit(1, "npc"), "mm"))
 
   # This gives us an accurate size for the letter placement in npc space
-  letterwidths <- (letters$shape$x_offset + letters$shape$x_midpoint)/(k * 0.8)
+  letterwidths <- (letters$shape$x_offset + letters$shape$x_midpoint) / (k * 1.8)
 
   # This calculates the starting distance along the path where we place
   # the first letter
-  start_dist <- path$hjust[1] * (max(path$adj_length) - max(letterwidths))
+  start_dist <- hjust[1] * (max(path$adj_length) - max(letterwidths))
 
   # Now we just add on the letterwidths and we have the correct distances
   dist_points <- letterwidths + start_dist
@@ -155,7 +174,6 @@
   # We now need to interpolate all the numeric values along the path so we
   # get the appropriate values at each point. Non-numeric values should all
   # be identical, so these are just kept as-is
-
 
   df <- as.data.frame(lapply(path, function(i) {
     if(is.numeric(i))

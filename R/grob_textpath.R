@@ -86,16 +86,17 @@ textpathGrob <- function(
 
   # Get gradients, angles and path lengths for each group
   path <- Map(.add_path_data, .data = split(path, path$group), vjust = vjust)
-  # path <- lapply(split(path, path$group), .add_path_data)
 
   # Get the actual text string positions and angles for each group
-  strings <- do.call(rbind.data.frame, c(lapply(path, .get_path_points),
-                                         make.row.names = FALSE))
-  string_lens <- rle(strings$group)$lengths
+  text <- Map(.get_path_points, path = path, label = label, hjust = hjust,
+                 gp = split_gp(gp_text, seq_along(label)))
+  text_lens <- vapply(text, nrow, integer(1))
+
+  text <- do.call(rbind.data.frame, c(text, make.row.names = FALSE))
   path <- do.call(rbind.data.frame, c(path, make.row.names = FALSE))
 
   # Get bookends by trimming paths when it intersects text
-  path <- .get_surrounding_lines(path, strings)
+  path <- .get_surrounding_lines(path, text)
 
   # Get first point of individual paths for recycling
   path_id <- paste0(path$group, "&", path$section)
@@ -103,7 +104,7 @@ textpathGrob <- function(
   path_start   <- c(TRUE, path_id[-1] != path_id[-length(path_id)])
 
   # Recycle graphical parameters to match lengths of strings / path
-  gp_text <- recycle_gp(gp_text, rep, times = string_lens)
+  gp_text <- recycle_gp(gp_text, rep, times = text_lens)
   gp_path <- recycle_gp(gp_path, `[`, i = path$group[path_start])
 
   # ---- Grob writing --------------------------------------------------- #
@@ -119,8 +120,8 @@ textpathGrob <- function(
 
   my_tree <- addGrob(
     my_tree, textGrob(
-      label = strings$label,
-      x = strings$x, y = strings$y, rot = strings$angle,
+      label = text$label,
+      x = text$x, y = text$y, rot = text$angle,
       vjust = vjust, hjust = 0.5, gp = gp_text,
       default.units = default.units
     )
@@ -137,6 +138,17 @@ recycle_gp <- function(gp, fun, ...) {
   # Never ever have zero-length objects in the gpar
   gp[lengths(gp) == 0] <- list(NULL)
   return(gp)
+}
+
+# Helper function to split out "gpar" class objects by index
+split_gp <- function(gp, index) {
+  do_split <- lengths(gp) > 1
+  lapply(index, function(i) {
+    ans <- gp
+    ans[do_split] <- lapply(unclass(gp)[do_split], `[`, i)
+    ans[lengths(ans) == 0] <- list(NULL)
+    ans
+  })
 }
 
 # Helper function to fill in missing parameters by defaults
