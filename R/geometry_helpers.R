@@ -206,6 +206,10 @@
 ##       intersects text, but that doesn't take ascenders and descenders into
 ##       account.
 
+## TODO: Sometimes when the device is really small or the letters huge, there
+##       can be a letters data.frame that has 0 rows for a group. We should
+##       defensively code something against this.
+
 #' Trim text area from path
 #'
 #' This function splits a path when a string is predicted to intersect with
