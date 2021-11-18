@@ -68,7 +68,7 @@ By default, the paths are broken to allow the names in-line.
 ```{r density_demo}
 ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
   geom_textpath(aes(label = Species), stat = "density",
-                size = 8, fontface = 2, hjust = 0.2)
+                size = 6, fontface = 2, hjust = 0.2, vjust = 0.3)
 ```
 
 If the `vjust`  parameter moves the text above or below the line, the line is automatically filled in.
@@ -76,8 +76,27 @@ If the `vjust`  parameter moves the text above or below the line, the line is au
 ```{r density_vjust}
 ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
   geom_textpath(aes(label = Species), stat = "density",
-                size = 8, fontface = 2, hjust = 0.2, vjust = -0.1)
+                size = 6, fontface = 2, hjust = 0.2, vjust = -0.2)
 ```
+
+### Correction of angles across different aspect ratios
+
+The angle of the text continues to follow the path even if the aspect ratio of the plot changes, for example, during faceting. Compare faceting horizontally:
+```{r horizontal_facets}
+p <- ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
+       geom_textpath(aes(label = Species), stat = "density",
+                     size = 6, fontface = 2, hjust = 0.1, vjust = -0.2) +
+       scale_y_continuous(limits = c(0, 1.5))
+
+p + facet_grid(.~Species)
+```
+
+to faceting vertically:
+```{r vertical_facets}
+p + facet_grid(Species~.)
+```
+
+The text will continue to rotate appropriately as the plotting window is rescaled.
 
 ### Labelling groups of point along their trend line
 
@@ -86,10 +105,12 @@ ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
   geom_point(alpha = 0.1) +
   geom_textpath(aes(label = Species, colour = Species),
                 stat = "smooth", method = "loess", formula = y ~ x,
-                size = 8, linetype = 3, fontface = 2, linewidth = 3) +
+                size = 7, linetype = 3, fontface = 2, linewidth = 1) +
   scale_colour_manual(values = c("forestgreen", "deepskyblue4", "tomato4")) +
   theme_bw()
 ```
+
+
 
 ### Text paths in polar coordinates
 

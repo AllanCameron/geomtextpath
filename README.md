@@ -67,7 +67,7 @@ By default, the paths are broken to allow the names in-line.
 ``` r
 ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
   geom_textpath(aes(label = Species), stat = "density",
-                size = 8, fontface = 2, hjust = 0.2)
+                size = 6, fontface = 2, hjust = 0.2, vjust = 0.3)
 ```
 
 <img src="man/figures/README-density_demo-1.png" width="100%" style="display: block; margin: auto;" />
@@ -78,10 +78,38 @@ line is automatically filled in.
 ``` r
 ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
   geom_textpath(aes(label = Species), stat = "density",
-                size = 8, fontface = 2, hjust = 0.2, vjust = -0.1)
+                size = 6, fontface = 2, hjust = 0.2, vjust = -0.2)
 ```
 
 <img src="man/figures/README-density_vjust-1.png" width="100%" style="display: block; margin: auto;" />
+
+### Correction of angles across different aspect ratios
+
+The angle of the text continues to follow the path even if the aspect
+ratio of the plot changes, for example, during faceting. Compare
+faceting horizontally:
+
+``` r
+p <- ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
+       geom_textpath(aes(label = Species), stat = "density",
+                     size = 6, fontface = 2, hjust = 0.1, vjust = -0.2) +
+       scale_y_continuous(limits = c(0, 1.5))
+
+p + facet_grid(.~Species)
+```
+
+<img src="man/figures/README-horizontal_facets-1.png" width="100%" style="display: block; margin: auto;" />
+
+to faceting vertically:
+
+``` r
+p + facet_grid(Species~.)
+```
+
+<img src="man/figures/README-vertical_facets-1.png" width="100%" style="display: block; margin: auto;" />
+
+The text will continue to rotate appropriately as the plotting window is
+rescaled.
 
 ### Labelling groups of point along their trend line
 
@@ -90,7 +118,7 @@ ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
   geom_point(alpha = 0.1) +
   geom_textpath(aes(label = Species, colour = Species),
                 stat = "smooth", method = "loess", formula = y ~ x,
-                size = 8, linetype = 3, fontface = 2, linewidth = 3) +
+                size = 7, linetype = 3, fontface = 2, linewidth = 1) +
   scale_colour_manual(values = c("forestgreen", "deepskyblue4", "tomato4")) +
   theme_bw()
 ```
