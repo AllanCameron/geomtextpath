@@ -5,3 +5,5 @@
 * Support for `lineend`, `linejoin`, `linemitre` parameters.
 * Letter angles should now be stable for regardless of aspect ratios and 
   recomputed when the plot device is resized (#6)
+* Line breaks now implemented (#4)
+* Added support for user-defined text spacing
