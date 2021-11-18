@@ -168,13 +168,32 @@
   # get the appropriate values at each point. Non-numeric values should all
   # be identical, so these are just kept as-is
 
-  df <- as.data.frame(lapply(path, function(i) {
+  df <- path[setdiff(names(path), c("x", "y", "angle"))]
+  df <- as.data.frame(lapply(df, function(i) {
     if(is.numeric(i))
       approx(x = path$adj_length, y = i, xout = dist_points, ties = mean)$y
     else
       rep(i[1], length(dist_points))
   }))
 
+  # Instead of interpolating the angle from what we've calculated earlier and
+  # what should  apply to the letter mid-points, we are re-calculating the angle
+  # from the letter start and end points to get better angles for coarse paths
+  letter_min <- letters$shape$x_offset / ppi + start_dist
+  letter_max <- letter_min + 2 * letters$shape$x_midpoint / ppi
+
+  # Interpolate x coordinates
+  f    <- approxfun(x = path$adj_length, y = path$x)
+  dx   <- f(letter_max) - f(letter_min)
+  df$x <- f(dist_points)
+
+  # Interpolate y coordinates
+  f    <- approxfun(x = path$adj_length, y = path$y)
+  dy   <- f(letter_max) - f(letter_min)
+  df$y <- f(dist_points)
+
+  # Recalculate angle
+  df$angle <- atan2(dy, dx) * 180 / pi
 
   # Now we assign each letter to its correct point on the path
   df$label <- letters$shape$glyph
