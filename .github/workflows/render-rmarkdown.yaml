@@ -18,6 +18,10 @@ jobs:
         run: Rscript -e 'install.packages("rmarkdown")'
       - name: Install ragg
         run: Rscript -e 'install.packages("ragg")'
+      - name: Install remotes
+        run: Rscript -e 'install.packages("remotes")'
+      - name: Install self
+        run: Rscript -e 'remotes::install_github("AllanCameron/geomtextpath")'
       - name: Render README
         run: Rscript -e 'rmarkdown::render("README.Rmd")'
       - name: Commit results
