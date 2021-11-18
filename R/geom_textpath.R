@@ -216,6 +216,9 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
 
     #---- Data manipulation ---------------------------------#
 
+
+    data <- .groupify_linebreaks(data)
+
     # Now we can sort the data by group
     data <- data[order(data$group), , drop = FALSE]
 
@@ -223,8 +226,6 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     data <- coord$transform(data, panel_params)
 
     #---- Set graphical parameters --------------------------#
-
-    # browser()
 
     # Get first observation of each group
     first <- c(TRUE, data$group[-1] != data$group[-nrow(data)])
@@ -247,9 +248,11 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       linemitre = linemitre
     )
 
+
+
     #---- Dispatch data to grob -----------------------------#
 
-    textpathGrob(
+    gt <- textpathGrob(
       label = data$label[first],
       x = data$x,
       y = data$y,
@@ -260,5 +263,6 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       gp_path = path_gp,
       default.units = "npc"
     )
+    gt
   }
 )

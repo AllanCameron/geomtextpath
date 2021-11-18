@@ -30,15 +30,7 @@
 #'   group-subset of the layer data frame as input, so this function needs to
 #'   be `lapply()`-ed to the list formed by splitting the layer data frame by
 #'   group. This has to be done *after* transforming the data to co-ordinate
-#'   space with `coord$transform()`, otherwise the angles will be wrong. This
-#'   function could be moved into the body of draw_panel, but I have kept it as
-#'   a separate non-exported function at the moment to keep the logic of this
-#'   step separate.
-#'
-#'   This function will be called after plot.new (or grid.newpage), so it will
-#'   have access to the current device dimensions, etc. This is where we should
-#'   do any calculations that take the aspect ratio into account to improve the
-#'   angle of rotation for the letters.
+#'   space with `coord$transform()`, otherwise the angles will be wrong.
 #'
 #' @examples
 #' xy <- data.frame(
@@ -74,7 +66,7 @@
   # This is how much the angle changes per unit distance. We need to use
   # radians here. We need to know the curvature to increase or decrease
   # the spacing between characters when vjust is used, otherwise the spacing
-  # will change
+  # will be inconsistent across sections with different curvature
 
   diff_rads <- approx(seq_along(diff_rads), diff_rads,
                       seq(1, length(diff_rads), length.out = nrow(.data) - 1))$y
@@ -82,7 +74,7 @@
   curvature <- diff_rads/diff(.data$length)
 
   effective_length <- diff(.data$length) *
-    (1 + ((head(.data$vjust, -1) + tail(.data$vjust, -1))/2 - 0.5) * 0.2 * curvature)
+    (1 + ((head(.data$vjust, -1) + tail(.data$vjust, -1))/2 - 0.5) * curvature / 5)
 
   .data$adj_length <- c(0, cumsum(effective_length))
 
@@ -118,11 +110,6 @@
 #' components. This function also takes one group subset of the main panel data
 #' frame at a time after .add_path_data() has been called, and returns a
 #' modified data frame.
-#'
-#' The total length of the textpath is currently implemented as the product of
-#' strwidth and text size multiplied by a "magic constant" that seems to look
-#' right on the plot (currently 0.5). Presumably there is a better way to do
-#' this.
 #'
 #' The hjust is also applied here. Actually, although it's called hjust, this
 #' parameter is really just analogous to hjust, and never gets passed to grid.
@@ -280,4 +267,64 @@
   path$start  <- start
 
   return(path)
+}
+
+
+
+## Split linebreaks  -----------------------------------------------
+
+#' Split strings with linebreaks into different groups
+#'
+#' This function prepares the data for plotting by splitting labels
+#' at line breaks and giving each its own group
+#'
+#' @param data A `data.frame` with at least a factor or character column
+#'   called "label", integer columns called "group" and "linetype", and
+#'   numeric columns called "vjust" and "lineheight".
+#'
+#' @details The returned data is split into groups, one group for each
+#'   segment of text such that none have line breaks. For strings that
+#'   initially contained line breaks, they are broken up into different
+#'   groups with different vjust values. The vjust values of each text line
+#'   are centered around the originally specified vjust,
+#'
+#' @return A data frame containing the same column names and types as the
+#'   original, but with newlines now treated as different groups.
+#' @noRd
+#'
+#' @examples
+#' xy <- data.frame(
+#'   x =  1:10,
+#'   y = (1:10)^2,
+#'   group = 1,
+#'   label = "This string \n has a line break",
+#'   vjust = 0.5,
+#'   linetype = 1,
+#'   lineheight = 1.2
+#' )
+#'
+#' .groupify_linebreaks(xy)
+.groupify_linebreaks <- function(data)
+{
+    data$label <- as.character(data$label)
+    line_breakers <- data[grepl("[\r\n]", data$label),]
+    non_breakers <- data[!grepl("[\r\n]", data$label),]
+    pieces <- strsplit(line_breakers$label, "[\r\n]+")
+    line_breakers <- do.call(rbind, lapply(seq_along(pieces), function(i){
+      n <- length(pieces[[i]])
+      df <- line_breakers[rep(i, n),]
+      df$label <- pieces[[i]]
+      df$vjust <- (seq(n) - n/2 - 0.5) * df$lineheight[1] + df$vjust
+      df$group <- rep(df$group[1] + seq(0, 1 - 1/n, 1/2),
+                      length.out = nrow(df))
+      line_type <- df$linetype[1]
+      df$linetype <- 0
+      df$linetype[which.max(nchar(df$label))] <- line_type
+      df
+    }))
+    data <- rbind(line_breakers, non_breakers)
+
+    data$group <- as.numeric(factor(data$group))
+
+    data
 }
