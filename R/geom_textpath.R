@@ -59,6 +59,9 @@
 #' "red"} or \code{size = 3}. They may also be parameters to the paired
 #'  geom/stat.
 #' @param na.rm Removes missing points or labels from the text path.
+#' @param spacing allows fine control of spacing of text. The default is 0.
+#'   Numbers greater than this increase the spacing, whereas negative numbers
+#'   decrease the spacing.
 #'
 #' @section Aesthetics:
 #' \code{geom_textpath()} understands the following aesthetics (required aesthetics are in bold):
@@ -140,7 +143,8 @@ geom_textpath <- function(
   mapping = NULL, data = NULL, stat = "identity",
   position = "identity", na.rm = FALSE, show.legend = NA,
   inherit.aes = TRUE,  ...,
-  lineend = "butt", linejoin = "round", linemitre = 10
+  lineend = "butt", linejoin = "round", linemitre = 10,
+  spacing = 0
   )
 {
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
@@ -151,6 +155,7 @@ geom_textpath <- function(
           lineend   = lineend,
           linejoin  = linejoin,
           linemitre = linemitre,
+          spacing   = spacing,
           ...
         ))
 }
@@ -182,7 +187,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   # The main draw_panel function is where we process our aesthetic data frame
   # into a tree of grobs for plotting.
   draw_panel = function(
-    data, panel_params, coord,
+    data, panel_params, coord, spacing = 0,
     lineend = "butt", linejoin = "round", linemitre = 10
   ) {
 
@@ -252,7 +257,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
 
     #---- Dispatch data to grob -----------------------------#
 
-    gt <- textpathGrob(
+    textpathGrob(
       label = data$label[first],
       x = data$x,
       y = data$y,
@@ -261,8 +266,9 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       vjust = data$vjust,
       gp_text = text_gp,
       gp_path = path_gp,
+      spacing = spacing,
       default.units = "npc"
     )
-    gt
+
   }
 )

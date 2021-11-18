@@ -13,6 +13,9 @@
 #'   a call from the [`gpar()`][grid::gpar] function. These are basically lists
 #'   of graphical parameters for the text and path respectively.
 #' @inheritParams grid::textGrob
+#' @param spacing A single number that increases or decreases the spacing between
+#'   the letters in the string. Positive values increase the spacing, negative
+#'   values decrease it. The default is 0.
 #'
 #' @return An object of class `gTree`, containing grobs.
 #' @export
@@ -44,10 +47,12 @@ textpathGrob <- function(
   vjust = NULL,
   gp_text = gpar(),
   gp_path = gpar(),
+  spacing = 0,
   default.units = "npc",
   name = NULL,
   vp = NULL
 ) {
+
   n_label <- length(label)
   id_lens <- rle(id)$lengths
 
@@ -85,7 +90,8 @@ textpathGrob <- function(
       id = rep(seq_along(id_lens), id_lens),
       vjust = vjust, hjust = hjust,
       gp_text = gp_text,
-      gp_path = gp_path
+      gp_path = gp_path,
+      spacing = spacing
     ),
     name = name, vp = vp,
     cl = "textpath"
@@ -111,7 +117,7 @@ makeContent.textpath <- function(x) {
 
   # Get the actual text string positions and angles for each group
   text <- Map(.get_path_points, path = path, label = v$label, hjust = v$hjust,
-              gp = split_gp(v$gp_text, seq_along(v$label)))
+              gp = split_gp(v$gp_text, seq_along(v$label)), spacing = v$spacing)
   text_lens <- vapply(text, nrow, integer(1))
 
   text <- do.call(rbind.data.frame, c(text, make.row.names = FALSE))

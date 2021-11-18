@@ -15,7 +15,8 @@ geom_textpath(
   ...,
   lineend = "butt",
   linejoin = "round",
-  linemitre = 10
+  linemitre = 10,
+  spacing = 0
 )
 }
 \arguments{
@@ -68,6 +69,10 @@ aesthetics, used to set an aesthetic to a fixed value, like \code{colour =
 \item{linejoin}{Line join style (round, mitre, bevel).}
 
 \item{linemitre}{Line mitre limit (number greater than 1).}
+
+\item{spacing}{allows fine control of spacing of text. The default is 0.
+Numbers greater than this increase the spacing, whereas negative numbers
+decrease the spacing.}
 }
 \description{
 The existing text-based geom layers in ggplot2

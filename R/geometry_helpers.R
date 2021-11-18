@@ -98,6 +98,9 @@
 #'   `fontfamily`, `font`, `fontsize` and `lineheight`.
 #' @param hjust A `numeric(1)` scalar specifying horizontal justification along
 #'   the path.
+#' @param spacing A number to be passed to the "tracking" argument of
+#'   `shape_text`. Negative numbers decrease the spacing, positive numbers
+#'   increase it.
 #'
 #' @return A `data.frame` with numerical values interpolated at the points where
 #'   the letters in `label` argument should be placed, along with a `label`
@@ -126,7 +129,8 @@
 #'
 #' .get_path_points(xy)
 .get_path_points <- function(path, label = "placeholder",
-                             gp = get.gpar(), hjust = 0.5)
+                             gp = get.gpar(), hjust = 0.5,
+                             spacing = 0)
 {
   # Get pixels per inch (72 is default screen resolution). For some reason text
   # renders weirdly if this is adapted to the device. For raster graphics,
@@ -148,6 +152,7 @@
                           bold       = gp$font[1] %in% c(2, 4),
                           size       = gp$fontsize[1],
                           lineheight = gp$lineheight[1],
+                          tracking   = spacing,
                           res = ppi)
 
   letterwidths <- (letters$shape$x_offset + letters$shape$x_midpoint) / ppi
