@@ -19,7 +19,6 @@
 #' information about the shape of the curve.
 #'
 #' @param .data A `data.frame` with `x` and `y` numeric columns.
-#' @param vjust A `numeric(1)` scalar specifying vertical justification.
 #'
 #' @return A `data.frame` with additional columns `angle`, `length` and
 #'   `adj_length`.
@@ -48,7 +47,7 @@
 #' )
 #'
 #' .add_path_data(xy)
-.add_path_data <- function(.data, vjust = 0.5)
+.add_path_data <- function(.data)
 {
   # Gradient is found and converted to angle here. Since we use approx
   # to interpolate angles later, we can't have any sudden transitions
@@ -83,7 +82,7 @@
   curvature <- diff_rads/diff(.data$length)
 
   effective_length <- diff(.data$length) *
-    (1 + (vjust[1] - 0.5) * 0.04 * curvature)
+    (1 + ((head(.data$vjust, -1) + tail(.data$vjust, -1))/2 - 0.5) * 0.2 * curvature)
 
   .data$adj_length <- c(0, cumsum(effective_length))
 
@@ -221,9 +220,6 @@
 #' @param letters A `data.frame` with at least a numeric `length` column and
 #'   integer `id` column. The `id` column must match that in the `path`
 #'   argument.
-#' @param vjust A `numeric` vector specifying vertical justification. Will be
-#'   recycled to match the length of the unique `id` values in the `path` and
-#'   `letters` arguments.
 #'
 #' @details We probably want the option to draw the path itself, since this will
 #'   be less work for the end-user. If the `vjust` is between 0 and 1 then the
@@ -246,10 +242,10 @@
 #' xy <- .add_path_data(xy)
 #' glyphs <- .get_path_points(xy)
 #' .get_surrounding_lines(xy, glyphs)
-.get_surrounding_lines <- function(path, letters, vjust = 0.5) {
+.get_surrounding_lines <- function(path, letters) {
 
   # Simplify if text isn't exactly on path
-  if (all(vjust < 0) || all(vjust > 1)) {
+  if (all(path$vjust < 0) || all(path$vjust > 1)) {
     path$section <- "all"
   } else {
     # Lengths of group runs (assumed to be sorted)
@@ -257,7 +253,7 @@
     # but I'm assuming `group` cannot be NA.
     letter_lens <- rle(letters$id)$lengths
     curve_lens  <- rle(path$id)$lengths
-    trim <- rep_len(!(vjust < 0 | vjust > 1), length(letter_lens))
+    trim <- rep_len(!(path$vjust < 0 | path$vjust > 1), length(letter_lens))
     trim <- rep(trim, curve_lens)
 
     # Get locations where strings start and end

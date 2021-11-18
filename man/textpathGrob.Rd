@@ -73,7 +73,8 @@ grob <- textpathGrob(
   ),
   x = c(t, t) / (2 * pi),
   y = c(cos(t), sin(t)) * 0.25 + 0.5,
-  id = rep(1:2, each = length(t))
+  id = rep(1:2, each = length(t)),
+  vjust = rep(0.5, 2 * length(t))
 )
 
 grid.newpage(); grid.draw(grob)

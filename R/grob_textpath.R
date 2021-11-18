@@ -29,7 +29,8 @@
 #'   ),
 #'   x = c(t, t) / (2 * pi),
 #'   y = c(cos(t), sin(t)) * 0.25 + 0.5,
-#'   id = rep(1:2, each = length(t))
+#'   id = rep(1:2, each = length(t)),
+#'   vjust = rep(0.5, 2 * length(t))
 #' )
 #'
 #' grid.newpage(); grid.draw(grob)
@@ -65,7 +66,6 @@ textpathGrob <- function(
   )
 
   # Match justification to labels length
-  vjust   <- rep_len(resolveVJust(just, vjust), n_label)
   hjust   <- rep_len(resolveHJust(just, hjust), n_label)
 
   # Reconstitute data
@@ -102,12 +102,12 @@ makeContent.textpath <- function(x) {
   xx <- convertX(v$x, "inches", valueOnly = TRUE)
   yy <- convertY(v$y, "inches", valueOnly = TRUE)
 
-  path <- data.frame(x = xx, y = yy, id = v$id)
+  path <- data.frame(x = xx, y = yy, id = v$id, vjust = v$vjust)
 
   ## ---- Data manipulation -------------------------------------------- #
 
   # Get gradients, angles and path lengths for each group
-  path <- Map(.add_path_data, .data = split(path, path$id), vjust = v$vjust)
+  path <- Map(.add_path_data, .data = split(path, path$id))
 
   # Get the actual text string positions and angles for each group
   text <- Map(.get_path_points, path = path, label = v$label, hjust = v$hjust,
@@ -118,7 +118,7 @@ makeContent.textpath <- function(x) {
   path <- do.call(rbind.data.frame, c(path, make.row.names = FALSE))
 
   # Get bookends by trimming paths when it intersects text
-  path <- .get_surrounding_lines(path, text, v$vjust)
+  path <- .get_surrounding_lines(path, text)
 
   # Recycle graphical parameters to match lengths of strings / path
   gp_text <- recycle_gp(v$gp_text, rep, times = text_lens)

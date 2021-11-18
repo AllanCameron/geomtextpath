@@ -255,7 +255,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       y = data$y,
       id = data$group,
       hjust = data$hjust[first],
-      vjust = data$vjust[first],
+      vjust = data$vjust,
       gp_text = text_gp,
       gp_path = path_gp,
       default.units = "npc"
