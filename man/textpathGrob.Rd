@@ -14,7 +14,6 @@ textpathGrob(
   vjust = NULL,
   gp_text = gpar(),
   gp_path = gpar(),
-  include_line = TRUE,
   default.units = "npc",
   name = NULL,
   vp = NULL

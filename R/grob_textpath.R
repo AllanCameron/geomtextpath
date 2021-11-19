@@ -44,7 +44,6 @@ textpathGrob <- function(
   vjust = NULL,
   gp_text = gpar(),
   gp_path = gpar(),
-  include_line = TRUE,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -87,8 +86,7 @@ textpathGrob <- function(
       id = rep(seq_along(id_lens), id_lens),
       vjust = vjust, hjust = hjust,
       gp_text = gp_text,
-      gp_path = gp_path,
-      include_line = include_line
+      gp_path = gp_path
     ),
     name = name, vp = vp,
     cl = "textpath"
