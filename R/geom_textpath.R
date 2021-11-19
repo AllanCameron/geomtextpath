@@ -203,13 +203,20 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
 
   extra_params = c("na.rm"),
 
+  setup_data = function(data, params) {
+    if (isFALSE(params$include_line)) {
+      data$linetype <- 0
+    }
+    data
+  },
+
   # Do we want this draw_key?
   draw_key = draw_key_text,
 
   # The main draw_panel function is where we process our aesthetic data frame
   # into a tree of grobs for plotting.
   draw_panel = function(
-    data, panel_params, coord, spacing = 0, include_line = TRUE,
+    data, panel_params, coord, spacing = 0,
     lineend = "butt", linejoin = "round", linemitre = 10
   ) {
 
@@ -265,15 +272,19 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       lineheight = data$lineheight[first]
     )
 
-    path_gp <- gpar(
-      col  = alpha(data$colour, data$alpha)[first],
-      fill = alpha(data$colour, data$alpha)[first],
-      lwd  = data$linewidth[first] * .pt,
-      lty  = data$linetype[first],
-      lineend   = lineend,
-      linejoin  = linejoin,
-      linemitre = linemitre
-    )
+    if (all(data$linetype == 0)) {
+      path_gp <- gpar(lty = 0)
+    } else {
+      path_gp <- gpar(
+        col  = alpha(data$colour, data$alpha)[first],
+        fill = alpha(data$colour, data$alpha)[first],
+        lwd  = data$linewidth[first] * .pt,
+        lty  = data$linetype[first],
+        lineend   = lineend,
+        linejoin  = linejoin,
+        linemitre = linemitre
+      )
+    }
 
     #---- Dispatch data to grob -----------------------------#
 
@@ -287,7 +298,6 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       gp_text = text_gp,
       gp_path = path_gp,
       spacing = spacing,
-      include_line = include_line,
       default.units = "npc"
     )
 
