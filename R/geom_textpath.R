@@ -202,7 +202,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       data$linetype <- as.numeric(data$linetype)
 
     # We need to change groups to numeric to order them appropriately
-    data$group <- as.numeric(factor(data$label))
+    data$group <- match(data$group, unique(data$group))
 
     # Standard warning if row-wise data is passed instead of columnar groups.
     if (!anyDuplicated(data$group)) {
