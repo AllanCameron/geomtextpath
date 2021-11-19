@@ -5,3 +5,4 @@
 .DS_Store
 .httr-oauth
 geomtextpath.Rproj
+tests/testthat/Rplots.pdf

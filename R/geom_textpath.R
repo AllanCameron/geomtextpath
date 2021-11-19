@@ -59,13 +59,15 @@
 #' "red"} or \code{size = 3}. They may also be parameters to the paired
 #'  geom/stat.
 #' @param na.rm Removes missing points or labels from the text path.
-#' @param spacing allows fine control of spacing of text. The default is 0.
-#'   Numbers greater than this increase the spacing, whereas negative numbers
-#'   decrease the spacing.
 #' @param include_line A single logical TRUE or FALSE, indicating whether a
 #'   line should be plotted along with the text. If FALSE, any parameters or
 #'   aesthetics relating to the drawing of the line in the layer will be
 #'   ignored.
+#'
+#' @details The \code{spacing} aesthetic allows fine control of spacing of text,
+#'   which is called 'tracking' in typography. The default is 0 and units are
+#'   measured in 1/1000 em. Numbers greater than zero increase the spacing,
+#'   whereas negative numbers decrease the spacing.
 #'
 #' @section Aesthetics:
 #' \code{geom_textpath()} understands the following aesthetics (required
@@ -85,6 +87,7 @@
 #'   \item \code{hjust}
 #'   \item \code{linetype}
 #'   \item \code{linewidth}
+#'   \item \code{spacing}
 #' }
 #'
 #' @export
@@ -165,7 +168,7 @@ geom_textpath <- function(
   position = "identity", na.rm = FALSE, show.legend = NA,
   inherit.aes = TRUE,  ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
-  spacing = 0, include_line = TRUE
+  include_line = TRUE
   )
 {
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
@@ -176,7 +179,6 @@ geom_textpath <- function(
           lineend      = lineend,
           linejoin     = linejoin,
           linemitre    = linemitre,
-          spacing      = spacing,
           include_line = include_line,
           ...
         ))
@@ -199,9 +201,9 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   # These aesthetics will all be available to the draw_panel function
   default_aes = aes(colour = "black", size = 3.88, hjust = 0.5, vjust = 0.5,
                     family = "", fontface = 1, lineheight = 1.2, alpha = 1,
-                    linewidth = 0.5, linetype = 1),
+                    linewidth = 0.5, linetype = 1, spacing = 0),
 
-  extra_params = c("na.rm"),
+  extra_params = c("na.rm", "include_line"),
 
   setup_data = function(data, params) {
     if (isFALSE(params$include_line)) {
@@ -216,7 +218,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   # The main draw_panel function is where we process our aesthetic data frame
   # into a tree of grobs for plotting.
   draw_panel = function(
-    data, panel_params, coord, spacing = 0,
+    data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10
   ) {
 
@@ -269,7 +271,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       fontsize   = data$size[first] * .pt,
       fontface   = data$fontface[first],
       fontfamily = data$family[first],
-      lineheight = data$lineheight[first]
+      lineheight = data$lineheight[first],
+      tracking   = data$spacing[first]
     )
 
     if (all(data$linetype == 0)) {
@@ -297,7 +300,6 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       vjust = data$vjust,
       gp_text = text_gp,
       gp_path = path_gp,
-      spacing = spacing,
       default.units = "npc"
     )
 
