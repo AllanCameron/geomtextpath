@@ -136,10 +136,6 @@
   # But that gives the wrong spacing here.
   ppi <- 72
 
-  # The text needs some breathing space on either side if we are adding lines.
-  # The easiest way to do this is to add spaces around the text string
-  label <- paste0("  ", label[1], "  ")
-
   # Using the shape_string function from package "systemfonts" allows fast
   # and accurate calculation of letter spacing
 
@@ -269,6 +265,13 @@
     starts <- {ends <- cumsum(letter_lens)} - letter_lens + 1
     mins <- letters$length[starts]
     maxs <- letters$length[ends]
+
+    # Create breathing space around letters
+    breathing_room <- 0.15
+    path_max <- tapply(path$length, path$id, max)
+    mins <- ifelse(mins < breathing_room, 0, mins - breathing_room)
+    maxs <- ifelse(maxs > path_max - breathing_room, path_max,
+                   maxs + breathing_room)
 
     # Assign sections to before and after string
     path$section <- ""
