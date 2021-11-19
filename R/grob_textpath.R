@@ -16,6 +16,8 @@
 #' @param spacing A single number that increases or decreases the spacing between
 #'   the letters in the string. Positive values increase the spacing, negative
 #'   values decrease it. The default is 0.
+#' @param include_line A single logical TRUE or FALSE, indicating whether a
+#'   line should be plotted along with the text.
 #'
 #' @return An object of class `gTree`, containing grobs.
 #' @export
@@ -48,6 +50,7 @@ textpathGrob <- function(
   gp_text = gpar(),
   gp_path = gpar(),
   spacing = 0,
+  include_line = TRUE,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -91,7 +94,8 @@ textpathGrob <- function(
       vjust = vjust, hjust = hjust,
       gp_text = gp_text,
       gp_path = gp_path,
-      spacing = spacing
+      spacing = spacing,
+      include_line = include_line
     ),
     name = name, vp = vp,
     cl = "textpath"
@@ -132,12 +136,14 @@ makeContent.textpath <- function(x) {
 
   # ---- Grob writing --------------------------------------------------- #
 
-  x <- addGrob(
-    x, polylineGrob(
-      x = path$x, y = path$y, id = path$new_id, gp = gp_path,
-      default.units = "inches"
+  if(v$include_line) {
+    x <- addGrob(
+      x, polylineGrob(
+        x = path$x, y = path$y, id = path$new_id, gp = gp_path,
+        default.units = "inches"
+      )
     )
-  )
+  }
 
   x <- addGrob(
     x, textGrob(

@@ -15,6 +15,7 @@ textpathGrob(
   gp_text = gpar(),
   gp_path = gpar(),
   spacing = 0,
+  include_line = TRUE,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -52,6 +53,9 @@ of graphical parameters for the text and path respectively.}
 \item{spacing}{A single number that increases or decreases the spacing between
 the letters in the string. Positive values increase the spacing, negative
 values decrease it. The default is 0.}
+
+\item{include_line}{A single logical TRUE or FALSE, indicating whether a
+line should be plotted along with the text.}
 
 \item{default.units}{A string indicating the default units to use
     if \code{x} or \code{y}

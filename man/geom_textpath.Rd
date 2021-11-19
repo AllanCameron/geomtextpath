@@ -16,7 +16,8 @@ geom_textpath(
   lineend = "butt",
   linejoin = "round",
   linemitre = 10,
-  spacing = 0
+  spacing = 0,
+  include_line = TRUE
 )
 }
 \arguments{
@@ -73,6 +74,11 @@ aesthetics, used to set an aesthetic to a fixed value, like \code{colour =
 \item{spacing}{allows fine control of spacing of text. The default is 0.
 Numbers greater than this increase the spacing, whereas negative numbers
 decrease the spacing.}
+
+\item{include_line}{A single logical TRUE or FALSE, indicating whether a
+line should be plotted along with the text. If FALSE, any parameters or
+aesthetics relating to the drawing of the line in the layer will be
+ignored.}
 }
 \description{
 The existing text-based geom layers in ggplot2
@@ -115,7 +121,8 @@ particularly those using the built-in \code{iris} data set.)
 }
 \section{Aesthetics}{
 
-\code{geom_textpath()} understands the following aesthetics (required aesthetics are in bold):
+\code{geom_textpath()} understands the following aesthetics (required
+aesthetics are in bold):
 \itemize{
   \item \strong{\code{x}}
   \item \strong{\code{y}}

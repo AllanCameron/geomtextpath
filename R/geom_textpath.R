@@ -62,9 +62,14 @@
 #' @param spacing allows fine control of spacing of text. The default is 0.
 #'   Numbers greater than this increase the spacing, whereas negative numbers
 #'   decrease the spacing.
+#' @param include_line A single logical TRUE or FALSE, indicating whether a
+#'   line should be plotted along with the text. If FALSE, any parameters or
+#'   aesthetics relating to the drawing of the line in the layer will be
+#'   ignored.
 #'
 #' @section Aesthetics:
-#' \code{geom_textpath()} understands the following aesthetics (required aesthetics are in bold):
+#' \code{geom_textpath()} understands the following aesthetics (required
+#' aesthetics are in bold):
 #' \itemize{
 #'   \item \strong{\code{x}}
 #'   \item \strong{\code{y}}
@@ -160,18 +165,19 @@ geom_textpath <- function(
   position = "identity", na.rm = FALSE, show.legend = NA,
   inherit.aes = TRUE,  ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
-  spacing = 0
+  spacing = 0, include_line = TRUE
   )
 {
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
         position = position, show.legend = show.legend,
         inherit.aes = inherit.aes,
         params = list(
-          na.rm     = na.rm,
-          lineend   = lineend,
-          linejoin  = linejoin,
-          linemitre = linemitre,
-          spacing   = spacing,
+          na.rm        = na.rm,
+          lineend      = lineend,
+          linejoin     = linejoin,
+          linemitre    = linemitre,
+          spacing      = spacing,
+          include_line = include_line,
           ...
         ))
 }
@@ -203,7 +209,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   # The main draw_panel function is where we process our aesthetic data frame
   # into a tree of grobs for plotting.
   draw_panel = function(
-    data, panel_params, coord, spacing = 0,
+    data, panel_params, coord, spacing = 0, include_line = TRUE,
     lineend = "butt", linejoin = "round", linemitre = 10
   ) {
 
@@ -281,6 +287,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       gp_text = text_gp,
       gp_path = path_gp,
       spacing = spacing,
+      include_line = include_line,
       default.units = "npc"
     )
 
