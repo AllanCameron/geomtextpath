@@ -209,6 +209,9 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     if (isFALSE(params$include_line)) {
       data$linetype <- 0
     }
+    if (all(data$group== -1)) {
+      data$group <- match(data$label, unique(data$label))
+    }
     data
   },
 
