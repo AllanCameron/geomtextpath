@@ -13,11 +13,6 @@
 #'   a call from the [`gpar()`][grid::gpar] function. These are basically lists
 #'   of graphical parameters for the text and path respectively.
 #' @inheritParams grid::textGrob
-#' @param spacing A single number that increases or decreases the spacing between
-#'   the letters in the string. Positive values increase the spacing, negative
-#'   values decrease it. The default is 0.
-#' @param include_line A single logical TRUE or FALSE, indicating whether a
-#'   line should be plotted along with the text.
 #'
 #' @return An object of class `gTree`, containing grobs.
 #' @export
@@ -49,8 +44,6 @@ textpathGrob <- function(
   vjust = NULL,
   gp_text = gpar(),
   gp_path = gpar(),
-  spacing = 0,
-  include_line = TRUE,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -93,9 +86,7 @@ textpathGrob <- function(
       id = rep(seq_along(id_lens), id_lens),
       vjust = vjust, hjust = hjust,
       gp_text = gp_text,
-      gp_path = gp_path,
-      spacing = spacing,
-      include_line = include_line
+      gp_path = gp_path
     ),
     name = name, vp = vp,
     cl = "textpath"
@@ -121,22 +112,23 @@ makeContent.textpath <- function(x) {
 
   # Get the actual text string positions and angles for each group
   text <- Map(.get_path_points, path = path, label = v$label, hjust = v$hjust,
-              gp = split_gp(v$gp_text, seq_along(v$label)), spacing = v$spacing)
+              gp = split_gp(v$gp_text, seq_along(v$label)))
   text_lens <- vapply(text, nrow, integer(1))
 
+  ## ---- Build text grob ---------------------------------------------- #
+
   text <- do.call(rbind.data.frame, c(text, make.row.names = FALSE))
-  path <- do.call(rbind.data.frame, c(path, make.row.names = FALSE))
 
-  # Get bookends by trimming paths when it intersects text
-  path <- .get_surrounding_lines(path, text)
+  if (!all(v$gp_path$lty == 0)) {
+    path <- do.call(rbind.data.frame, c(path, make.row.names = FALSE))
 
-  # Recycle graphical parameters to match lengths of strings / path
-  gp_text <- recycle_gp(v$gp_text, rep, times = text_lens)
-  gp_path <- recycle_gp(v$gp_path, `[`, i = path$id[path$start])
+    # Get bookends by trimming paths when it intersects text
+    path <- .get_surrounding_lines(path, text)
 
-  # ---- Grob writing --------------------------------------------------- #
+    # Recycle graphical parameters to match lengths of path
+    gp_path <- recycle_gp(v$gp_path, `[`, i = path$id[path$start])
 
-  if(v$include_line) {
+    # Write path grob
     x <- addGrob(
       x, polylineGrob(
         x = path$x, y = path$y, id = path$new_id, gp = gp_path,
@@ -145,6 +137,10 @@ makeContent.textpath <- function(x) {
     )
   }
 
+  # Recycle graphical parameters to match lengths of letters
+  gp_text <- recycle_gp(v$gp_text, rep, times = text_lens)
+
+  # Write text grob
   x <- addGrob(
     x, textGrob(
       label = text$label,

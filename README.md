@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# geomtextpath
+# geomtextpath <img src='man/figures/logo.png' align="right" height="137" />
 
 <!-- badges: start -->
 

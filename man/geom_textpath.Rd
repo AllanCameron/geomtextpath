@@ -16,7 +16,6 @@ geom_textpath(
   lineend = "butt",
   linejoin = "round",
   linemitre = 10,
-  spacing = 0,
   include_line = TRUE
 )
 }
@@ -71,10 +70,6 @@ aesthetics, used to set an aesthetic to a fixed value, like \code{colour =
 
 \item{linemitre}{Line mitre limit (number greater than 1).}
 
-\item{spacing}{allows fine control of spacing of text. The default is 0.
-Numbers greater than this increase the spacing, whereas negative numbers
-decrease the spacing.}
-
 \item{include_line}{A single logical TRUE or FALSE, indicating whether a
 line should be plotted along with the text. If FALSE, any parameters or
 aesthetics relating to the drawing of the line in the layer will be
@@ -119,6 +114,12 @@ grouping variable column, there can only be a single label for the group.
 Typically, this will be the grouping variable itself (see the examples,
 particularly those using the built-in \code{iris} data set.)
 }
+\details{
+The \code{spacing} aesthetic allows fine control of spacing of text,
+  which is called 'tracking' in typography. The default is 0 and units are
+  measured in 1/1000 em. Numbers greater than zero increase the spacing,
+  whereas negative numbers decrease the spacing.
+}
 \section{Aesthetics}{
 
 \code{geom_textpath()} understands the following aesthetics (required
@@ -138,6 +139,7 @@ aesthetics are in bold):
   \item \code{hjust}
   \item \code{linetype}
   \item \code{linewidth}
+  \item \code{spacing}
 }
 }
 

@@ -14,8 +14,6 @@ textpathGrob(
   vjust = NULL,
   gp_text = gpar(),
   gp_path = gpar(),
-  spacing = 0,
-  include_line = TRUE,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -49,13 +47,6 @@ multiple lines. All locations with the same \code{id} belong to the same line.}
 \item{gp_text, gp_path}{An object of class \code{"gpar"}, typically the output from
 a call from the \code{\link[grid:gpar]{gpar()}} function. These are basically lists
 of graphical parameters for the text and path respectively.}
-
-\item{spacing}{A single number that increases or decreases the spacing between
-the letters in the string. Positive values increase the spacing, negative
-values decrease it. The default is 0.}
-
-\item{include_line}{A single logical TRUE or FALSE, indicating whether a
-line should be plotted along with the text.}
 
 \item{default.units}{A string indicating the default units to use
     if \code{x} or \code{y}
