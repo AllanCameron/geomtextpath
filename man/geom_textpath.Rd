@@ -16,7 +16,8 @@ geom_textpath(
   lineend = "butt",
   linejoin = "round",
   linemitre = 10,
-  spacing = 0
+  spacing = 0,
+  include_line = TRUE
 )
 }
 \arguments{
@@ -73,6 +74,11 @@ aesthetics, used to set an aesthetic to a fixed value, like \code{colour =
 \item{spacing}{allows fine control of spacing of text. The default is 0.
 Numbers greater than this increase the spacing, whereas negative numbers
 decrease the spacing.}
+
+\item{include_line}{A single logical TRUE or FALSE, indicating whether a
+line should be plotted along with the text. If FALSE, any parameters or
+aesthetics relating to the drawing of the line in the layer will be
+ignored.}
 }
 \description{
 The existing text-based geom layers in ggplot2
@@ -115,7 +121,8 @@ particularly those using the built-in \code{iris} data set.)
 }
 \section{Aesthetics}{
 
-\code{geom_textpath()} understands the following aesthetics (required aesthetics are in bold):
+\code{geom_textpath()} understands the following aesthetics (required
+aesthetics are in bold):
 \itemize{
   \item \strong{\code{x}}
   \item \strong{\code{y}}
@@ -137,54 +144,70 @@ particularly those using the built-in \code{iris} data set.)
 \examples{
 
 # Plot text along an arbitrary path
+ t <- seq(-1, 5, length.out = 1000) * pi
+ spiral <- data.frame(
+   x = rev(sin(t) * 1000:1),
+   y = rev(cos(t) * 1000:1),
+   s = seq(1, 10, length.out = 100),
+   text = paste(
+     "Like a circle in a spiral, like a wheel within a wheel,",
+     "never ending or beginning on an ever spinning reel"
+  )
+)
 
-spiral <- data.frame(x = rev(sin(seq(0, 5*pi, length.out = 1000)) * 1000:1),
-                     y = rev(cos(seq(0, 5*pi, length.out = 1000)) * 1000:1),
-                     s = seq(1, 10, length.out = 1000),
-                     z = paste("Like a circle in a spiral, like a",
-                               "wheel within a wheel, never ending",
-                               "or beginning on an ever spinning reel"))
-
-ggplot(spiral, aes(x, y, label = z)) +
-  geom_textpath(size = 7.1, vjust = 2, linewidth = 0) +
-  coord_equal(xlim = c(-1500, 1500), ylim = c(-1500, 1500))
-
+ ggplot(spiral, aes(x, y, label = text)) +
+   geom_textpath(size = 7, vjust = 2, linewidth = 0) +
+   coord_equal(xlim = c(-1500, 1500), ylim = c(-1500, 1500))
 
 # Produce labelled density lines:
 
 # By default the paths are broken to allow the names in-line
 
- ggplot(iris, aes(x = Sepal.Length, color = Species)) +
-  geom_textpath(aes(label = Species),
-                size = 8, stat = "density",
-                fontface = 2, hjust = 0.2)
+ ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
+   geom_textpath(aes(label = Species), stat = "density",
+                 size = 6, fontface = 2, hjust = 0.2, vjust = 0.3)
 
 # If the vjust parameter moves the text above or below the line,
 # the line is automatically filled in:
 
-ggplot(iris, aes(x = Sepal.Length, color = Species)) +
-  geom_textpath(aes(label = Species), vjust = -0.1,
-                size = 8, stat = "density",
-                fontface = 2, hjust = 0.2)
+ ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
+   geom_textpath(aes(label = Species), stat = "density",
+                 size = 6, fontface = 2, hjust = 0.2, vjust = -0.2)
+
+# Correction of angles across different aspect ratios:
+
+# The angle of the text continues to follow the path even if the
+# aspect ratio of the plot changes, for example, during faceting.
+# Compare faceting horizontally:
+
+ p <- ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
+        geom_textpath(aes(label = Species), stat = "density",
+                      size = 6, fontface = 2, hjust = 0.1, vjust = -0.2) +
+        scale_y_continuous(limits = c(0, 1.5))
+
+ p + facet_grid(.~Species)
+
+# and faceting vertically:
+
+ p + facet_grid(Species~.)
 
 # label groups of points along their trend line:
 
-ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
-  geom_point(alpha = 0.1) +
-  geom_textpath(aes(label = Species, color = Species),
-                size = 8, stat = "smooth", linetype = 3,
-                fontface = 2, linewidth = 3) +
-  scale_color_manual(values = c("forestgreen", "deepskyblue4", "tomato4")) +
-  theme_bw()
+ ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+   geom_point(alpha = 0.1) +
+   geom_textpath(aes(label = Species, colour = Species),
+                 stat = "smooth", method = "loess", formula = y ~ x,
+                 size = 7, linetype = 3, fontface = 2, linewidth = 1) +
+   scale_colour_manual(values = c("forestgreen", "deepskyblue4", "tomato4")) +
+   theme_bw()
 
 # Straight text paths in Cartesian Co-ordinates curve in Polar Co-ordinates
 
-df <- data.frame(x = 1:1000, y = 1, z = "This is a perfectly flat label")
+ df <- data.frame(x = 1:1000, y = 1, text = "This is a perfectly flat label")
 
-p <- ggplot(df, aes(x, y, label = z)) +
+ p <- ggplot(df, aes(x, y, label = text)) +
    geom_textpath(size = 6)
+ p
 
-p
-
-p + coord_polar()
+p + coord_polar(start = pi)
 }

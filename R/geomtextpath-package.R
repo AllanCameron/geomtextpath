@@ -8,6 +8,7 @@
 #' @importFrom utils head tail
 #' @importFrom graphics strwidth
 #' @importFrom systemfonts shape_string
+#' @importFrom stats approxfun
 NULL
 
 # The following block is used by usethis to automatically manage
