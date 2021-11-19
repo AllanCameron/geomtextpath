@@ -73,6 +73,7 @@
 
   curvature <- diff_rads/diff(.data$length)
 
+  .data$vjust <- .data$vjust %||% 0.5 # Set default vjust if absent from data
   effective_length <- diff(.data$length) *
     (1 + ((head(.data$vjust, -1) + tail(.data$vjust, -1))/2 - 0.5) * curvature / 5)
 
@@ -159,7 +160,8 @@
 
   # This calculates the starting distance along the path where we place
   # the first letter
-  start_dist <- hjust[1] * (max(path$adj_length) - max(letterwidths))
+  start_dist <- hjust[1] *
+    (max(path$adj_length) - max(letterwidths + letters$shape$x_midpoint / ppi))
 
   # Now we just add on the letterwidths and we have the correct distances
   dist_points <- letterwidths + start_dist

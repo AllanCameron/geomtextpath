@@ -7,3 +7,5 @@
   recomputed when the plot device is resized (#6)
 * Line breaks now implemented (#4)
 * Added support for user-defined text spacing
+* Text angles are now correct for straight paths.
+* Duplicated labels are now allowed
