@@ -23,7 +23,7 @@ jobs:
       - name: Install remotes
         run: Rscript -e 'install.packages("remotes")'
       - name: Install self
-        run: Rscript -e 'remotes::install_github("AllanCameron/geomtextpath")'
+        run: Rscript -e 'remotes::install_github("$GITHUB_REPOSITORY")'
       - name: Render README
         run: Rscript -e 'rmarkdown::render("README.Rmd")'
       - name: Commit results
