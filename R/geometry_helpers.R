@@ -50,10 +50,15 @@
   # in angle never wrap around.
   grad <- diff(.data$y) / diff(.data$x)
   rads <- atan(grad)
-  diff_rads <- diff(rads)
-  diff_rads <- ifelse(diff_rads < - pi / 2, diff_rads + pi, diff_rads)
-  diff_rads <- ifelse(diff_rads > pi / 2, diff_rads - pi, diff_rads)
-  rads <- cumsum(c(rads[1], 0, diff_rads))
+  if (length(rads) > 1) {
+    diff_rads <- diff(rads)
+    diff_rads <- ifelse(diff_rads < - pi / 2, diff_rads + pi, diff_rads)
+    diff_rads <- ifelse(diff_rads > + pi / 2, diff_rads - pi, diff_rads)
+    rads <- cumsum(c(rads[1], 0, diff_rads))
+  } else {
+    diff_rads <- c(0, 0)
+    rads <- rep(rads, 2)
+  }
 
   # Now we can safely convert to degrees
   .data$angle <- rads * 180 / pi
