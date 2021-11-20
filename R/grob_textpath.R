@@ -12,6 +12,10 @@
 #' @param gp_text,gp_path An object of class `"gpar"`, typically the output from
 #'   a call from the [`gpar()`][grid::gpar] function. These are basically lists
 #'   of graphical parameters for the text and path respectively.
+#' @param cut_path A single logical TRUE or FALSE which if TRUE breaks the path
+#'   into two sections, one on either side of the string and if FALSE leaves the
+#'   path unbroken. The default value is NA, which will break the line if the
+#'   string has a vjust of between 0 and 1
 #' @inheritParams grid::textGrob
 #'
 #' @return An object of class `gTree`, containing grobs.
@@ -44,6 +48,7 @@ textpathGrob <- function(
   vjust = NULL,
   gp_text = gpar(),
   gp_path = gpar(),
+  cut_path = NA,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -85,6 +90,7 @@ textpathGrob <- function(
       x = x, y = y,
       id = rep(seq_along(id_lens), id_lens),
       vjust = vjust, hjust = hjust,
+      cut_path = cut_path,
       gp_text = gp_text,
       gp_path = gp_path
     ),
@@ -123,7 +129,7 @@ makeContent.textpath <- function(x) {
     path <- do.call(rbind.data.frame, c(path, make.row.names = FALSE))
 
     # Get bookends by trimming paths when it intersects text
-    path <- .get_surrounding_lines(path, text)
+    path <- .get_surrounding_lines(path, text, v$cut_path)
 
     if (nrow(path) > 1) {
       # Recycle graphical parameters to match lengths of path
@@ -192,3 +198,5 @@ gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {
 `%||%` <- function(x, y) {
   if (is.null(x)) y else x
 }
+
+

@@ -8,7 +8,8 @@
 \description{
 \if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
 
-Allows text to follow curved paths in ggplot2. This allows for neat labelling of curves and of plots in polar co-ordinates.
+Allows text to follow curved paths in ggplot2.
+    This allows for neat labelling of curves and of plots in polar co-ordinates.
 }
 \author{
 \strong{Maintainer}: Allan Cameron \email{Allan.Cameron@nhs.scot}

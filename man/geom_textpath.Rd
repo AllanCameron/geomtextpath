@@ -16,7 +16,8 @@ geom_textpath(
   lineend = "butt",
   linejoin = "round",
   linemitre = 10,
-  include_line = TRUE
+  include_line = TRUE,
+  cut_path = NA
 )
 }
 \arguments{
@@ -74,6 +75,11 @@ aesthetics, used to set an aesthetic to a fixed value, like \code{colour =
 line should be plotted along with the text. If FALSE, any parameters or
 aesthetics relating to the drawing of the line in the layer will be
 ignored.}
+
+\item{cut_path}{A single logical TRUE or FALSE which if TRUE breaks the path
+into two sections, one on either side of the string and if FALSE leaves the
+path unbroken. The default value is NA, which will break the line if the
+string has a vjust of between 0 and 1.}
 }
 \description{
 The existing text-based geom layers in ggplot2

@@ -14,6 +14,7 @@ textpathGrob(
   vjust = NULL,
   gp_text = gpar(),
   gp_path = gpar(),
+  cut_path = NA,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -47,6 +48,11 @@ multiple lines. All locations with the same \code{id} belong to the same line.}
 \item{gp_text, gp_path}{An object of class \code{"gpar"}, typically the output from
 a call from the \code{\link[grid:gpar]{gpar()}} function. These are basically lists
 of graphical parameters for the text and path respectively.}
+
+\item{cut_path}{A single logical TRUE or FALSE which if TRUE breaks the path
+into two sections, one on either side of the string and if FALSE leaves the
+path unbroken. The default value is NA, which will break the line if the
+string has a vjust of between 0 and 1}
 
 \item{default.units}{A string indicating the default units to use
     if \code{x} or \code{y}
