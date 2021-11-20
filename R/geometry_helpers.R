@@ -283,16 +283,17 @@
     maxs <- letters$length[ends]
 
     # Create breathing space around letters
-    path_max <- tapply(path$length, path$id, max)
-    mins <- ifelse(mins < breathing_room, 0, mins - breathing_room)
-    maxs <- ifelse(maxs > path_max - breathing_room, path_max,
-                   maxs + breathing_room)
 
     # Assign sections to before and after string
     path$section <- ""
     path$section[path$length < rep(mins, curve_lens)] <- "pre"
     path$section[path$length > rep(maxs, curve_lens)] <- "post"
     path$section[!trim] <- "all"
+    path_max <- vapply(split(path$length, path$id), max,
+                       numeric(1), USE.NAMES = FALSE)
+
+    mins <- pmax(0, mins - breathing_room)
+    maxs <- pmin(path_max, maxs + breathing_room)
 
     # Filter empty sections (i.e., the part where the string is)
     path <- path[path$section != "", , drop = FALSE]
