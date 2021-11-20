@@ -63,6 +63,10 @@
 #'   line should be plotted along with the text. If FALSE, any parameters or
 #'   aesthetics relating to the drawing of the line in the layer will be
 #'   ignored.
+#' @param cut_path A single logical TRUE or FALSE which if TRUE breaks the path
+#'   into two sections, one on either side of the string and if FALSE leaves the
+#'   path unbroken. The default value is NA, which will break the line if the
+#'   string has a vjust of between 0 and 1.
 #'
 #' @details The \code{spacing} aesthetic allows fine control of spacing of text,
 #'   which is called 'tracking' in typography. The default is 0 and units are
@@ -168,7 +172,7 @@ geom_textpath <- function(
   position = "identity", na.rm = FALSE, show.legend = NA,
   inherit.aes = TRUE,  ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
-  include_line = TRUE
+  include_line = TRUE, cut_path = NA
   )
 {
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
@@ -180,6 +184,7 @@ geom_textpath <- function(
           linejoin     = linejoin,
           linemitre    = linemitre,
           include_line = include_line,
+          cut_path     = cut_path,
           ...
         ))
 }
@@ -222,7 +227,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   # into a tree of grobs for plotting.
   draw_panel = function(
     data, panel_params, coord,
-    lineend = "butt", linejoin = "round", linemitre = 10
+    lineend = "butt", linejoin = "round", linemitre = 10, cut_path = NA
   ) {
 
     #---- type conversion, checks & warnings ---------------------------#
@@ -301,6 +306,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       id = data$group,
       hjust = data$hjust[first],
       vjust = data$vjust,
+      cut_path = cut_path,
       gp_text = text_gp,
       gp_path = path_gp,
       default.units = "npc"

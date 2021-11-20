@@ -225,6 +225,10 @@
 #' @param letters A `data.frame` with at least a numeric `length` column and
 #'   integer `id` column. The `id` column must match that in the `path`
 #'   argument.
+#' @param cut_path A single logical TRUE or FALSE which if TRUE breaks the path
+#'   into two sections, one on either side of the string and if FALSE leaves the
+#'   path unbroken. The default value is NA, which will break the line if the
+#'   string has a vjust of between 0 and 1
 #'
 #' @details We probably want the option to draw the path itself, since this will
 #'   be less work for the end-user. If the `vjust` is between 0 and 1 then the
@@ -247,10 +251,16 @@
 #' xy <- .add_path_data(xy)
 #' glyphs <- .get_path_points(xy)
 #' .get_surrounding_lines(xy, glyphs)
-.get_surrounding_lines <- function(path, letters) {
+.get_surrounding_lines <- function(path, letters, cut_path = NA) {
+
+
+  if(is.na(cut_path))
+  {
+    cut_path <- !(all(path$vjust <= 0) || all(path$vjust >= 1))
+  }
 
   # Simplify if text isn't exactly on path
-  if (all(path$vjust < 0) || all(path$vjust > 1)) {
+  if (!cut_path) {
     path$section <- "all"
   } else {
     # Lengths of group runs (assumed to be sorted)
@@ -258,7 +268,7 @@
     # but I'm assuming `group` cannot be NA.
     letter_lens <- rle(letters$id)$lengths
     curve_lens  <- rle(path$id)$lengths
-    trim <- rep_len(!(path$vjust < 0 | path$vjust > 1), length(letter_lens))
+    trim <- rep_len(TRUE, length(letter_lens))
     trim <- rep(trim, curve_lens)
 
     # Get locations where strings start and end
