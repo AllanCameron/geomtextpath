@@ -259,47 +259,62 @@
 .get_surrounding_lines <- function(path, letters, cut_path = NA,
                                    breathing_room = 0.15) {
 
-
-  if(is.na(cut_path))
-  {
-    cut_path <- !(all(path$vjust <= 0) || all(path$vjust >= 1))
-  }
+  path$trim <- !(path$vjust <= 0 | path$vjust >= 1)
+  path$trim <- if (!is.na(cut_path)) rep(cut_path, nrow(path)) else path$trim
 
   # Simplify if text isn't exactly on path
-  if (!cut_path) {
+  if (!any(path$trim)) {
     path$section <- "all"
   } else {
+    trim <- path$trim[c(TRUE, path$id[-1] != path$id[-nrow(path)])]
+
+    # Get locations where strings start and end
     # Lengths of group runs (assumed to be sorted)
     # The `rle()` function handles NAs inelegantly,
     # but I'm assuming `id` cannot be NA.
     letter_lens <- rle(letters$id)$lengths
-    curve_lens  <- rle(path$id)$lengths
-    trim <- rep_len(TRUE, length(letter_lens))
-    trim <- rep(trim, curve_lens)
-
-    # Get locations where strings start and end
     starts <- {ends <- cumsum(letter_lens)} - letter_lens + 1
     mins <- letters$length[starts]
     maxs <- letters$length[ends]
 
     # Create breathing space around letters
-
-    # Assign sections to before and after string
-    path$section <- ""
-    path$section[path$length < rep(mins, curve_lens)] <- "pre"
-    path$section[path$length > rep(maxs, curve_lens)] <- "post"
-    path$section[!trim] <- "all"
     path_max <- vapply(split(path$length, path$id), max,
                        numeric(1), USE.NAMES = FALSE)
 
     mins <- pmax(0, mins - breathing_room)
     maxs <- pmin(path_max, maxs + breathing_room)
 
+    # Consider path length as following one another to avoid a loop
+    sumlen <- c(0, path_max[-length(path_max)])
+    sumlen <- cumsum(sumlen + seq_along(path_max) - 1)
+    mins <- mins + sumlen
+    maxs <- maxs + sumlen
+    path$length <- path$length + sumlen[path$id]
+
+    # Assign sections based on trimming
+    section <- character(nrow(path))
+    section[path$length <= mins[path$id]] <- "pre"
+    section[path$length >= maxs[path$id]] <- "post"
+    section[!trim[path$id]] <- "all"
+
+    # Interpolate trimming points
+    ipol <- c(mins[trim], maxs[trim])
+    trim_x <- approx(path$length, path$x, ipol)$y
+    trim_y <- approx(path$length, path$y, ipol)$y
+
+    # Add trimming points to paths
+    path <- data.frame(
+      x  = c(path$x, trim_x),
+      y  = c(path$y, trim_y),
+      id = c(path$id, rep(which(trim), 2L)),
+      section = c(section, rep(c("pre", "post"), each = sum(trim)))
+    )[order(c(path$length, ipol)), , drop = FALSE]
+
     # Filter empty sections (i.e., the part where the string is)
     path <- path[path$section != "", , drop = FALSE]
   }
 
-  if (nrow(path) > 1) {
+  if (nrow(path) > 0) {
     # Get first point of individual paths
     new_id <- paste0(path$id, "&", path$section)
     new_id <- match(new_id, unique(new_id))
