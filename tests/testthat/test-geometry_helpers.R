@@ -35,8 +35,8 @@ test_that("Path trimming is correct", {
   xy <- split(xy, xy$id)
   xy <- Map(.add_path_data, .data = xy)
   glyphs <- Map(.get_path_points, path = xy, label = c("A", "B", "C"))
-  glyphs <- do.call(rbind.data.frame, c(glyphs, make.row.names = FALSE))
-  xy     <- do.call(rbind.data.frame, c(xy, make.row.names = FALSE))
+  glyphs <- rbind_dfs(glyphs)
+  xy     <- rbind_dfs(xy)
 
   # Breathing room
   br <- c(-0.15, 0.15)

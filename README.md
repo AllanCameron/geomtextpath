@@ -131,7 +131,7 @@ Straight text paths in Cartesian coordinates become curved in polar
 coordinates.
 
 ``` r
-df <- data.frame(x = 1:1000, y = 1, text = "This is a perfectly flat label")
+df <- data.frame(x = c(1, 1000), y = 1, text = "This is a perfectly flat label")
 
 p <- ggplot(df, aes(x, y, label = text)) +
   geom_textpath(size = 6)

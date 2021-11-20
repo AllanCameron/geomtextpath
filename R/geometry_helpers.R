@@ -168,7 +168,7 @@
   # be identical, so these are just kept as-is
 
   df <- path[setdiff(names(path), c("x", "y", "angle"))]
-  df <- as.data.frame(lapply(df, function(i) {
+  df <- list_to_df(lapply(df, function(i) {
     if(is.numeric(i))
       approx(x = path$adj_length, y = i, xout = dist_points, ties = mean)$y
     else
@@ -273,10 +273,7 @@
     trim <- path$trim[c(TRUE, path$id[-1] != path$id[-nrow(path)])]
 
     # Get locations where strings start and end
-    # Lengths of group runs (assumed to be sorted)
-    # The `rle()` function handles NAs inelegantly,
-    # but I'm assuming `id` cannot be NA.
-    letter_lens <- rle(letters$id)$lengths
+    letter_lens <- run_len(letters$id)
     starts <- {ends <- cumsum(letter_lens)} - letter_lens + 1
     mins <- letters$length[starts]
     maxs <- letters$length[ends]
@@ -307,7 +304,7 @@
     trim_y <- approx(path$length, path$y, ipol)$y
 
     # Add trimming points to paths
-    path <- data.frame(
+    path <- data_frame(
       x  = c(path$x, trim_x),
       y  = c(path$y, trim_y),
       id = c(path$id, rep(which(trim), 2L)),
@@ -321,7 +318,7 @@
   if (nrow(path) > 0) {
     # Get first point of individual paths
     new_id <- paste0(path$id, "&", path$section)
-    new_id <- match(new_id, unique(new_id))
+    new_id <- discretise(new_id)
     start  <- c(TRUE, new_id[-1] != new_id[-length(new_id)])
 
     path$new_id <- new_id
@@ -375,7 +372,7 @@
     line_breakers <- data[grepl("[\r\n]", data$label),]
     non_breakers <- data[!grepl("[\r\n]", data$label),]
     pieces <- strsplit(line_breakers$label, "[\r\n]+")
-    line_breakers <- do.call(rbind, lapply(seq_along(pieces), function(i){
+    line_breakers <- rbind_dfs(lapply(seq_along(pieces), function(i){
       n <- length(pieces[[i]])
       df <- line_breakers[rep(i, n),]
       df$label <- pieces[[i]]
@@ -389,7 +386,7 @@
     }))
     data <- rbind(line_breakers, non_breakers)
 
-    data$group <- as.numeric(factor(data$group))
+    data$group <- discretise(data$group)
 
     data
 }

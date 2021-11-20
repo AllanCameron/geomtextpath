@@ -215,7 +215,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       data$linetype <- 0
     }
     if (all(data$group== -1)) {
-      data$group <- match(data$label, unique(data$label))
+      data$group <- discretise(data$label)
     }
     data
   },
@@ -241,7 +241,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       data$linetype <- as.numeric(data$linetype)
 
     # We need to change groups to numeric to order them appropriately
-    data$group <- match(data$group, unique(data$group))
+    data$group <- discretise(data$group)
 
     # Standard warning if row-wise data is passed instead of columnar groups.
     if (!anyDuplicated(data$group)) {

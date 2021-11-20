@@ -55,7 +55,7 @@ textpathGrob <- function(
 ) {
 
   n_label <- length(label)
-  id_lens <- rle(id)$lengths
+  id_lens <- run_len(id)
 
   # Verify that:
   #  1) There are as many labels as there are paths
@@ -86,13 +86,13 @@ textpathGrob <- function(
 
   gTree(
     textpath = list(
-      label = label,
+      label  = label,
       x = x, y = y,
       id = rep(seq_along(id_lens), id_lens),
       vjust = vjust, hjust = hjust,
       cut_path = cut_path,
-      gp_text = gp_text,
-      gp_path = gp_path
+      gp_text  = gp_text,
+      gp_path  = gp_path
     ),
     name = name, vp = vp,
     cl = "textpath"
@@ -109,7 +109,7 @@ makeContent.textpath <- function(x) {
   xx <- convertX(v$x, "inches", valueOnly = TRUE)
   yy <- convertY(v$y, "inches", valueOnly = TRUE)
 
-  path <- data.frame(x = xx, y = yy, id = v$id, vjust = v$vjust)
+  path <- data_frame(x = xx, y = yy, id = v$id, vjust = v$vjust)
 
   ## ---- Data manipulation -------------------------------------------- #
 
@@ -123,10 +123,10 @@ makeContent.textpath <- function(x) {
 
   ## ---- Build text grob ---------------------------------------------- #
 
-  text <- do.call(rbind.data.frame, c(text, make.row.names = FALSE))
+  text <- rbind_dfs(text)
 
   if (!all(v$gp_path$lty == 0)) {
-    path <- do.call(rbind.data.frame, c(path, make.row.names = FALSE))
+    path <- rbind_dfs(path)
 
     # Get bookends by trimming paths when it intersects text
     path <- .get_surrounding_lines(path, text, v$cut_path)
@@ -193,10 +193,4 @@ gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {
   for (i in names(gp))    defaults[[i]] <- gp[[i]]
   defaults
 }
-
-# Similar to rlang::`%||%` or utils:::`%||%`
-`%||%` <- function(x, y) {
-  if (is.null(x)) y else x
-}
-
 
