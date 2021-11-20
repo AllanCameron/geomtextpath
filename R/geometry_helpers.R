@@ -224,9 +224,9 @@
 #' This function splits a path when a string is predicted to intersect with
 #' the path.
 #'
-#' @param path A `data.frame` with at least a numeric `length` column and
-#'   integer `id` column. The `id` column must match that in the `letters`
-#'   argument.
+#' @param path A `data.frame` with at least a numeric `length` column, an
+#'   integer `id` column and `vjust` column. The `id` column must match that in
+#'   the `letters` argument.
 #' @param letters A `data.frame` with at least a numeric `length` column and
 #'   integer `id` column. The `id` column must match that in the `path`
 #'   argument.
@@ -234,6 +234,9 @@
 #'   into two sections, one on either side of the string and if FALSE leaves the
 #'   path unbroken. The default value is NA, which will break the line if the
 #'   string has a vjust of between 0 and 1
+#' @param vjust_lim A `numeric` of length two setting the lower and upper limits
+#'   of the `vjust` column in the `path` argument, which is used to decide
+#'   whether a path should be trimmed or not when `cut_path = NA`.
 #'
 #' @details We probably want the option to draw the path itself, since this will
 #'   be less work for the end-user. If the `vjust` is between 0 and 1 then the
@@ -257,9 +260,10 @@
 #' glyphs <- .get_path_points(xy)
 #' .get_surrounding_lines(xy, glyphs)
 .get_surrounding_lines <- function(path, letters, cut_path = NA,
-                                   breathing_room = 0.15) {
+                                   breathing_room = 0.15,
+                                   vjust_lim = c(0, 1)) {
 
-  path$trim <- !(path$vjust <= 0 | path$vjust >= 1)
+  path$trim <- !(path$vjust <= vjust_lim[1] | path$vjust >= vjust_lim[2])
   path$trim <- if (!is.na(cut_path)) rep(cut_path, nrow(path)) else path$trim
 
   # Simplify if text isn't exactly on path
