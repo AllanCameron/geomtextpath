@@ -269,6 +269,11 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     # All our transformations occur after the coord transform:
     data <- coord_munch(coord, data, panel_params)
 
+    # Drop paths with less than two points
+    group_lens <- stats::ave(seq_len(nrow(data)), data$group, FUN = length)
+    data <- data[group_lens >= 2, , drop = FALSE]
+    if (nrow(data) < 2) return(zeroGrob())
+
     #---- Set graphical parameters --------------------------#
 
     # Get first observation of each group
