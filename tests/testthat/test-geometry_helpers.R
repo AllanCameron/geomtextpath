@@ -25,3 +25,67 @@ test_that("Text angles are correct", {
   expect_equal(test$y[test$label != " "], 3)
 })
 
+test_that("Path trimming is correct", {
+  # Prep data
+  xy <- data.frame(
+    x = c(1:6), y = 1,
+    id = c(1,1,2,2,3,3),
+    vjust = c(2, 2, 0.5, 0.5, -1, -1)
+  )
+  xy <- split(xy, xy$id)
+  xy <- Map(.add_path_data, .data = xy)
+  glyphs <- Map(.get_path_points, path = xy, label = c("A", "B", "C"))
+  glyphs <- do.call(rbind.data.frame, c(glyphs, make.row.names = FALSE))
+  xy     <- do.call(rbind.data.frame, c(xy, make.row.names = FALSE))
+
+  # Breathing room
+  br <- c(-0.15, 0.15)
+
+  # TRUE cut_path
+  test <- .get_surrounding_lines(xy, glyphs, cut_path = TRUE,
+                                 breathing_room = br[2])
+  expect_length(test$x, nrow(xy) * 2)
+  expect_equal(
+    test$x,
+    c(1, 1.5 + br, 2,
+      3, 3.5 + br, 4,
+      5, 5.5 + br, 6)
+  )
+  expect_equal(unique(test$y), 1)
+
+  # FALSE cut_path
+  test <- .get_surrounding_lines(xy, glyphs, cut_path = FALSE,
+                                 breathing_room = br[2])
+  expect_length(test$x, nrow(xy))
+  expect_equal(
+    test$x,
+    c(1, 2,
+      3, 4,
+      5, 6)
+  )
+  expect_equal(unique(test$y), 1)
+
+  # Variable cut_path
+  test <- .get_surrounding_lines(xy, glyphs, cut_path = NA,
+                                 breathing_room = br[2])
+  expect_length(test$x, nrow(xy) + 2)
+  expect_equal(
+    test$x,
+    c(1, 2,
+      3, 3.5 + br, 4,
+      5, 6)
+  )
+  expect_equal(unique(test$y), 1)
+
+  # Test variable vjust is respected
+  test <- .get_surrounding_lines(xy, glyphs, cut_path = NA,
+                                 breathing_room = br[2], vjust_lim = c(0, 3))
+  expect_length(test$x, nrow(xy) + 4)
+  expect_equal(
+    test$x,
+    c(1, 1.5 + br, 2,
+      3, 3.5 + br, 4,
+      5, 6)
+  )
+  expect_equal(unique(test$y), 1)
+})
