@@ -256,7 +256,8 @@
 #' xy <- .add_path_data(xy)
 #' glyphs <- .get_path_points(xy)
 #' .get_surrounding_lines(xy, glyphs)
-.get_surrounding_lines <- function(path, letters, cut_path = NA) {
+.get_surrounding_lines <- function(path, letters, cut_path = NA,
+                                   breathing_room = 0.15) {
 
 
   if(is.na(cut_path))
@@ -282,7 +283,6 @@
     maxs <- letters$length[ends]
 
     # Create breathing space around letters
-    breathing_room <- 0.15
     path_max <- tapply(path$length, path$id, max)
     mins <- ifelse(mins < breathing_room, 0, mins - breathing_room)
     maxs <- ifelse(maxs > path_max - breathing_room, path_max,
