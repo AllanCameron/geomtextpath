@@ -125,16 +125,18 @@ makeContent.textpath <- function(x) {
     # Get bookends by trimming paths when it intersects text
     path <- .get_surrounding_lines(path, text)
 
-    # Recycle graphical parameters to match lengths of path
-    gp_path <- recycle_gp(v$gp_path, `[`, i = path$id[path$start])
+    if (nrow(path) > 1) {
+      # Recycle graphical parameters to match lengths of path
+      gp_path <- recycle_gp(v$gp_path, `[`, i = path$id[path$start])
 
-    # Write path grob
-    x <- addGrob(
-      x, polylineGrob(
-        x = path$x, y = path$y, id = path$new_id, gp = gp_path,
-        default.units = "inches"
+      # Write path grob
+      x <- addGrob(
+        x, polylineGrob(
+          x = path$x, y = path$y, id = path$new_id, gp = gp_path,
+          default.units = "inches"
+        )
       )
-    )
+    }
   }
 
   # Recycle graphical parameters to match lengths of letters

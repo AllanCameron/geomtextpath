@@ -260,7 +260,7 @@
   } else {
     # Lengths of group runs (assumed to be sorted)
     # The `rle()` function handles NAs inelegantly,
-    # but I'm assuming `group` cannot be NA.
+    # but I'm assuming `id` cannot be NA.
     letter_lens <- rle(letters$id)$lengths
     curve_lens  <- rle(path$id)$lengths
     trim <- rep_len(!(path$vjust < 0 | path$vjust > 1), length(letter_lens))
@@ -288,13 +288,18 @@
     path <- path[path$section != "", , drop = FALSE]
   }
 
-  # Get first point of individual paths
-  new_id <- paste0(path$id, "&", path$section)
-  new_id <- match(new_id, unique(new_id))
-  start  <- c(TRUE, new_id[-1] != new_id[-length(new_id)])
+  if (nrow(path) > 1) {
+    # Get first point of individual paths
+    new_id <- paste0(path$id, "&", path$section)
+    new_id <- match(new_id, unique(new_id))
+    start  <- c(TRUE, new_id[-1] != new_id[-length(new_id)])
 
-  path$new_id <- new_id
-  path$start  <- start
+    path$new_id <- new_id
+    path$start  <- start
+  } else {
+    path$new_id <- integer(0)
+    path$start  <- logical(0)
+  }
 
   return(path)
 }
