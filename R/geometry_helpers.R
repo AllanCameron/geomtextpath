@@ -50,10 +50,15 @@
   # in angle never wrap around.
   grad <- diff(.data$y) / diff(.data$x)
   rads <- atan(grad)
-  diff_rads <- diff(rads)
-  diff_rads <- ifelse(diff_rads < - pi / 2, diff_rads + pi, diff_rads)
-  diff_rads <- ifelse(diff_rads > pi / 2, diff_rads - pi, diff_rads)
-  rads <- cumsum(c(rads[1], 0, diff_rads))
+  if (length(rads) > 1) {
+    diff_rads <- diff(rads)
+    diff_rads <- ifelse(diff_rads < - pi / 2, diff_rads + pi, diff_rads)
+    diff_rads <- ifelse(diff_rads > + pi / 2, diff_rads - pi, diff_rads)
+    rads <- cumsum(c(rads[1], 0, diff_rads))
+  } else {
+    diff_rads <- c(0, 0)
+    rads <- rep(rads, 2)
+  }
 
   # Now we can safely convert to degrees
   .data$angle <- rads * 180 / pi
@@ -163,7 +168,7 @@
   # be identical, so these are just kept as-is
 
   df <- path[setdiff(names(path), c("x", "y", "angle"))]
-  df <- as.data.frame(lapply(df, function(i) {
+  df <- list_to_df(lapply(df, function(i) {
     if(is.numeric(i))
       approx(x = path$adj_length, y = i, xout = dist_points, ties = mean)$y
     else
@@ -219,9 +224,9 @@
 #' This function splits a path when a string is predicted to intersect with
 #' the path.
 #'
-#' @param path A `data.frame` with at least a numeric `length` column and
-#'   integer `id` column. The `id` column must match that in the `letters`
-#'   argument.
+#' @param path A `data.frame` with at least a numeric `length` column, an
+#'   integer `id` column and `vjust` column. The `id` column must match that in
+#'   the `letters` argument.
 #' @param letters A `data.frame` with at least a numeric `length` column and
 #'   integer `id` column. The `id` column must match that in the `path`
 #'   argument.
@@ -229,6 +234,9 @@
 #'   into two sections, one on either side of the string and if FALSE leaves the
 #'   path unbroken. The default value is NA, which will break the line if the
 #'   string has a vjust of between 0 and 1
+#' @param vjust_lim A `numeric` of length two setting the lower and upper limits
+#'   of the `vjust` column in the `path` argument, which is used to decide
+#'   whether a path should be trimmed or not when `cut_path = NA`.
 #'
 #' @details We probably want the option to draw the path itself, since this will
 #'   be less work for the end-user. If the `vjust` is between 0 and 1 then the
@@ -251,55 +259,74 @@
 #' xy <- .add_path_data(xy)
 #' glyphs <- .get_path_points(xy)
 #' .get_surrounding_lines(xy, glyphs)
-.get_surrounding_lines <- function(path, letters, cut_path = NA) {
+.get_surrounding_lines <- function(path, letters, cut_path = NA,
+                                   breathing_room = 0.15,
+                                   vjust_lim = c(0, 1)) {
 
-
-  if(is.na(cut_path))
-  {
-    cut_path <- !(all(path$vjust <= 0) || all(path$vjust >= 1))
-  }
+  path$trim <- !(path$vjust <= vjust_lim[1] | path$vjust >= vjust_lim[2])
+  path$trim <- if (!is.na(cut_path)) rep(cut_path, nrow(path)) else path$trim
 
   # Simplify if text isn't exactly on path
-  if (!cut_path) {
+  if (!any(path$trim)) {
     path$section <- "all"
   } else {
-    # Lengths of group runs (assumed to be sorted)
-    # The `rle()` function handles NAs inelegantly,
-    # but I'm assuming `group` cannot be NA.
-    letter_lens <- rle(letters$id)$lengths
-    curve_lens  <- rle(path$id)$lengths
-    trim <- rep_len(TRUE, length(letter_lens))
-    trim <- rep(trim, curve_lens)
+    trim <- path$trim[c(TRUE, path$id[-1] != path$id[-nrow(path)])]
 
     # Get locations where strings start and end
+    letter_lens <- run_len(letters$id)
     starts <- {ends <- cumsum(letter_lens)} - letter_lens + 1
     mins <- letters$length[starts]
     maxs <- letters$length[ends]
 
     # Create breathing space around letters
-    breathing_room <- 0.15
-    path_max <- tapply(path$length, path$id, max)
-    mins <- ifelse(mins < breathing_room, 0, mins - breathing_room)
-    maxs <- ifelse(maxs > path_max - breathing_room, path_max,
-                   maxs + breathing_room)
+    path_max <- vapply(split(path$length, path$id), max,
+                       numeric(1), USE.NAMES = FALSE)
 
-    # Assign sections to before and after string
-    path$section <- ""
-    path$section[path$length < rep(mins, curve_lens)] <- "pre"
-    path$section[path$length > rep(maxs, curve_lens)] <- "post"
-    path$section[!trim] <- "all"
+    mins <- pmax(0, mins - breathing_room)
+    maxs <- pmin(path_max, maxs + breathing_room)
+
+    # Consider path length as following one another to avoid a loop
+    sumlen <- c(0, path_max[-length(path_max)])
+    sumlen <- cumsum(sumlen + seq_along(path_max) - 1)
+    mins <- mins + sumlen
+    maxs <- maxs + sumlen
+    path$length <- path$length + sumlen[path$id]
+
+    # Assign sections based on trimming
+    section <- character(nrow(path))
+    section[path$length <= mins[path$id]] <- "pre"
+    section[path$length >= maxs[path$id]] <- "post"
+    section[!trim[path$id]] <- "all"
+
+    # Interpolate trimming points
+    ipol <- c(mins[trim], maxs[trim])
+    trim_x <- approx(path$length, path$x, ipol)$y
+    trim_y <- approx(path$length, path$y, ipol)$y
+
+    # Add trimming points to paths
+    path <- data_frame(
+      x  = c(path$x, trim_x),
+      y  = c(path$y, trim_y),
+      id = c(path$id, rep(which(trim), 2L)),
+      section = c(section, rep(c("pre", "post"), each = sum(trim)))
+    )[order(c(path$length, ipol)), , drop = FALSE]
 
     # Filter empty sections (i.e., the part where the string is)
     path <- path[path$section != "", , drop = FALSE]
   }
 
-  # Get first point of individual paths
-  new_id <- paste0(path$id, "&", path$section)
-  new_id <- match(new_id, unique(new_id))
-  start  <- c(TRUE, new_id[-1] != new_id[-length(new_id)])
+  if (nrow(path) > 0) {
+    # Get first point of individual paths
+    new_id <- paste0(path$id, "&", path$section)
+    new_id <- discretise(new_id)
+    start  <- c(TRUE, new_id[-1] != new_id[-length(new_id)])
 
-  path$new_id <- new_id
-  path$start  <- start
+    path$new_id <- new_id
+    path$start  <- start
+  } else {
+    path$new_id <- integer(0)
+    path$start  <- logical(0)
+  }
 
   return(path)
 }
@@ -345,7 +372,7 @@
     line_breakers <- data[grepl("[\r\n]", data$label),]
     non_breakers <- data[!grepl("[\r\n]", data$label),]
     pieces <- strsplit(line_breakers$label, "[\r\n]+")
-    line_breakers <- do.call(rbind, lapply(seq_along(pieces), function(i){
+    line_breakers <- rbind_dfs(lapply(seq_along(pieces), function(i){
       n <- length(pieces[[i]])
       df <- line_breakers[rep(i, n),]
       df$label <- pieces[[i]]
@@ -359,7 +386,7 @@
     }))
     data <- rbind(line_breakers, non_breakers)
 
-    data$group <- as.numeric(factor(data$group))
+    data$group <- discretise(data$group)
 
     data
 }

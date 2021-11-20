@@ -215,7 +215,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       data$linetype <- 0
     }
     if (all(data$group== -1)) {
-      data$group <- match(data$label, unique(data$label))
+      data$group <- discretise(data$label)
     }
     data
   },
@@ -241,7 +241,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       data$linetype <- as.numeric(data$linetype)
 
     # We need to change groups to numeric to order them appropriately
-    data$group <- match(data$group, unique(data$group))
+    data$group <- discretise(data$group)
 
     # Standard warning if row-wise data is passed instead of columnar groups.
     if (!anyDuplicated(data$group)) {
@@ -267,7 +267,12 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     data <- data[order(data$group), , drop = FALSE]
 
     # All our transformations occur after the coord transform:
-    data <- coord$transform(data, panel_params)
+    data <- coord_munch(coord, data, panel_params)
+
+    # Drop paths with less than two points
+    group_lens <- stats::ave(seq_len(nrow(data)), data$group, FUN = length)
+    data <- data[group_lens >= 2, , drop = FALSE]
+    if (nrow(data) < 2) return(zeroGrob())
 
     #---- Set graphical parameters --------------------------#
 
