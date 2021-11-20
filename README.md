@@ -134,7 +134,8 @@ coordinates.
 df <- data.frame(x = c(1, 1000), y = 1, text = "This is a perfectly flat label")
 
 p <- ggplot(df, aes(x, y, label = text)) +
-  geom_textpath(size = 6)
+  geom_textpath(size = 6) +
+  ylim(c(0.9, 1.1))
 p
 ```
 
@@ -187,7 +188,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 
