@@ -267,7 +267,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     data <- data[order(data$group), , drop = FALSE]
 
     # All our transformations occur after the coord transform:
-    data <- coord$transform(data, panel_params)
+    data <- coord_munch(coord, data, panel_params)
 
     #---- Set graphical parameters --------------------------#
 
