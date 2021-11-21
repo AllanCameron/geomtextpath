@@ -260,9 +260,6 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
 
     #---- Data manipulation ---------------------------------#
 
-    # Break separate text lines into different groups
-    data <- .groupify_linebreaks(data)
-
     # Now we can sort the data by group
     data <- data[order(data$group), , drop = FALSE]
 
@@ -312,8 +309,6 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       id = data$group,
       hjust = data$hjust[first],
       vjust = data$vjust,
-      group_min_vjust = data$group_min_vjust,
-      group_max_vjust = data$group_max_vjust,
       cut_path = cut_path,
       gp_text = text_gp,
       gp_path = path_gp,

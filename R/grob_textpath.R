@@ -16,12 +16,6 @@
 #'   into two sections, one on either side of the string and if FALSE leaves the
 #'   path unbroken. The default value is NA, which will break the line if the
 #'   string has a vjust of between 0 and 1
-#' @param group_min_vjust each multi-line group needs to know the vjust of the
-#'   whole group together. If there is only a single line, this can be left
-#'   as `NULL`, in which case the group's vjust will be used
-#' @param group_max_vjust each multi-line group needs to know the vjust of the
-#'   whole group together. If there is only a single line, this can be left
-#'   as `NULL`, in which case the group's vjust will be used
 #'
 #' @inheritParams grid::textGrob
 #'
@@ -41,7 +35,9 @@
 #'   x = c(t, t) / (2 * pi),
 #'   y = c(cos(t), sin(t)) * 0.25 + 0.5,
 #'   id = rep(1:2, each = length(t)),
-#'   vjust = rep(0.5, 2 * length(t))
+#'   vjust = rep(0.5, 2 * length(t)),
+#'   gp_text = gpar(lineheight = c(1.2, 1.2)),
+#'   gp_path = gpar(lty = c(1, 2))
 #' )
 #'
 #' grid.newpage(); grid.draw(grob)
@@ -53,8 +49,6 @@ textpathGrob <- function(
   just = "centre",
   hjust = NULL,
   vjust = NULL,
-  group_min_vjust = NULL,
-  group_max_vjust = NULL,
   gp_text = gpar(),
   gp_path = gpar(),
   cut_path = NA,
@@ -65,8 +59,6 @@ textpathGrob <- function(
 
   n_label <- length(label)
   id_lens <- run_len(id)
-  if(is.null(group_max_vjust)) group_max_vjust <- vjust
-  if(is.null(group_min_vjust)) group_min_vjust <- vjust
 
   # Verify that:
   #  1) There are as many labels as there are paths
@@ -95,19 +87,22 @@ textpathGrob <- function(
     y <- unit(y, default.units)
   }
 
+  path <- data_frame(x = x, y = y, id = rep(seq_along(id_lens), id_lens),
+                     vjust = vjust, label = rep(label, id_lens),
+                     lineheight = rep(gp_text$lineheight, id_lens),
+                     linetype = rep(gp_path$lty, id_lens))
+
+  path <- .groupify_linebreaks(path)
+
   gTree(
-    textpath = list(
-      label  = label,
-      x = x, y = y,
-      id = rep(seq_along(id_lens), id_lens),
-      vjust = vjust, hjust = hjust,
-      group_min_vjust = group_min_vjust,
-      group_max_vjust = group_max_vjust,
+    textpath = list(data = path,
+      hjust    = hjust,
       cut_path = cut_path,
       gp_text  = gp_text,
       gp_path  = gp_path
     ),
-    name = name, vp = vp,
+    name = name,
+    vp = vp,
     cl = "textpath"
   )
 }
@@ -117,23 +112,21 @@ textpathGrob <- function(
 #' @export
 makeContent.textpath <- function(x) {
   v <- x$textpath
+  path <- v$data
   x$textpath <- NULL
 
-  xx <- convertX(v$x, "inches", valueOnly = TRUE)
-  yy <- convertY(v$y, "inches", valueOnly = TRUE)
-
-  path <- data_frame(x = xx, y = yy, id = v$id, vjust = v$vjust,
-                     group_min_vjust = v$group_min_vjust,
-                     group_max_vjust = v$group_max_vjust)
+  path$x <- convertX(path$x, "inches", valueOnly = TRUE)
+  path$y <- convertY(path$y, "inches", valueOnly = TRUE)
 
   ## ---- Data manipulation -------------------------------------------- #
 
   # Get gradients, angles and path lengths for each group
   path <- Map(.add_path_data, .data = split(path, path$id))
 
+  labels <- sapply(path, function(x) x$label[1])
   # Get the actual text string positions and angles for each group
-  text <- Map(.get_path_points, path = path, label = v$label, hjust = v$hjust,
-              gp = split_gp(v$gp_text, seq_along(v$label)))
+  text <- Map(.get_path_points, path = path, label = labels,
+              hjust = v$hjust, gp = split_gp(v$gp_text, seq_along(labels)))
   text_lens <- vapply(text, nrow, integer(1))
 
   ## ---- Build text grob ---------------------------------------------- #
@@ -176,6 +169,77 @@ makeContent.textpath <- function(x) {
 }
 
 
+## Split linebreaks  -----------------------------------------------
+
+#' Split strings with linebreaks into different groups
+#'
+#' This function prepares the data for plotting by splitting labels
+#' at line breaks and giving each its own group
+#'
+#' @param data A `data.frame` with at least a factor or character column
+#'   called "label", integer columns called "group" and "linetype", and
+#'   numeric columns called "vjust" and "lineheight".
+#'
+#' @details The returned data is split into groups, one group for each
+#'   segment of text such that none have line breaks. For strings that
+#'   initially contained line breaks, they are broken up into different
+#'   groups with different vjust values. The vjust values of each text line
+#'   are centered around the originally specified vjust,
+#'
+#' @return A data frame containing the same column names and types as the
+#'   original, but with newlines now treated as different groups.
+#' @noRd
+#'
+#' @examples
+#' xy <- data.frame(
+#'   x =  1:10,
+#'   y = (1:10)^2,
+#'   group = 1,
+#'   label = "This string \n has a line break",
+#'   vjust = 0.5,
+#'   linetype = 1,
+#'   lineheight = 1.2
+#' )
+#'
+#' .groupify_linebreaks(xy)
+.groupify_linebreaks <- function(data)
+{
+    data$label <- as.character(data$label)
+    data$group_min_vjust <- data$vjust
+    data$group_max_vjust <- data$vjust
+    multi_liners <- grepl("[\r\n]", data$label)
+
+    if(!any(multi_liners)) return(data)
+
+    line_breakers <- data[multi_liners,]
+
+    pieces        <- strsplit(line_breakers$label, "[\r\n]+")
+    line_breakers <- do.call(rbind, lapply(seq_along(pieces), function(i){
+      n <- length(pieces[[i]])
+      df <- line_breakers[rep(i, n),]
+      df$label <- pieces[[i]]
+      df$vjust <- (seq(n) - n)  * df$lineheight[1] +
+                  df$vjust[1] * df$lineheight[1] * (n - 1) + df$vjust[1]
+      df$id <- rep(df$id[1] + seq(0, 1 - 1/n, 1/n),
+                      length.out = nrow(df))
+      line_type <- df$linetype[1]
+      df$linetype <- 0
+      df$linetype[which(df$vjust <= 1 & df$vjust >= 0)] <- line_type
+      if(all(df$linetype == 0)) {
+        df$linetype[which.min(abs(df$vjust))] <- line_type
+      }
+      df$group_min_vjust <- min(df$vjust)
+      df$group_max_vjust <- max(df$vjust)
+      df
+    }))
+
+    data <- if(all(multi_liners)) line_breakers
+            else rbind(line_breakers, data[!multi_liners,])
+
+    data$id <- as.numeric(factor(data$id))
+
+    data
+}
 
 # Helpers -----------------------------------------------------------------
 
