@@ -12,6 +12,8 @@ textpathGrob(
   just = "centre",
   hjust = NULL,
   vjust = NULL,
+  group_min_vjust = NULL,
+  group_max_vjust = NULL,
   gp_text = gpar(),
   gp_path = gpar(),
   cut_path = NA,
@@ -44,6 +46,14 @@ multiple lines. All locations with the same \code{id} belong to the same line.}
 
 \item{vjust}{A numeric vector specifying vertical justification.
     If specified, overrides the \code{just} setting.}
+
+\item{group_min_vjust}{each multi-line group needs to know the vjust of the
+whole group together. If there is only a single line, this can be left
+as \code{NULL}, in which case the group's vjust will be used}
+
+\item{group_max_vjust}{each multi-line group needs to know the vjust of the
+whole group together. If there is only a single line, this can be left
+as \code{NULL}, in which case the group's vjust will be used}
 
 \item{gp_text, gp_path}{An object of class \code{"gpar"}, typically the output from
 a call from the \code{\link[grid:gpar]{gpar()}} function. These are basically lists

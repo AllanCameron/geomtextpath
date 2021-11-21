@@ -16,6 +16,13 @@
 #'   into two sections, one on either side of the string and if FALSE leaves the
 #'   path unbroken. The default value is NA, which will break the line if the
 #'   string has a vjust of between 0 and 1
+#' @param group_min_vjust each multi-line group needs to know the vjust of the
+#'   whole group together. If there is only a single line, this can be left
+#'   as `NULL`, in which case the group's vjust will be used
+#' @param group_max_vjust each multi-line group needs to know the vjust of the
+#'   whole group together. If there is only a single line, this can be left
+#'   as `NULL`, in which case the group's vjust will be used
+#'
 #' @inheritParams grid::textGrob
 #'
 #' @return An object of class `gTree`, containing grobs.
@@ -58,6 +65,8 @@ textpathGrob <- function(
 
   n_label <- length(label)
   id_lens <- run_len(id)
+  if(is.null(group_max_vjust)) group_max_vjust <- vjust
+  if(is.null(group_min_vjust)) group_min_vjust <- vjust
 
   # Verify that:
   #  1) There are as many labels as there are paths
