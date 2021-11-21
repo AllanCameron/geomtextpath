@@ -144,63 +144,95 @@
   # Using the shape_string function from package "systemfonts" allows fast
   # and accurate calculation of letter spacing
 
-  letters <- shape_string(strings    = label[1],
-                          family     = gp$fontfamily[1],
-                          italic     = gp$font[1] %in% c(3, 4),
-                          bold       = gp$font[1] %in% c(2, 4),
-                          size       = gp$fontsize[1],
-                          lineheight = gp$lineheight[1],
-                          tracking   = gp$tracking[1] %||% 0,
-                          res = ppi)
-
-  letterwidths <- (letters$shape$x_offset + letters$shape$x_midpoint) / ppi
-
-  # This calculates the starting distance along the path where we place
-  # the first letter
-  start_dist <- hjust[1] *
-    (max(path$adj_length) - max(letterwidths + letters$shape$x_midpoint / ppi))
-
-  # Now we just add on the letterwidths and we have the correct distances
-  dist_points <- letterwidths + start_dist
+  letters <- measure_text(label, gp = gp, ppi = ppi, vjust = 0.5,
+                          hjust = hjust[1], path_len = max(path$adj_length))
 
   # We now need to interpolate all the numeric values along the path so we
   # get the appropriate values at each point. Non-numeric values should all
   # be identical, so these are just kept as-is
 
-  df <- path[setdiff(names(path), c("x", "y", "angle"))]
-  df <- list_to_df(lapply(df, function(i) {
-    if(is.numeric(i))
-      approx(x = path$adj_length, y = i, xout = dist_points, ties = mean)$y
-    else
-      rep(i[1], length(dist_points))
-  }))
+  df <- as.list(path[setdiff(names(path), c("x", "y", "angle"))])
+  is_num <- vapply(df, is.numeric, logical(1))
+  df[is_num] <- lapply(df[is_num], function(i) {
+    approx(x = path$adj_length, y = i, xout = letters$xmid, ties = mean)$y
+  })
+  df[!is_num] <- lapply(lapply(df[!is_num], `[`, 1L),
+                        rep, length.out = nrow(letters))
 
   # Instead of interpolating the angle from what we've calculated earlier and
   # what should  apply to the letter mid-points, we are re-calculating the angle
   # from the letter start and end points to get better angles for coarse paths
-  letter_min <- letters$shape$x_offset / ppi + start_dist
-  letter_max <- letter_min + 2 * letters$shape$x_midpoint / ppi
 
   # Interpolate x coordinates
   f    <- approxfun(x = path$adj_length, y = path$x)
-  dx   <- f(letter_max) - f(letter_min)
-  df$x <- f(dist_points)
+  dx   <- f(letters$xmax) - f(letters$xmin)
+  df$x <- f(letters$xmid)
 
   # Interpolate y coordinates
   f    <- approxfun(x = path$adj_length, y = path$y)
-  dy   <- f(letter_max) - f(letter_min)
-  df$y <- f(dist_points)
+  dy   <- f(letters$xmax) - f(letters$xmin)
+  df$y <- f(letters$xmid)
 
   # Recalculate angle
   df$angle <- atan2(dy, dx) * 180 / pi
 
   # Now we assign each letter to its correct point on the path
-  df$label <- letters$shape$glyph
+  df$label <- letters$glyph
 
   # This ensures that we don't try to return any invalid letters
   # (those letters that fall off the path on either side will have
   # NA angles)
+  df <- list_to_df(df)
   df[!is.na(df$angle), ]
+}
+
+#' Wrapper for text measurement
+#'
+#' This wrap the `systemfonts::shape_string()` function to return positions for
+#' every letter.
+#'
+#' @param label A `character(1)` of a label.
+#' @param gp A `grid::gpar()` object.
+#' @param ppi A `numeric(1)` for the resolution in points per inch.
+#' @param vjust The justification of the text.
+#'
+#' @return A `data.frame` with the columns `glyph`, `ymin`, `xmin`, `xmid` and
+#'   `xmax`.
+#' @noRd
+#'
+#' @examples
+#' measure_text("Hello there,\nGeneral Kenobi")
+measure_text <- function(label, gp = get.gpar(), ppi = 72,
+                         vjust = NULL, hjust = 0.5,
+                         path_len = 10) {
+  txt <- shape_string(
+    strings    = label[1],
+    family     = gp$fontfamily[1],
+    italic     = gp$font[1] %in% c(3, 4),
+    bold       = gp$font[1] %in% c(2, 4),
+    size       = gp$fontsize[1],
+    lineheight = gp$lineheight[1],
+    tracking   = gp$tracking[1] %||% 0,
+    res = ppi
+    # vjust = vjust %||% 0.5,
+    # hjust = 0.5
+  )
+  metrics <- txt$metrics
+  txt <- txt$shape
+
+  start <- hjust[1] * (path_len - metrics$width / ppi)
+  txt$x_offset   <- start + txt$x_offset / ppi
+  txt$x_midpoint <- txt$x_midpoint / ppi
+
+  ans <- data_frame(
+    glyph =  txt$glyph,
+    ymin  =  txt$y_offset / ppi,
+    xmin  =  txt$x_offset,
+    xmid  = (txt$x_offset + txt$x_midpoint),
+    xmax  = (txt$x_offset + txt$x_midpoint * 2)
+  )
+  attr(ans, "metrics") <- metrics
+  return(ans)
 }
 
 ## Getting surrounding lines -----------------------------------------------
