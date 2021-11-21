@@ -48,7 +48,10 @@
   # around 0. When combined with a vjust, this also makes the letters
   # jump out of alignment. This little algorithm makes sure the changes
   # in angle never wrap around.
-  grad <- diff(.data$y) / diff(.data$x)
+  dx <- diff(.data$x)
+  dy <- diff(.data$y)
+  grad <- dy / dx
+
   rads <- atan(grad)
   if (length(rads) > 1) {
     diff_rads <- diff(rads)
@@ -65,7 +68,8 @@
 
   # Letters need to be spaced according to their distance along the path, so
   # we need a column to measure the distance of each point along the path
-  .data$length <- c(0, cumsum(sqrt(diff(.data$x)^2 + diff(.data$y)^2)))
+  dist <- sqrt(dx^2 + dy^2)
+  .data$length <- c(0, cumsum(dist))
 
   # We also need to define curvature of the line at each point.
   # This is how much the angle changes per unit distance. We need to use
@@ -76,17 +80,16 @@
   diff_rads <- approx(seq_along(diff_rads), diff_rads,
                       seq(1, length(diff_rads), length.out = nrow(.data) - 1))$y
 
-  curvature <- diff_rads/diff(.data$length)
+  curvature <- diff_rads/dist
 
-  .data$vjust <- .data$vjust %||% 0.5 # Set default vjust if absent from data
-  effective_length <- diff(.data$length) *
-    (1 + ((head(.data$vjust, -1) + tail(.data$vjust, -1))/2 - 0.5) * curvature / 5)
+  adj_vjust <- .data$vjust %||% c(0.5, 0.5) # Set default vjust if absent from data
+  adj_vjust <- ((head(adj_vjust, -1) + tail(adj_vjust, -1)) / 2 - 0.5)
+  effective_length <- dist * (1 + adj_vjust * curvature / 5)
 
   .data$adj_length <- c(0, cumsum(effective_length))
 
   .data
 }
-
 
 ## Getting path points ----------------------------------------------------
 
