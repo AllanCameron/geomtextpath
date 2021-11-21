@@ -77,6 +77,9 @@ textpathGrob <- function(
   # Match justification to labels length
   hjust   <- rep_len(resolveHJust(just, hjust), n_label)
 
+  # Match linetype to labels length
+  if(length(gp_path$lty) != n_label) gp_path$lty <- rep(gp_path$lty[1], n_label)
+
   # Reconstitute data
   gp_text <- gp_fill_defaults(gp_text)
 
