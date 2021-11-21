@@ -46,6 +46,8 @@ textpathGrob <- function(
   just = "centre",
   hjust = NULL,
   vjust = NULL,
+  group_min_vjust = NULL,
+  group_max_vjust = NULL,
   gp_text = gpar(),
   gp_path = gpar(),
   cut_path = NA,
@@ -90,6 +92,8 @@ textpathGrob <- function(
       x = x, y = y,
       id = rep(seq_along(id_lens), id_lens),
       vjust = vjust, hjust = hjust,
+      group_min_vjust = group_min_vjust,
+      group_max_vjust = group_max_vjust,
       cut_path = cut_path,
       gp_text  = gp_text,
       gp_path  = gp_path
@@ -109,7 +113,9 @@ makeContent.textpath <- function(x) {
   xx <- convertX(v$x, "inches", valueOnly = TRUE)
   yy <- convertY(v$y, "inches", valueOnly = TRUE)
 
-  path <- data_frame(x = xx, y = yy, id = v$id, vjust = v$vjust)
+  path <- data_frame(x = xx, y = yy, id = v$id, vjust = v$vjust,
+                     group_min_vjust = v$group_min_vjust,
+                     group_max_vjust = v$group_max_vjust)
 
   ## ---- Data manipulation -------------------------------------------- #
 

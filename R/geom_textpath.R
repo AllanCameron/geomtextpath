@@ -304,6 +304,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
 
     #---- Dispatch data to grob -----------------------------#
 
+
     textpathGrob(
       label = data$label[first],
       x = data$x,
@@ -311,6 +312,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       id = data$group,
       hjust = data$hjust[first],
       vjust = data$vjust,
+      group_min_vjust = data$group_min_vjust,
+      group_max_vjust = data$group_max_vjust,
       cut_path = cut_path,
       gp_text = text_gp,
       gp_path = path_gp,

@@ -30,8 +30,11 @@ test_that("Path trimming is correct", {
   xy <- data.frame(
     x = c(1:6), y = 1,
     id = c(1,1,2,2,3,3),
-    vjust = c(2, 2, 0.5, 0.5, -1, -1)
+    vjust = c(2, 2, 0.5, 0.5, -1, -1),
+    label = "a label"
   )
+  xy$group <- xy$id
+  xy <- .groupify_linebreaks(xy)
   xy <- split(xy, xy$id)
   xy <- Map(.add_path_data, .data = xy)
   glyphs <- Map(.get_path_points, path = xy, label = c("A", "B", "C"))

@@ -263,7 +263,11 @@
                                    breathing_room = 0.15,
                                    vjust_lim = c(0, 1)) {
 
-  path$trim <- !(path$vjust <= vjust_lim[1] | path$vjust >= vjust_lim[2])
+  path$trim <- (path$group_max_vjust >= vjust_lim[1] &
+                path$group_min_vjust <= vjust_lim[2] ) |
+               (path$group_max_vjust <= vjust_lim[2] &
+                path$group_min_vjust >= vjust_lim[1])
+
   path$trim <- if (!is.na(cut_path)) rep(cut_path, nrow(path)) else path$trim
 
   # Simplify if text isn't exactly on path
@@ -369,24 +373,32 @@
 .groupify_linebreaks <- function(data)
 {
     data$label <- as.character(data$label)
+    data$group_min_vjust <- data$vjust
+    data$group_max_vjust <- data$vjust
     line_breakers <- data[grepl("[\r\n]", data$label),]
     non_breakers <- data[!grepl("[\r\n]", data$label),]
     pieces <- strsplit(line_breakers$label, "[\r\n]+")
-    line_breakers <- rbind_dfs(lapply(seq_along(pieces), function(i){
+    line_breakers <- do.call(rbind, lapply(seq_along(pieces), function(i){
       n <- length(pieces[[i]])
       df <- line_breakers[rep(i, n),]
       df$label <- pieces[[i]]
-      df$vjust <- (seq(n) - n/2 - 0.5) * df$lineheight[1] + df$vjust
-      df$group <- rep(df$group[1] + seq(0, 1 - 1/n, 1/2),
+      df$vjust <- (seq(n) - n)  * df$lineheight[1] +
+                  df$vjust[1] * df$lineheight[1] * (n - 1) + df$vjust[1]
+      df$group <- rep(df$group[1] + seq(0, 1 - 1/n, 1/n),
                       length.out = nrow(df))
       line_type <- df$linetype[1]
       df$linetype <- 0
-      df$linetype[which.max(nchar(df$label))] <- line_type
+      df$linetype[which(df$vjust <= 1 & df$vjust >= 0)] <- line_type
+      if(all(df$linetype == 0)) {
+        df$linetype[which.min(abs(df$vjust))] <- line_type
+      }
+      df$group_min_vjust <- min(df$vjust)
+      df$group_max_vjust <- max(df$vjust)
       df
     }))
     data <- rbind(line_breakers, non_breakers)
 
-    data$group <- discretise(data$group)
+    data$group <- as.numeric(factor(data$group))
 
     data
 }
