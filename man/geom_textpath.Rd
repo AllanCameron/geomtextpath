@@ -17,7 +17,8 @@ geom_textpath(
   linejoin = "round",
   linemitre = 10,
   include_line = TRUE,
-  cut_path = NA
+  cut_path = NA,
+  flip_inverted = FALSE
 )
 }
 \arguments{
@@ -80,6 +81,10 @@ ignored.}
 into two sections, one on either side of the string and if FALSE leaves the
 path unbroken. The default value is NA, which will break the line if the
 string has a vjust of between 0 and 1.}
+
+\item{flip_inverted}{If TRUE, any string where the majority of letters would
+be upside down along the path are inverted to improve legibility. The
+default is FALSE.}
 }
 \description{
 The existing text-based geom layers in ggplot2

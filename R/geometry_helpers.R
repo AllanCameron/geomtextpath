@@ -104,6 +104,9 @@
 #'   `fontfamily`, `font`, `fontsize` and `lineheight`.
 #' @param hjust A `numeric(1)` scalar specifying horizontal justification along
 #'   the path.
+#' @param flip_inverted If TRUE, any string where the majority of letters would
+#'   be upside down along the path are inverted to improve legibility. The
+#'   default is FALSE.
 #'
 #' @return A `data.frame` with numerical values interpolated at the points where
 #'   the letters in `label` argument should be placed, along with a `label`
@@ -132,7 +135,8 @@
 #'
 #' .get_path_points(xy)
 .get_path_points <- function(path, label = "placeholder",
-                             gp = get.gpar(), hjust = 0.5)
+                             gp = get.gpar(), hjust = 0.5,
+                             flip_inverted = FALSE)
 {
   # Get pixels per inch (72 is default screen resolution). For some reason text
   # renders weirdly if this is adapted to the device. For raster graphics,
@@ -197,6 +201,19 @@
   # Now we assign each letter to its correct point on the path
   df$label <- letters$shape$glyph
 
+  is_upside_down <- df$angle %% 360 > 100 & df$angle %% 360 < 260
+  mostly_upside_down <- (sum(is_upside_down) / length(is_upside_down)) > 0.5
+
+  if(mostly_upside_down & flip_inverted)
+  {
+    path$angle <- path$angle + 180
+    path$length <- max(path$length) - path$length
+    path$adj_length <- max(path$adj_length) - path$adj_length
+    path$vjust <- 1 - path$vjust
+    path <- path[rev(seq(nrow(path))),]
+    df <- .get_path_points(path, label, gp, hjust)
+  }
+
   # This ensures that we don't try to return any invalid letters
   # (those letters that fall off the path on either side will have
   # NA angles)
@@ -204,16 +221,6 @@
 }
 
 ## Getting surrounding lines -----------------------------------------------
-
-## TODO: Do we want to add a parameter to switch the lines on and off,
-##       inside geom_textpath(), or simply set a default linewidth of 0?
-## RE: We could separate it into two geoms, one with a path by default and one
-##     without. I think some graphics devices interpret 0-linewidth differently,
-##     so the safer option would be to use `linetype = 0`, I think.
-
-## TODO: Below, we're using `vjust` to determine where to cut the path if it
-##       intersects text, but that doesn't take ascenders and descenders into
-##       account.
 
 ## TODO: Sometimes when the device is really small or the letters huge, there
 ##       can be a letters data.frame that has 0 rows for a group. We should

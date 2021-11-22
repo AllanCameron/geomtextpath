@@ -16,6 +16,9 @@
 #'   into two sections, one on either side of the string and if FALSE leaves the
 #'   path unbroken. The default value is NA, which will break the line if the
 #'   string has a vjust of between 0 and 1
+#' @param flip_inverted If TRUE, any string where the majority of letters would
+#'   be upside down along the path are inverted to improve legibility. The
+#'   default is FALSE.
 #'
 #' @inheritParams grid::textGrob
 #'
@@ -52,6 +55,7 @@ textpathGrob <- function(
   gp_text = gpar(),
   gp_path = gpar(),
   cut_path = NA,
+  flip_inverted = FALSE,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -98,11 +102,13 @@ textpathGrob <- function(
   path <- .groupify_linebreaks(path)
 
   gTree(
-    textpath = list(data = path,
-      hjust    = hjust,
-      cut_path = cut_path,
-      gp_text  = gp_text,
-      gp_path  = gp_path
+    textpath = list(
+      data          = path,
+      hjust         = hjust,
+      cut_path      = cut_path,
+      gp_text       = gp_text,
+      gp_path       = gp_path,
+      flip_inverted = flip_inverted
     ),
     name = name,
     vp = vp,
@@ -129,7 +135,8 @@ makeContent.textpath <- function(x) {
   labels <- sapply(path, function(x) x$label[1])
   # Get the actual text string positions and angles for each group
   text <- Map(.get_path_points, path = path, label = labels,
-              hjust = v$hjust, gp = split_gp(v$gp_text, seq_along(labels)))
+              hjust = v$hjust, gp = split_gp(v$gp_text, seq_along(labels)),
+              flip_inverted = v$flip_inverted)
   text_lens <- vapply(text, nrow, integer(1))
 
   ## ---- Build text grob ---------------------------------------------- #

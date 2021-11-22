@@ -15,6 +15,7 @@ textpathGrob(
   gp_text = gpar(),
   gp_path = gpar(),
   cut_path = NA,
+  flip_inverted = FALSE,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -53,6 +54,10 @@ of graphical parameters for the text and path respectively.}
 into two sections, one on either side of the string and if FALSE leaves the
 path unbroken. The default value is NA, which will break the line if the
 string has a vjust of between 0 and 1}
+
+\item{flip_inverted}{If TRUE, any string where the majority of letters would
+be upside down along the path are inverted to improve legibility. The
+default is FALSE.}
 
 \item{default.units}{A string indicating the default units to use
     if \code{x} or \code{y}
