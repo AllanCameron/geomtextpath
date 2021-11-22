@@ -165,13 +165,15 @@ p <- data.frame(x1 = c(seq(0, 10/6 * pi, pi/3),
   geom_textpath(data = data.frame(x1 = seq(0, 2 * pi, length = 300),
            y1 = rep(0.5, 300),
            label = rep(c("stats", "effects", "polar"), each = 100)),
-           aes(label = label), linetype = 0, size = 8) +
+           aes(label = label), linetype = 0, size = 8,
+           flip_inverted = TRUE) +
   geom_textpath(data = data.frame(x1 = seq(0, 2 * pi, length = 300),
            y1 = rep(3, 300),
            label = rep(c("density", "smooth", "unique", "organic",
                          "easy to use", "automatic"), 
                        each = 50)),
-           aes(label = label), linetype = 0, size = 5, color = "white") +
+           aes(label = label), linetype = 0, size = 5, color = "white",
+           flip_inverted = TRUE) +
   scale_y_continuous(limits = c(-5, 4)) +
   scale_x_continuous(limits = c(0, 2*pi)) +
   scale_fill_manual(values = c("deepskyblue3", "deepskyblue4",
