@@ -230,6 +230,7 @@ makeContent.textpath <- function(x) {
     data$group_min_vjust <- data$vjust
     data$group_max_vjust <- data$vjust
     data$original_id <- data$id
+    data$vjust_if_inverted <- data$vjust
     multi_liners <- grepl("[\r\n]", data$label)
 
     if(!any(multi_liners)) return(data)
@@ -253,6 +254,7 @@ makeContent.textpath <- function(x) {
       }
       df$group_min_vjust <- min(df$vjust)
       df$group_max_vjust <- max(df$vjust)
+      df$vjust_if_inverted <- rev(df$vjust)
       df
     }))
 

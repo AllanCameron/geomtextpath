@@ -18,7 +18,7 @@
 #' This function supplements a single path given as x and y coordinates with
 #' information about the shape of the curve.
 #'
-#' @param .data A `data.frame` with `x` and `y` numeric columns.
+#' @param .data A `data.frame` with `x`, `y` and `vjust` numeric columns.
 #'
 #' @return A `data.frame` with additional columns `angle`, `length` and
 #'   `adj_length`.
@@ -211,12 +211,11 @@
 
   if(mostly_upside_down & flip_inverted)
   {
-    path$angle <- path$angle + 180
-    path$length <- max(path$length) - path$length
-    path$adj_length <- max(path$adj_length) - path$adj_length
-    path$vjust <- 1 - path$vjust
     path <- path[rev(seq(nrow(path))),]
-    df <- .get_path_points(path, label, gp, hjust)
+    path$vjust <- 1 - path$vjust_if_inverted
+    path <- .add_path_data(path)
+    df <- .get_path_points(path, label, gp, hjust = 1 - hjust)
+
   }
  df
 }
