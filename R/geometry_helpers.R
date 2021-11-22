@@ -80,7 +80,7 @@
 
   .data$vjust <- .data$vjust %||% 0.5 # Set default vjust if absent from data
   effective_length <- diff(.data$length) *
-    (1 + ((head(.data$vjust, -1) + tail(.data$vjust, -1))/2 - 0.5) * curvature / 5)
+    (1 + ((head(.data$vjust, -1) + tail(.data$vjust, -1))/2 - 0.5) * curvature / (2 * pi))
 
   .data$adj_length <- c(0, cumsum(effective_length))
 
@@ -201,6 +201,11 @@
   # Now we assign each letter to its correct point on the path
   df$label <- letters$shape$glyph
 
+  # This ensures that we don't try to return any invalid letters
+  # (those letters that fall off the path on either side will have
+  # NA angles)
+  df <- df[!is.na(df$angle), ]
+
   is_upside_down <- df$angle %% 360 > 100 & df$angle %% 360 < 260
   mostly_upside_down <- (sum(is_upside_down) / length(is_upside_down)) > 0.5
 
@@ -213,11 +218,7 @@
     path <- path[rev(seq(nrow(path))),]
     df <- .get_path_points(path, label, gp, hjust)
   }
-
-  # This ensures that we don't try to return any invalid letters
-  # (those letters that fall off the path on either side will have
-  # NA angles)
-  df[!is.na(df$angle), ]
+ df
 }
 
 ## Getting surrounding lines -----------------------------------------------

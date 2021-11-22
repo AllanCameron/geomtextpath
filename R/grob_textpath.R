@@ -99,7 +99,7 @@ textpathGrob <- function(
                      lineheight = rep(gp_text$lineheight, id_lens),
                      linetype = rep(gp_path$lty, id_lens))
 
-  path <- .groupify_linebreaks(path)
+  path <- .groupify_linebreaks(path, flip_inverted)
 
   n_reps <- sapply(seq_along(unique(path$original_id)), function(i)
   {
@@ -197,6 +197,9 @@ makeContent.textpath <- function(x) {
 #' @param data A `data.frame` with at least a factor or character column
 #'   called "label", integer columns called "group" and "linetype", and
 #'   numeric columns called "vjust" and "lineheight".
+#' @param flip_inverted If TRUE, any string where the majority of letters would
+#'   be upside down along the path are inverted to improve legibility. The
+#'   default is FALSE.
 #'
 #' @details The returned data is split into groups, one group for each
 #'   segment of text such that none have line breaks. For strings that
@@ -220,11 +223,12 @@ makeContent.textpath <- function(x) {
 #' )
 #'
 #' .groupify_linebreaks(xy)
-.groupify_linebreaks <- function(data)
+.groupify_linebreaks <- function(data, flip_inverted = FALSE)
 {
     data$label <- as.character(data$label)
     data$group_min_vjust <- data$vjust
     data$group_max_vjust <- data$vjust
+    data$original_id <- data$id
     multi_liners <- grepl("[\r\n]", data$label)
 
     if(!any(multi_liners)) return(data)
@@ -238,7 +242,6 @@ makeContent.textpath <- function(x) {
       df$label <- pieces[[i]]
       df$vjust <- (seq(n) - n)  * df$lineheight[1] +
                   df$vjust[1] * df$lineheight[1] * (n - 1) + df$vjust[1]
-      df$original_id <- df$id
       df$id <- rep(df$id[1] + seq(0, 1 - 1/n, 1/n),
                       length.out = nrow(df))
       line_type <- df$linetype[1]

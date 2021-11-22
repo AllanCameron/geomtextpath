@@ -154,7 +154,7 @@ p <- data.frame(x1 = c(seq(0, 10/6 * pi, pi/3),
            label = rep(c("density", "smooth", "unique", "organic",
                          "easy to use", "automatic"), 
                        each = 50)),
-           aes(label = label), linetype = 0, size = 5, color = "white",
+           aes(label = label), linetype = 0, size = 4.6, color = "white",
            flip_inverted = TRUE) +
   scale_y_continuous(limits = c(-5, 4)) +
   scale_x_continuous(limits = c(0, 2*pi)) +
