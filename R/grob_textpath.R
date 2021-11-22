@@ -108,6 +108,7 @@ textpathGrob <- function(
   })
 
   gp_text <- recycle_gp(gp_text, rep, times = n_reps)
+  gp_path <- recycle_gp(gp_path, rep, times = n_reps)
 
   gTree(
     textpath = list(
