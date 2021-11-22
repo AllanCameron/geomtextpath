@@ -101,6 +101,14 @@ textpathGrob <- function(
 
   path <- .groupify_linebreaks(path)
 
+  n_reps <- sapply(seq_along(unique(path$original_id)), function(i)
+  {
+    sub_paths <- path$original_id == unique(path$original_id)[i]
+    length(unique(path$id[sub_paths]))
+  })
+
+  gp_text <- recycle_gp(gp_text, rep, times = n_reps)
+
   gTree(
     textpath = list(
       data          = path,
@@ -230,6 +238,7 @@ makeContent.textpath <- function(x) {
       df$label <- pieces[[i]]
       df$vjust <- (seq(n) - n)  * df$lineheight[1] +
                   df$vjust[1] * df$lineheight[1] * (n - 1) + df$vjust[1]
+      df$original_id <- df$id
       df$id <- rep(df$id[1] + seq(0, 1 - 1/n, 1/n),
                       length.out = nrow(df))
       line_type <- df$linetype[1]
