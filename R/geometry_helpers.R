@@ -41,6 +41,9 @@
 #' .add_path_data(xy)
 .add_path_data <- function(.data)
 {
+  # Set default vjust if absent from data
+  .data$vjust <- .data$vjust %||% 0.5
+
   # Gradient is found and converted to angle here. Since we use approx
   # to interpolate angles later, we can't have any sudden transitions
   # where angles "wrap around" from +180 to -180, otherwise we might
@@ -48,14 +51,15 @@
   # around 0. When combined with a vjust, this also makes the letters
   # jump out of alignment. This little algorithm makes sure the changes
   # in angle never wrap around.
-  grad <- diff(.data$y) / diff(.data$x)
-  rads <- atan(grad)
+  rads <- atan(diff(.data$y) / diff(.data$x))
+
   if (length(rads) > 1) {
     diff_rads <- diff(rads)
     diff_rads <- ifelse(diff_rads < - pi / 2, diff_rads + pi, diff_rads)
     diff_rads <- ifelse(diff_rads > + pi / 2, diff_rads - pi, diff_rads)
     rads <- cumsum(c(rads[1], 0, diff_rads))
-  } else {
+  }
+  else {
     diff_rads <- c(0, 0)
     rads <- rep(rads, 2)
   }
@@ -74,15 +78,17 @@
   # will be inconsistent across sections with different curvature
 
   diff_rads <- approx(seq_along(diff_rads), diff_rads,
-                      seq(1, length(diff_rads), length.out = nrow(.data) - 1))$y
+                      seq(1, length(diff_rads), length = nrow(.data) - 1))$y
 
-  curvature <- diff_rads/diff(.data$length)
+  curvature         <- diff_rads / (diff(.data$length) * pi)
 
-  .data$vjust <- .data$vjust %||% 0.5 # Set default vjust if absent from data
-  effective_length <- diff(.data$length) *
-    (1 + ((head(.data$vjust, -1) + tail(.data$vjust, -1))/2 - 0.5) * curvature / (2 * pi))
+  offset            <- (.data$vjust[-nrow(.data)] + .data$vjust[-1] - 1) / 2
 
-  .data$adj_length <- c(0, cumsum(effective_length))
+  length_correction <-  1 +  offset * curvature
+
+  effective_length  <- diff(.data$length) * length_correction
+
+  .data$adj_length  <- c(0, cumsum(effective_length))
 
   .data
 }
