@@ -42,53 +42,15 @@
 .add_path_data <- function(.data)
 {
   # Set default vjust if absent from data
-  .data$vjust <- .data$vjust %||% 0.5
+  .data$vjust  <- .data$vjust %||% 0.5
 
-  # Gradient is found and converted to angle here. Since we use approx
-  # to interpolate angles later, we can't have any sudden transitions
-  # where angles "wrap around" from +180 to -180, otherwise we might
-  # interpolate in this transition and get letters with an angle of
-  # around 0. When combined with a vjust, this also makes the letters
-  # jump out of alignment. This little algorithm makes sure the changes
-  # in angle never wrap around.
-  rads <- atan(diff(.data$y) / diff(.data$x))
+  .data$angle  <- .path_angle_at_xy(.data$x, .data$y)
 
-  if (length(rads) > 1) {
-    diff_rads <- diff(rads)
-    diff_rads <- ifelse(diff_rads < - pi / 2, diff_rads + pi, diff_rads)
-    diff_rads <- ifelse(diff_rads > + pi / 2, diff_rads - pi, diff_rads)
-    rads <- cumsum(c(rads[1], 0, diff_rads))
-  }
-  else {
-    diff_rads <- c(0, 0)
-    rads <- rep(rads, 2)
-  }
+  .data$length <- .arclength_from_xy(.data$x, .data$y)
 
-  # Now we can safely convert to degrees
-  .data$angle <- rads * 180 / pi
+  offset <- .data$vjust - 0.5
 
-  # Letters need to be spaced according to their distance along the path, so
-  # we need a column to measure the distance of each point along the path
-  .data$length <- c(0, cumsum(sqrt(diff(.data$x)^2 + diff(.data$y)^2)))
-
-  # We also need to define curvature of the line at each point.
-  # This is how much the angle changes per unit distance. We need to use
-  # radians here. We need to know the curvature to increase or decrease
-  # the spacing between characters when vjust is used, otherwise the spacing
-  # will be inconsistent across sections with different curvature
-
-  diff_rads <- approx(seq_along(diff_rads), diff_rads,
-                      seq(1, length(diff_rads), length = nrow(.data) - 1))$y
-
-  curvature         <- diff_rads / (diff(.data$length) * 5)
-
-  offset            <- (.data$vjust[-nrow(.data)] + .data$vjust[-1] - 1) / 2
-
-  length_correction <-  1 +  offset * curvature
-
-  effective_length  <- diff(.data$length) * length_correction
-
-  .data$adj_length  <- c(0, cumsum(effective_length))
+  .data$adj_length  <- .length_adjust_by_curvature(.data$x, .data$y, offset)
 
   .data
 }

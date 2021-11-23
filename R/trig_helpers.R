@@ -6,7 +6,11 @@
 .stretch_by_one <- function(vec)
 {
   n <- length(vec)
-  approx(seq(n), vec, seq(1, n, length.out = n + 1))$y
+
+  if(n == 1)
+    rep(vec, 2)
+  else
+    approx(seq(n), vec, seq(1, n, length.out = n + 1))$y
 }
 
 # ------------------------------------------------------------------------------
@@ -98,5 +102,27 @@
   .arclength_from_xy(offset_df$x, offset_df$y, accuracy)
 }
 
+# ------------------------------------------------------------------------------
+# Finds the curvature (change in angle per change in arc length)
+.get_curvature <- function(x, y, stretch = TRUE)
+{
+  arclength <- .arclength_from_xy(x, y)
+  angle     <- .path_angle_at_xy(x, y, degrees = FALSE)
+  curvature <- diff(angle) / diff(arclength)
+  if(stretch) .stretch_by_one(curvature) else curvature
+}
 
+
+# ------------------------------------------------------------------------------
+# Finds the length of each part of the offset path that projects onto the
+# original path
+.length_adjust_by_curvature <- function(x, y, offset)
+{
+  curvature         <- .get_curvature(x, y) * 0.2
+  length_correction <-  1 +  offset * curvature
+
+  effective_length  <- c(0, diff(.arclength_from_xy(x, y))) * length_correction
+
+  cumsum(effective_length)
+}
 
