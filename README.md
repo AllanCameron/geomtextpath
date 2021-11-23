@@ -92,7 +92,7 @@ faceting horizontally:
 ``` r
 p <- ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
        geom_textpath(aes(label = Species), stat = "density",
-                     size = 6, fontface = 2, hjust = 0.1, vjust = -0.2) +
+                     size = 6, fontface = 2, hjust = 0.2, vjust = -0.2) +
        scale_y_continuous(limits = c(0, 1.5))
 
 p + facet_grid(.~Species)
@@ -190,7 +190,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 

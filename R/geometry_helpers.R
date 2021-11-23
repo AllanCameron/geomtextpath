@@ -80,7 +80,7 @@
   diff_rads <- approx(seq_along(diff_rads), diff_rads,
                       seq(1, length(diff_rads), length = nrow(.data) - 1))$y
 
-  curvature         <- diff_rads / (diff(.data$length) * pi)
+  curvature         <- diff_rads / (diff(.data$length) * 5)
 
   offset            <- (.data$vjust[-nrow(.data)] + .data$vjust[-1] - 1) / 2
 
