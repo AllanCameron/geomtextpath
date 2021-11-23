@@ -40,7 +40,7 @@
     diff_rads <- diff(rads)
     diff_rads <- ifelse(diff_rads < - pi / 2, diff_rads + pi, diff_rads)
     diff_rads <- ifelse(diff_rads > + pi / 2, diff_rads - pi, diff_rads)
-    rads <- c(rads[1], cumsum(diff_rads))
+    rads <- cumsum(c(rads[1], diff_rads))
   }
   else {
     diff_rads <- c(0, 0)
@@ -85,7 +85,8 @@
 # Finds the xy co-ordinates at offset d from original x, y coordinates
 .get_offset_path <- function(x, y, d)
 {
-   angle <- .path_angle_at_xy(x, y, degrees = FALSE) + pi/2
+   angle <- .path_angle_at_xy(x, y, degrees = FALSE) + pi / 2
+
    data.frame(x = d * cos(angle) + x, y = d * sin(angle) + y)
 }
 
@@ -94,7 +95,8 @@
 .length_adjustment_at_d <- function(x, y, d, accuracy = 0)
 {
   offset_df <- .get_offset_path(x, y, d)
-  original_path <- diff(.arclength_from_xy(x, y, accuracy))
-  offset_path <- diff(.arclength_from_xy(offset_df$x, offset_df$y, accuracy))
-  .stretch_by_one(offset_path / original_path)
+  .arclength_from_xy(offset_df$x, offset_df$y, accuracy)
 }
+
+
+
