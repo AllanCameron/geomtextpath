@@ -17,7 +17,7 @@ test_that("Text angles are correct", {
   expect_equal(test$angle[test$label != " "], -45)
 
   # This should be at the exact top of the triangle, where angle should be 0
-  test <- .get_path_points(xy, "O", hjust = 0.5)
+  test <- .get_path_points(xy, "O", hjust = 0.5, halign = 0.5)
   expect_equal(test$angle[test$label != " "], 0)
 
   # Test location of letters
@@ -90,4 +90,21 @@ test_that("Path trimming is correct", {
       5, 6)
   )
   expect_equal(unique(test$y), 1)
+})
+
+test_that("text can be placed on 2-point paths", {
+  # This is a canary in a coal-mine test to see if we haven't implemented
+  # something that works for longer paths but not for very short paths.
+
+  xy <- data.frame(x = c(1,2,3,4), y = c(1,2,2,1), id = c(1,1,2,2))
+  xy <- split(xy, xy$id)
+  xy <- Map(.add_path_data, .data = xy)
+
+  test <- Map(.get_path_points, label = c("A", "B"), path = xy)
+  test <- rbind_dfs(test)
+
+  # What actually to test is arbitrary, we just want the above to run without
+  # errors and be notified if anything changes.
+  expect_snapshot(test)
+
 })
