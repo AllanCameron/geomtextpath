@@ -433,17 +433,15 @@ measure_text <- function(label, gp = get.gpar(), ppi = 72,
     trim <- path$trim[c(TRUE, path$id[-1] != path$id[-nrow(path)])]
 
     # Get locations where strings start and end
-    letter_lens <- run_len(letters$id)
-    starts <- {ends <- cumsum(letter_lens)} - letter_lens + 1
-    mins <- letters$length[starts]
-    maxs <- letters$length[ends]
+    ranges <- vapply(split(letters$length, letters$id), range,
+                     numeric(2), USE.NAMES = FALSE)
 
     # Create breathing space around letters
     path_max <- vapply(split(path$length, path$id), max,
                        numeric(1), USE.NAMES = FALSE)
 
-    mins <- pmax(0, mins - breathing_room)
-    maxs <- pmin(path_max, maxs + breathing_room)
+    mins <- pmax(0, ranges[1, ] - breathing_room)
+    maxs <- pmin(path_max, ranges[2, ] + breathing_room)
 
     # Consider path length as following one another to avoid a loop
     sumlen <- c(0, path_max[-length(path_max)])
