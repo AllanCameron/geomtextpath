@@ -12,11 +12,10 @@ textpathGrob(
   just = "centre",
   hjust = NULL,
   vjust = NULL,
-  group_min_vjust = NULL,
-  group_max_vjust = NULL,
   gp_text = gpar(),
   gp_path = gpar(),
   cut_path = NA,
+  flip_inverted = FALSE,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -47,14 +46,6 @@ multiple lines. All locations with the same \code{id} belong to the same line.}
 \item{vjust}{A numeric vector specifying vertical justification.
     If specified, overrides the \code{just} setting.}
 
-\item{group_min_vjust}{each multi-line group needs to know the vjust of the
-whole group together. If there is only a single line, this can be left
-as \code{NULL}, in which case the group's vjust will be used}
-
-\item{group_max_vjust}{each multi-line group needs to know the vjust of the
-whole group together. If there is only a single line, this can be left
-as \code{NULL}, in which case the group's vjust will be used}
-
 \item{gp_text, gp_path}{An object of class \code{"gpar"}, typically the output from
 a call from the \code{\link[grid:gpar]{gpar()}} function. These are basically lists
 of graphical parameters for the text and path respectively.}
@@ -63,6 +54,10 @@ of graphical parameters for the text and path respectively.}
 into two sections, one on either side of the string and if FALSE leaves the
 path unbroken. The default value is NA, which will break the line if the
 string has a vjust of between 0 and 1}
+
+\item{flip_inverted}{If TRUE, any string where the majority of letters would
+be upside down along the path are inverted to improve legibility. The
+default is FALSE.}
 
 \item{default.units}{A string indicating the default units to use
     if \code{x} or \code{y}
@@ -90,7 +85,9 @@ grob <- textpathGrob(
   x = c(t, t) / (2 * pi),
   y = c(cos(t), sin(t)) * 0.25 + 0.5,
   id = rep(1:2, each = length(t)),
-  vjust = rep(0.5, 2 * length(t))
+  vjust = rep(0.5, 2 * length(t)),
+  gp_text = gpar(lineheight = c(1.2, 1.2)),
+  gp_path = gpar(lty = c(1, 2))
 )
 
 grid.newpage(); grid.draw(grob)

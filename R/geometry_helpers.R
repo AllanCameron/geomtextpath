@@ -18,7 +18,7 @@
 #' This function supplements a single path given as x and y coordinates with
 #' information about the shape of the curve.
 #'
-#' @param .data A `data.frame` with `x` and `y` numeric columns.
+#' @param .data A `data.frame` with `x`, `y` and `vjust` numeric columns.
 #'
 #' @return A `data.frame` with additional columns `angle`, `length` and
 #'   `adj_length`.
@@ -41,52 +41,15 @@
 #' .add_path_data(xy)
 .add_path_data <- function(.data)
 {
-  # Gradient is found and converted to angle here. Since we use approx
-  # to interpolate angles later, we can't have any sudden transitions
-  # where angles "wrap around" from +180 to -180, otherwise we might
-  # interpolate in this transition and get letters with an angle of
-  # around 0. When combined with a vjust, this also makes the letters
-  # jump out of alignment. This little algorithm makes sure the changes
-  # in angle never wrap around.
-  dx <- diff(.data$x)
-  dy <- diff(.data$y)
-  grad <- dy / dx
+  # Set default vjust if absent from data
+  .data$vjust  <- .data$vjust %||% 0.5
+  .data$angle  <- .path_angle_at_xy(.data$x, .data$y)
 
-  rads <- atan(grad)
-  if (length(rads) > 1) {
-    diff_rads <- diff(rads)
-    diff_rads <- ifelse(diff_rads < - pi / 2, diff_rads + pi, diff_rads)
-    diff_rads <- ifelse(diff_rads > + pi / 2, diff_rads - pi, diff_rads)
-    rads <- cumsum(c(rads[1], 0, diff_rads))
-  } else {
-    diff_rads <- c(0, 0)
-    rads <- rep(rads, 2)
-  }
+  .data$length <- .arclength_from_xy(.data$x, .data$y)
 
-  # Now we can safely convert to degrees
-  .data$angle <- rads * 180 / pi
+  offset <- .data$vjust - 0.5
 
-  # Letters need to be spaced according to their distance along the path, so
-  # we need a column to measure the distance of each point along the path
-  dist <- sqrt(dx^2 + dy^2)
-  .data$length <- c(0, cumsum(dist))
-
-  # We also need to define curvature of the line at each point.
-  # This is how much the angle changes per unit distance. We need to use
-  # radians here. We need to know the curvature to increase or decrease
-  # the spacing between characters when vjust is used, otherwise the spacing
-  # will be inconsistent across sections with different curvature
-
-  diff_rads <- approx(seq_along(diff_rads), diff_rads,
-                      seq(1, length(diff_rads), length.out = nrow(.data) - 1))$y
-
-  curvature <- diff_rads/dist
-
-  adj_vjust <- .data$vjust %||% c(0.5, 0.5) # Set default vjust if absent from data
-  adj_vjust <- ((head(adj_vjust, -1) + tail(adj_vjust, -1)) / 2 - 0.5)
-  effective_length <- dist * (1 + adj_vjust * curvature / 5)
-
-  .data$adj_length <- c(0, cumsum(effective_length))
+  .data$adj_length  <- .length_adjust_by_curvature(.data$x, .data$y, offset)
 
   .data
 }
@@ -319,38 +282,7 @@ measure_text <- function(label, gp = get.gpar(), ppi = 72,
   return(ans)
 }
 
-path_orientation <- function(x, y) {
-  if (length(x) < 3) {
-    return("cw")
-  }
-  i <- which(y == min(y))
-  if (length(i) > 1) {
-    i <- i[which.max(x[i])]
-  }
-  if (i == length(x)) {
-    i <- i - 1
-  }
-  if (i == 1) {
-    i <- 2
-  }
-  det <- (x[i] - x[i-1]) * (y[i + 1] - y[i - 1]) -
-    (x[i + 1] - x[i - 1]) * (y[i] - y[i - 1])
-  out <- if (sign(det) %in% c(0, 1)) "cw" else "ccw"
-  print(out)
-  out
-}
-
 ## Getting surrounding lines -----------------------------------------------
-
-## TODO: Do we want to add a parameter to switch the lines on and off,
-##       inside geom_textpath(), or simply set a default linewidth of 0?
-## RE: We could separate it into two geoms, one with a path by default and one
-##     without. I think some graphics devices interpret 0-linewidth differently,
-##     so the safer option would be to use `linetype = 0`, I think.
-
-## TODO: Below, we're using `vjust` to determine where to cut the path if it
-##       intersects text, but that doesn't take ascenders and descenders into
-##       account.
 
 ## TODO: Sometimes when the device is really small or the letters huge, there
 ##       can be a letters data.frame that has 0 rows for a group. We should
@@ -472,68 +404,3 @@ path_orientation <- function(x, y) {
 
 
 
-## Split linebreaks  -----------------------------------------------
-
-#' Split strings with linebreaks into different groups
-#'
-#' This function prepares the data for plotting by splitting labels
-#' at line breaks and giving each its own group
-#'
-#' @param data A `data.frame` with at least a factor or character column
-#'   called "label", integer columns called "group" and "linetype", and
-#'   numeric columns called "vjust" and "lineheight".
-#'
-#' @details The returned data is split into groups, one group for each
-#'   segment of text such that none have line breaks. For strings that
-#'   initially contained line breaks, they are broken up into different
-#'   groups with different vjust values. The vjust values of each text line
-#'   are centered around the originally specified vjust,
-#'
-#' @return A data frame containing the same column names and types as the
-#'   original, but with newlines now treated as different groups.
-#' @noRd
-#'
-#' @examples
-#' xy <- data.frame(
-#'   x =  1:10,
-#'   y = (1:10)^2,
-#'   group = 1,
-#'   label = "This string \n has a line break",
-#'   vjust = 0.5,
-#'   linetype = 1,
-#'   lineheight = 1.2
-#' )
-#'
-#' .groupify_linebreaks(xy)
-.groupify_linebreaks <- function(data)
-{
-    data$label <- as.character(data$label)
-    data$group_min_vjust <- data$vjust
-    data$group_max_vjust <- data$vjust
-    line_breakers <- data[grepl("[\r\n]", data$label),]
-    non_breakers <- data[!grepl("[\r\n]", data$label),]
-    pieces <- strsplit(line_breakers$label, "[\r\n]+")
-    line_breakers <- do.call(rbind, lapply(seq_along(pieces), function(i){
-      n <- length(pieces[[i]])
-      df <- line_breakers[rep(i, n),]
-      df$label <- pieces[[i]]
-      df$vjust <- (seq(n) - n)  * df$lineheight[1] +
-                  df$vjust[1] * df$lineheight[1] * (n - 1) + df$vjust[1]
-      df$group <- rep(df$group[1] + seq(0, 1 - 1/n, 1/n),
-                      length.out = nrow(df))
-      line_type <- df$linetype[1]
-      df$linetype <- 0
-      df$linetype[which(df$vjust <= 1 & df$vjust >= 0)] <- line_type
-      if(all(df$linetype == 0)) {
-        df$linetype[which.min(abs(df$vjust))] <- line_type
-      }
-      df$group_min_vjust <- min(df$vjust)
-      df$group_max_vjust <- max(df$vjust)
-      df
-    }))
-    data <- rbind(line_breakers, non_breakers)
-
-    data$group <- as.numeric(factor(data$group))
-
-    data
-}
