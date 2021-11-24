@@ -56,47 +56,6 @@
 
 ## Getting path points ----------------------------------------------------
 
-calc_offset <- function(x, y, d = 0) {
-  n  <- length(x)
-  dx <- diff(x)
-  dy <- diff(y)
-  ang  <- atan(dy / dx)
-  dang <- diff(ang)
-  dang <- ifelse(dang < - pi / 2, dang + pi, dang)
-  dang <- ifelse(dang > + pi / 2, dang - pi, dang)
-  ang <- atan2(dy[1], dx[1])
-
-  # Get orthogonal angles
-  ang <- cumsum(c(ang[1], dang)) + pi / 2
-
-  # Left / right aligned indices
-  before <- c(1L, seq_along(ang))
-  after  <- c(seq_along(ang), length(ang))
-
-  # Calculate angle bisector
-  bis <- (ang[before] + ang[after])/2
-
-  # Calculate x position at angle bisector
-  xx <- cos(ang)
-  xx <- xx[before] * xx[after]
-
-  # Calculate y position at angle bisector
-  yy <- sin(ang)
-  yy <- yy[before] * yy[after]
-
-  # Find appropriate length along bisector
-  len <- outer(sqrt(2) / sqrt(1 + xx + yy), d)
-
-  # Project new points at the bisector
-  xout <- len * cos(bis) + x
-  yout <- len * sin(bis) + y
-
-  length <- rbind(0, sqrt(diff(xout)^2 + diff(yout)^2))
-  length <- apply(length, 2, cumsum)
-
-  return(list(x = xout, y = yout, length = length))
-}
-
 #' Interpolate path at text locations
 #'
 #' This function aids in specifying the `x`, `y` and angle components of where
@@ -156,7 +115,7 @@ calc_offset <- function(x, y, d = 0) {
   offset <- calc_offset(path$x, path$y, d = y_pos)
   n <- nrow(path)
 
-  length <- offset$length
+  length <- offset$arc_length
 
   # Calculate anchorpoint
   anchor <- hjust[1] * (length[n, 1] - string_size) + halign * string_size
@@ -200,7 +159,7 @@ calc_offset <- function(x, y, d = 0) {
 
   # Resolve inverted text
   if (flip_inverted) {
-    upside_down <- ang %% 360 > 100 & ang %% 360
+    upside_down <- ang %% 360 > 100 & ang %% 360 < 260
     if (mean(upside_down) > 0.5) {
       path <- path[rev(seq_len(nrow(path))), ]
       df <- .get_path_points(
