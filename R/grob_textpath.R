@@ -152,7 +152,7 @@ makeContent.textpath <- function(x) {
 
   text <- rbind_dfs(text)
 
-  if (!all(v$gp_path$lty == 0)) {
+  if (FALSE) {#!all(v$gp_path$lty == 0)) {
     path <- rbind_dfs(path)
 
     # Get bookends by trimming paths when it intersects text
@@ -180,7 +180,7 @@ makeContent.textpath <- function(x) {
     x, textGrob(
       label = text$label,
       x = text$x, y = text$y, rot = text$angle,
-      vjust = text$vjust, hjust = 0.5, gp = gp_text,
+      vjust = 0, hjust = 0.5, gp = gp_text,
       default.units = "inches"
     )
   )
