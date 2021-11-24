@@ -204,18 +204,18 @@
 #'
 #' @examples
 #' measure_text("Hello there,\nGeneral Kenobi")
-measure_text <- function(label, gp = get.gpar(), ppi = 72,
+measure_text <- function(label, gp = gpar(), ppi = 72,
                          vjust = 0.5, hjust = 0.5, halign = "center") {
   halign <- match.arg(halign, c("center", "left", "right"))
   vjust[vjust == 1] <- 1 + .Machine$double.eps
   txt <- shape_string(
     strings    = label[1],
-    family     = gp$fontfamily[1],
-    italic     = gp$font[1] %in% c(3, 4),
-    bold       = gp$font[1] %in% c(2, 4),
-    size       = gp$fontsize[1],
-    lineheight = gp$lineheight[1],
-    tracking   = gp$tracking[1] %||% 0,
+    family     = gp$fontfamily[1] %||% "",
+    italic     = (gp$font[1]      %||% 1) %in% c(3, 4),
+    bold       = (gp$font[1]      %||% 1) %in% c(2, 4),
+    size       = gp$fontsize[1]   %||% 12,
+    lineheight = gp$lineheight[1] %||% 1.2,
+    tracking   = gp$tracking[1]   %||% 0,
     res = ppi,
     vjust = vjust,
     hjust = hjust,
@@ -307,6 +307,7 @@ measure_text <- function(label, gp = get.gpar(), ppi = 72,
     # Create breathing space around letters
     path_max <- vapply(split(path$length, path$id), max,
                        numeric(1), USE.NAMES = FALSE)
+    trim <- rep_len(trim, length(path_max))
 
     mins <- pmax(0, ranges[1, ] - breathing_room)
     maxs <- pmin(path_max, ranges[2, ] + breathing_room)
