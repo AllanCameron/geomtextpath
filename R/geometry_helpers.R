@@ -118,7 +118,7 @@
   length <- offset$arc_length
 
   # Calculate anchorpoint
-  anchor <- hjust[1] * (length[n, 1] - string_size)
+  anchor <- hjust[1] * (length[n, 1] - string_size) + 0.5 * string_size
   i <- findInterval(anchor, length[, 1], all.inside = TRUE)
   di <- (anchor - length[i, 1]) / (length[i + 1, 1] - length[i, 1])
   anchor <- length[i, ] * (1 - di) + length[i + 1, ] * di
@@ -205,7 +205,7 @@
 #' @examples
 #' measure_text("Hello there,\nGeneral Kenobi")
 measure_text <- function(label, gp = get.gpar(), ppi = 72,
-                         vjust = 0.5, hjust = 0, halign = "center") {
+                         vjust = 0.5, hjust = 0.5, halign = "center") {
   halign <- match.arg(halign, c("center", "left", "right"))
   vjust[vjust == 1] <- 1 + .Machine$double.eps
   txt <- shape_string(
