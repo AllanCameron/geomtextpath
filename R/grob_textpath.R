@@ -52,6 +52,7 @@ textpathGrob <- function(
   just = "centre",
   hjust = NULL,
   vjust = NULL,
+  halign = "center",
   gp_text = gpar(),
   gp_path = gpar(),
   cut_path = NA,
@@ -79,10 +80,9 @@ textpathGrob <- function(
   )
 
   # Match justification to labels length
-  hjust   <- rep_len(resolveHJust(just, hjust), n_label)
-
-  # Match linetype to labels length
-  if(length(gp_path$lty) != n_label) gp_path$lty <- rep(gp_path$lty[1], n_label)
+  hjust  <- rep_len(resolveHJust(just, hjust), n_label)
+  vjust  <- rep_len(resolveVJust(just, vjust), n_label)
+  halign <- rep_len(halign, n_label)
 
   # Reconstitute data
   gp_text <- gp_fill_defaults(gp_text)
@@ -94,26 +94,15 @@ textpathGrob <- function(
     y <- unit(y, default.units)
   }
 
-  path <- data_frame(x = x, y = y, id = rep(seq_along(id_lens), id_lens),
-                     vjust = vjust, label = rep(label, id_lens),
-                     lineheight = rep(gp_text$lineheight, id_lens),
-                     linetype = rep(gp_path$lty, id_lens))
-
-  path <- .groupify_linebreaks(path, flip_inverted)
-
-  n_reps <- sapply(seq_along(unique(path$original_id)), function(i)
-  {
-    sub_paths <- path$original_id == unique(path$original_id)[i]
-    length(unique(path$id[sub_paths]))
-  })
-
-  gp_text <- recycle_gp(gp_text, rep, times = n_reps)
-  gp_path <- recycle_gp(gp_path, rep, times = n_reps)
+  path <- data_frame(x = x, y = y, id = rep(seq_along(id_lens), id_lens))
 
   gTree(
     textpath = list(
       data          = path,
+      label         = label,
       hjust         = hjust,
+      vjust         = vjust,
+      halign        = halign,
       cut_path      = cut_path,
       gp_text       = gp_text,
       gp_path       = gp_path,
@@ -141,11 +130,14 @@ makeContent.textpath <- function(x) {
   # Get gradients, angles and path lengths for each group
   path <- Map(.add_path_data, .data = split(path, path$id))
 
-  labels <- sapply(path, function(x) x$label[1])
   # Get the actual text string positions and angles for each group
-  text <- Map(.get_path_points, path = path, label = labels,
-              hjust = v$hjust, gp = split_gp(v$gp_text, seq_along(labels)),
-              flip_inverted = v$flip_inverted)
+  text <- Map(
+    .get_path_points,
+    path = path, label = v$label,
+    hjust = v$hjust, vjust = v$vjust, halign = v$halign,
+    gp = split_gp(v$gp_text, seq_along(labels)),
+    flip_inverted = v$flip_inverted
+  )
   text_lens <- vapply(text, nrow, integer(1))
 
   ## ---- Build text grob ---------------------------------------------- #
@@ -156,7 +148,7 @@ makeContent.textpath <- function(x) {
     path <- rbind_dfs(path)
 
     # Get bookends by trimming paths when it intersects text
-    path <- .get_surrounding_lines(path, text, v$cut_path)
+    path <- .get_surrounding_lines(path, text, vjust = v$vjust, v$cut_path)
 
     if (nrow(path) > 1) {
       # Recycle graphical parameters to match lengths of path

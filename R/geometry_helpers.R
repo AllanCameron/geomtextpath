@@ -290,22 +290,16 @@ measure_text <- function(label, gp = get.gpar(), ppi = 72,
 #' glyphs <- .get_path_points(xy)
 #' .get_surrounding_lines(xy, glyphs)
 .get_surrounding_lines <- function(path, letters, cut_path = NA,
-                                   breathing_room = 0.15,
+                                   breathing_room = 0.15, vjust = 0.5,
                                    vjust_lim = c(0, 1)) {
 
-  path$trim <- (path$group_max_vjust >= vjust_lim[1] &
-                path$group_min_vjust <= vjust_lim[2] ) |
-               (path$group_max_vjust <= vjust_lim[2] &
-                path$group_min_vjust >= vjust_lim[1])
-
-  path$trim <- if (!is.na(cut_path)) rep(cut_path, nrow(path)) else path$trim
+  trim <- vjust >= vjust_lim[1] & vjust <= vjust_lim[2]
+  trim <- if (!is.na(cut_path)) rep(cut_path, length(trim)) else trim
 
   # Simplify if text isn't exactly on path
-  if (!any(path$trim)) {
+  if (!any(trim)) {
     path$section <- "all"
   } else {
-    trim <- path$trim[c(TRUE, path$id[-1] != path$id[-nrow(path)])]
-
     # Get locations where strings start and end
     ranges <- vapply(split(letters$length, letters$id), range,
                      numeric(2), USE.NAMES = FALSE)
