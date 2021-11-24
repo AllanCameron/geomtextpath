@@ -101,14 +101,14 @@
   label = "placeholder",
   gp = get.gpar(),
   hjust = 0.5, vjust = 0.5,
-  halign = 0,
+  halign = "center",
   flip_inverted = FALSE
 ) {
   ppi <- 72
 
   # Meaure text
-  letters <- measure_text(label, gp = gp, ppi = ppi,
-                          hjust = halign[1], vjust = vjust[1])
+  letters <- measure_text(label, gp = gp, ppi = ppi, vjust = vjust[1],
+                          halign = halign)
   string_size <- attr(letters, "metrics")$width
   y_pos <- unique(c(0, letters$ymin))
 
@@ -118,7 +118,7 @@
   length <- offset$arc_length
 
   # Calculate anchorpoint
-  anchor <- hjust[1] * (length[n, 1] - string_size) + halign * string_size
+  anchor <- hjust[1] * (length[n, 1] - string_size)
   i <- findInterval(anchor, length[, 1], all.inside = TRUE)
   di <- (anchor - length[i, 1]) / (length[i + 1, 1] - length[i, 1])
   anchor <- length[i, ] * (1 - di) + length[i + 1, ] * di
@@ -205,7 +205,8 @@
 #' @examples
 #' measure_text("Hello there,\nGeneral Kenobi")
 measure_text <- function(label, gp = get.gpar(), ppi = 72,
-                         vjust = 0.5, hjust = 0.5) {
+                         vjust = 0.5, hjust = 0, halign = "center") {
+  halign <- match.arg(halign, c("center", "left", "right"))
   vjust[vjust == 1] <- 1 + .Machine$double.eps
   txt <- shape_string(
     strings    = label[1],
@@ -217,7 +218,8 @@ measure_text <- function(label, gp = get.gpar(), ppi = 72,
     tracking   = gp$tracking[1] %||% 0,
     res = ppi,
     vjust = vjust,
-    hjust = hjust
+    hjust = hjust,
+    align = halign,
   )
   # Adjust metrics
   metrics <- txt$metrics
