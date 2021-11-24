@@ -67,6 +67,9 @@
 #'   into two sections, one on either side of the string and if FALSE leaves the
 #'   path unbroken. The default value is NA, which will break the line if the
 #'   string has a vjust of between 0 and 1.
+#' @param flip_inverted If TRUE, any string where the majority of letters would
+#'   be upside down along the path are inverted to improve legibility. The
+#'   default is FALSE.
 #'
 #' @details The \code{spacing} aesthetic allows fine control of spacing of text,
 #'   which is called 'tracking' in typography. The default is 0 and units are
@@ -172,19 +175,20 @@ geom_textpath <- function(
   position = "identity", na.rm = FALSE, show.legend = NA,
   inherit.aes = TRUE,  ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
-  include_line = TRUE, cut_path = NA
+  include_line = TRUE, cut_path = NA, flip_inverted = FALSE
   )
 {
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
         position = position, show.legend = show.legend,
         inherit.aes = inherit.aes,
         params = list(
-          na.rm        = na.rm,
-          lineend      = lineend,
-          linejoin     = linejoin,
-          linemitre    = linemitre,
-          include_line = include_line,
-          cut_path     = cut_path,
+          na.rm         = na.rm,
+          lineend       = lineend,
+          linejoin      = linejoin,
+          linemitre     = linemitre,
+          include_line  = include_line,
+          cut_path      = cut_path,
+          flip_inverted = flip_inverted,
           ...
         ))
 }
@@ -227,7 +231,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   # into a tree of grobs for plotting.
   draw_panel = function(
     data, panel_params, coord,
-    lineend = "butt", linejoin = "round", linemitre = 10, cut_path = NA
+    lineend = "butt", linejoin = "round", linemitre = 10, cut_path = NA,
+    flip_inverted = FALSE
   ) {
 
     #---- type conversion, checks & warnings ---------------------------#
@@ -259,9 +264,6 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     }
 
     #---- Data manipulation ---------------------------------#
-
-    # Break separate text lines into different groups
-    data <- .groupify_linebreaks(data)
 
     # Now we can sort the data by group
     data <- data[order(data$group), , drop = FALSE]
@@ -312,11 +314,10 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       id = data$group,
       hjust = data$hjust[first],
       vjust = data$vjust,
-      group_min_vjust = data$group_min_vjust,
-      group_max_vjust = data$group_max_vjust,
       cut_path = cut_path,
       gp_text = text_gp,
       gp_path = path_gp,
+      flip_inverted = flip_inverted,
       default.units = "npc"
     )
 
