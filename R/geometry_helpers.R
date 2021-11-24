@@ -135,7 +135,7 @@
   split(index, membr) <- Map(
     findInterval,
     x   = split(index, membr),
-    vec = asplit(length[, unique(membr), drop = FALSE], MARGIN = 2),
+    vec = asplit(length[, sort(unique(membr)), drop = FALSE], MARGIN = 2),
     all.inside = TRUE
   )
   # Build matrix indices of the previous and next points
