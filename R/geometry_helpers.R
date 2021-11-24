@@ -182,9 +182,10 @@ calc_offset <- function(x, y, d = 0) {
   i0 <- cbind(index + 0, membr)
   i1 <- cbind(index + 1, membr)
   di <- (x - length[i0]) / (length[i1] - length[i0])
-  new_x <- offset$x[i0] * (1 - di) + offset$x[i1] * di
-  new_y <- offset$y[i0] * (1 - di) + offset$y[i1] * di
-  dim(new_x) <- dim(new_y) <- c(nrow(letters), 3)
+  new_x   <- offset$x[i0] * (1 - di) + offset$x[i1] * di
+  new_y   <- offset$y[i0] * (1 - di) + offset$y[i1] * di
+  new_len <- length[i0[, 1], 1] * (1 - di) + length[i1[, 1], 1] * di
+  dim(new_x) <- dim(new_y) <- dim(new_len) <- c(nrow(letters), 3)
 
   # Calculate text angles
   dx <- new_x[, 3] - new_x[, 1]
@@ -199,24 +200,12 @@ calc_offset <- function(x, y, d = 0) {
   })
   df[!is_num] <- lapply(lapply(df[!is_num], `[`, 1L),
                         rep, length.out = nrow(letters))
-  debug <- FALSE
-  if (isTRUE(debug)) {
-    plot(path$x, path$y, type = 'b', pch = 16)
-    lines(offset$x[, 2], offset$y[, 2], col = 2, type = 'b')
-    points(new_x[, c(1, 3)], new_y[, c(1, 3)], pch = 1)
-    points(new_x[, 2], new_y[, 2], pch = 16)
-    print(ang)
-    lines(
-      x = c(new_x[, 2], new_x[, 2] + cos((ang + 90) * pi / 180) * 1),
-      y = c(new_y[, 2], new_y[, 2] + sin((ang + 90) * pi / 180) * 1),
-      lty = 2
-    )
-  }
 
   df$angle <- ang
   df$x <- new_x[, 2]
   df$y <- new_y[, 2]
-  df$label <- letters$glyph
+  df$label  <- letters$glyph
+  df$length <- new_len[, 2]
   df <- list_to_df(df)
   df[!is.na(df$angle), ]
 }
