@@ -17,7 +17,7 @@ test_that("Text angles are correct", {
   expect_equal(test$angle[test$label != " "], -45)
 
   # This should be at the exact top of the triangle, where angle should be 0
-  test <- .get_path_points(xy, "O", hjust = 0.5, halign = 0.5)
+  test <- .get_path_points(xy, "O", hjust = 0.5)
   expect_equal(test$angle[test$label != " "], 0)
 
   # Test location of letters
@@ -29,11 +29,10 @@ test_that("Path trimming is correct", {
   xy <- data.frame(
     x = c(1:6), y = 1,
     id = c(1,1,2,2,3,3),
-    vjust = c(2, 2, 0.5, 0.5, -1, -1),
     label = "a label"
   )
+  vjust <- c(2, 0.5, -1)
   xy$group <- xy$id
-  xy <- .groupify_linebreaks(xy)
   xy <- split(xy, xy$id)
   xy <- Map(.add_path_data, .data = xy)
   glyphs <- Map(.get_path_points, path = xy, label = c("A", "B", "C"))
@@ -45,7 +44,7 @@ test_that("Path trimming is correct", {
 
   # TRUE cut_path
   test <- .get_surrounding_lines(xy, glyphs, cut_path = TRUE,
-                                 breathing_room = br[2])
+                                 breathing_room = br[2], vjust = vjust)
   expect_length(test$x, nrow(xy) * 2)
   expect_equal(
     test$x,
@@ -57,7 +56,7 @@ test_that("Path trimming is correct", {
 
   # FALSE cut_path
   test <- .get_surrounding_lines(xy, glyphs, cut_path = FALSE,
-                                 breathing_room = br[2])
+                                 breathing_room = br[2], vjust = vjust)
   expect_length(test$x, nrow(xy))
   expect_equal(
     test$x,
@@ -69,7 +68,7 @@ test_that("Path trimming is correct", {
 
   # Variable cut_path
   test <- .get_surrounding_lines(xy, glyphs, cut_path = NA,
-                                 breathing_room = br[2])
+                                 breathing_room = br[2], vjust = vjust)
   expect_length(test$x, nrow(xy) + 2)
   expect_equal(
     test$x,
@@ -80,7 +79,7 @@ test_that("Path trimming is correct", {
   expect_equal(unique(test$y), 1)
 
   # Test variable vjust is respected
-  test <- .get_surrounding_lines(xy, glyphs, cut_path = NA,
+  test <- .get_surrounding_lines(xy, glyphs, cut_path = NA, vjust = vjust,
                                  breathing_room = br[2], vjust_lim = c(0, 3))
   expect_length(test$x, nrow(xy) + 4)
   expect_equal(

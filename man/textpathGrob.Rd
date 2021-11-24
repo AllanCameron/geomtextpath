@@ -12,6 +12,7 @@ textpathGrob(
   just = "centre",
   hjust = NULL,
   vjust = NULL,
+  halign = "left",
   gp_text = gpar(),
   gp_path = gpar(),
   cut_path = NA,
@@ -45,6 +46,9 @@ multiple lines. All locations with the same \code{id} belong to the same line.}
 
 \item{vjust}{A numeric vector specifying vertical justification.
     If specified, overrides the \code{just} setting.}
+
+\item{halign}{A \code{character(1)} setting text alignment amongst multi-line
+labels. Can be either \code{"left"} (default), \code{"center"} or \code{"right"}.}
 
 \item{gp_text, gp_path}{An object of class \code{"gpar"}, typically the output from
 a call from the \code{\link[grid:gpar]{gpar()}} function. These are basically lists

@@ -19,6 +19,8 @@
 #' @param flip_inverted If TRUE, any string where the majority of letters would
 #'   be upside down along the path are inverted to improve legibility. The
 #'   default is FALSE.
+#' @param halign A `character(1)` setting text alignment amongst multi-line
+#'   labels. Can be either `"left"` (default), `"center"` or `"right"`.
 #'
 #' @inheritParams grid::textGrob
 #'
@@ -52,7 +54,7 @@ textpathGrob <- function(
   just = "centre",
   hjust = NULL,
   vjust = NULL,
-  halign = "center",
+  halign = "left",
   gp_text = gpar(),
   gp_path = gpar(),
   cut_path = NA,

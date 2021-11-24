@@ -18,7 +18,8 @@ geom_textpath(
   linemitre = 10,
   include_line = TRUE,
   cut_path = NA,
-  flip_inverted = FALSE
+  flip_inverted = FALSE,
+  halign = "left"
 )
 }
 \arguments{
@@ -85,6 +86,10 @@ string has a vjust of between 0 and 1.}
 \item{flip_inverted}{If TRUE, any string where the majority of letters would
 be upside down along the path are inverted to improve legibility. The
 default is FALSE.}
+
+\item{halign}{A \code{character(1)} describing how multi-line labels should
+be justified. Can either be \code{"left"} (default), \code{"center"} or
+\code{"right"}.}
 }
 \description{
 The existing text-based geom layers in ggplot2
