@@ -160,7 +160,7 @@ calc_offset <- function(x, y, d = 0) {
   length <- offset$length
 
   # Calculate anchorpoint
-  anchor <- hjust[1] * (length[n, 1] - string_size) + hjust[1] * string_size
+  anchor <- hjust[1] * (length[n, 1] - string_size)
   i <- findInterval(anchor, length[, 1], all.inside = TRUE)
   di <- (anchor - length[i, 1]) / (length[i + 1, 1] - length[i, 1])
   anchor <- length[i, ] * (1 - di) + length[i + 1, ] * di
