@@ -93,51 +93,50 @@
 
 ## Getting path points ----------------------------------------------------
 
-calc_offset <- function(x, y, d = 0, debug = FALSE) {
+calc_offset <- function(x, y, d = 0) {
   n  <- length(x)
   dx <- diff(x)
   dy <- diff(y)
   ang  <- atan(dy / dx)
-  if (length(ang) > 1) {
-    dang <- diff(ang)
-    dang <- ifelse(dang < - pi / 2, dang + pi, dang)
-    dang <- ifelse(dang > + pi / 2, dang - pi, dang)
-    ang  <- cumsum(c(ang[1], 0, dang))
-  } else {
-    dang <- c(0, 0)
-    ang <- rep(ang, 2)
+  dang <- diff(ang)
+  dang <- ifelse(dang < - pi / 2, dang + pi, dang)
+  dang <- ifelse(dang > + pi / 2, dang - pi, dang)
+
+  # Get orthogonal angles
+  ang <- cumsum(c(ang[1], dang)) + pi / 2
+
+  ang2 <- ang - pi / 2
+  inverted <- mean(ang2 %% 2 * pi > 100/180*pi & ang2 %% 2 * pi < 260/180*pi)
+  if (inverted < 0.5) {
+    d <- 0 - d
   }
 
-  xstart <- x[1] + cos(ang[1] + pi / 2) * d
-  ystart <- y[1] + sin(ang[1] + pi / 2) * d
+  # Left / right aligned indices
+  before <- c(1L, seq_along(ang))
+  after  <- c(seq_along(ang), length(ang))
 
-  lens <- sqrt(dx^2 + dy^2)
+  # Calculate angle bisector
+  bis <- (ang[before] + ang[after])/2
 
-  dang <- approx(seq_along(dang), dang,
-                 seq(1, length(dang), length.out = n - 1))$y
+  # Calculate x position at angle bisector
+  xx <- cos(ang)
+  xx <- xx[before] * xx[after]
 
-  curv <- (dang / lens * pi)# / (2 * pi) #/ (2 * pi) #* 0.9549297 # Rounding error correction?
-  curv <- 1 - outer(curv, d)
+  # Calculate y position at angle bisector
+  yy <- sin(ang)
+  yy <- yy[before] * yy[after]
 
-  eff_len <- rbind(0, curv * lens)
-  xout <- apply(cos(ang) * eff_len, 2, cumsum) + rep(xstart, each = n)
-  yout <- apply(sin(ang) * eff_len, 2, cumsum) + rep(ystart, each = n)
-  eff_len <- apply(eff_len, 2, cumsum)
-  eff_len <- apply(eff_len, 2, cummax) # Should only ever increase
+  # Find appropriate length along bisector
+  len <- outer(sqrt(2) / sqrt(1 + xx + yy), d)
 
-  if (debug) {
-    plot(x, y, type = 'b',
-         ylim = range(c(y, yout)), xlim = range(c(x, xout)))
-    for (i in seq_len(ncol(xout))) {
-      lines(xout[,i], yout[,i], col = i + 1, type = 'b', pch = 16)
-    }
-    sqrt((x - xout)^2 + (y - yout)^2)
-  }
-  list(
-    x = xout,
-    y = yout,
-    length = eff_len
-  )
+  # Project new points at the bisector
+  xout <- len * cos(bis) + x
+  yout <- len * sin(bis) + y
+
+  length <- rbind(0, sqrt(diff(xout)^2 + diff(yout)^2))
+  length <- apply(length, 2, cumsum)
+
+  return(list(x = xout, y = yout, length = length))
 }
 
 .get_path_points <- function(
