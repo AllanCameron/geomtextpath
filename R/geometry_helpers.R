@@ -101,15 +101,10 @@ calc_offset <- function(x, y, d = 0) {
   dang <- diff(ang)
   dang <- ifelse(dang < - pi / 2, dang + pi, dang)
   dang <- ifelse(dang > + pi / 2, dang - pi, dang)
+  ang <- atan2(dy[1], dx[1])
 
   # Get orthogonal angles
   ang <- cumsum(c(ang[1], dang)) + pi / 2
-
-  ang2 <- ang - pi / 2
-  inverted <- mean(ang2 %% 2 * pi > 100/180*pi & ang2 %% 2 * pi < 260/180*pi)
-  if (inverted < 0.5) {
-    d <- 0 - d
-  }
 
   # Left / right aligned indices
   before <- c(1L, seq_along(ang))
@@ -139,12 +134,53 @@ calc_offset <- function(x, y, d = 0) {
   return(list(x = xout, y = yout, length = length))
 }
 
+#' Interpolate path at text locations
+#'
+#' This function aids in specifying the `x`, `y` and angle components of where
+#' individual letters should be placed, of a single path-label pair.
+#'
+#' @param path A `data.frame` with the numeric columns `x`, `y`.
+#' @param label A `character(1)` scalar with a string to place.
+#' @param gp An object of class `"gpar"`, typically the output from a call to
+#'   the `grid::gpar()` function. Note that parameters related to fonts *must*
+#'   be present. To be exact, the following parameters cannot be missing:
+#'   `fontfamily`, `font`, `fontsize` and `lineheight`.
+#' @param hjust A `numeric(1)` scalar specifying horizontal justification along
+#'   the path.
+#'
+#' @return A `data.frame` with numerical values interpolated at the points where
+#'   the letters in `label` argument should be placed, along with a `label`
+#'   column containing individual glyphs of the string.
+#' @noRd
+#'
+#' @details This is another helper function for the draw_panel function.
+#' This is where
+#' the text gets split into its component parts and assigned x, y and angle
+#' components. This function also takes one group subset of the main panel data
+#' frame at a time after .add_path_data() has been called, and returns a
+#' modified data frame.
+#'
+#' The hjust is also applied here. Actually, although it's called hjust, this
+#' parameter is really just analogous to hjust, and never gets passed to grid.
+#' It determines how far along the path the string will be placed. The
+#' individual letters all have an hjust of 0.5.
+#'
+#' @examples
+#' xy <- data.frame(
+#'   x =  1:10,
+#'   y = (1:10)^2
+#' )
+#'
+#' xy <- .add_path_data(xy)
+#'
+#' .get_path_points(xy)
 .get_path_points <- function(
   path,
   label = "placeholder",
   gp = get.gpar(),
   hjust = 0.5, vjust = 0.5,
-  halign = 0.5
+  halign = 0,
+  flip_inverted = FALSE
 ) {
   ppi <- 72
 
@@ -160,7 +196,7 @@ calc_offset <- function(x, y, d = 0) {
   length <- offset$length
 
   # Calculate anchorpoint
-  anchor <- hjust[1] * (length[n, 1] - string_size)
+  anchor <- hjust[1] * (length[n, 1] - string_size) + halign * string_size
   i <- findInterval(anchor, length[, 1], all.inside = TRUE)
   di <- (anchor - length[i, 1]) / (length[i + 1, 1] - length[i, 1])
   anchor <- length[i, ] * (1 - di) + length[i + 1, ] * di
@@ -171,6 +207,10 @@ calc_offset <- function(x, y, d = 0) {
   letters[, xpos] <- letters[, xpos] + anchor[letters$yid]
 
   # Project text on path
+  # The next bit is going to be a complicated variant of `approx()`.
+
+  # This finds the indices of the previous path points relative to the positions
+  # of the letters, taking into account the y-offset.
   index <- x <- unlist(letters[, xpos], FALSE, FALSE)
   membr <- rep(letters$yid, 3)
   split(index, membr) <- Map(
@@ -179,9 +219,12 @@ calc_offset <- function(x, y, d = 0) {
     vec = asplit(length[, unique(membr), drop = FALSE], MARGIN = 2),
     all.inside = TRUE
   )
+  # Build matrix indices of the previous and next points
   i0 <- cbind(index + 0, membr)
   i1 <- cbind(index + 1, membr)
+  # Calculate the relative contribution (weights) of the previous and next point
   di <- (x - length[i0]) / (length[i1] - length[i0])
+  # Apply weights to interpolate
   new_x   <- offset$x[i0] * (1 - di) + offset$x[i1] * di
   new_y   <- offset$y[i0] * (1 - di) + offset$y[i1] * di
   new_len <- length[i0[, 1], 1] * (1 - di) + length[i1[, 1], 1] * di
@@ -191,6 +234,19 @@ calc_offset <- function(x, y, d = 0) {
   dx <- new_x[, 3] - new_x[, 1]
   dy <- new_y[, 3] - new_y[, 1]
   ang <- atan2(dy, dx) * 180 / pi
+
+  # Resolve inverted text
+  if (flip_inverted) {
+    upside_down <- ang %% 360 > 100 & ang %% 360
+    if (mean(upside_down) > 0.5) {
+      path <- path[rev(seq_len(nrow(path))), ]
+      df <- .get_path_points(
+        path, label, gp, hjust = 1 - hjust, halign = halign,
+        flip_inverted = FALSE
+      )
+      return(df)
+    }
+  }
 
   # Format output
   df <- as.list(path[setdiff(names(path), c("x", "y", "angle"))])
@@ -209,102 +265,6 @@ calc_offset <- function(x, y, d = 0) {
   df <- list_to_df(df)
   df[!is.na(df$angle), ]
 }
-
-#' #' Interpolate path at text locations
-#' #'
-#' #' This function aids in specifying the `x`, `y` and angle components of where
-#' #' individual letters should be placed, of a single path-label pair.
-#' #'
-#' #' @param path A `data.frame` with the numeric columns `x`, `y`, `angle`,
-#' #'   `length` and `adj_length`.
-#' #' @param label A `character(1)` scalar with a string to place.
-#' #' @param gp An object of class `"gpar"`, typically the output from a call to
-#' #'   the `grid::gpar()` function. Note that parameters related to fonts *must*
-#' #'   be present. To be exact, the following parameters cannot be missing:
-#' #'   `fontfamily`, `font`, `fontsize` and `lineheight`.
-#' #' @param hjust A `numeric(1)` scalar specifying horizontal justification along
-#' #'   the path.
-#' #'
-#' #' @return A `data.frame` with numerical values interpolated at the points where
-#' #'   the letters in `label` argument should be placed, along with a `label`
-#' #'   column containing individual glyphs of the string.
-#' #' @noRd
-#' #'
-#' #' @details This is another helper function for the draw_panel function.
-#' #' This is where
-#' #' the text gets split into its component parts and assigned x, y and angle
-#' #' components. This function also takes one group subset of the main panel data
-#' #' frame at a time after .add_path_data() has been called, and returns a
-#' #' modified data frame.
-#' #'
-#' #' The hjust is also applied here. Actually, although it's called hjust, this
-#' #' parameter is really just analogous to hjust, and never gets passed to grid.
-#' #' It determines how far along the path the string will be placed. The
-#' #' individual letters all have an hjust of 0.5.
-#' #'
-#' #' @examples
-#' #' xy <- data.frame(
-#' #'   x =  1:10,
-#' #'   y = (1:10)^2
-#' #' )
-#' #'
-#' #' xy <- .add_path_data(xy)
-#' #'
-#' #' .get_path_points(xy)
-#' .get_path_points <- function(path, label = "placeholder",
-#'                              gp = get.gpar(), hjust = 0.5)
-#' {
-#'   # Get pixels per inch (72 is default screen resolution). For some reason text
-#'   # renders weirdly if this is adapted to the device. For raster graphics,
-#'   # one would typically use the following:
-#'   # ppi <- dev.size("px")[1] / dev.size("in")[1]
-#'   # But that gives the wrong spacing here.
-#'   ppi <- 72
-#'
-#'   # Using the shape_string function from package "systemfonts" allows fast
-#'   # and accurate calculation of letter spacing
-#'
-#'   letters <- measure_text(label, gp = gp, ppi = ppi, vjust = 0.5,
-#'                           hjust = hjust[1], path_len = max(path$adj_length))
-#'
-#'   # We now need to interpolate all the numeric values along the path so we
-#'   # get the appropriate values at each point. Non-numeric values should all
-#'   # be identical, so these are just kept as-is
-#'
-#'   df <- as.list(path[setdiff(names(path), c("x", "y", "angle"))])
-#'   is_num <- vapply(df, is.numeric, logical(1))
-#'   df[is_num] <- lapply(df[is_num], function(i) {
-#'     approx(x = path$adj_length, y = i, xout = letters$xmid, ties = mean)$y
-#'   })
-#'   df[!is_num] <- lapply(lapply(df[!is_num], `[`, 1L),
-#'                         rep, length.out = nrow(letters))
-#'
-#'   # Instead of interpolating the angle from what we've calculated earlier and
-#'   # what should  apply to the letter mid-points, we are re-calculating the angle
-#'   # from the letter start and end points to get better angles for coarse paths
-#'
-#'   # Interpolate x coordinates
-#'   f    <- approxfun(x = path$adj_length, y = path$x)
-#'   dx   <- f(letters$xmax) - f(letters$xmin)
-#'   df$x <- f(letters$xmid)
-#'
-#'   # Interpolate y coordinates
-#'   f    <- approxfun(x = path$adj_length, y = path$y)
-#'   dy   <- f(letters$xmax) - f(letters$xmin)
-#'   df$y <- f(letters$xmid)
-#'
-#'   # Recalculate angle
-#'   df$angle <- atan2(dy, dx) * 180 / pi
-#'
-#'   # Now we assign each letter to its correct point on the path
-#'   df$label <- letters$glyph
-#'
-#'   # This ensures that we don't try to return any invalid letters
-#'   # (those letters that fall off the path on either side will have
-#'   # NA angles)
-#'   df <- list_to_df(df)
-#'   df[!is.na(df$angle), ]
-#' }
 
 #' Wrapper for text measurement
 #'
@@ -357,6 +317,27 @@ measure_text <- function(label, gp = get.gpar(), ppi = 72,
   )
   attr(ans, "metrics") <- metrics
   return(ans)
+}
+
+path_orientation <- function(x, y) {
+  if (length(x) < 3) {
+    return("cw")
+  }
+  i <- which(y == min(y))
+  if (length(i) > 1) {
+    i <- i[which.max(x[i])]
+  }
+  if (i == length(x)) {
+    i <- i - 1
+  }
+  if (i == 1) {
+    i <- 2
+  }
+  det <- (x[i] - x[i-1]) * (y[i + 1] - y[i - 1]) -
+    (x[i + 1] - x[i - 1]) * (y[i] - y[i - 1])
+  out <- if (sign(det) %in% c(0, 1)) "cw" else "ccw"
+  print(out)
+  out
 }
 
 ## Getting surrounding lines -----------------------------------------------
