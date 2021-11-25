@@ -94,6 +94,48 @@
    data.frame(x = d * cos(angle) + x, y = d * sin(angle) + y)
 }
 
+calc_offset <- function(x, y, d = 0) {
+  n  <- length(x)
+  dx <- diff(x)
+  dy <- diff(y)
+  ang  <- atan(dy / dx)
+  dang <- diff(ang)
+  dang <- ifelse(dang < - pi / 2, dang + pi, dang)
+  dang <- ifelse(dang > + pi / 2, dang - pi, dang)
+  ang <- atan2(dy[1], dx[1]) # Never reorient first angle
+
+  # Get orthogonal angles
+  ang <- cumsum(c(ang[1], dang)) + pi / 2
+
+  # Left / right aligned indices
+  before <- c(1L, seq_along(ang))
+  after  <- c(seq_along(ang), length(ang))
+
+  # Calculate angle bisector
+  bis <- (ang[before] + ang[after])/2
+
+  # Calculate x position at angle bisector
+  xx <- cos(ang)
+  xx <- xx[before] * xx[after]
+
+  # Calculate y position at angle bisector
+  yy <- sin(ang)
+  yy <- yy[before] * yy[after]
+
+  # Find appropriate length along bisector
+  len <- outer(sqrt(2) / sqrt(1 + xx + yy), d)
+
+  # Project new points at the bisector
+  xout <- len * cos(bis) + x
+  yout <- len * sin(bis) + y
+
+  # Calculate arc length
+  arc_length <- rbind(0, sqrt(diff(xout)^2 + diff(yout)^2))
+  arc_length <- apply(arc_length, 2, cumsum)
+
+  return(list(x = xout, y = yout, arc_length = arc_length))
+}
+
 # ------------------------------------------------------------------------------
 # Finds the curvature (change in angle per change in arc length)
 # This in effect finds 1/R, where R is the radius of the curve

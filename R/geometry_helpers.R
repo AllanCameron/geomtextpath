@@ -43,9 +43,12 @@
 {
   # Set default vjust if absent from data
   .data$vjust  <- .data$vjust %||% 0.5
+<<<<<<< HEAD
 
   # Get angles in degrees without any "wraparound" jumps from positive to
   # negative
+=======
+>>>>>>> b32faf661f9d4f050b5e3e96f6e89a864533e9f3
   .data$angle  <- .path_angle_at_xy(.data$x, .data$y)
 
   # Get accurate arc length
@@ -62,7 +65,6 @@
   .data
 }
 
-
 ## Getting path points ----------------------------------------------------
 
 #' Interpolate path at text locations
@@ -70,8 +72,7 @@
 #' This function aids in specifying the `x`, `y` and angle components of where
 #' individual letters should be placed, of a single path-label pair.
 #'
-#' @param path A `data.frame` with the numeric columns `x`, `y`, `angle`,
-#'   `length` and `adj_length`.
+#' @param path A `data.frame` with the numeric columns `x`, `y`.
 #' @param label A `character(1)` scalar with a string to place.
 #' @param gp An object of class `"gpar"`, typically the output from a call to
 #'   the `grid::gpar()` function. Note that parameters related to fonts *must*
@@ -79,9 +80,6 @@
 #'   `fontfamily`, `font`, `fontsize` and `lineheight`.
 #' @param hjust A `numeric(1)` scalar specifying horizontal justification along
 #'   the path.
-#' @param flip_inverted If TRUE, any string where the majority of letters would
-#'   be upside down along the path are inverted to improve legibility. The
-#'   default is FALSE.
 #'
 #' @return A `data.frame` with numerical values interpolated at the points where
 #'   the letters in `label` argument should be placed, along with a `label`
@@ -109,90 +107,148 @@
 #' xy <- .add_path_data(xy)
 #'
 #' .get_path_points(xy)
-.get_path_points <- function(path, label = "placeholder",
-                             gp = get.gpar(), hjust = 0.5,
-                             flip_inverted = FALSE)
-{
-  # Get pixels per inch (72 is default screen resolution). For some reason text
-  # renders weirdly if this is adapted to the device. For raster graphics,
-  # one would typically use the following:
-  # ppi <- dev.size("px")[1] / dev.size("in")[1]
-  # But that gives the wrong spacing here.
+.get_path_points <- function(
+  path,
+  label = "placeholder",
+  gp = get.gpar(),
+  hjust = 0.5, vjust = 0.5,
+  halign = "center",
+  flip_inverted = FALSE
+) {
   ppi <- 72
 
-  # Using the shape_string function from package "systemfonts" allows fast
-  # and accurate calculation of letter spacing
+  # Meaure text
+  letters <- measure_text(label, gp = gp, ppi = ppi, vjust = vjust[1],
+                          halign = halign)
+  string_size <- attr(letters, "metrics")$width
+  y_pos <- unique(c(0, letters$ymin))
 
-  letters <- shape_string(strings    = label[1],
-                          family     = gp$fontfamily[1],
-                          italic     = gp$font[1] %in% c(3, 4),
-                          bold       = gp$font[1] %in% c(2, 4),
-                          size       = gp$fontsize[1],
-                          lineheight = gp$lineheight[1],
-                          tracking   = gp$tracking[1] %||% 0,
-                          res = ppi)
+  offset <- calc_offset(path$x, path$y, d = y_pos)
+  n <- nrow(path)
 
-  letterwidths <- (letters$shape$x_offset + letters$shape$x_midpoint) / ppi
+  length <- offset$arc_length
 
-  # This calculates the starting distance along the path where we place
-  # the first letter
-  start_dist <- hjust[1] *
-    (max(path$adj_length) - max(letterwidths + letters$shape$x_midpoint / ppi))
+  # Calculate anchorpoint
+  anchor <- hjust[1] * (length[n, ] - string_size)
 
-  # Now we just add on the letterwidths and we have the correct distances
-  dist_points <- letterwidths + start_dist
+  # Offset text x by anchorpoint
+  xpos <- c("xmin", "xmid", "xmax")
+  letters$yid <- match(letters$ymin, y_pos)
+  letters[, xpos] <- letters[, xpos] + anchor[letters$yid]
 
-  # We now need to interpolate all the numeric values along the path so we
-  # get the appropriate values at each point. Non-numeric values should all
-  # be identical, so these are just kept as-is
+  # Project text on path
+  # The next bit is going to be a complicated variant of `approx()`.
 
-  df <- path[setdiff(names(path), c("x", "y", "angle"))]
-  df <- list_to_df(lapply(df, function(i) {
-    if(is.numeric(i))
-      approx(x = path$adj_length, y = i, xout = dist_points, ties = mean)$y
-    else
-      rep(i[1], length(dist_points))
-  }))
+  # This finds the indices of the previous path points relative to the positions
+  # of the letters, taking into account the y-offset.
+  index <- x <- unlist(letters[, xpos], FALSE, FALSE)
+  membr <- rep(letters$yid, 3)
+  split(index, membr) <- Map(
+    findInterval,
+    x   = split(index, membr),
+    vec = asplit(length[, sort(unique(membr)), drop = FALSE], MARGIN = 2),
+    all.inside = TRUE
+  )
+  # Build matrix indices of the previous and next points
+  i0 <- cbind(index + 0, membr)
+  i1 <- cbind(index + 1, membr)
+  # Calculate the relative contribution (weights) of the previous and next point
+  di <- (x - length[i0]) / (length[i1] - length[i0])
+  # Apply weights to interpolate
+  new_x   <- offset$x[i0] * (1 - di) + offset$x[i1] * di
+  new_y   <- offset$y[i0] * (1 - di) + offset$y[i1] * di
+  new_len <- length[i0[, 1], 1] * (1 - di) + length[i1[, 1], 1] * di
+  dim(new_x) <- dim(new_y) <- dim(new_len) <- c(nrow(letters), 3)
 
-  # Instead of interpolating the angle from what we've calculated earlier and
-  # what should  apply to the letter mid-points, we are re-calculating the angle
-  # from the letter start and end points to get better angles for coarse paths
-  letter_min <- letters$shape$x_offset / ppi + start_dist
-  letter_max <- letter_min + 2 * letters$shape$x_midpoint / ppi
+  # Calculate text angles
+  dx <- new_x[, 3] - new_x[, 1]
+  dy <- new_y[, 3] - new_y[, 1]
+  ang <- atan2(dy, dx) * 180 / pi
 
-  # Interpolate x coordinates
-  f    <- approxfun(x = path$adj_length, y = path$x)
-  dx   <- f(letter_max) - f(letter_min)
-  df$x <- f(dist_points)
-
-  # Interpolate y coordinates
-  f    <- approxfun(x = path$adj_length, y = path$y)
-  dy   <- f(letter_max) - f(letter_min)
-  df$y <- f(dist_points)
-
-  # Recalculate angle
-  df$angle <- atan2(dy, dx) * 180 / pi
-
-  # Now we assign each letter to its correct point on the path
-  df$label <- letters$shape$glyph
-
-  # This ensures that we don't try to return any invalid letters
-  # (those letters that fall off the path on either side will have
-  # NA angles)
-  df <- df[!is.na(df$angle), ]
-
-  is_upside_down <- df$angle %% 360 > 100 & df$angle %% 360 < 260
-  mostly_upside_down <- (sum(is_upside_down) / length(is_upside_down)) > 0.5
-
-  if(mostly_upside_down & flip_inverted)
-  {
-    path <- path[rev(seq(nrow(path))),]
-    path$vjust <- 1 - path$vjust_if_inverted
-    path <- .add_path_data(path)
-    df <- .get_path_points(path, label, gp, hjust = 1 - hjust)
-
+  # Resolve inverted text
+  if (flip_inverted) {
+    upside_down <- ang %% 360 > 100 & ang %% 360 < 260
+    if (mean(upside_down) > 0.5) {
+      path <- path[rev(seq_len(nrow(path))), ]
+      df <- .get_path_points(
+        path, label, gp, hjust = 1 - hjust, halign = halign,
+        flip_inverted = FALSE
+      )
+      return(df)
+    }
   }
- df
+
+  # Format output
+  df <- as.list(path[setdiff(names(path), c("x", "y", "angle"))])
+  is_num <- vapply(df, is.numeric, logical(1))
+  df[is_num] <- lapply(df[is_num], function(i) {
+    approx(x = path$adj_length, y = i, xout = letters$xmid, ties = mean)$y
+  })
+  df[!is_num] <- lapply(lapply(df[!is_num], `[`, 1L),
+                        rep, length.out = nrow(letters))
+
+  df$angle <- ang
+  df$x <- new_x[, 2]
+  df$y <- new_y[, 2]
+  df$label  <- letters$glyph
+  df$length <- new_len[, 2]
+  df <- list_to_df(df)
+  df[!is.na(df$angle), ]
+}
+
+#' Wrapper for text measurement
+#'
+#' This wrap the `systemfonts::shape_string()` function to return positions for
+#' every letter.
+#'
+#' @param label A `character(1)` of a label.
+#' @param gp A `grid::gpar()` object.
+#' @param ppi A `numeric(1)` for the resolution in points per inch.
+#' @param vjust The justification of the text.
+#'
+#' @return A `data.frame` with the columns `glyph`, `ymin`, `xmin`, `xmid` and
+#'   `xmax`.
+#' @noRd
+#'
+#' @examples
+#' measure_text("Hello there,\nGeneral Kenobi")
+measure_text <- function(label, gp = gpar(), ppi = 72,
+                         vjust = 0.5, hjust = 0, halign = "center") {
+  halign <- match.arg(halign, c("center", "left", "right"))
+  vjust[vjust == 1] <- 1 + .Machine$double.eps
+  txt <- shape_string(
+    strings    = label[1],
+    family     = gp$fontfamily[1] %||% "",
+    italic     = (gp$font[1]      %||% 1) %in% c(3, 4),
+    bold       = (gp$font[1]      %||% 1) %in% c(2, 4),
+    size       = gp$fontsize[1]   %||% 12,
+    lineheight = gp$lineheight[1] %||% 1.2,
+    tracking   = gp$tracking[1]   %||% 0,
+    res = ppi,
+    vjust = vjust,
+    hjust = hjust,
+    align = halign,
+  )
+  # Adjust metrics
+  metrics <- txt$metrics
+  metrics$width  <- metrics$width  / ppi
+  metrics$height <- metrics$height / ppi
+
+  # Adjust shape
+  txt <- txt$shape
+  txt$x_offset   <- txt$x_offset   / ppi
+  txt$x_midpoint <- txt$x_midpoint / ppi
+
+  # Format shape
+  ans <- data_frame(
+    glyph =  txt$glyph,
+    ymin  =  txt$y_offset / ppi,
+    xmin  =  txt$x_offset,
+    xmid  = (txt$x_offset + txt$x_midpoint),
+    xmax  = (txt$x_offset + txt$x_midpoint * 2)
+  )
+  attr(ans, "metrics") <- metrics
+  return(ans)
 }
 
 ## Getting surrounding lines -----------------------------------------------
@@ -242,34 +298,27 @@
 #' glyphs <- .get_path_points(xy)
 #' .get_surrounding_lines(xy, glyphs)
 .get_surrounding_lines <- function(path, letters, cut_path = NA,
-                                   breathing_room = 0.15,
+                                   breathing_room = 0.15, vjust = 0.5,
                                    vjust_lim = c(0, 1)) {
 
-  path$trim <- (path$group_max_vjust >= vjust_lim[1] &
-                path$group_min_vjust <= vjust_lim[2] ) |
-               (path$group_max_vjust <= vjust_lim[2] &
-                path$group_min_vjust >= vjust_lim[1])
-
-  path$trim <- if (!is.na(cut_path)) rep(cut_path, nrow(path)) else path$trim
+  trim <- vjust >= vjust_lim[1] & vjust <= vjust_lim[2]
+  trim <- if (!is.na(cut_path)) rep(cut_path, length(trim)) else trim
 
   # Simplify if text isn't exactly on path
-  if (!any(path$trim)) {
+  if (!any(trim)) {
     path$section <- "all"
   } else {
-    trim <- path$trim[c(TRUE, path$id[-1] != path$id[-nrow(path)])]
-
     # Get locations where strings start and end
-    letter_lens <- run_len(letters$id)
-    starts <- {ends <- cumsum(letter_lens)} - letter_lens + 1
-    mins <- letters$length[starts]
-    maxs <- letters$length[ends]
+    ranges <- vapply(split(letters$length, letters$id), range,
+                     numeric(2), USE.NAMES = FALSE)
 
     # Create breathing space around letters
     path_max <- vapply(split(path$length, path$id), max,
                        numeric(1), USE.NAMES = FALSE)
+    trim <- rep_len(trim, length(path_max))
 
-    mins <- pmax(0, mins - breathing_room)
-    maxs <- pmin(path_max, maxs + breathing_room)
+    mins <- pmax(0, ranges[1, ] - breathing_room)
+    maxs <- pmin(path_max, ranges[2, ] + breathing_room)
 
     # Consider path length as following one another to avoid a loop
     sumlen <- c(0, path_max[-length(path_max)])

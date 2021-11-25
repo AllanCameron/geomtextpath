@@ -70,6 +70,9 @@
 #' @param flip_inverted If TRUE, any string where the majority of letters would
 #'   be upside down along the path are inverted to improve legibility. The
 #'   default is FALSE.
+#' @param halign A \code{character(1)} describing how multi-line labels should
+#'   be justified. Can either be \code{"left"} (default), \code{"center"} or
+#'   \code{"right"}.
 #'
 #' @details The \code{spacing} aesthetic allows fine control of spacing of text,
 #'   which is called 'tracking' in typography. The default is 0 and units are
@@ -175,7 +178,8 @@ geom_textpath <- function(
   position = "identity", na.rm = FALSE, show.legend = NA,
   inherit.aes = TRUE,  ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
-  include_line = TRUE, cut_path = NA, flip_inverted = FALSE
+  include_line = TRUE, cut_path = NA, flip_inverted = FALSE,
+  halign = "left"
   )
 {
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
@@ -189,6 +193,7 @@ geom_textpath <- function(
           include_line  = include_line,
           cut_path      = cut_path,
           flip_inverted = flip_inverted,
+          halign        = halign,
           ...
         ))
 }
@@ -231,8 +236,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   # into a tree of grobs for plotting.
   draw_panel = function(
     data, panel_params, coord,
-    lineend = "butt", linejoin = "round", linemitre = 10, cut_path = NA,
-    flip_inverted = FALSE
+    lineend = "butt", linejoin = "round", linemitre = 10,
+    cut_path = NA, flip_inverted = FALSE, halign = "left"
   ) {
 
     #---- type conversion, checks & warnings ---------------------------#
@@ -306,20 +311,19 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
 
     #---- Dispatch data to grob -----------------------------#
 
-
     textpathGrob(
       label = data$label[first],
       x = data$x,
       y = data$y,
       id = data$group,
-      hjust = data$hjust[first],
-      vjust = data$vjust,
+      hjust  = data$hjust[first],
+      vjust  = data$vjust,
+      halign = halign,
       cut_path = cut_path,
       gp_text = text_gp,
       gp_path = path_gp,
       flip_inverted = flip_inverted,
       default.units = "npc"
     )
-
   }
 )

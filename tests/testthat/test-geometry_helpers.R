@@ -1,13 +1,17 @@
 test_that("Text angles are correct", {
 
   # Triangle
+<<<<<<< HEAD
   xy <- data.frame(x = 1:5, y = c(1,2,3,2,1), size = c(5, 5, 5, 5, 5))
+=======
+  xy <- data.frame(x = 1:5 * sqrt(2), y = c(1,2,3,2,1) * sqrt(2))
+>>>>>>> b32faf661f9d4f050b5e3e96f6e89a864533e9f3
   xy <- .add_path_data(xy)
 
   # Test angles and lenghts of .add_path_data
   expect_equal(xy$angle[1:2], c( 45,  45))
   expect_equal(xy$angle[4:5], c(-45, -45))
-  expect_equal(xy$length, c(0, sqrt(2) * 1:4))
+  expect_equal(xy$length, c(0, 2 * 1:4))
 
   # Test angles of `.get_path_points`
   test <- .get_path_points(xy, "O", hjust = 0.25)
@@ -21,8 +25,7 @@ test_that("Text angles are correct", {
   expect_equal(test$angle[test$label != " "], 0)
 
   # Test location of letters
-  expect_equal(test$x[test$label != " "], 3)
-  expect_equal(test$y[test$label != " "], 3)
+  expect_equal(test$x[test$label != " "], 3 * sqrt(2))
 })
 
 test_that("Path trimming is correct", {
@@ -30,12 +33,15 @@ test_that("Path trimming is correct", {
   xy <- data.frame(
     x = c(1:6), y = 1,
     id = c(1,1,2,2,3,3),
+<<<<<<< HEAD
     vjust = c(2, 2, 0.5, 0.5, -1, -1),
     size = 5,
+=======
+>>>>>>> b32faf661f9d4f050b5e3e96f6e89a864533e9f3
     label = "a label"
   )
+  vjust <- c(2, 0.5, -1)
   xy$group <- xy$id
-  xy <- .groupify_linebreaks(xy)
   xy <- split(xy, xy$id)
   xy <- Map(.add_path_data, .data = xy)
   glyphs <- Map(.get_path_points, path = xy, label = c("A", "B", "C"))
@@ -47,7 +53,7 @@ test_that("Path trimming is correct", {
 
   # TRUE cut_path
   test <- .get_surrounding_lines(xy, glyphs, cut_path = TRUE,
-                                 breathing_room = br[2])
+                                 breathing_room = br[2], vjust = vjust)
   expect_length(test$x, nrow(xy) * 2)
   expect_equal(
     test$x,
@@ -59,7 +65,7 @@ test_that("Path trimming is correct", {
 
   # FALSE cut_path
   test <- .get_surrounding_lines(xy, glyphs, cut_path = FALSE,
-                                 breathing_room = br[2])
+                                 breathing_room = br[2], vjust = vjust)
   expect_length(test$x, nrow(xy))
   expect_equal(
     test$x,
@@ -71,7 +77,7 @@ test_that("Path trimming is correct", {
 
   # Variable cut_path
   test <- .get_surrounding_lines(xy, glyphs, cut_path = NA,
-                                 breathing_room = br[2])
+                                 breathing_room = br[2], vjust = vjust)
   expect_length(test$x, nrow(xy) + 2)
   expect_equal(
     test$x,
@@ -82,7 +88,7 @@ test_that("Path trimming is correct", {
   expect_equal(unique(test$y), 1)
 
   # Test variable vjust is respected
-  test <- .get_surrounding_lines(xy, glyphs, cut_path = NA,
+  test <- .get_surrounding_lines(xy, glyphs, cut_path = NA, vjust = vjust,
                                  breathing_room = br[2], vjust_lim = c(0, 3))
   expect_length(test$x, nrow(xy) + 4)
   expect_equal(
@@ -92,4 +98,21 @@ test_that("Path trimming is correct", {
       5, 6)
   )
   expect_equal(unique(test$y), 1)
+})
+
+test_that("text can be placed on 2-point paths", {
+  # This is a canary in a coal-mine test to see if we haven't implemented
+  # something that works for longer paths but not for very short paths.
+
+  xy <- data.frame(x = c(1,2,3,4), y = c(1,2,2,1), id = c(1,1,2,2))
+  xy <- split(xy, xy$id)
+  xy <- Map(.add_path_data, .data = xy)
+
+  test <- Map(.get_path_points, label = c("A", "B"), path = xy)
+  test <- rbind_dfs(test)
+
+  # What actually to test is arbitrary, we just want the above to run without
+  # errors and be notified if anything changes.
+  expect_snapshot(test)
+
 })
