@@ -43,12 +43,7 @@
 {
   # Set default vjust if absent from data
   .data$vjust  <- .data$vjust %||% 0.5
-<<<<<<< HEAD
 
-  # Get angles in degrees without any "wraparound" jumps from positive to
-  # negative
-=======
->>>>>>> b32faf661f9d4f050b5e3e96f6e89a864533e9f3
   .data$angle  <- .path_angle_at_xy(.data$x, .data$y)
 
   # Get accurate arc length
