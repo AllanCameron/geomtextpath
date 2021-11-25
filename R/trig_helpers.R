@@ -1,3 +1,8 @@
+# Constants ---------------------------------------------------------------
+
+.rad2deg <- 180 / pi
+.deg2rad <- pi / 180
+.halfpi  <- pi /2
 
 # ------------------------------------------------------------------------------
 # Often we need the derivative or gradient to match the length of the input
@@ -38,16 +43,14 @@
 
 .angle_from_xy <- function(x, y, degrees = FALSE, stretch = FALSE, norm = FALSE)
 {
-  grad       <- .derivative(x, y, stretch = stretch)
-  first      <- atan2(diff(y), diff(x))[1]
-  rads       <- atan(grad)
-  diff_rads  <- if(length(rads) > 1) diff(rads) else numeric()
-  diff_rads  <- ifelse(diff_rads < - pi / 2, diff_rads + pi, diff_rads)
-  diff_rads  <- ifelse(diff_rads > + pi / 2, diff_rads - pi, diff_rads)
-  rads       <- cumsum(c(first, diff_rads))
-
-  if(norm) rads <- rads + pi / 2
-  if(degrees) rads * 180 / pi else rads
+  grad      <- .derivative(x, y, stretch = stretch)
+  first     <- atan2(diff(y[1:2]), diff(x[1:2]))
+  diff_rads <- diff(atan(grad))
+  diff_rads[i] <- diff_rads[{i <- diff_rads < - .halfpi}] + pi
+  diff_rads[i] <- diff_rads[{i <- diff_rads > + .halfpi}] - pi
+  rads      <- cumsum(c(first, diff_rads))
+  if(norm) rads <- rads + .halfpi
+  if(degrees) rads * .rad2deg else rads
 }
 
 
