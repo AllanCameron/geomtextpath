@@ -88,42 +88,19 @@
 
 .after  <- function(x) x[c(seq_along(x), length(x))]
 
-# The norms of a path tell us the norm of each *segment*. We want to know the
-# norm at each *point*, which is just the mean angle at the two adjacent
-# segments. Each end point simply gets the angle of its adjacent segment.
-.bisect_angles <- function(theta)
-{
-  (.before(theta) + .after(theta)) / 2
-}
-
-.bisector_offset <- function(theta, d) {
-
-  # Calculate x position at angle bisector
-  xx <- cos(theta)
-  xx <- .before(xx) * .after(xx)
-
-  # Calculate y position at angle bisector
-  yy <- sin(theta)
-  yy <- .before(yy) * .after(yy)
-
-  # Find appropriate length along bisector
-  outer(sqrt(2) / sqrt(1 + xx + yy), d)
-}
-
 
 
 .get_offset <- function(x, y, d = 0) {
 
-  norm_theta <- .angle_from_xy(x, y, norm = TRUE)
+  theta <- .angle_from_xy(x, y, norm = TRUE)
 
-  # Calculate angle bisector
-  bisector_angles <- .bisect_angles(norm_theta)
+  theta_bisect <- (.before(theta) + .after(theta)) / 2
 
-  offset <- .bisector_offset(norm_theta, d)
+  offset <- outer(cos(theta_bisect - .after(theta)), d)
 
   # Project new points at the bisector
-  xout <- offset * cos(bisector_angles) + x
-  yout <- offset * sin(bisector_angles) + y
+  xout <- offset * cos(theta_bisect) + x
+  yout <- offset * sin(theta_bisect) + y
 
   # Calculate arc length
   arc_length <- sapply(seq(ncol(xout)), function(i) {

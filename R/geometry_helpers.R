@@ -65,7 +65,7 @@
   ppi <- floor(convertUnit(unit(1, "in"), "pt", valueOnly = TRUE))
   dpi <- (dev.size("px") / dev.size("in"))[1]
 
-  d <- (vjust - 0.5) * path$size / dpi
+  d <-0
 
   path$adj_length <- .length_adjust_by_curvature(path$x, path$y, d)
 
