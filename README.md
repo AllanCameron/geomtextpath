@@ -181,9 +181,6 @@ p <- data.frame(x1 = c(seq(0, 10/6 * pi, pi/3),
   scale_alpha_identity() +
   theme_void() +
   theme(legend.position = "none") 
-#> Warning: Ignoring unknown parameters: flip_inverted
-
-#> Warning: Ignoring unknown parameters: flip_inverted
 
 p
 ```
