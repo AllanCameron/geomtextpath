@@ -115,10 +115,13 @@
   # Meaure text
   letters <- measure_text(label, gp = gp, ppi = ppi, vjust = vjust[1],
                           halign = halign)
+
   string_size <- attr(letters, "metrics")$width
+
   y_pos <- unique(c(0, letters$ymin))
 
   offset <- .get_offset(path$x, path$y, d = y_pos)
+
   n <- nrow(path)
 
   length <- offset$arc_length
@@ -209,8 +212,11 @@
 #' measure_text("Hello there,\nGeneral Kenobi")
 measure_text <- function(label, gp = gpar(), ppi = 72,
                          vjust = 0.5, hjust = 0, halign = "center") {
+
   halign <- match.arg(halign, c("center", "left", "right"))
+
   vjust[vjust == 1] <- 1 + .Machine$double.eps
+
   txt <- shape_string(
     strings    = label[1],
     family     = gp$fontfamily[1] %||% "",
@@ -224,6 +230,7 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
     hjust = hjust,
     align = halign,
   )
+
   # Adjust metrics
   metrics <- txt$metrics
   metrics$width  <- metrics$width  / ppi
@@ -243,6 +250,9 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
     xmax  = (txt$x_offset + txt$x_midpoint * 2)
   )
   attr(ans, "metrics") <- metrics
+
+  ans <- ans[ans$glyph != "\r" & ans$glyph != "\n" & ans$glyph != "\t",]
+
   return(ans)
 }
 
