@@ -1,11 +1,10 @@
 test_that("Text angles are correct", {
 
   # Triangle
-<<<<<<< HEAD
-  xy <- data.frame(x = 1:5, y = c(1,2,3,2,1), size = c(5, 5, 5, 5, 5))
-=======
-  xy <- data.frame(x = 1:5 * sqrt(2), y = c(1,2,3,2,1) * sqrt(2))
->>>>>>> b32faf661f9d4f050b5e3e96f6e89a864533e9f3
+
+  xy <- data.frame(x = 1:5 * sqrt(2), y = c(1,2,3,2,1) * sqrt(2),
+                   size = 5)
+
   xy <- .add_path_data(xy)
 
   # Test angles and lenghts of .add_path_data
@@ -33,11 +32,7 @@ test_that("Path trimming is correct", {
   xy <- data.frame(
     x = c(1:6), y = 1,
     id = c(1,1,2,2,3,3),
-<<<<<<< HEAD
-    vjust = c(2, 2, 0.5, 0.5, -1, -1),
     size = 5,
-=======
->>>>>>> b32faf661f9d4f050b5e3e96f6e89a864533e9f3
     label = "a label"
   )
   vjust <- c(2, 0.5, -1)
@@ -104,7 +99,7 @@ test_that("text can be placed on 2-point paths", {
   # This is a canary in a coal-mine test to see if we haven't implemented
   # something that works for longer paths but not for very short paths.
 
-  xy <- data.frame(x = c(1,2,3,4), y = c(1,2,2,1), id = c(1,1,2,2))
+  xy <- data.frame(x = c(1,2,3,4), y = c(1,2,2,1), id = c(1,1,2,2), size = 5)
   xy <- split(xy, xy$id)
   xy <- Map(.add_path_data, .data = xy)
 
