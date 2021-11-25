@@ -36,9 +36,9 @@
 # jump out of alignment. This little algorithm makes sure the changes
 # in angle never wrap around.
 
-.path_angle_at_xy <- function(x, y, degrees = TRUE)
+.angle_from_xy <- function(x, y, degrees = FALSE, stretch = FALSE, norm = FALSE)
 {
-  rads <- atan(.derivative(x, y))
+  rads <- atan(.derivative(x, y, stretch = stretch))
 
   if (length(rads) > 1) {
     diff_rads <- diff(rads)
@@ -50,8 +50,12 @@
     diff_rads <- c(0, 0)
     rads <- rep(rads, 2)
   }
+  if(norm) rads <- rads + pi / 2
   if(degrees) rads * 180 / pi else rads
+
 }
+
+
 
 # ------------------------------------------------------------------------------
 # Get the cumulative length of an x, y path. The accuracy can be improved by
@@ -85,56 +89,55 @@
   }
 }
 
-# ------------------------------------------------------------------------------
-# Finds the xy co-ordinates at offset d from original x, y coordinates
-.get_offset_path <- function(x, y, d)
-{
-   angle <- .path_angle_at_xy(x, y, degrees = FALSE) + pi / 2
+.before <- function(x) x[c(1, seq_along(x))]
 
-   data.frame(x = d * cos(angle) + x, y = d * sin(angle) + y)
+.after  <- function(x) x[c(seq_along(x), length(x))]
+
+# The norms of a path tell us the norm of each *segment*. We want to know the
+# norm at each *point*, which is just the mean angle at the two adjacent
+# segments. Each end point simply gets the angle of its adjacent segment.
+.bisect_angles <- function(theta)
+{
+  (.before(theta) + .after(theta)) / 2
 }
 
-calc_offset <- function(x, y, d = 0) {
-  n  <- length(x)
-  dx <- diff(x)
-  dy <- diff(y)
-  ang  <- atan(dy / dx)
-  dang <- diff(ang)
-  dang <- ifelse(dang < - pi / 2, dang + pi, dang)
-  dang <- ifelse(dang > + pi / 2, dang - pi, dang)
-  ang <- atan2(dy[1], dx[1]) # Never reorient first angle
-
-  # Get orthogonal angles
-  ang <- cumsum(c(ang[1], dang)) + pi / 2
-
-  # Left / right aligned indices
-  before <- c(1L, seq_along(ang))
-  after  <- c(seq_along(ang), length(ang))
-
-  # Calculate angle bisector
-  bis <- (ang[before] + ang[after])/2
+.bisector_offset <- function(theta, d) {
 
   # Calculate x position at angle bisector
-  xx <- cos(ang)
-  xx <- xx[before] * xx[after]
+  xx <- cos(theta)
+  xx <- .before(xx) * .after(xx)
 
   # Calculate y position at angle bisector
-  yy <- sin(ang)
-  yy <- yy[before] * yy[after]
+  yy <- sin(theta)
+  yy <- .before(yy) * .after(yy)
 
   # Find appropriate length along bisector
-  len <- outer(sqrt(2) / sqrt(1 + xx + yy), d)
+  outer(sqrt(2) / sqrt(1 + xx + yy), d)
+}
+
+
+
+.get_offset <- function(x, y, d = 0) {
+
+  norm_theta <- .angle_from_xy(x, y, norm = TRUE)
+
+  # Calculate angle bisector
+  bisector_angles <- .bisect_angles(norm_theta)
+
+  offset <- .bisector_offset(norm_theta, d)
 
   # Project new points at the bisector
-  xout <- len * cos(bis) + x
-  yout <- len * sin(bis) + y
+  xout <- offset * cos(bisector_angles) + x
+  yout <- offset * sin(bisector_angles) + y
 
   # Calculate arc length
-  arc_length <- rbind(0, sqrt(diff(xout)^2 + diff(yout)^2))
-  arc_length <- apply(arc_length, 2, cumsum)
+  arc_length <- sapply(seq(ncol(xout)), function(i) {
+     .arclength_from_xy(xout[,i], yout[,i])
+  })
 
   return(list(x = xout, y = yout, arc_length = arc_length))
 }
+
 
 # ------------------------------------------------------------------------------
 # Finds the curvature (change in angle per change in arc length)

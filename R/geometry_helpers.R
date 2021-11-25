@@ -42,9 +42,9 @@
 .add_path_data <- function(.data)
 {
   # Set default vjust if absent from data
-  .data$vjust  <- .data$vjust %||% 0.5
+  .data$vjust <- .data$vjust %||% 0.5
 
-  .data$angle  <- .path_angle_at_xy(.data$x, .data$y)
+  .data$angle <- .angle_from_xy(.data$x, .data$y, degrees = TRUE, stretch = TRUE)
 
   # Get accurate arc length
   .data$length <- .arclength_from_xy(.data$x, .data$y)
@@ -118,7 +118,7 @@
   string_size <- attr(letters, "metrics")$width
   y_pos <- unique(c(0, letters$ymin))
 
-  offset <- calc_offset(path$x, path$y, d = y_pos)
+  offset <- .get_offset(path$x, path$y, d = y_pos)
   n <- nrow(path)
 
   length <- offset$arc_length
