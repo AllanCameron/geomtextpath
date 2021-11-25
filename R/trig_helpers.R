@@ -38,17 +38,17 @@
 
 .angle_from_xy <- function(x, y, degrees = FALSE, stretch = FALSE, norm = FALSE)
 {
-  rads <- atan(.derivative(x, y, stretch = stretch))
+  grad <- .derivative(x, y, stretch = stretch)
+  rads <- atan(grad)
 
   if (length(rads) > 1) {
     diff_rads <- diff(rads)
     diff_rads <- ifelse(diff_rads < - pi / 2, diff_rads + pi, diff_rads)
     diff_rads <- ifelse(diff_rads > + pi / 2, diff_rads - pi, diff_rads)
-    rads <- cumsum(c(rads[1], diff_rads))
+    rads <- cumsum(c(atan2(diff(y)[1], diff(x)[1]), diff_rads))
   }
   else {
-    diff_rads <- c(0, 0)
-    rads <- rep(rads, 2)
+    rads <- atan2(diff(y), diff(x))
   }
   if(norm) rads <- rads + pi / 2
   if(degrees) rads * 180 / pi else rads
