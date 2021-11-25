@@ -86,7 +86,7 @@ grob <- textpathGrob(
   y = c(cos(t), sin(t)) * 0.25 + 0.5,
   id = rep(1:2, each = length(t)),
   vjust = rep(0.5, 2 * length(t)),
-  gp_text = gpar(lineheight = c(1.2, 1.2)),
+  gp_text = gpar(lineheight = c(1.2, 1.2), fontsize = c(10, 10)),
   gp_path = gpar(lty = c(1, 2))
 )
 

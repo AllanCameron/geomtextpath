@@ -44,12 +44,19 @@
   # Set default vjust if absent from data
   .data$vjust  <- .data$vjust %||% 0.5
 
+  # Get angles in degrees without any "wraparound" jumps from positive to
+  # negative
   .data$angle  <- .path_angle_at_xy(.data$x, .data$y)
 
+  # Get accurate arc length
   .data$length <- .arclength_from_xy(.data$x, .data$y)
 
-  offset <- .data$vjust - 0.5
+  dpi <- (dev.size("in")/dev.size("px"))[1]
 
+  offset <- (.data$vjust - 0.5) * .data$size * dpi
+
+  # Adjusted length is the length of the pseudo-path at the baseline of
+  # the vjusted text
   .data$adj_length  <- .length_adjust_by_curvature(.data$x, .data$y, offset)
 
   .data

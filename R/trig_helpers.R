@@ -95,21 +95,15 @@
 }
 
 # ------------------------------------------------------------------------------
-# Finds the proportional change in path length
-.length_adjustment_at_d <- function(x, y, d, accuracy = 0)
-{
-  offset_df <- .get_offset_path(x, y, d)
-  .arclength_from_xy(offset_df$x, offset_df$y, accuracy)
-}
-
-# ------------------------------------------------------------------------------
 # Finds the curvature (change in angle per change in arc length)
-.get_curvature <- function(x, y, stretch = TRUE)
+# This in effect finds 1/R, where R is the radius of the curve
+.get_curvature <- function(x, y)
 {
-  arclength <- .arclength_from_xy(x, y)
-  angle     <- .path_angle_at_xy(x, y, degrees = FALSE)
-  curvature <- diff(angle) / diff(arclength)
-  if(stretch) .stretch_by_one(curvature) else curvature
+  dx  <- .stretch_by_one(diff(x))
+  ddx <- .stretch_by_one(diff(dx))
+  dy  <- .stretch_by_one(diff(y))
+  ddy <- .stretch_by_one(diff(dy))
+  (dx * ddy - ddx * dy) / (dx^2 + dy^2)^(3/2)
 }
 
 
@@ -118,8 +112,11 @@
 # original path
 .length_adjust_by_curvature <- function(x, y, offset)
 {
-  curvature         <- .get_curvature(x, y) * 0.2
-  length_correction <-  1 +  offset * curvature
+  curvature         <- .get_curvature(x, y)
+  radius            <- 1 / curvature
+  radius[radius > 1e6] <- 1e6
+  radius[radius < -1e6] <- -1e6
+  length_correction <-  (radius + offset) / radius
 
   effective_length  <- c(0, diff(.arclength_from_xy(x, y))) * length_correction
 

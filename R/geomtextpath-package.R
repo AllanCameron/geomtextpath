@@ -9,6 +9,7 @@
 #' @importFrom graphics strwidth
 #' @importFrom systemfonts shape_string
 #' @importFrom stats approxfun
+#' @importFrom grDevices dev.size
 NULL
 
 # The following block is used by usethis to automatically manage

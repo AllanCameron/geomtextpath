@@ -39,7 +39,7 @@
 #'   y = c(cos(t), sin(t)) * 0.25 + 0.5,
 #'   id = rep(1:2, each = length(t)),
 #'   vjust = rep(0.5, 2 * length(t)),
-#'   gp_text = gpar(lineheight = c(1.2, 1.2)),
+#'   gp_text = gpar(lineheight = c(1.2, 1.2), fontsize = c(10, 10)),
 #'   gp_path = gpar(lty = c(1, 2))
 #' )
 #'
@@ -137,6 +137,8 @@ makeContent.textpath <- function(x) {
   path$y <- convertY(path$y, "inches", valueOnly = TRUE)
 
   ## ---- Data manipulation -------------------------------------------- #
+
+  path$size <- rep(v$gp_text$fontsize, run_len(path$id))
 
   # Get gradients, angles and path lengths for each group
   path <- Map(.add_path_data, .data = split(path, path$id))
