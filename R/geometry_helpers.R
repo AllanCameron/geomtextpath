@@ -11,55 +11,6 @@
 
 # Helpers -----------------------------------------------------------------
 
-## Adding path data -------------------------------------------------------
-
-#' Supplement path data
-#'
-#' This function supplements a single path given as x and y coordinates with
-#' information about the shape of the curve.
-#'
-#' @param .data A `data.frame` with `x`, `y` and `vjust` numeric columns.
-#'
-#' @return A `data.frame` with additional columns `angle`, `length` and
-#'   `adj_length`.
-#' @noRd
-#'
-#' @details This function does the work of calculating the gradient of the path
-#'   at each `x, y` value along its length, and the angle this implies that text
-#'   should sit on the path (measured in degrees, not radians). It takes a
-#'   group-subset of the layer data frame as input, so this function needs to
-#'   be `lapply()`-ed to the list formed by splitting the layer data frame by
-#'   group. This has to be done *after* transforming the data to co-ordinate
-#'   space with `coord$transform()`, otherwise the angles will be wrong.
-#'
-#' @examples
-#' xy <- data.frame(
-#'   x =  1:10,
-#'   y = (1:10)^2
-#' )
-#'
-#' .add_path_data(xy)
-.add_path_data <- function(.data)
-{
-  # Set default vjust if absent from data
-  .data$vjust <- .data$vjust %||% 0.5
-
-  .data$angle <- .angle_from_xy(.data$x, .data$y, degrees = TRUE, stretch = TRUE)
-
-  # Get accurate arc length
-  .data$length <- .arclength_from_xy(.data$x, .data$y)
-
-  dpi <- (dev.size("in")/dev.size("px"))[1]
-
-  offset <- (.data$vjust - 0.5) * .data$size * dpi
-
-  # Adjusted length is the length of the pseudo-path at the baseline of
-  # the vjusted text
-  .data$adj_length  <- .length_adjust_by_curvature(.data$x, .data$y, offset)
-
-  .data
-}
-
 ## Getting path points ----------------------------------------------------
 
 #' Interpolate path at text locations
@@ -110,7 +61,13 @@
   halign = "center",
   flip_inverted = FALSE
 ) {
-  ppi <- 72
+
+  ppi <- floor(convertUnit(unit(1, "in"), "pt", valueOnly = TRUE))
+  dpi <- (dev.size("px") / dev.size("in"))[1]
+
+  d <- (vjust - 0.5) * path$size / dpi
+
+  path$adj_length <- .length_adjust_by_curvature(path$x, path$y, d)
 
   # Meaure text
   letters <- measure_text(label, gp = gp, ppi = ppi, vjust = vjust[1],
@@ -124,10 +81,10 @@
 
   n <- nrow(path)
 
-  length <- offset$arc_length
+  arclength <- offset$arc_length
 
   # Calculate anchorpoint
-  anchor <- hjust[1] * (length[n, ] - string_size)
+  anchor <- hjust[1] * (arclength[n, ] - string_size)
 
   # Offset text x by anchorpoint
   xpos <- c("xmin", "xmid", "xmax")
@@ -144,18 +101,18 @@
   split(index, membr) <- Map(
     findInterval,
     x   = split(index, membr),
-    vec = asplit(length[, sort(unique(membr)), drop = FALSE], MARGIN = 2),
+    vec = asplit(arclength[, sort(unique(membr)), drop = FALSE], MARGIN = 2),
     all.inside = TRUE
   )
   # Build matrix indices of the previous and next points
   i0 <- cbind(index + 0, membr)
   i1 <- cbind(index + 1, membr)
   # Calculate the relative contribution (weights) of the previous and next point
-  di <- (x - length[i0]) / (length[i1] - length[i0])
+  di <- (x - arclength[i0]) / (arclength[i1] - arclength[i0])
   # Apply weights to interpolate
   new_x   <- offset$x[i0] * (1 - di) + offset$x[i1] * di
   new_y   <- offset$y[i0] * (1 - di) + offset$y[i1] * di
-  new_len <- length[i0[, 1], 1] * (1 - di) + length[i1[, 1], 1] * di
+  new_len <- arclength[i0[, 1], 1] * (1 - di) + arclength[i1[, 1], 1] * di
   dim(new_x) <- dim(new_y) <- dim(new_len) <- c(nrow(letters), 3)
 
   # Calculate text angles

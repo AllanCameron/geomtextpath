@@ -5,12 +5,14 @@ test_that("Text angles are correct", {
   xy <- data.frame(x = 1:5 * sqrt(2), y = c(1,2,3,2,1) * sqrt(2),
                    size = 5)
 
-  xy <- .add_path_data(xy)
+  angles <- .angle_from_xy(xy$x, xy$y, degrees = TRUE)
+  arclength <- .arclength_from_xy(xy$x, xy$y)
+
 
   # Test angles and lenghts of .add_path_data
-  expect_equal(xy$angle[1:2], c( 45,  45))
-  expect_equal(xy$angle[4:5], c(-45, -45))
-  expect_equal(xy$length, c(0, 2 * 1:4))
+  expect_equal(angles[1:2], c( 45,  45))
+  expect_equal(angles[3:4], c(-45, -45))
+  expect_equal(arclength, c(2 * 0:4))
 
   # Test angles of `.get_path_points`
   test <- .get_path_points(xy, "O", hjust = 0.25)
@@ -38,7 +40,8 @@ test_that("Path trimming is correct", {
   vjust <- c(2, 0.5, -1)
   xy$group <- xy$id
   xy <- split(xy, xy$id)
-  xy <- Map(.add_path_data, .data = xy)
+  xy <- lapply(xy, function(x) {
+    x$length <- .arclength_from_xy(x$x, x$y); x;})
   glyphs <- Map(.get_path_points, path = xy, label = c("A", "B", "C"))
   glyphs <- rbind_dfs(glyphs)
   xy     <- rbind_dfs(xy)
@@ -101,7 +104,6 @@ test_that("text can be placed on 2-point paths", {
 
   xy <- data.frame(x = c(1,2,3,4), y = c(1,2,2,1), id = c(1,1,2,2), size = 5)
   xy <- split(xy, xy$id)
-  xy <- Map(.add_path_data, .data = xy)
 
   test <- Map(.get_path_points, label = c("A", "B"), path = xy)
   test <- rbind_dfs(test)

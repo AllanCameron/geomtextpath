@@ -132,14 +132,19 @@ makeContent.textpath <- function(x) {
   path$size <- rep(v$gp_text$fontsize, run_len(path$id))
 
   # Get gradients, angles and path lengths for each group
-  path <- Map(.add_path_data, .data = split(path, path$id))
+  path <- split(path, path$id)
+
+  path <- lapply(path, function(x){
+    x$length <- .arclength_from_xy(x$x, x$y)
+    x
+  })
 
   # Get the actual text string positions and angles for each group
   text <- Map(
     .get_path_points,
     path = path, label = v$label,
     hjust = v$hjust, vjust = v$vjust, halign = v$halign,
-    gp = split_gp(v$gp_text, seq_along(labels)),
+    gp = split_gp(v$gp_text, seq_along(v$label)),
     flip_inverted = v$flip_inverted
   )
   text_lens <- vapply(text, nrow, integer(1))
@@ -181,85 +186,6 @@ makeContent.textpath <- function(x) {
     )
   )
   x
-}
-
-
-## Split linebreaks  -----------------------------------------------
-
-#' Split strings with linebreaks into different groups
-#'
-#' This function prepares the data for plotting by splitting labels
-#' at line breaks and giving each its own group
-#'
-#' @param data A `data.frame` with at least a factor or character column
-#'   called "label", integer columns called "group" and "linetype", and
-#'   numeric columns called "vjust" and "lineheight".
-#' @param flip_inverted If TRUE, any string where the majority of letters would
-#'   be upside down along the path are inverted to improve legibility. The
-#'   default is FALSE.
-#'
-#' @details The returned data is split into groups, one group for each
-#'   segment of text such that none have line breaks. For strings that
-#'   initially contained line breaks, they are broken up into different
-#'   groups with different vjust values. The vjust values of each text line
-#'   are centered around the originally specified vjust,
-#'
-#' @return A data frame containing the same column names and types as the
-#'   original, but with newlines now treated as different groups.
-#' @noRd
-#'
-#' @examples
-#' xy <- data.frame(
-#'   x =  1:10,
-#'   y = (1:10)^2,
-#'   group = 1,
-#'   label = "This string \n has a line break",
-#'   vjust = 0.5,
-#'   linetype = 1,
-#'   lineheight = 1.2
-#' )
-#'
-#' .groupify_linebreaks(xy)
-.groupify_linebreaks <- function(data, flip_inverted = FALSE)
-{
-    data$label <- as.character(data$label)
-    data$group_min_vjust <- data$vjust
-    data$group_max_vjust <- data$vjust
-    data$original_id <- data$id
-    data$vjust_if_inverted <- data$vjust
-    multi_liners <- grepl("[\r\n]", data$label)
-
-    if(!any(multi_liners)) return(data)
-
-    line_breakers <- data[multi_liners,]
-
-    pieces        <- strsplit(line_breakers$label, "[\r\n]+")
-    line_breakers <- do.call(rbind, lapply(seq_along(pieces), function(i){
-      n <- length(pieces[[i]])
-      df <- line_breakers[rep(i, n),]
-      df$label <- pieces[[i]]
-      df$vjust <- (seq(n) - n)  * df$lineheight[1] +
-                  df$vjust[1] * df$lineheight[1] * (n - 1) + df$vjust[1]
-      df$id <- rep(df$id[1] + seq(0, 1 - 1/n, 1/n),
-                      length.out = nrow(df))
-      line_type <- df$linetype[1]
-      df$linetype <- 0
-      df$linetype[which(df$vjust <= 1 & df$vjust >= 0)] <- line_type
-      if(all(df$linetype == 0)) {
-        df$linetype[which.min(abs(df$vjust))] <- line_type
-      }
-      df$group_min_vjust <- min(df$vjust)
-      df$group_max_vjust <- max(df$vjust)
-      df$vjust_if_inverted <- rev(df$vjust)
-      df
-    }))
-
-    data <- if(all(multi_liners)) line_breakers
-            else rbind(line_breakers, data[!multi_liners,])
-
-    data$id <- as.numeric(factor(data$id))
-
-    data
 }
 
 # Helpers -----------------------------------------------------------------
