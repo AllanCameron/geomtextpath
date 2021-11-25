@@ -64,6 +64,21 @@
 {
   if(length(x) != length(y)) stop("x and y must be same length")
 
+  if (is.matrix(x) || is.matrix(y)) {
+    stopifnot(
+      "Both or neither x and y must be matrices" =
+        is.matrix(x) && is.matrix(y)
+    )
+    if (!is.na(accuracy)) {
+      # Call self for every column
+      out <- Map(.arclength_from_xy, x = asplit(x, 2), y = asplit(y, 2),
+                 accuracy = accuracy)
+      out <- do.call(cbind, out)
+    } else {
+      out <- rbind(0, apply(sqrt(diff(x)^2 + diff(y)^2), 2, cumsum))
+    }
+    return(out)
+  }
 
   if(!is.na(accuracy))
   {
@@ -129,9 +144,7 @@
   yout <- offset * sin(bisector_angles) + y
 
   # Calculate arc length
-  arc_length <- sapply(seq(ncol(xout)), function(i) {
-     .arclength_from_xy(xout[,i], yout[,i])
-  })
+  arc_length <- .arclength_from_xy(xout, yout)
 
   return(list(x = xout, y = yout, arc_length = arc_length))
 }
