@@ -15,10 +15,10 @@ test_that("Text angles are correct", {
   expect_equal(arclength, c(2 * 0:4))
 
   # Test angles of `.get_path_points`
-  test <- .get_path_points(xy, "O", hjust = 0.25, vjust = 0)
+  test <- .get_path_points(xy, "O", hjust = 0.25)
   expect_equal(test$angle[test$label != " "], 45)
 
-  test <- .get_path_points(xy, "O", hjust = 0.75, vjust = 0)
+  test <- .get_path_points(xy, "O", hjust = 0.75)
   expect_equal(test$angle[test$label != " "], -45)
 
   # This should be at the exact top of the triangle, where angle should be 0

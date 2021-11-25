@@ -96,7 +96,7 @@
 
   theta_bisect <- (.before(theta) + .after(theta)) / 2
 
-  offset <- outer(cos(theta_bisect - .after(theta)), d)
+  offset <- outer(1/cos(theta_bisect - .after(theta)), d)
 
   # Project new points at the bisector
   xout <- offset * cos(theta_bisect) + x
