@@ -108,6 +108,6 @@ test_that("text can be placed on 2-point paths", {
 
   # What actually to test is arbitrary, we just want the above to run without
   # errors and be notified if anything changes.
-  expect_snapshot(test)
+  expect_true(all(!is.na(test$x)))
 
 })
