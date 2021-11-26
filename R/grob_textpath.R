@@ -96,7 +96,7 @@ textpathGrob <- function(
     y <- unit(y, default.units)
   }
 
-  path <- dedup_path(x = x, y = y, id = rep(seq_along(id_lens), id_lens))
+  path <- data_frame(x = x, y = y, id = rep(seq_along(id_lens), id_lens))
 
   gTree(
     textpath = list(
@@ -121,11 +121,12 @@ textpathGrob <- function(
 #' @export
 makeContent.textpath <- function(x) {
   v <- x$textpath
-  path <- v$data
+  path <- dedup_path(
+    x = convertX(v$data$x, "inches", valueOnly = TRUE),
+    y = convertY(v$data$y, "inches", valueOnly = TRUE),
+    id = v$data$id
+  )
   x$textpath <- NULL
-
-  path$x <- convertX(path$x, "inches", valueOnly = TRUE)
-  path$y <- convertY(path$y, "inches", valueOnly = TRUE)
 
   ## ---- Data manipulation -------------------------------------------- #
 
@@ -224,15 +225,17 @@ gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {
 # problems for gradient/offset calculations
 dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
   vecs <- data_frame(x = x, y = y, id = id)
-  if (anyDuplicated(vecs)) {
-    lens <- lengths(vecs)
-    n    <- max(lengths(vecs))
-    vecs[lens != n] <- lapply(vecs[lens != n], rep_len, length.out = n)
-    dups <- vapply(vecs, function(x){abs(x[-1] - x[-length(x)]) < tolerance},
-                   logical(n - 1))
+  lens <- lengths(vecs)
+  n    <- max(lengths(vecs))
+  vecs[lens != n] <- lapply(vecs[lens != n], rep_len, length.out = n)
+  dups <- vapply(vecs, function(x){abs(x[-1] - x[-length(x)]) < tolerance},
+                 logical(n - 1))
+  if (n > 2) {
     keep <- c(TRUE, rowSums(dups) < 3L)
-    vecs[keep, , drop = FALSE]
+  } else {
+    keep <- c(TRUE, sum(dups))
   }
+  vecs <- vecs[keep, , drop = FALSE]
   vecs
 }
 
