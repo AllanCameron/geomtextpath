@@ -223,7 +223,7 @@ gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {
 # Path constructor that filters out subsequent duplicated points that can cause
 # problems for gradient/offset calculations
 dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
-  vecs <- list(x = x, y = y, id = id)
+  vecs <- data_frame(x = x, y = y, id = id)
   if (anyDuplicated(vecs)) {
     lens <- lengths(vecs)
     n    <- max(lengths(vecs))
@@ -231,8 +231,8 @@ dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
     dups <- vapply(vecs, function(x){abs(x[-1] - x[-length(x)]) < tolerance},
                    logical(n - 1))
     keep <- c(TRUE, rowSums(dups) < 3L)
-    list_to_df(vecs)[keep, , drop = FALSE]
+    vecs[keep, , drop = FALSE]
   }
-  list_to_df(vecs)
+  vecs
 }
 
