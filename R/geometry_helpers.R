@@ -199,9 +199,9 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
     xmid  = (txt$x_offset + txt$x_midpoint),
     xmax  = (txt$x_offset + txt$x_midpoint * 2)
   )
-  attr(ans, "metrics") <- metrics
+  ans[!(ans$glyph %in% c("\r", "\n", "\t")), , drop = FALSE]
 
-  ans <- ans[ans$glyph != "\r" & ans$glyph != "\n" & ans$glyph != "\t",]
+  attr(ans, "metrics") <- metrics
 
   return(ans)
 }

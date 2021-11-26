@@ -48,3 +48,27 @@ test_that("data_frame works", {
   expect_error(eval(test), "Elements must be named")
 
 })
+
+test_that("dedup_path works", {
+  x  <- c(1, 1, 2, 1)
+  y  <- c(1, 2, 3, 1)
+  id <- c(1, 1, 1, 1)
+  ctrl <- data_frame(x = x, y = y, id = id)
+
+  # Should not remove row if unique
+  test <- dedup_path(x, y, id)
+  expect_equal(test, ctrl)
+
+  # Should remove 2nd row but not 4th row
+  y[2] <- 1
+  test <- dedup_path(x, y, id)
+  expect_equal(test, ctrl[c(1, 3:4),])
+
+  # Check tolerance is respected
+  y[2] <- 1.1
+  test <- dedup_path(x, y, id, tolerance = 0.2)
+  expect_equal(test, ctrl[c(1, 3:4), ])
+
+  test <- dedup_path(x, y, id, tolerance = 0.05)
+  expect_equal(test, transform(ctrl, y = c(y[1], 1.1, y[3:4])))
+})
