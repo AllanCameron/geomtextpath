@@ -53,7 +53,7 @@
   }
 
   if(is.na(accuracy)) return(c(0, cumsum(sqrt(diff(x)^2 + diff(y)^2))))
-  
+
   if(!is.numeric(accuracy) | length(accuracy) != 1 | accuracy < 0)
   {
     stop("accuracy must be a positive integer")
@@ -123,6 +123,20 @@
   dy  <- .stretch_by_one(diff(y))
   ddy <- .stretch_by_one(diff(dy))
   (dx * ddy - ddx * dy) / (dx^2 + dy^2)^(3/2)
+}
+
+# ------------------------------------------------------------------------------
+# Often we need the derivative or gradient to match the length of the input
+# vector. This does it via a simple interpolation along the input vector
+
+.stretch_by_one <- function(vec)
+{
+  n <- length(vec)
+
+  if(n == 1)
+    rep(vec, 2)
+  else
+    approx(seq(n), vec, seq(1, n, length.out = n + 1))$y
 }
 
 
