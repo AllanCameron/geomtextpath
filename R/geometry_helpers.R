@@ -76,13 +76,30 @@
 
   arclength <- offset$arc_length
 
-  # Calculate anchorpoint
-  anchor <- hjust[1] * (c(tail(arclength, 1)) - attr(letters, "metrics")$width)
-
   # Offset text x by anchorpoint
   xpos <- c("xmin", "xmid", "xmax")
   letters$yid <- match(letters$ymin, y_pos)
-  letters[, xpos] <- letters[, xpos] + anchor[letters$yid]
+
+  # Calculate anchorpoints
+  text_width <- attr(letters, "metrics")$width
+  anchor <- hjust[1] * c(tail(arclength, 1))[1]
+  left_anchor <- anchor - hjust[1] * text_width
+  right_anchor <- anchor + (1 - hjust) * text_width
+
+  # project anchorpoints
+
+  anchors <- sapply(asplit(arclength, 2), function(a) {
+    approx(arclength[, 1], a, c(left_anchor, right_anchor))$y
+  })
+
+  letters[, xpos] <- if(halign == "left") {
+    letters[, xpos] + anchors[1, letters$yid]
+  } else if (halign == "right") {
+    anchors[2, letters$yid] - (text_width - letters[, xpos])
+  } else {
+    (letters[, xpos] + anchors[1, letters$yid] +
+      anchors[2, letters$yid] - (text_width - letters[, xpos])) / 2
+  }
 
   # Project text on path
   # The next bit is going to be a complicated variant of `approx()`.
@@ -199,7 +216,7 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
     xmid  = (txt$x_offset + txt$x_midpoint),
     xmax  = (txt$x_offset + txt$x_midpoint * 2)
   )
-  ans[!(ans$glyph %in% c("\r", "\n", "\t")), , drop = FALSE]
+  ans <- ans[!(ans$glyph %in% c("\r", "\n", "\t")), , drop = FALSE]
 
   attr(ans, "metrics") <- metrics
 
