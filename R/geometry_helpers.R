@@ -63,28 +63,19 @@
 ) {
 
   ppi <- floor(convertUnit(unit(1, "in"), "pt", valueOnly = TRUE))
-  dpi <- (dev.size("px") / dev.size("in"))[1]
 
-  d <- (vjust - 0.5) * path$size / dpi
+  path$length <- .arclength_from_xy(path$x, path$y)
 
-  path$adj_length <- .length_adjust_by_curvature(path$x, path$y, d)
-
-  # Meaure text
-  letters <- measure_text(label, gp = gp, ppi = ppi, vjust = vjust[1],
-                          halign = halign)
-
-  string_size <- attr(letters, "metrics")$width
+  letters <- measure_text(label, gp = gp, vjust = vjust[1], halign = halign)
 
   y_pos <- unique(c(0, letters$ymin))
 
   offset <- .get_offset(path$x, path$y, d = y_pos)
 
-  n <- nrow(path)
-
   arclength <- offset$arc_length
 
   # Calculate anchorpoint
-  anchor <- hjust[1] * (arclength[n, ] - string_size)
+  anchor <- hjust[1] * (c(tail(arclength, 1)) - attr(letters, "metrics")$width)
 
   # Offset text x by anchorpoint
   xpos <- c("xmin", "xmid", "xmax")
@@ -137,7 +128,7 @@
   df <- as.list(path[setdiff(names(path), c("x", "y", "angle"))])
   is_num <- vapply(df, is.numeric, logical(1))
   df[is_num] <- lapply(df[is_num], function(i) {
-    approx(x = path$adj_length, y = i, xout = letters$xmid, ties = mean)$y
+    approx(x = path$length, y = i, xout = letters$xmid, ties = mean)$y
   })
   df[!is_num] <- lapply(lapply(df[!is_num], `[`, 1L),
                         rep, length.out = nrow(letters))
