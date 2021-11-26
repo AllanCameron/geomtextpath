@@ -1,3 +1,9 @@
+# Constants ---------------------------------------------------------------
+
+.rad2deg <- 180 / pi
+.deg2rad <- pi / 180
+.halfpi  <- pi /2
+
 # ------------------------------------------------------------------------------
 # This is a safe way to get the direction along a path. Since we use approx
 # to interpolate angles later, we can't have any sudden transitions
@@ -12,15 +18,13 @@
   if(length(x) != length(y)) stop("x and y vectors must be the same length")
 
   grad       <- diff(y) / diff(x)
-  first      <- atan2(diff(y), diff(x))[1]
-  rads       <- atan(grad)
-  diff_rads  <- if(length(rads) > 1) diff(rads) else numeric()
-  diff_rads  <- ifelse(diff_rads < - pi / 2, diff_rads + pi, diff_rads)
-  diff_rads  <- ifelse(diff_rads > + pi / 2, diff_rads - pi, diff_rads)
-  rads       <- cumsum(c(first, diff_rads))
-
-  if(norm) rads <- rads + pi / 2
-  if(degrees) rads * 180 / pi else rads
+  first     <- atan2(diff(y[1:2]), diff(x[1:2]))
+  diff_rads <- diff(atan(grad))
+  diff_rads[i] <- diff_rads[{i <- diff_rads < - .halfpi}] + pi
+  diff_rads[i] <- diff_rads[{i <- diff_rads > + .halfpi}] - pi
+  rads      <- cumsum(c(first, diff_rads))
+  if(norm) rads <- rads + .halfpi
+  if(degrees) rads * .rad2deg else rads
 }
 
 # ------------------------------------------------------------------------------
@@ -32,8 +36,24 @@
 {
   if(length(x) != length(y)) stop("x and y must be same length")
 
-  if(is.na(accuracy)) return(c(0, cumsum(sqrt(diff(x)^2 + diff(y)^2))))
+  if (is.matrix(x) || is.matrix(y)) {
+    stopifnot(
+      "Both or neither x and y must be matrices" =
+        is.matrix(x) && is.matrix(y)
+    )
+    if (!is.na(accuracy)) {
+      # Call self for every column
+      out <- Map(.arclength_from_xy, x = asplit(x, 2), y = asplit(y, 2),
+                 accuracy = accuracy)
+      out <- do.call(cbind, out)
+    } else {
+      out <- rbind(0, apply(sqrt(diff(x)^2 + diff(y)^2), 2, cumsum))
+    }
+    return(out)
+  }
 
+  if(is.na(accuracy)) return(c(0, cumsum(sqrt(diff(x)^2 + diff(y)^2))))
+  
   if(!is.numeric(accuracy) | length(accuracy) != 1 | accuracy < 0)
   {
     stop("accuracy must be a positive integer")
@@ -87,13 +107,10 @@
 
   # Calculate arc length of the new paths: one length for each column in
   # our x and y matrices.
-  arc_length <- sapply(seq(ncol(xout)), function(i) {
-     .arclength_from_xy(xout[,i], yout[,i])
-  })
+  arc_length <- .arclength_from_xy(xout, yout)
 
   return(list(x = xout, y = yout, arc_length = arc_length))
 }
-
 
 # ------------------------------------------------------------------------------
 # Finds the curvature (change in angle per change in arc length)
