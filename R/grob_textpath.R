@@ -181,7 +181,7 @@ makeContent.textpath <- function(x) {
     x, textGrob(
       label = text$label,
       x = text$x, y = text$y, rot = text$angle,
-      vjust = 0, hjust = 0.5, gp = gp_text,
+      vjust = 0.5, hjust = 0.5, gp = gp_text,
       default.units = "inches"
     )
   )

@@ -68,6 +68,8 @@
 
   letters <- measure_text(label, gp = gp, vjust = vjust[1], halign = halign)
 
+  letters$ymin <- letters$ymin - measure_text("x", gp = gp, vjust = 0.5)$ymin[1]
+
   y_pos <- unique(c(0, letters$ymin))
 
   offset <- .get_offset(path$x, path$y, d = y_pos)
