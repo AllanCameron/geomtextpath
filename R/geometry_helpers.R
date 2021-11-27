@@ -122,7 +122,8 @@
 measure_text <- function(label, gp = gpar(), ppi = 72,
                          vjust = 0.5, hjust = 0, halign = "center") {
 
-  halign <- match.arg(halign, c("center", "left", "right"))
+  halign <- match(halign, c("center", "left", "right"), nomatch = 2L)
+  halign <- c("center", "left", "right")[halign]
 
   vjust[vjust == 1] <- 1 + .Machine$double.eps
 
@@ -131,13 +132,13 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   # replication in the code.
 
   string_args <- list(
-    strings    = label[1],
-    family     = gp$fontfamily[1] %||% "",
-    italic     = (gp$font[1]      %||% 1) %in% c(3, 4),
-    bold       = (gp$font[1]      %||% 1) %in% c(2, 4),
-    size       = gp$fontsize[1]   %||% 12,
-    lineheight = gp$lineheight[1] %||% 1.2,
-    tracking   = gp$tracking[1]   %||% 0,
+    strings    = label,
+    family     = gp$fontfamily %||% "",
+    italic     = (gp$font      %||% 1) %in% c(3, 4),
+    bold       = (gp$font      %||% 1) %in% c(2, 4),
+    size       = gp$fontsize   %||% 12,
+    lineheight = gp$lineheight %||% 1.2,
+    tracking   = gp$tracking   %||% 0,
     res = ppi,
     vjust = vjust,
     hjust = hjust,
@@ -150,7 +151,7 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   # y offset. This allows us to correct for the fixed vjust of 0.5 passed to
   # textGrob inside makeContent.textpath
 
-  string_args$strings <- "x"
+  string_args$strings <- rep("x", length(label))
   string_args$vjust   <- 0.5
   x_adjust <- do.call(shape_string, string_args)$shape$y_offset
 
@@ -159,13 +160,14 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   metrics$width  <- metrics$width  / ppi
   metrics$height <- metrics$height / ppi
 
-  # Adjust shape
+  # Filter non-letters
   txt <- txt$shape
+  txt <- txt[!(txt$glyph %in% c("\r", "\n", "\t")), , drop = FALSE]
+
+  # Adjust shape
   txt$x_offset   <- txt$x_offset   / ppi
   txt$x_midpoint <- txt$x_midpoint / ppi
-  txt$y_offset   <- (txt$y_offset - x_adjust) / ppi
-
-  offset <- unique(c(0, txt$y_offset))
+  txt$y_offset   <- (txt$y_offset - x_adjust[txt$metric_id + 1]) / ppi
 
   # Format shape
   ans <- data_frame(
@@ -173,13 +175,19 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
     ymin  =  txt$y_offset,
     xmin  =  txt$x_offset,
     xmid  = (txt$x_offset + txt$x_midpoint),
-    xmax  = (txt$x_offset + txt$x_midpoint * 2),
-    y_id  =  match(txt$y_offset, offset)
+    xmax  = (txt$x_offset + txt$x_midpoint * 2)
   )
-  ans <- ans[!(ans$glyph %in% c("\r", "\n", "\t")), , drop = FALSE]
 
-  attr(ans, "metrics") <- metrics
-  attr(ans, "offset")  <- offset
+  # Split and assign group-specific attributes
+  ans <- split(ans, txt$metric_id)
+  ans <- lapply(seq_along(ans), function(i) {
+    df      <- ans[[i]]
+    offset  <- unique(c(0, df$ymin))
+    df$y_id <- match(df$ymin, offset)
+    attr(df, "metrics") <- metrics[i, , drop = FALSE]
+    attr(df, "offset")  <- offset
+    df
+  })
 
   return(ans)
 }
