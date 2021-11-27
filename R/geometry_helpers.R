@@ -100,7 +100,7 @@
   }
 
   # Format output
-  df <- as.list(path[setdiff(names(path), c("x", "y", "angle"))])
+  df <- as.list(path[setdiff(names(path), c("x", "y", "angle", "length"))])
   is_num <- vapply(df, is.numeric, logical(1))
   df[is_num] <- lapply(df[is_num], function(i) {
     approx(x = path$length, y = i, xout = letters$length, ties = mean)$y
@@ -176,6 +176,9 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 
 #' Get anchor points
 #'
+#' This is a helper function that calculates for every offset what the anchor
+#' position of text along the arc-length of an (offset) path should be.
+#'
 #' @param arc_length A `matrix` with `numeric` values, giving the arc-length of
 #'   the original path in the first column, and a column for every offset-path.
 #' @param text_width A `numeric` with the total width of the text.
@@ -198,8 +201,9 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 
   # Interpolate for offset paths
   i <- findInterval(anchor, arc_length[, 1], all.inside = TRUE)
-  d <- (anchor - arc_length[i, 1]) + (arc_length[i + 1, ] - arc_length[i, 1])
-  anchor <- arc_length[i + 1, ] * (1 - d) + arc_length[i, ] * d
+  d <- (anchor - arc_length[i, 1]) / (arc_length[i + 1, 1] - arc_length[i, 1])
+  anchor <- arc_length[i, , drop = FALSE] * (1 - d) +
+    arc_length[i + 1, , drop = FALSE] * d
 
   switch(
     halign,
@@ -209,10 +213,31 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   )
 }
 
+#' Project text onto path
+#'
+#' This is a helper function that converts the position of letters from
+#' arc-length space to Cartesian coordinates and calculates the appropriate
+#' angle of the text.
+#'
+#' @param text A `data.frame` with a row for every letter and at least the
+#'   following columns: `xmin`, `xmid`, `xmax` for the positions of the glyph
+#'   along the arc-length of a path and `yid` for to which offset a letter
+#'   belongs.
+#' @param offset A `list` with at least 3 `matrix` elements describing the
+#'   x, y positions and arc-lengths. Every row in these matrices correspond to
+#'   a point on a path and every column holds an offsetted position, starting
+#'   with no offset at the first column.
+#'
+#' @return A `data.frame` with the following columns: `label`, `length`,
+#'   `angle`, `x` and `y` and `nrow(text)` rows.
+#' @md
+#'
+#' @examples
+#' NULL
 .project_text <- function(text, offset) {
   arclength <- offset$arc_length
   index <- x <- unlist(text[, c("xmin", "xmid", "xmax")])
-  membr <- rep(letters$yid, 3)
+  membr <- rep(text$yid, 3)
 
   # Find indices along arc lengths
   split(index, membr) <- Map(
@@ -222,7 +247,7 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
     all.inside = TRUE
   )
 
-  # Format indices
+  # Format indices for matrix-subsetting
   i0 <- cbind(index + 0, membr)
   i1 <- cbind(index + 1, membr)
 
@@ -233,6 +258,9 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   new_x <- offset$x[i0] * (1 - d) + offset$x[i1] * d
   new_y <- offset$y[i0] * (1 - d) + offset$y[i1] * d
   lengs <- arclength[i0[, 1], 1] * (1 - d) + arclength[i1[, 1], 1] * d
+
+  # Restore dimensions
+  # Column 1 comes from `xmin`, 2 from `xmid` and 3 from `xmax`
   dim(new_x) <- dim(new_y) <- dim(lengs) <- c(nrow(text), 3)
 
   # Calculate text angles
