@@ -146,7 +146,6 @@ makeContent.textpath <- function(x) {
     .get_path_points,
     path = path, label = v$label,
     hjust = v$hjust, halign = v$halign,
-    gp = split_gp(v$gp_text, seq_along(v$label)),
     flip_inverted = v$flip_inverted
   )
   text_lens <- vapply(text, nrow, integer(1))

@@ -1,6 +1,6 @@
 ##---------------------------------------------------------------------------##
 ##                                                                           ##
-##  geom_textpath main                                                       ##
+##  geom_textpath helpers                                                    ##
 ##                                                                           ##
 ##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
 ##                                                                           ##
@@ -21,10 +21,6 @@
 #' @param path A `data.frame` with the numeric columns `x`, `y`.
 #' @param label A `data.frame` with measured text, such as one produced by the
 #'   `measure_text()` function.
-#' @param gp An object of class `"gpar"`, typically the output from a call to
-#'   the `grid::gpar()` function. Note that parameters related to fonts *must*
-#'   be present. To be exact, the following parameters cannot be missing:
-#'   `fontfamily`, `font`, `fontsize` and `lineheight`.
 #' @param hjust A `numeric(1)` scalar specifying horizontal justification along
 #'   the path.
 #'
@@ -57,7 +53,6 @@
 .get_path_points <- function(
   path,
   label = "placeholder",
-  gp = get.gpar(),
   hjust = 0.5,
   halign = "center",
   flip_inverted = FALSE
@@ -78,9 +73,7 @@
   letters <- .project_text(letters, offset)
 
   # Consider flipping the text
-  df <- .attempt_flip(path, label, letters$angle,
-                      gp, hjust, halign,
-                      flip_inverted)
+  df <- .attempt_flip(path, label, letters$angle, hjust, halign, flip_inverted)
   if (!is.null(df)) {
     return(df)
   }
@@ -113,7 +106,7 @@
 #' @examples
 #' NULL
 .attempt_flip <- function(
-  path, label = "placeholder", angle = 0, gp = gpar(),
+  path, label = "placeholder", angle = 0,
   hjust = 0, halign = "left", flip_inverted = FALSE
 ) {
   if (!flip_inverted) {
@@ -129,7 +122,7 @@
   hjust <- 1 - hjust
 
   .get_path_points(
-    path, label, gp, hjust, halign,
+    path, label, hjust, halign,
     flip_inverted = FALSE
   )
 }
@@ -330,10 +323,6 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 }
 
 ## Getting surrounding lines -----------------------------------------------
-
-## TODO: Sometimes when the device is really small or the letters huge, there
-##       can be a letters data.frame that has 0 rows for a group. We should
-##       defensively code something against this.
 
 #' Trim text area from path
 #'
