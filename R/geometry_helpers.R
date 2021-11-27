@@ -112,13 +112,14 @@
 #' This wrap the `systemfonts::shape_string()` function to return positions for
 #' every letter.
 #'
-#' @param label A `character(1)` of a label.
+#' @param label A `character` vector of labels.
 #' @param gp A `grid::gpar()` object.
 #' @param ppi A `numeric(1)` for the resolution in points per inch.
 #' @param vjust The justification of the text.
 #'
-#' @return A `data.frame` with the columns `glyph`, `ymin`, `xmin`, `xmid` and
-#'   `xmax`.
+#' @return A `list` with `data.frame`s, parallel to `label`. Every `data.frame`
+#' has the columns `glyph`, `ymin`, `xmin`, `xmid`, `xmax` and `y_id`. In
+#' addition, every element of the list has `offset` and `metrics` attributes.
 #' @noRd
 #'
 #' @examples
