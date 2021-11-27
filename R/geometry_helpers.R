@@ -188,6 +188,7 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 #'   among different lines in a multi-line text.
 #' @return A `numeric` vector of length `ncol(arc_length)` with anchor points.
 #' @md
+#' @noRd
 #'
 #' @examples
 #' arclength <- cbind(0:5, 0:5 * 2)
@@ -231,6 +232,7 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 #' @return A `data.frame` with the following columns: `label`, `length`,
 #'   `angle`, `x` and `y` and `nrow(text)` rows.
 #' @md
+#' @noRd
 #'
 #' @examples
 #' NULL
