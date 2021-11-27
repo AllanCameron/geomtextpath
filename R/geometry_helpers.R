@@ -64,19 +64,16 @@
 
   letters   <- measure_text(label, gp = gp, vjust = vjust[1], halign = halign)
 
-  y_pos <- unique(c(0, letters$ymin))
-
-  offset    <- .get_offset(path$x, path$y, d = y_pos)
+  offset    <- .get_offset(path$x, path$y, d = attr(letters, "offset"))
   arclength <- offset$arc_length
 
-  # Offset text x by anchorpoint
-  xpos <- c("xmin", "xmid", "xmax")
-  letters$yid <- match(letters$ymin, y_pos)
-
+  # Offset text by anchorpoint
   anchor <- .anchor_points(arclength, attr(letters, "metrics")$width,
                            hjust = hjust, halign = halign)
-  letters[, xpos] <- letters[, xpos] + anchor[letters$yid]
+  xpos <- c("xmin", "xmid", "xmax")
+  letters[, xpos] <- letters[, xpos] + anchor[letters$y_id]
 
+  # Project text to curves
   letters <- .project_text(letters, offset)
 
   # Resolve inverted text
@@ -166,18 +163,23 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   txt <- txt$shape
   txt$x_offset   <- txt$x_offset   / ppi
   txt$x_midpoint <- txt$x_midpoint / ppi
+  txt$y_offset   <- (txt$y_offset - x_adjust) / ppi
+
+  offset <- unique(c(0, txt$y_offset))
 
   # Format shape
   ans <- data_frame(
     glyph =  txt$glyph,
-    ymin  =  (txt$y_offset - x_adjust) / ppi,
+    ymin  =  txt$y_offset,
     xmin  =  txt$x_offset,
     xmid  = (txt$x_offset + txt$x_midpoint),
-    xmax  = (txt$x_offset + txt$x_midpoint * 2)
+    xmax  = (txt$x_offset + txt$x_midpoint * 2),
+    y_id  =  match(txt$y_offset, offset)
   )
   ans <- ans[!(ans$glyph %in% c("\r", "\n", "\t")), , drop = FALSE]
 
   attr(ans, "metrics") <- metrics
+  attr(ans, "offset")  <- offset
 
   return(ans)
 }
@@ -229,7 +231,7 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 #'
 #' @param text A `data.frame` with a row for every letter and at least the
 #'   following columns: `xmin`, `xmid`, `xmax` for the positions of the glyph
-#'   along the arc-length of a path and `yid` for to which offset a letter
+#'   along the arc-length of a path and `y_id` for to which offset a letter
 #'   belongs.
 #' @param offset A `list` with at least 3 `matrix` elements describing the
 #'   x, y positions and arc-lengths. Every row in these matrices correspond to
@@ -246,7 +248,7 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 .project_text <- function(text, offset) {
   arclength <- offset$arc_length
   index <- x <- unlist(text[, c("xmin", "xmid", "xmax")])
-  membr <- rep(text$yid, 3)
+  membr <- rep(text$y_id, 3)
 
   # Find indices along arc lengths
   split(index, membr) <- Map(
@@ -401,6 +403,4 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 
   return(path)
 }
-
-
 
