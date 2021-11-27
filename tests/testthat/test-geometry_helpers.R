@@ -1,28 +1,28 @@
 test_that("Text angles are correct", {
 
   # Triangle
-
   xy <- data.frame(x = 1:5 * sqrt(2), y = c(1,2,3,2,1) * sqrt(2),
                    size = 5)
 
-  angles <- .angle_from_xy(xy$x, xy$y, degrees = TRUE)
+  angles    <- .angle_from_xy(xy$x, xy$y, degrees = TRUE)
   arclength <- .arclength_from_xy(xy$x, xy$y)
-
 
   # Test angles and lenghts of .add_path_data
   expect_equal(angles[1:2], c( 45,  45))
   expect_equal(angles[3:4], c(-45, -45))
   expect_equal(arclength, c(2 * 0:4))
 
+  labels <- measure_text("O")[[1]]
+
   # Test angles of `.get_path_points`
-  test <- .get_path_points(xy, "O", hjust = 0.25)
+  test <- .get_path_points(xy, labels, hjust = 0.25)
   expect_equal(test$angle[test$label != " "], 45)
 
-  test <- .get_path_points(xy, "O", hjust = 0.75)
+  test <- .get_path_points(xy, labels, hjust = 0.75)
   expect_equal(test$angle[test$label != " "], -45)
 
   # This should be at the exact top of the triangle, where angle should be 0
-  test <- .get_path_points(xy, "O", hjust = 0.5)
+  test <- .get_path_points(xy, labels, hjust = 0.5)
   expect_equal(test$angle[test$label != " "], 0)
 
   # Test location of letters
@@ -42,7 +42,8 @@ test_that("Path trimming is correct", {
   xy <- split(xy, xy$id)
   xy <- lapply(xy, function(x) {
     x$length <- .arclength_from_xy(x$x, x$y); x;})
-  glyphs <- Map(.get_path_points, path = xy, label = c("A", "B", "C"))
+  label  <- measure_text(c("A", "B", "C"))
+  glyphs <- Map(.get_path_points, path = xy, label = label)
   glyphs <- rbind_dfs(glyphs)
   xy     <- rbind_dfs(xy)
 

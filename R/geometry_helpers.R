@@ -19,7 +19,8 @@
 #' individual letters should be placed, of a single path-label pair.
 #'
 #' @param path A `data.frame` with the numeric columns `x`, `y`.
-#' @param label A `character(1)` scalar with a string to place.
+#' @param label A `data.frame` with measured text, such as one produced by the
+#'   `measure_text()` function.
 #' @param gp An object of class `"gpar"`, typically the output from a call to
 #'   the `grid::gpar()` function. Note that parameters related to fonts *must*
 #'   be present. To be exact, the following parameters cannot be missing:
@@ -50,9 +51,9 @@
 #'   y = (1:10)^2
 #' )
 #'
-#' xy <- .add_path_data(xy)
+#' label <- measure_text("To be or not to be")[[1]]
 #'
-#' .get_path_points(xy)
+#' .get_path_points(xy, label)
 .get_path_points <- function(
   path,
   label = "placeholder",
@@ -61,12 +62,8 @@
   halign = "center",
   flip_inverted = FALSE
 ) {
-  if (is.data.frame(label)) {
-    letters <- label
-  } else {
-    letters <- measure_text(label, gp = gp, vjust = vjust[1], halign = halign)
-    letters <- letters[[1]]
-  }
+  # We need a copy for a potential flip
+  letters <- label
 
   # Calculate offsets and anchorpoints
   offset <- .get_offset(path$x, path$y, d = attr(letters, "offset"))
@@ -80,7 +77,7 @@
   # Project text to curves
   letters <- .project_text(letters, offset)
 
-  # Resolve inverted text
+  # Consider flipping the text
   df <- .attempt_flip(path, label, letters$angle,
                       gp, hjust, vjust, halign,
                       flip_inverted)
@@ -92,8 +89,11 @@
   path$length <- .arclength_from_xy(path$x, path$y)
   df <- as.list(path[setdiff(names(path), c("x", "y", "angle", "length"))])
   df <- approx_multiple(path$length, letters$length, df)
-
-  df <- cbind(list_to_df(df), letters)
+  if (length(df)) {
+    df <- cbind(list_to_df(df), letters)
+  } else {
+    df <- letters
+  }
   df[!is.na(df$angle), ]
 }
 

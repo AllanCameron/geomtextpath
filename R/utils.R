@@ -65,6 +65,9 @@ discretise <- function(x) {
 # iteration. For non-numeric values, repeats first entry to match length.
 # Note: This also extrapolates based on the four extreme points.
 approx_multiple <- function(x, xout, y = matrix()) {
+  if (length(y) == 0) {
+    return(y)
+  }
   # Coerce lists and data.frames to matrices
   if ({listmode <- is.list(y)}) {
     is_df    <- is.data.frame(y)
