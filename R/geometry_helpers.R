@@ -206,6 +206,23 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   return(ans)
 }
 
+
+
+#' Get anchor points
+#'
+#' @param arc_length A `matrix` with `numeric` values, giving the arc-length of
+#'   the original path in the first column, and a column for every offset-path.
+#' @param text_width A `numeric` with the total width of the text.
+#' @param hjust A `numeric` specifying horizontal justification of the text
+#'   within the path.
+#' @param halign A `character` specifying horizontal justification of the text
+#'   among different lines in a multi-line text.
+#' @return A `numeric` vector of length `ncol(arc_length)` with anchor points.
+#' @md
+#'
+#' @examples
+#' arclength <- cbind(0:5, 0:5 * 2)
+#' .anchor_points(arclength, 2.5, 0.5, "left")
 .anchor_points <- function(
   arc_length, text_width, hjust = 0.5, halign = "center"
 ) {
