@@ -84,38 +84,11 @@
                            hjust = hjust, halign = halign)
   letters[, xpos] <- letters[, xpos] + anchor[letters$yid]
 
-  # Project text on path
-  # The next bit is going to be a complicated variant of `approx()`.
-
-  # This finds the indices of the previous path points relative to the positions
-  # of the letters, taking into account the y-offset.
-  index <- x <- unlist(letters[, xpos], FALSE, FALSE)
-  membr <- rep(letters$yid, 3)
-  split(index, membr) <- Map(
-    findInterval,
-    x   = split(index, membr),
-    vec = asplit(arclength[, sort(unique(membr)), drop = FALSE], MARGIN = 2),
-    all.inside = TRUE
-  )
-  # Build matrix indices of the previous and next points
-  i0 <- cbind(index + 0, membr)
-  i1 <- cbind(index + 1, membr)
-  # Calculate the relative contribution (weights) of the previous and next point
-  di <- (x - arclength[i0]) / (arclength[i1] - arclength[i0])
-  # Apply weights to interpolate
-  new_x   <- offset$x[i0] * (1 - di) + offset$x[i1] * di
-  new_y   <- offset$y[i0] * (1 - di) + offset$y[i1] * di
-  new_len <- arclength[i0[, 1], 1] * (1 - di) + arclength[i1[, 1], 1] * di
-  dim(new_x) <- dim(new_y) <- dim(new_len) <- c(nrow(letters), 3)
-
-  # Calculate text angles
-  dx <- new_x[, 3] - new_x[, 1]
-  dy <- new_y[, 3] - new_y[, 1]
-  ang <- atan2(dy, dx) * 180 / pi
+  letters <- .project_text(letters, offset)
 
   # Resolve inverted text
   if (flip_inverted) {
-    upside_down <- ang %% 360 > 100 & ang %% 360 < 260
+    upside_down <- letters$angle %% 360 > 100 & letters$angle %% 360 < 260
     if (mean(upside_down) > 0.5) {
       path <- path[rev(seq_len(nrow(path))), ]
       df <- .get_path_points(
@@ -130,17 +103,12 @@
   df <- as.list(path[setdiff(names(path), c("x", "y", "angle"))])
   is_num <- vapply(df, is.numeric, logical(1))
   df[is_num] <- lapply(df[is_num], function(i) {
-    approx(x = path$length, y = i, xout = letters$xmid, ties = mean)$y
+    approx(x = path$length, y = i, xout = letters$length, ties = mean)$y
   })
   df[!is_num] <- lapply(lapply(df[!is_num], `[`, 1L),
                         rep, length.out = nrow(letters))
 
-  df$angle <- ang
-  df$x <- new_x[, 2]
-  df$y <- new_y[, 2]
-  df$label  <- letters$glyph
-  df$length <- new_len[, 2]
-  df <- list_to_df(df)
+  df <- cbind(list_to_df(df), letters)
   df[!is.na(df$angle), ]
 }
 
@@ -206,8 +174,6 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   return(ans)
 }
 
-
-
 #' Get anchor points
 #'
 #' @param arc_length A `matrix` with `numeric` values, giving the arc-length of
@@ -240,6 +206,47 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
     "left"   = anchor[1, ],
     "right"  = anchor[2, ] - text_width,
     "center" = (anchor[1, ] + anchor[2, ] - text_width) / 2
+  )
+}
+
+.project_text <- function(text, offset) {
+  arclength <- offset$arc_length
+  index <- x <- unlist(text[, c("xmin", "xmid", "xmax")])
+  membr <- rep(letters$yid, 3)
+
+  # Find indices along arc lengths
+  split(index, membr) <- Map(
+    findInterval,
+    x    = split(index, membr),
+    vec  = asplit(arclength[, sort(unique(membr)), drop = FALSE], MARGIN = 2),
+    all.inside = TRUE
+  )
+
+  # Format indices
+  i0 <- cbind(index + 0, membr)
+  i1 <- cbind(index + 1, membr)
+
+  # Calculate weight of indices
+  d  <- (x - arclength[i0]) / (arclength[i1] - arclength[i0])
+
+  # Interpolate
+  new_x <- offset$x[i0] * (1 - d) + offset$x[i1] * d
+  new_y <- offset$y[i0] * (1 - d) + offset$y[i1] * d
+  lengs <- arclength[i0[, 1], 1] * (1 - d) + arclength[i1[, 1], 1] * d
+  dim(new_x) <- dim(new_y) <- dim(lengs) <- c(nrow(text), 3)
+
+  # Calculate text angles
+  dx <- new_x[, 3] - new_x[, 1]
+  dy <- new_y[, 3] - new_y[, 1]
+  angle <- atan2(dy, dx) * .rad2deg
+
+  # Format output
+  data_frame(
+    label  = text$glyph,
+    length = lengs[, 2],
+    angle  = angle,
+    x = new_x[, 2],
+    y = new_y[, 2]
   )
 }
 
