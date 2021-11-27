@@ -62,18 +62,11 @@
   flip_inverted = FALSE
 ) {
 
-  ppi <- floor(convertUnit(unit(1, "in"), "pt", valueOnly = TRUE))
-
-  path$length <- .arclength_from_xy(path$x, path$y)
-
-  letters <- measure_text(label, gp = gp, vjust = vjust[1], halign = halign)
-
-  letters$ymin <- letters$ymin - measure_text("x", gp = gp, vjust = 0.5)$ymin[1]
+  letters   <- measure_text(label, gp = gp, vjust = vjust[1], halign = halign)
 
   y_pos <- unique(c(0, letters$ymin))
 
-  offset <- .get_offset(path$x, path$y, d = y_pos)
-
+  offset    <- .get_offset(path$x, path$y, d = y_pos)
   arclength <- offset$arc_length
 
   # Offset text x by anchorpoint
@@ -98,6 +91,7 @@
       return(df)
     }
   }
+  path$length <- .arclength_from_xy(path$x, path$y)
 
   # Format output
   df <- as.list(path[setdiff(names(path), c("x", "y", "angle", "length"))])
@@ -135,7 +129,11 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 
   vjust[vjust == 1] <- 1 + .Machine$double.eps
 
-  txt <- shape_string(
+  # We need to call shape_string twice with lots of parameters which are mostly
+  # the same, so we store the parameters in a list and use do.call to avoid
+  # replication in the code.
+
+  string_args <- list(
     strings    = label[1],
     family     = gp$fontfamily[1] %||% "",
     italic     = (gp$font[1]      %||% 1) %in% c(3, 4),
@@ -146,8 +144,18 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
     res = ppi,
     vjust = vjust,
     hjust = hjust,
-    align = halign,
+    align = halign
   )
+
+  txt <- do.call(shape_string, string_args)
+
+  # Now we repeat the call to shape_string with a 0.5 vadjusted "x" to get the
+  # y offset. This allows us to correct for the fixed vjust of 0.5 passed to
+  # textGrob inside makeContent.textpath
+
+  string_args$strings <- "x"
+  string_args$vjust   <- 0.5
+  x_adjust <- do.call(shape_string, string_args)$shape$y_offset
 
   # Adjust metrics
   metrics <- txt$metrics
@@ -162,7 +170,7 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   # Format shape
   ans <- data_frame(
     glyph =  txt$glyph,
-    ymin  =  txt$y_offset / ppi,
+    ymin  =  (txt$y_offset - x_adjust) / ppi,
     xmin  =  txt$x_offset,
     xmid  = (txt$x_offset + txt$x_midpoint),
     xmax  = (txt$x_offset + txt$x_midpoint * 2)
