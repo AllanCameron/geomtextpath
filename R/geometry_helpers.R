@@ -81,16 +81,11 @@
   letters <- .project_text(letters, offset)
 
   # Resolve inverted text
-  if (flip_inverted) {
-    upside_down <- letters$angle %% 360 > 100 & letters$angle %% 360 < 260
-    if (mean(upside_down) > 0.5) {
-      path <- path[rev(seq_len(nrow(path))), ]
-      df <- .get_path_points(
-        path, label, gp, hjust = 1 - hjust, halign = halign,
-        flip_inverted = FALSE
-      )
-      return(df)
-    }
+  df <- .attempt_flip(path, label, letters$angle,
+                      gp, hjust, vjust, halign,
+                      flip_inverted)
+  if (!is.null(df)) {
+    return(df)
   }
   path$length <- .arclength_from_xy(path$x, path$y)
 
@@ -106,6 +101,45 @@
   df <- cbind(list_to_df(df), letters)
   df[!is.na(df$angle), ]
 }
+
+
+#' Maybe flip text
+#'
+#' This function is just to capture the logic behind whether text ought to be
+#' flipped.
+#'
+#' @inheritParams .get_path_points
+#' @param angle A `numeric` vector with text angles in
+#'
+#' @return Either `NULL`, when text shouldn't be flipped, or a `data.frame` with
+#'   flipped text if it should have been flipped.
+#' @md
+#' @noRd
+#'
+#' @examples
+#' NULL
+.attempt_flip <- function(
+  path, label = "placeholder", angle = 0, gp = gpar(),
+  hjust = 0, vjust = 0.5, halign = "left", flip_inverted = FALSE
+) {
+  if (!flip_inverted) {
+    return(NULL)
+  }
+  angle <- angle %% 360
+  upside_down <- mean(angle > 100 & angle < 260) > 0.5
+  if (!upside_down) {
+    return(NULL)
+  }
+  # Invert path and hjust
+  path  <- path[rev(seq_len(nrow(path))), ]
+  hjust <- 1 - hjust
+
+  .get_path_points(
+    path, label, gp, hjust, vjust, halign,
+    flip_inverted = FALSE
+  )
+}
+
 
 #' Wrapper for text measurement
 #'
