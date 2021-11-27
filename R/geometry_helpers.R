@@ -80,26 +80,9 @@
   xpos <- c("xmin", "xmid", "xmax")
   letters$yid <- match(letters$ymin, y_pos)
 
-  # Calculate anchorpoints
-  text_width <- attr(letters, "metrics")$width
-  anchor <- hjust[1] * c(tail(arclength, 1))[1]
-  left_anchor <- anchor - hjust[1] * text_width
-  right_anchor <- anchor + (1 - hjust) * text_width
-
-  # project anchorpoints
-
-  anchors <- sapply(asplit(arclength, 2), function(a) {
-    approx(arclength[, 1], a, c(left_anchor, right_anchor))$y
-  })
-
-  letters[, xpos] <- if(halign == "left") {
-    letters[, xpos] + anchors[1, letters$yid]
-  } else if (halign == "right") {
-    anchors[2, letters$yid] - (text_width - letters[, xpos])
-  } else {
-    (letters[, xpos] + anchors[1, letters$yid] +
-      anchors[2, letters$yid] - (text_width - letters[, xpos])) / 2
-  }
+  anchor <- .anchor_points(arclength, attr(letters, "metrics")$width,
+                           hjust = hjust, halign = halign)
+  letters[, xpos] <- letters[, xpos] + anchor[letters$yid]
 
   # Project text on path
   # The next bit is going to be a complicated variant of `approx()`.
@@ -221,6 +204,26 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   attr(ans, "metrics") <- metrics
 
   return(ans)
+}
+
+.anchor_points <- function(
+  arc_length, text_width, hjust = 0.5, halign = "center"
+) {
+  anchor <- hjust[1] * arc_length[nrow(arc_length), 1]
+  # Get left and right positions
+  anchor <- anchor - (hjust + c(0, -1)) * text_width
+
+  # Interpolate for offset paths
+  i <- findInterval(anchor, arc_length[, 1], all.inside = TRUE)
+  d <- (anchor - arc_length[i, 1]) + (arc_length[i + 1, ] - arc_length[i, 1])
+  anchor <- arc_length[i + 1, ] * (1 - d) + arc_length[i, ] * d
+
+  switch(
+    halign,
+    "left"   = anchor[1, ],
+    "right"  = anchor[2, ] - text_width,
+    "center" = (anchor[1, ] + anchor[2, ] - text_width) / 2
+  )
 }
 
 ## Getting surrounding lines -----------------------------------------------
