@@ -1,3 +1,5 @@
+# Text angles -------------------------------------------------------------
+
 test_that("Text angles are correct", {
 
   # Triangle
@@ -28,6 +30,8 @@ test_that("Text angles are correct", {
   # Test location of letters
   expect_equal(test$x[test$label != " "], 3 * sqrt(2))
 })
+
+# Path trimming -----------------------------------------------------------
 
 test_that("Path trimming is correct", {
   # Prep data
@@ -99,6 +103,8 @@ test_that("Path trimming is correct", {
   expect_equal(unique(test$y), 1)
 })
 
+# Short paths -------------------------------------------------------------
+
 test_that("text can be placed on 2-point paths", {
   # This is a canary in a coal-mine test to see if we haven't implemented
   # something that works for longer paths but not for very short paths.
@@ -116,6 +122,8 @@ test_that("text can be placed on 2-point paths", {
 
 })
 
+# Anchor points -----------------------------------------------------------
+
 test_that("Anchor point calculations are correct", {
   lens  <- cbind(0:5, 0:5 * 2)
   width <- 2
@@ -131,3 +139,38 @@ test_that("Anchor point calculations are correct", {
   expect_equal(test[1, ], rep(c(0, 1.5, 3), each = 3))
   expect_equal(test[2, ], 0:8)
 })
+
+# Flipping ----------------------------------------------------------------
+
+test_that("Flipping logic is correct", {
+  label <- measure_text("ABC")[[1]]
+  xy <- data_frame(x = 2:1, y = 1:2)
+  angle <- .angle_from_xy(xy$x, xy$y, norm = TRUE, degrees = TRUE)
+  angle <- rep(angle, nrow(label))
+
+  # Should return NULL if we're not interested in flipping
+  test <- .attempt_flip(xy, label, angle = angle, flip_inverted = FALSE)
+  expect_null(test)
+
+  # Should return data.frame on approved flip
+  test <- .attempt_flip(xy, label, angle = angle, flip_inverted = TRUE)
+  expect_s3_class(test, "data.frame")
+
+  # Angles should not be amenable to flip
+  xy <- data_frame(x = 2:1, y = 2:1)
+  angle <- .angle_from_xy(xy$x, xy$y, norm = TRUE, degrees = TRUE)
+  angle <- rep(angle, nrow(label))
+
+  test <- .attempt_flip(xy, label, angle = angle, flip_inverted = TRUE)
+  expect_null(test)
+
+  # Test if .get_path_points() also respects this
+  xy <- data_frame(x = 2:1, y = 1:2)
+
+  case <- .get_path_points(xy, label, flip_inverted = TRUE)
+  expect_equal(case$angle, c(-45, -45, -45))
+
+  ctrl <- .get_path_points(xy, label, flip_inverted = FALSE)
+  expect_equal(case$angle, ctrl$angle - 180)
+})
+
