@@ -59,3 +59,53 @@ list_to_df <- function(x = list()) {
 discretise <- function(x) {
   match(x, unique(x))
 }
+
+# Function for `approx()`-ing a number of `y` variables. More efficient
+# than looping `approx()` due to not having to recalculate indices every
+# iteration. For non-numeric values, repeats first entry to match length.
+# Note: This also extrapolates based on the four extreme points.
+approx_multiple <- function(x, xout, y = matrix()) {
+  # Coerce lists and data.frames to matrices
+  if ({listmode <- is.list(y)}) {
+    is_df    <- is.data.frame(y)
+    lens     <- lengths(y)
+    stopifnot(
+      "All elements in `y` must have the same length as `x`" =
+        all(lens == length(x))
+    )
+    orig     <- unclass(y)
+    is_num   <- vapply(orig, is.numeric, logical(1))
+    orig[!is_num] <- lapply(lapply(orig[!is_num], `[`, 1),
+                            rep, length.out = length(xout))
+    y <- do.call(cbind, y[is_num])
+  }
+  # Assign a dimension if there is none
+  if ({dimless <- is.null(dim(y))}) {
+    dim(y) <- c(length(y), 1L)
+  }
+  # Checks
+  stopifnot(
+    "`y` must be numeric." =
+      is.numeric(y),
+    "`y` must have a compatible length with `x`" =
+      nrow(y) == length(x)
+  )
+
+  # Find indices
+  i <- findInterval(xout, x, all.inside = TRUE)
+  d <- (xout - x[i]) / (x[i + 1] - x[i])
+
+  # Interpolate
+  out <- y[i, , drop = FALSE] * (1 - d) + y[i + 1, , drop = FALSE] * d
+
+  # Restore data.frame/lists
+  if (listmode) {
+    orig[is_num] <- split(out, col(out))
+    out <- list_to_df(orig)
+  }
+  # Drop dimensions if `y` didn't have dimensions at the beginning
+  if (dimless) {
+    out <- drop(out)
+  }
+  return(out)
+}
