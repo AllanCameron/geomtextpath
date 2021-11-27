@@ -196,6 +196,9 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 .anchor_points <- function(
   arc_length, text_width, hjust = 0.5, halign = "center"
 ) {
+  # Convert halign to a weight
+  halign <- (match(halign, c("right", "center", "left")) - 1) / 2
+
   anchor <- hjust[1] * arc_length[nrow(arc_length), 1]
   # Get left and right positions
   anchor <- anchor - (hjust + c(0, -1)) * text_width
@@ -206,12 +209,8 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   anchor <- arc_length[i, , drop = FALSE] * (1 - d) +
     arc_length[i + 1, , drop = FALSE] * d
 
-  switch(
-    halign,
-    "left"   = anchor[1, ],
-    "right"  = anchor[2, ] - text_width,
-    "center" = (anchor[1, ] + anchor[2, ] - text_width) / 2
-  )
+  # Weigh left and right anchors according to halign
+  anchor[1, ] * halign + (1 - halign) * (anchor[2, ] - text_width)
 }
 
 #' Project text onto path
