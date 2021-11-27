@@ -58,7 +58,7 @@
   path,
   label = "placeholder",
   gp = get.gpar(),
-  hjust = 0.5, vjust = 0.5,
+  hjust = 0.5,
   halign = "center",
   flip_inverted = FALSE
 ) {
@@ -79,7 +79,7 @@
 
   # Consider flipping the text
   df <- .attempt_flip(path, label, letters$angle,
-                      gp, hjust, vjust, halign,
+                      gp, hjust, halign,
                       flip_inverted)
   if (!is.null(df)) {
     return(df)
@@ -88,8 +88,8 @@
   # Interpolate whatever else is in `path` at text positions
   path$length <- .arclength_from_xy(path$x, path$y)
   df <- as.list(path[setdiff(names(path), c("x", "y", "angle", "length"))])
-  df <- approx_multiple(path$length, letters$length, df)
   if (length(df)) {
+    df <- approx_multiple(path$length, letters$length, df)
     df <- cbind(list_to_df(df), letters)
   } else {
     df <- letters
@@ -114,7 +114,7 @@
 #' NULL
 .attempt_flip <- function(
   path, label = "placeholder", angle = 0, gp = gpar(),
-  hjust = 0, vjust = 0.5, halign = "left", flip_inverted = FALSE
+  hjust = 0, halign = "left", flip_inverted = FALSE
 ) {
   if (!flip_inverted) {
     return(NULL)
@@ -129,7 +129,7 @@
   hjust <- 1 - hjust
 
   .get_path_points(
-    path, label, gp, hjust, vjust, halign,
+    path, label, gp, hjust, halign,
     flip_inverted = FALSE
   )
 }

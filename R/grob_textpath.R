@@ -145,7 +145,7 @@ makeContent.textpath <- function(x) {
   text <- Map(
     .get_path_points,
     path = path, label = v$label,
-    hjust = v$hjust, vjust = v$vjust, halign = v$halign,
+    hjust = v$hjust, halign = v$halign,
     gp = split_gp(v$gp_text, seq_along(v$label)),
     flip_inverted = v$flip_inverted
   )

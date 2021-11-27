@@ -105,8 +105,9 @@ test_that("text can be placed on 2-point paths", {
 
   xy <- data.frame(x = c(1,2,3,4), y = c(1,2,2,1), id = c(1,1,2,2), size = 5)
   xy <- split(xy, xy$id)
+  label <- measure_text(c("A", "B"))
 
-  test <- Map(.get_path_points, label = c("A", "B"), path = xy)
+  test <- Map(.get_path_points, label = label, path = xy)
   test <- rbind_dfs(test)
 
   # What actually to test is arbitrary, we just want the above to run without
