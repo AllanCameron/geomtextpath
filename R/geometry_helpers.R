@@ -129,12 +129,14 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   halign <- match(halign, c("center", "left", "right"), nomatch = 2L)
   halign <- c("center", "left", "right")[halign]
 
+  # Remedy for https://github.com/r-lib/systemfonts/issues/85
   vjust[vjust == 1] <- 1 + .Machine$double.eps
 
+  # Multiplier for sub-pixel precision
+  mult <- 100
   # We need to call shape_string twice with lots of parameters which are mostly
   # the same, so we store the parameters in a list and use do.call to avoid
   # replication in the code.
-
   string_args <- list(
     strings    = label,
     family     = gp$fontfamily %||% "",
@@ -143,7 +145,7 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
     size       = gp$fontsize   %||% 12,
     lineheight = gp$lineheight %||% 1.2,
     tracking   = gp$tracking   %||% 0,
-    res = ppi,
+    res = ppi * mult,
     vjust = vjust,
     hjust = hjust,
     align = halign
@@ -161,8 +163,8 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 
   # Adjust metrics
   metrics <- txt$metrics
-  metrics$width  <- metrics$width  / ppi
-  metrics$height <- metrics$height / ppi
+  metrics$width  <- metrics$width  / (ppi * mult)
+  metrics$height <- metrics$height / (ppi * mult)
 
   # Filter non-letters
   txt <- txt$shape
