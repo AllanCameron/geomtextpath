@@ -88,6 +88,7 @@ textpathGrob <- function(
 
   # Reconstitute data
   gp_text <- gp_fill_defaults(gp_text)
+  label   <- measure_text(label, gp_text, vjust = vjust, halign = halign)
 
   if (!is.unit(x)) {
     x <- unit(x, default.units)

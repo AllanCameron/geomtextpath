@@ -61,8 +61,12 @@
   halign = "center",
   flip_inverted = FALSE
 ) {
-
-  letters   <- measure_text(label, gp = gp, vjust = vjust[1], halign = halign)
+  if (is.data.frame(label)) {
+    letters <- label
+  } else {
+    letters <- measure_text(label, gp = gp, vjust = vjust[1], halign = halign)
+    letters <- letters[[1]]
+  }
 
   offset    <- .get_offset(path$x, path$y, d = attr(letters, "offset"))
   arclength <- offset$arc_length
