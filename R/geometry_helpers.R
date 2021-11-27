@@ -68,12 +68,12 @@
     letters <- letters[[1]]
   }
 
-  offset    <- .get_offset(path$x, path$y, d = attr(letters, "offset"))
-  arclength <- offset$arc_length
-
-  # Offset text by anchorpoint
-  anchor <- .anchor_points(arclength, attr(letters, "metrics")$width,
+  # Calculate offsets and anchorpoints
+  offset <- .get_offset(path$x, path$y, d = attr(letters, "offset"))
+  anchor <- .anchor_points(offset$arc_length, attr(letters, "metrics")$width,
                            hjust = hjust, halign = halign)
+
+  # Offset text by anchorpoints
   xpos <- c("xmin", "xmid", "xmax")
   letters[, xpos] <- letters[, xpos] + anchor[letters$y_id]
 
@@ -87,21 +87,15 @@
   if (!is.null(df)) {
     return(df)
   }
-  path$length <- .arclength_from_xy(path$x, path$y)
 
-  # Format output
+  # Interpolate whatever else is in `path` at text positions
+  path$length <- .arclength_from_xy(path$x, path$y)
   df <- as.list(path[setdiff(names(path), c("x", "y", "angle", "length"))])
-  is_num <- vapply(df, is.numeric, logical(1))
-  df[is_num] <- lapply(df[is_num], function(i) {
-    approx(x = path$length, y = i, xout = letters$length, ties = mean)$y
-  })
-  df[!is_num] <- lapply(lapply(df[!is_num], `[`, 1L),
-                        rep, length.out = nrow(letters))
+  df <- approx_multiple(path$length, letters$length, df)
 
   df <- cbind(list_to_df(df), letters)
   df[!is.na(df$angle), ]
 }
-
 
 #' Maybe flip text
 #'
@@ -263,10 +257,7 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   anchor <- anchor - (hjust + c(0, -1)) * text_width
 
   # Interpolate for offset paths
-  i <- findInterval(anchor, arc_length[, 1], all.inside = TRUE)
-  d <- (anchor - arc_length[i, 1]) / (arc_length[i + 1, 1] - arc_length[i, 1])
-  anchor <- arc_length[i, , drop = FALSE] * (1 - d) +
-    arc_length[i + 1, , drop = FALSE] * d
+  anchor <- approx_multiple(arc_length[, 1], anchor, arc_length)
 
   # Weigh left and right anchors according to halign
   anchor[1, ] * halign + (1 - halign) * (anchor[2, ] - text_width)
@@ -404,7 +395,7 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
                        numeric(1), USE.NAMES = FALSE)
     trim <- rep_len(trim, length(path_max))
 
-    mins <- pmax(0, ranges[1, ] - breathing_room)
+    mins <- pmax(0,        ranges[1, ] - breathing_room)
     maxs <- pmin(path_max, ranges[2, ] + breathing_room)
 
     # Consider path length as following one another to avoid a loop
@@ -422,13 +413,14 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 
     # Interpolate trimming points
     ipol <- c(mins[trim], maxs[trim])
-    trim_x <- approx(path$length, path$x, ipol)$y
-    trim_y <- approx(path$length, path$y, ipol)$y
+    trim_xy <- approx_multiple(path$length, ipol, path[c("x", "y")])
+    # trim_x <- approx(path$length, path$x, ipol)$y
+    # trim_y <- approx(path$length, path$y, ipol)$y
 
     # Add trimming points to paths
     path <- data_frame(
-      x  = c(path$x, trim_x),
-      y  = c(path$y, trim_y),
+      x  = c(path$x, trim_xy$x),
+      y  = c(path$y, trim_xy$y),
       id = c(path$id, rep(which(trim), 2L)),
       section = c(section, rep(c("pre", "post"), each = sum(trim)))
     )[order(c(path$length, ipol)), , drop = FALSE]
