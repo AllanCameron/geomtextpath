@@ -62,51 +62,19 @@
   flip_inverted = FALSE
 ) {
 
-  ppi <- floor(convertUnit(unit(1, "in"), "pt", valueOnly = TRUE))
+  letters   <- measure_text(label, gp = gp, vjust = vjust[1], halign = halign)
 
-  path$length <- .arclength_from_xy(path$x, path$y)
-
-  letters <- measure_text(label, gp = gp, vjust = vjust[1], halign = halign)
-
-  letters$ymin <- letters$ymin - measure_text("x", gp = gp, vjust = 0.5)$ymin[1]
-
-  y_pos <- unique(c(0, letters$ymin))
-
-  offset <- .get_offset(path$x, path$y, d = y_pos)
-
+  offset    <- .get_offset(path$x, path$y, d = unique(c(0, letters$ymin)))
   arclength <- offset$arc_length
 
-  # Offset text x by anchorpoint
-  xpos <- c("xmin", "xmid", "xmax")
-  letters$yid <- match(letters$ymin, y_pos)
-
-  # Calculate anchorpoints
-  text_width <- attr(letters, "metrics")$width
-  anchor <- hjust[1] * c(tail(arclength, 1))[1]
-  left_anchor <- anchor - hjust[1] * text_width
-  right_anchor <- anchor + (1 - hjust) * text_width
-
-  # project anchorpoints
-
-  anchors <- sapply(asplit(arclength, 2), function(a) {
-    approx(arclength[, 1], a, c(left_anchor, right_anchor))$y
-  })
-
-  letters[, xpos] <- if(halign == "left") {
-    letters[, xpos] + anchors[1, letters$yid]
-  } else if (halign == "right") {
-    anchors[2, letters$yid] - (text_width - letters[, xpos])
-  } else {
-    (letters[, xpos] + anchors[1, letters$yid] +
-      anchors[2, letters$yid] - (text_width - letters[, xpos])) / 2
-  }
+  letters   <- apply_halign(letters, arclength, hjust[1], halign)
 
   # Project text on path
   # The next bit is going to be a complicated variant of `approx()`.
 
   # This finds the indices of the previous path points relative to the positions
   # of the letters, taking into account the y-offset.
-  index <- x <- unlist(letters[, xpos], FALSE, FALSE)
+  index <- x <- unlist(letters[, c("xmin", "xmid", "xmax")], FALSE, FALSE)
   membr <- rep(letters$yid, 3)
   split(index, membr) <- Map(
     findInterval,
@@ -114,11 +82,14 @@
     vec = asplit(arclength[, sort(unique(membr)), drop = FALSE], MARGIN = 2),
     all.inside = TRUE
   )
+
   # Build matrix indices of the previous and next points
   i0 <- cbind(index + 0, membr)
   i1 <- cbind(index + 1, membr)
+
   # Calculate the relative contribution (weights) of the previous and next point
   di <- (x - arclength[i0]) / (arclength[i1] - arclength[i0])
+
   # Apply weights to interpolate
   new_x   <- offset$x[i0] * (1 - di) + offset$x[i1] * di
   new_y   <- offset$y[i0] * (1 - di) + offset$y[i1] * di
@@ -142,6 +113,7 @@
       return(df)
     }
   }
+  path$length <- .arclength_from_xy(path$x, path$y)
 
   # Format output
   df <- as.list(path[setdiff(names(path), c("x", "y", "angle"))])
@@ -158,7 +130,8 @@
   df$label  <- letters$glyph
   df$length <- new_len[, 2]
   df <- list_to_df(df)
-  df[!is.na(df$angle), ]
+
+  return(df[!is.na(df$angle), ])
 }
 
 #' Wrapper for text measurement
@@ -184,7 +157,11 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 
   vjust[vjust == 1] <- 1 + .Machine$double.eps
 
-  txt <- shape_string(
+  # We need to call shape_string twice with lots of parameters which are mostly
+  # the same, so we store the parameters in a list and use do.call to avoid
+  # replication in the code.
+
+  string_args <- list(
     strings    = label[1],
     family     = gp$fontfamily[1] %||% "",
     italic     = (gp$font[1]      %||% 1) %in% c(3, 4),
@@ -195,8 +172,18 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
     res = ppi,
     vjust = vjust,
     hjust = hjust,
-    align = halign,
+    align = halign
   )
+
+  txt <- do.call(shape_string, string_args)
+
+  # Now we repeat the call to shape_string with a 0.5 vadjusted "x" to get the
+  # y offset. This allows us to correct for the fixed vjust of 0.5 passed to
+  # textGrob inside makeContent.textpath
+
+  string_args$strings <- "x"
+  string_args$vjust   <- 0.5
+  x_adjust <- do.call(shape_string, string_args)$shape$y_offset
 
   # Adjust metrics
   metrics <- txt$metrics
@@ -211,7 +198,7 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   # Format shape
   ans <- data_frame(
     glyph =  txt$glyph,
-    ymin  =  txt$y_offset / ppi,
+    ymin  =  (txt$y_offset - x_adjust) / ppi,
     xmin  =  txt$x_offset,
     xmid  = (txt$x_offset + txt$x_midpoint),
     xmax  = (txt$x_offset + txt$x_midpoint * 2)
@@ -222,6 +209,41 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 
   return(ans)
 }
+
+## Apply halign ----------------------------------------------------------------
+#
+# This is a helper function for .get_path_points, which has been moved out of
+# that function to separate the logic of creating correct halign positions.
+
+apply_halign <- function(letters, arclength, hjust = 0.5, halign = "center") {
+
+  y_pos <- unique(c(0, letters$ymin))
+
+  # Calculate anchor points
+  text_width   <- attr(letters, "metrics")$width
+  anchor       <- hjust * c(tail(arclength, 1))[1]
+  left_anchor  <- anchor - hjust * text_width
+  right_anchor <- anchor + (1 - hjust) * text_width
+
+  # project anchor points
+
+  anchors <- sapply(asplit(arclength, 2), function(a) {
+    approx(arclength[, 1], a, c(left_anchor, right_anchor))$y
+  })
+
+  xpos <- c("xmin", "xmid", "xmax")
+  letters$yid <- match(letters$ymin, y_pos)
+  left_edge   <- letters[, xpos] + anchors[1, letters$yid]
+  right_edge  <- anchors[2, letters$yid] - (text_width - letters[, xpos])
+  center      <- (left_edge + right_edge) / 2
+
+  letters[, xpos] <- if (halign == "left")       left_edge
+  else if (halign == "right") right_edge
+  else center
+
+  return(letters)
+}
+
 
 ## Getting surrounding lines -----------------------------------------------
 
