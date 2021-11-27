@@ -15,7 +15,7 @@
 
 .angle_from_xy <- function(x, y, degrees = FALSE, norm = FALSE)
 {
-  if(length(x) != length(y)) stop("x and y vectors must be the same length")
+  stopifnot("x and y vectors must be the same length" = length(x) == length(y))
 
   grad       <- diff(y) / diff(x)
   first     <- atan2(diff(y[1:2]), diff(x[1:2]))
@@ -34,7 +34,7 @@
 
 .arclength_from_xy <- function(x, y, accuracy = NA)
 {
-  if(length(x) != length(y)) stop("x and y must be same length")
+  stopifnot("x and y vectors must be the same length" = length(x) == length(y))
 
   if (is.matrix(x) || is.matrix(y)) {
     stopifnot(
@@ -54,10 +54,10 @@
 
   if(is.na(accuracy)) return(c(0, cumsum(sqrt(diff(x)^2 + diff(y)^2))))
 
-  if(!is.numeric(accuracy) | length(accuracy) != 1 | accuracy < 0)
-  {
-    stop("accuracy must be a positive integer")
-  }
+  stopifnot(
+    "accuracy must be a positive integer" =
+      is.numeric(accuracy) & length(accuracy) == 1 & accuracy >= 0
+  )
 
   t <- seq_along(x)
   n <- length(x)

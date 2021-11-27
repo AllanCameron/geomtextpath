@@ -88,6 +88,7 @@ textpathGrob <- function(
 
   # Reconstitute data
   gp_text <- gp_fill_defaults(gp_text)
+  label   <- measure_text(label, gp_text, vjust = vjust, halign = halign)
 
   if (!is.unit(x)) {
     x <- unit(x, default.units)
@@ -144,8 +145,7 @@ makeContent.textpath <- function(x) {
   text <- Map(
     .get_path_points,
     path = path, label = v$label,
-    hjust = v$hjust, vjust = v$vjust, halign = v$halign,
-    gp = split_gp(v$gp_text, seq_along(v$label)),
+    hjust = v$hjust, halign = v$halign,
     flip_inverted = v$flip_inverted
   )
   text_lens <- vapply(text, nrow, integer(1))

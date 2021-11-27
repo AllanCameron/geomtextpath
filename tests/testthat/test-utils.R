@@ -1,3 +1,5 @@
+# rbind_dfs ---------------------------------------------------------------
+
 test_that("rbind_dfs works", {
 
   df <- data_frame(x = 1:5, y = 2)
@@ -15,6 +17,8 @@ test_that("rbind_dfs works", {
   expect_equal(test$id, rep(c("A", "B"), each = 5))
 
 })
+
+# run_len -----------------------------------------------------------------
 
 test_that("run_len works", {
   runvalue <- c("A", "B", "C")
@@ -35,6 +39,8 @@ test_that("run_len works", {
   expect_equal(test, runlen)
 })
 
+# data_frame --------------------------------------------------------------
+
 test_that("data_frame works", {
 
   test <- data_frame(x = 1:5, y = 1)
@@ -48,6 +54,8 @@ test_that("data_frame works", {
   expect_error(eval(test), "Elements must be named")
 
 })
+
+# dedup_path --------------------------------------------------------------
 
 test_that("dedup_path works", {
   x  <- c(1, 1, 2, 1)
@@ -71,4 +79,48 @@ test_that("dedup_path works", {
 
   test <- dedup_path(x, y, id, tolerance = 0.05)
   expect_equal(test, transform(ctrl, y = c(y[1], 1.1, y[3:4])))
+})
+
+# approx_multiple ---------------------------------------------------------
+
+test_that("approx_multiple works", {
+  x <- 1:10
+  xout <- c(2.5, 5, 7.5)
+
+  # Single vector modus
+  y <- (x - 5.5)^2
+  test <- approx_multiple(x, xout, y)
+  expect_equal(test, c(y[2] + y[3], 2*y[5], y[7] + y[8])/2)
+  expect_type(test, "double")
+
+  # Matrix modus
+  y <- cbind(y1 = y, y2 = (x - 5.5)^3)
+  test <- approx_multiple(x, xout, y)
+  expect_equal(
+    test,
+    rbind(y[2, ] + y[3, ], 2 * y[5, ], y[7, ] + y[8, ]) / 2
+  )
+  expect_true(inherits(test, "matrix"))
+
+  # Data frame modus
+  y <- cbind(as.data.frame(y), dummy = "A")
+  test <- approx_multiple(x, xout, y)
+  expect_equal(
+    test[1:2],
+    rbind(y[2, 1:2] + y[3, 1:2], 2 * y[5, 1:2], y[7, 1:2] + y[8, 1:2]) / 2,
+    ignore_attr = TRUE
+  )
+  expect_equal(test$dummy, y$dummy[1:3])
+  expect_s3_class(test, "data.frame")
+
+  # List modus
+  ylist <- as.list(y)
+  test  <- approx_multiple(x, xout, ylist)
+  expect_equal(
+    test[1:2],
+    rbind(y[2, 1:2] + y[3, 1:2], 2 * y[5, 1:2], y[7, 1:2] + y[8, 1:2]) / 2,
+    ignore_attr = TRUE
+  )
+  expect_equal(test$dummy, y$dummy[1:3])
+  expect_s3_class(test, "data.frame")
 })
