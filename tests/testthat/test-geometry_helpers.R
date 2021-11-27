@@ -113,3 +113,19 @@ test_that("text can be placed on 2-point paths", {
   expect_true(all(!is.na(test$x)))
 
 })
+
+test_that("Anchor point calculations are correct", {
+  lens  <- cbind(0:5, 0:5 * 2)
+  width <- 2
+
+  grid <- expand.grid(halign = c("left", "center", "right"),
+                      hjust = c(0, 0.5, 1),
+                      stringsAsFactors = FALSE)
+
+  test <- vapply(seq_len(nrow(grid)), function(i) {
+    .anchor_points(lens, width, hjust = grid$hjust[i], halign = grid$halign[i])
+  }, numeric(2))
+
+  expect_equal(test[1, ], rep(c(0, 1.5, 3), each = 3))
+  expect_equal(test[2, ], 0:8)
+})

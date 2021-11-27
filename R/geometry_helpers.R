@@ -64,46 +64,21 @@
 
   letters   <- measure_text(label, gp = gp, vjust = vjust[1], halign = halign)
 
-  offset    <- .get_offset(path$x, path$y, d = unique(c(0, letters$ymin)))
+  offset    <- .get_offset(path$x, path$y, d = attr(letters, "offset"))
   arclength <- offset$arc_length
 
-  letters   <- apply_halign(letters, arclength, hjust[1], halign)
+  # Offset text by anchorpoint
+  anchor <- .anchor_points(arclength, attr(letters, "metrics")$width,
+                           hjust = hjust, halign = halign)
+  xpos <- c("xmin", "xmid", "xmax")
+  letters[, xpos] <- letters[, xpos] + anchor[letters$y_id]
 
-  # Project text on path
-  # The next bit is going to be a complicated variant of `approx()`.
-
-  # This finds the indices of the previous path points relative to the positions
-  # of the letters, taking into account the y-offset.
-  index <- x <- unlist(letters[, c("xmin", "xmid", "xmax")], FALSE, FALSE)
-  membr <- rep(letters$yid, 3)
-  split(index, membr) <- Map(
-    findInterval,
-    x   = split(index, membr),
-    vec = asplit(arclength[, sort(unique(membr)), drop = FALSE], MARGIN = 2),
-    all.inside = TRUE
-  )
-
-  # Build matrix indices of the previous and next points
-  i0 <- cbind(index + 0, membr)
-  i1 <- cbind(index + 1, membr)
-
-  # Calculate the relative contribution (weights) of the previous and next point
-  di <- (x - arclength[i0]) / (arclength[i1] - arclength[i0])
-
-  # Apply weights to interpolate
-  new_x   <- offset$x[i0] * (1 - di) + offset$x[i1] * di
-  new_y   <- offset$y[i0] * (1 - di) + offset$y[i1] * di
-  new_len <- arclength[i0[, 1], 1] * (1 - di) + arclength[i1[, 1], 1] * di
-  dim(new_x) <- dim(new_y) <- dim(new_len) <- c(nrow(letters), 3)
-
-  # Calculate text angles
-  dx <- new_x[, 3] - new_x[, 1]
-  dy <- new_y[, 3] - new_y[, 1]
-  ang <- atan2(dy, dx) * 180 / pi
+  # Project text to curves
+  letters <- .project_text(letters, offset)
 
   # Resolve inverted text
   if (flip_inverted) {
-    upside_down <- ang %% 360 > 100 & ang %% 360 < 260
+    upside_down <- letters$angle %% 360 > 100 & letters$angle %% 360 < 260
     if (mean(upside_down) > 0.5) {
       path <- path[rev(seq_len(nrow(path))), ]
       df <- .get_path_points(
@@ -116,22 +91,16 @@
   path$length <- .arclength_from_xy(path$x, path$y)
 
   # Format output
-  df <- as.list(path[setdiff(names(path), c("x", "y", "angle"))])
+  df <- as.list(path[setdiff(names(path), c("x", "y", "angle", "length"))])
   is_num <- vapply(df, is.numeric, logical(1))
   df[is_num] <- lapply(df[is_num], function(i) {
-    approx(x = path$length, y = i, xout = letters$xmid, ties = mean)$y
+    approx(x = path$length, y = i, xout = letters$length, ties = mean)$y
   })
   df[!is_num] <- lapply(lapply(df[!is_num], `[`, 1L),
                         rep, length.out = nrow(letters))
 
-  df$angle <- ang
-  df$x <- new_x[, 2]
-  df$y <- new_y[, 2]
-  df$label  <- letters$glyph
-  df$length <- new_len[, 2]
-  df <- list_to_df(df)
-
-  return(df[!is.na(df$angle), ])
+  df <- cbind(list_to_df(df), letters)
+  df[!is.na(df$angle), ]
 }
 
 #' Wrapper for text measurement
@@ -194,56 +163,131 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   txt <- txt$shape
   txt$x_offset   <- txt$x_offset   / ppi
   txt$x_midpoint <- txt$x_midpoint / ppi
+  txt$y_offset   <- (txt$y_offset - x_adjust) / ppi
+
+  offset <- unique(c(0, txt$y_offset))
 
   # Format shape
   ans <- data_frame(
     glyph =  txt$glyph,
-    ymin  =  (txt$y_offset - x_adjust) / ppi,
+    ymin  =  txt$y_offset,
     xmin  =  txt$x_offset,
     xmid  = (txt$x_offset + txt$x_midpoint),
-    xmax  = (txt$x_offset + txt$x_midpoint * 2)
+    xmax  = (txt$x_offset + txt$x_midpoint * 2),
+    y_id  =  match(txt$y_offset, offset)
   )
   ans <- ans[!(ans$glyph %in% c("\r", "\n", "\t")), , drop = FALSE]
 
   attr(ans, "metrics") <- metrics
+  attr(ans, "offset")  <- offset
 
   return(ans)
 }
 
-## Apply halign ----------------------------------------------------------------
-#
-# This is a helper function for .get_path_points, which has been moved out of
-# that function to separate the logic of creating correct halign positions.
+#' Get anchor points
+#'
+#' This is a helper function that calculates for every offset what the anchor
+#' position of text along the arc-length of an (offset) path should be.
+#'
+#' @param arc_length A `matrix` with `numeric` values, giving the arc-length of
+#'   the original path in the first column, and a column for every offset-path.
+#' @param text_width A `numeric` with the total width of the text.
+#' @param hjust A `numeric` specifying horizontal justification of the text
+#'   within the path.
+#' @param halign A `character` specifying horizontal justification of the text
+#'   among different lines in a multi-line text.
+#' @return A `numeric` vector of length `ncol(arc_length)` with anchor points.
+#' @md
+#' @noRd
+#'
+#' @examples
+#' arclength <- cbind(0:5, 0:5 * 2)
+#' .anchor_points(arclength, 2.5, 0.5, "left")
+.anchor_points <- function(
+  arc_length, text_width, hjust = 0.5, halign = "center"
+) {
+  # Convert halign to a weight
+  halign <- (match(halign, c("right", "center", "left")) - 1) / 2
 
-apply_halign <- function(letters, arclength, hjust = 0.5, halign = "center") {
+  anchor <- hjust[1] * arc_length[nrow(arc_length), 1]
+  # Get left and right positions
+  anchor <- anchor - (hjust + c(0, -1)) * text_width
 
-  y_pos <- unique(c(0, letters$ymin))
+  # Interpolate for offset paths
+  i <- findInterval(anchor, arc_length[, 1], all.inside = TRUE)
+  d <- (anchor - arc_length[i, 1]) / (arc_length[i + 1, 1] - arc_length[i, 1])
+  anchor <- arc_length[i, , drop = FALSE] * (1 - d) +
+    arc_length[i + 1, , drop = FALSE] * d
 
-  # Calculate anchor points
-  text_width   <- attr(letters, "metrics")$width
-  anchor       <- hjust * c(tail(arclength, 1))[1]
-  left_anchor  <- anchor - hjust * text_width
-  right_anchor <- anchor + (1 - hjust) * text_width
-
-  # project anchor points
-
-  anchors <- sapply(asplit(arclength, 2), function(a) {
-    approx(arclength[, 1], a, c(left_anchor, right_anchor))$y
-  })
-
-  xpos <- c("xmin", "xmid", "xmax")
-  letters$yid <- match(letters$ymin, y_pos)
-  left_edge   <- letters[, xpos] + anchors[1, letters$yid]
-  right_edge  <- anchors[2, letters$yid] - (text_width - letters[, xpos])
-  center      <- (left_edge + right_edge) / 2
-
-  letters[, xpos] <- if (halign == "left")       left_edge
-  else if (halign == "right") right_edge
-  else center
-
-  return(letters)
+  # Weigh left and right anchors according to halign
+  anchor[1, ] * halign + (1 - halign) * (anchor[2, ] - text_width)
 }
 
+#' Project text onto path
+#'
+#' This is a helper function that converts the position of letters from
+#' arc-length space to Cartesian coordinates and calculates the appropriate
+#' angle of the text.
+#'
+#' @param text A `data.frame` with a row for every letter and at least the
+#'   following columns: `xmin`, `xmid`, `xmax` for the positions of the glyph
+#'   along the arc-length of a path and `y_id` for to which offset a letter
+#'   belongs.
+#' @param offset A `list` with at least 3 `matrix` elements describing the
+#'   x, y positions and arc-lengths. Every row in these matrices correspond to
+#'   a point on a path and every column holds an offsetted position, starting
+#'   with no offset at the first column.
+#'
+#' @return A `data.frame` with the following columns: `label`, `length`,
+#'   `angle`, `x` and `y` and `nrow(text)` rows.
+#' @md
+#' @noRd
+#'
+#' @examples
+#' NULL
+.project_text <- function(text, offset) {
+  arclength <- offset$arc_length
+  index <- x <- unlist(text[, c("xmin", "xmid", "xmax")])
+  membr <- rep(text$y_id, 3)
+
+  # Find indices along arc lengths
+  split(index, membr) <- Map(
+    findInterval,
+    x    = split(index, membr),
+    vec  = asplit(arclength[, sort(unique(membr)), drop = FALSE], MARGIN = 2),
+    all.inside = TRUE
+  )
+
+  # Format indices for matrix-subsetting
+  i0 <- cbind(index + 0, membr)
+  i1 <- cbind(index + 1, membr)
+
+  # Calculate weight of indices
+  d  <- (x - arclength[i0]) / (arclength[i1] - arclength[i0])
+
+  # Interpolate
+  new_x <- offset$x[i0] * (1 - d) + offset$x[i1] * d
+  new_y <- offset$y[i0] * (1 - d) + offset$y[i1] * d
+  lengs <- arclength[i0[, 1], 1] * (1 - d) + arclength[i1[, 1], 1] * d
+
+  # Restore dimensions
+  # Column 1 comes from `xmin`, 2 from `xmid` and 3 from `xmax`
+  dim(new_x) <- dim(new_y) <- dim(lengs) <- c(nrow(text), 3)
+
+  # Calculate text angles
+  dx <- new_x[, 3] - new_x[, 1]
+  dy <- new_y[, 3] - new_y[, 1]
+  angle <- atan2(dy, dx) * .rad2deg
+
+  # Format output
+  data_frame(
+    label  = text$glyph,
+    length = lengs[, 2],
+    angle  = angle,
+    x = new_x[, 2],
+    y = new_y[, 2]
+  )
+}
 
 ## Getting surrounding lines -----------------------------------------------
 
@@ -359,6 +403,4 @@ apply_halign <- function(letters, arclength, hjust = 0.5, halign = "center") {
 
   return(path)
 }
-
-
 
