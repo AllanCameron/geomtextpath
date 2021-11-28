@@ -6,3 +6,4 @@
 .httr-oauth
 geomtextpath.Rproj
 tests/testthat/Rplots.pdf
+inst/doc
