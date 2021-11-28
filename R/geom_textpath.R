@@ -223,7 +223,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     if (isFALSE(params$include_line)) {
       data$linetype <- 0
     }
-    if (all(data$group== -1)) {
+    if (all(data$group== -1) && !is.null(data$label)) {
       data$group <- discretise(data$label)
     }
     data
