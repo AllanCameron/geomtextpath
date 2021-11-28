@@ -44,6 +44,17 @@ test_that(".arclength_from_xy gives correct results", {
 
   arclen <- .arclength_from_xy(x, y)
   expect_equal(arclen[25,], c(sum(lens[2:25]), sum(lens[27:50])))
+
+  # Ensure accuracy is improved with accuracy parameter
+
+  t <- seq(0, 360, length.out = 1000) * pi / 180
+  x <- cos(t)
+  y <- sin(t)
+
+  basic <- abs(max(.arclength_from_xy(x, y)) - 2 * pi)
+  accurate <-  abs(max(.arclength_from_xy(x, y, accuracy = 5)) - 2 * pi)
+
+  expect_lt(accurate, basic)
 })
 
 test_that(".get_offset offsets correctly", {
