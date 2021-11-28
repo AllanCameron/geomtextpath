@@ -80,10 +80,11 @@
 
   # Interpolate whatever else is in `path` at text positions
   path$length <- .arclength_from_xy(path$x, path$y)
-  df <- as.list(path[setdiff(names(path), c("x", "y", "angle", "length"))])
+  protect_column <- c("x", "y", "angle", "length", "id")
+  df <- as.list(path[setdiff(names(path), protect_column)])
   if (length(df)) {
     df <- approx_multiple(path$length, letters$length, df)
-    df <- cbind(list_to_df(df), letters)
+    df <- cbind(list_to_df(df), letters, id = path$id[1] %||% 1L)
   } else {
     df <- letters
   }
