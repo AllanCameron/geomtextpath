@@ -89,6 +89,6 @@ test_that("We can measure curvature accurately", {
   curv_2 <- .get_curvature(2 * x, 2 * y)
 
   expect_true(
-    all(curv_1 / curv_2 == 2)
+    all( abs((curv_1 / curv_2) - 2) < 0.001)
   )
 })
