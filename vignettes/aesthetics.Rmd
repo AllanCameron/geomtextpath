@@ -1,0 +1,117 @@
+---
+title: "Aesthetics"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Aesthetics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(ggplot2)
+library(geomtextpath)
+```
+
+## Aesthetics
+
+Like any ggplot2 layer, `geom_textpath()` recognises several aesthetics. Broadly, these can be divided into three categories:
+
+1. Aesthetics shared with `geom_text()`. These include `label`, `alpha`, `colour`, `family`, `fontface` and `size`.
+2. Aesthetics shared with `geom_path()`. These include `x`, `y`, `group` and `linetype`. Furthermore, to distinguish the text from the path, there are these additional aesthetics:
+    1. `linewidth`, which acts as a `size` aesthetic to the path.
+    2. `linecolour`, which acts as a `colour` aesthetic to the path.
+3. Aesthetics that are specific to `geom_textpath()` or have a slightly altered meaning. This applies to the following aesthetics: `hjust`, `vjust` and `spacing`, which are explained below.
+
+Let's build a plot for which to examine the aesthetics.
+
+```{r}
+t <- seq(5, -1, length.out = 1000) * pi
+spiral <- data.frame(
+  x = sin(t) * 1000:1,
+  y = cos(t) * 1000:1
+)
+rhyme <- paste(
+  "Like a circle in a spiral, like a wheel within a wheel,",
+  "never ending or beginning on an ever spinning reel"
+)
+
+p <- ggplot(spiral, aes(x, y, label = rhyme)) +
+  coord_equal(xlim = c(-1000, 1000), ylim = c(-1000, 1000))
+p + geom_textpath(size  = 4)
+```
+
+### Horizontal justification
+
+The `hjust` parameter in text is understood as the justification of text along the direction of the text, relative to some anchor point. This coincides with horizontal justification when the text angle is exactly zero. In `geom_textpath()`, there is no anchor point, so the `hjust` parameter is re-interpreted as justification of text along the curve. 
+
+```{r hjust_explain, fig.show = 'hold'}
+p + geom_textpath(size  = 4, hjust = 0) +
+  labs(subtitle = "hjust = 0")
+p + geom_textpath(size  = 4, hjust = 1) +
+  labs(subtitle = "hjust = 1")
+```
+
+#### Justification of multi-line text
+
+One potential downside to interpreting `hjust` this way, is that it can't be used to control the horizontal justification of multi-line text. Instead, controlling justification among multi-line text occurs through the `halign` parameter, which can be one of `"left"`, `"center"` or `"right"`. Note that this parameter doesn't affect single-line text.
+
+```{r halign_explain, fig.show = 'hold'}
+# Separate text with newline
+rhyme_lines <- paste(
+  "Like a circle in a spiral, like a wheel within a wheel,",
+  "never ending or beginning on an ever spinning reel", sep = "\n"
+)
+p + geom_textpath(size  = 4, label = rhyme_lines, halign = "left") +
+  labs(subtitle = "halign = 'left'")
+p + geom_textpath(size  = 4, label = rhyme_lines, halign = "right") +
+  labs(subtitle = "halign = 'right'")
+```
+
+### Vertical justification
+
+The `vjust` parameter controls the justification of the text orthogonal to the direction of the text. When the angle of the text is zero, this is the same as vertical justification. In `geom_textpath()`, there is no single direction of the text as angles vary along the curve. Instead, it is imagined as an offset to the path where text should be placed. In the examples below, `vjust = 0` aligns the bottom of the text with the curve, whereas `vjust = 1` aligns the top of the text with the curve.
+
+```{r vjust_explain, fig.show = 'hold'}
+p + geom_textpath(size  = 4, vjust = 0) +
+  labs(subtitle = "vjust = 0")
+p + geom_textpath(size  = 4, vjust = 1) +
+  labs(subtitle = "vjust = 1")
+```
+
+#### Path cutting
+
+It should be noted that when `vjust` is outside the [0,1] interval, text generally shouldn't intersect the path. As such, the default behaviour no longer cuts the path at the text positions, but this can be turned back on by setting `cut_path = TRUE`.
+
+```{r path_cutting_1, fig.show = 'hold'}
+p + geom_textpath(size  = 4, vjust = 1.5) +
+  labs(subtitle = "vjust = 1.5, default cut_path")
+p + geom_textpath(size  = 4, vjust = 1.5, cut_path = TRUE) +
+  labs(subtitle = "vjust = 1.5, cut_path = TRUE")
+```
+
+Inversely, you can also turn off path cutting when it is expected to intersect with the text.
+
+```{r path_cutting_2, fig.show = 'hold'}
+p + geom_textpath(size  = 4, vjust = 0.5) +
+  labs(subtitle = "default cut_path")
+p + geom_textpath(size  = 4, vjust = 0.5, cut_path = FALSE) +
+  labs(subtitle = "cut_path = FALSE")
+```
+
+### Spacing
+
+While `geom_textpath()` tries to do a decent job of plotting text along a curve, sometimes the text can feel 'too tight' or 'too loose'. In order to adjust how text is spaced, there is a `spacing` aesthetic that for positive values increasing the spacing and for negative values decreases the spacing. In typography, this is also known as the 'tracking' of a text and the units are measured in 1/1000 em, wherein 'em' is the typographical space that the '—' em-dash occupies.
+
+```{r spacing, fig.show = 'hold'}
+p + geom_textpath(size = 4, spacing = 100) +
+  labs(subtitle = "spacing = 100")
+p + geom_textpath(size = 4, spacing = -100) +
+  labs(subtitle = "spacing = -100")
+```
