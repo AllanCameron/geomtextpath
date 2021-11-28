@@ -93,9 +93,17 @@
 # and last elements are compared to themselves. These little utility functions
 # allow a shorthand method of doing this.
 
-.before <- function(x) if(length(x) == 0) x else x[c(1, seq_along(x))]
+.before <- function(x) {
 
-.after <- function(x) if(length(x) == 0) x else x[c(seq_along(x), length(x))]
+  if(length(x) == 0) x else x[c(1, seq_along(x))]
+}
+
+# ------------------------------------------------------------------------------
+
+.after <- function(x) {
+
+  if(length(x) == 0) x else x[c(seq_along(x), length(x))]
+}
 
 # Some features of a path are associated with its points, such as its x and y
 # coordinates, whereas others are associated with the *segments* joining the
@@ -109,7 +117,10 @@
 # segments, and all intervening points with the mean of their two adjacent
 # segments.
 
-.average_segments_at_points <- function(x) (.before(x) + .after(x)) / 2
+.average_segments_at_points <- function(x) {
+
+  (.before(x) + .after(x)) / 2
+}
 
 # ------------------------------------------------------------------------------
 # Finds the offset path at distance d. This method effectively looks at each
@@ -117,10 +128,6 @@
 # it. The offset path is the set of points where adjacent offset lines meet.
 
 .get_offset <- function(x, y, d = 0) {
-
-  .check_xy(x, y)
-  x <- .interp_na(x)
-  y <- .interp_na(y)
 
   # Get angle normal to each segment of the path
   theta <- .angle_from_xy(x, y, norm = TRUE)
@@ -150,12 +157,8 @@
 # Finds the curvature (change in angle per change in arc length)
 # This in effect finds 1/R, where R is the radius of the curve
 
-.get_curvature <- function(x, y, samples = 1000)
+.get_curvature <- function(x, y)
 {
-  .check_xy(x, y)
-  x <- .interp_na(x)
-  y <- .interp_na(y)
-
   if(length(x) < 3) return(rep(0, length(x)))
 
   dx  <- diff(x)
@@ -171,6 +174,7 @@
   # of the curvature at these points, which is otherwise undefined.
   .before(.after(curv))
 }
+
 
 
 

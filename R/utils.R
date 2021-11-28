@@ -129,7 +129,7 @@ approx_multiple <- function(x, xout, y = matrix()) {
 
 .interp_na <- function(x) {
 
-  if(!any(is.na(x))) return(x)
+  if(!anyNA(x)) return(x)
 
   stopifnot("Cannot interpolate NA in non-numeric vectors" = is.numeric(x),
             "Cannot interpolate NA if no non-NA values" = !all(is.na(x)))
