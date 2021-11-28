@@ -6,6 +6,7 @@
 * Letter angles should now be stable for regardless of aspect ratios and 
   recomputed when the plot device is resized (#6)
 * Line breaks now implemented (#4)
-* Added support for user-defined text spacing
+* Added support for user-defined text spacing.
 * Text angles are now correct for straight paths.
-* Duplicated labels are now allowed
+* Duplicated labels are now allowed.
+* Multi-line text can be justified horizontally using the `halign` parameter.
