@@ -97,6 +97,7 @@
 #'   \item \code{hjust}
 #'   \item \code{linetype}
 #'   \item \code{linewidth}
+#'   \item \code{linecolour}
 #'   \item \code{spacing}
 #' }
 #'
@@ -215,7 +216,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   # These aesthetics will all be available to the draw_panel function
   default_aes = aes(colour = "black", size = 3.88, hjust = 0.5, vjust = 0.5,
                     family = "", fontface = 1, lineheight = 1.2, alpha = 1,
-                    linewidth = 0.5, linetype = 1, spacing = 0),
+                    linewidth = 0.5, linetype = 1, spacing = 0,
+                    linecolour = "_copy_text_colour_"),
 
   extra_params = c("na.rm", "include_line"),
 
@@ -223,7 +225,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     if (isFALSE(params$include_line)) {
       data$linetype <- 0
     }
-    if (all(data$group== -1) && !is.null(data$label)) {
+    if (all(data$group == -1) && !is.null(data$label)) {
       data$group <- discretise(data$label)
     }
     data
@@ -249,6 +251,9 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
        data$linetype <- as.numeric(data$linetype)
     if(is.factor(data$linetype))
       data$linetype <- as.numeric(data$linetype)
+
+    copy_colour <- data$linecolour == "_copy_text_colour_"
+    data$linecolour[copy_colour] <- data$colour[copy_colour]
 
     # We need to change groups to numeric to order them appropriately
     data$group <- discretise(data$group)
@@ -299,8 +304,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       path_gp <- gpar(lty = 0)
     } else {
       path_gp <- gpar(
-        col  = alpha(data$colour, data$alpha)[first],
-        fill = alpha(data$colour, data$alpha)[first],
+        col  = alpha(data$linecolour, data$alpha)[first],
+        fill = alpha(data$linecolour, data$alpha)[first],
         lwd  = data$linewidth[first] * .pt,
         lty  = data$linetype[first],
         lineend   = lineend,
