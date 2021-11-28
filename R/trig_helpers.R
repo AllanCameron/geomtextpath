@@ -175,6 +175,13 @@
   .before(.after(curv))
 }
 
-
+.exceeds_curvature <- function(x, y, d, tolerance = 0.1)
+{
+  curve_radius <- 1 / .get_curvature(x, y)
+  as.numeric(apply(outer(curve_radius, d,
+        FUN = function(a, b) {
+          (abs(a) < abs(b)) & (sign(a) == sign(b))
+        }), 1, any))
+}
 
 

@@ -60,7 +60,10 @@
   # We need a copy for a potential flip
   letters <- label
 
+  path$exceed <- .exceeds_curvature(path$x, path$y, d = attr(letters, "offset"))
   # Calculate offsets and anchorpoints
+
+
   offset <- .get_offset(path$x, path$y, d = attr(letters, "offset"))
   anchor <- .anchor_points(offset$arc_length, attr(letters, "metrics")$width,
                            hjust = hjust, halign = halign)
@@ -80,13 +83,22 @@
 
   # Interpolate whatever else is in `path` at text positions
   path$length <- .arclength_from_xy(path$x, path$y)
+
   df <- as.list(path[setdiff(names(path), c("x", "y", "angle", "length"))])
   if (length(df)) {
-    df <- approx_multiple(path$length, letters$length, df)
+    df <- approx_multiple(path$length, letters$base_length, df)
     df <- cbind(list_to_df(df), letters)
   } else {
     df <- letters
   }
+
+  if(any(df$exceed != 0))
+  {
+   warning("The text offset exceeds the curvature in one or more paths.\n",
+           "This will result in displaced letters.\n",
+           "Consider reducing the vjust or text size.")
+  }
+
   df[!is.na(df$angle), ]
 }
 
@@ -301,11 +313,12 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   # Interpolate
   new_x <- offset$x[i0] * (1 - d) + offset$x[i1] * d
   new_y <- offset$y[i0] * (1 - d) + offset$y[i1] * d
-  lengs <- arclength[i0[, 1], 1] * (1 - d) + arclength[i1[, 1], 1] * d
+  old_len <- arclength[i0[, 1], 1]
+  lengs <- old_len * (1 - d) + arclength[i1[, 1], 1] * d
 
   # Restore dimensions
   # Column 1 comes from `xmin`, 2 from `xmid` and 3 from `xmax`
-  dim(new_x) <- dim(new_y) <- dim(lengs) <- c(nrow(text), 3)
+  dim(old_len) <- dim(new_x) <- dim(new_y) <- dim(lengs) <- c(nrow(text), 3)
 
   # Calculate text angles
   dx <- new_x[, 3] - new_x[, 1]
@@ -316,6 +329,7 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   data_frame(
     label  = text$glyph,
     length = lengs[, 2],
+    base_length = old_len[,1],
     angle  = angle,
     x = new_x[, 2],
     y = new_y[, 2]
