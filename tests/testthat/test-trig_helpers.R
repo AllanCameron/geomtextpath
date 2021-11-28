@@ -1,13 +1,4 @@
-test_that(".stretch by one works", {
 
-  x <- 1:3
-
-  test <- .stretch_by_one(x)
-  expect_equal(test, c(1, 1 + 2/3, 2 + 1/3, 3))
-
-  test <- .stretch_by_one(x[1])
-  expect_equal(test, c(1, 1))
-})
 
 test_that(".angle_from_xy gives correct results", {
   # Equilateral triangle
@@ -75,5 +66,29 @@ test_that(".get_offset offsets correctly", {
   expect_equal(
     offset$arc_length,
     cbind(c(0, 2, 5, 8, 10), c(0, 2, 6, 10, 12)) / sqrt(2)
+  )
+})
+
+test_that("We can measure curvature accurately", {
+
+  # x and y describe a circle with radius 1:
+  t <- seq(0, 360, length.out = 1000) * pi / 180
+  x <- cos(t)
+  y <- sin(t)
+
+  curv_1 <- .get_curvature(x, y)
+
+  # the curvature should be the reciprocal of the radius
+  radius_1 <- 1 / curv_1
+
+  expect_true(
+    all(abs(radius_1 - 1) < 0.001)
+  )
+
+  # Doubling the radius of the circle should half the curvature
+  curv_2 <- .get_curvature(2 * x, 2 * y)
+
+  expect_true(
+    all(curv_1 / curv_2 == 2)
   )
 })

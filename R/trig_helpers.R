@@ -80,6 +80,19 @@
 
 .after  <- function(x) x[c(seq_along(x), length(x))]
 
+# Some features of a path are associated with its points, such as its x and y
+# coordinates, whereas others are associated with the *segments* joining the
+# points, such as the slope or angle. Still others can only really be
+# defined by a change in two adjacent segments, such as curvature. For a path
+# with n points, there will therefore be some features that have length n,
+# some that have length n - 1, and some that have length n - 2. This is a
+# problem if we want to have these features all defined at the same points, as
+# would be possible with a truly differentiable curve. One way to get round this
+# for n - 1 features is to associate the two end points with the two end
+# segments, and all intervening points with the mean of their two adjacent
+# segments.
+
+.average_segments_at_points <- function(x) (.before(x) + .after(x)) / 2
 
 # ------------------------------------------------------------------------------
 # Finds the offset path at distance d. This method effectively looks at each
@@ -93,7 +106,7 @@
 
   # Find the angle of the lines which, when drawn at each point on the path
   # will project onto the intersections between adjacent offset segments
-  theta_bisect <- (.before(theta) + .after(theta)) / 2
+  theta_bisect <- .average_segments_at_points(theta)
 
   # Find the distances to these intersecting points when the offset is d.
   # Since d can be a vector of distances, we need a matrix result, where
@@ -116,27 +129,22 @@
 # Finds the curvature (change in angle per change in arc length)
 # This in effect finds 1/R, where R is the radius of the curve
 
-.get_curvature <- function(x, y)
+.get_curvature <- function(x, y, samples = 1000)
 {
-  dx  <- .stretch_by_one(diff(x))
-  ddx <- .stretch_by_one(diff(dx))
-  dy  <- .stretch_by_one(diff(y))
-  ddy <- .stretch_by_one(diff(dy))
-  (dx * ddy - ddx * dy) / (dx^2 + dy^2)^(3/2)
+  if((n <- length(x)) != length(y))
+    stop("x and y must be the same length")
+
+  dx  <- diff(x)
+  ddx <- diff(dx)
+  dy  <- diff(y)
+  ddy <- diff(dy)
+  dx <-  head(dx, -1)
+  dy <-  head(dy, -1)
+
+  curv <- (dx * ddy - ddx * dy) / (dx^2 + dy^2)^(3/2)
+
+  .before(.after(curv))
 }
 
-# ------------------------------------------------------------------------------
-# Often we need the derivative or gradient to match the length of the input
-# vector. This does it via a simple interpolation along the input vector
-
-.stretch_by_one <- function(vec)
-{
-  n <- length(vec)
-
-  if(n == 1)
-    rep(vec, 2)
-  else
-    approx(seq(n), vec, seq(1, n, length.out = n + 1))$y
-}
 
 
