@@ -1,6 +1,11 @@
 
 
 test_that(".angle_from_xy gives correct results", {
+
+  # We should get an error if there are inadequate points
+  expect_error(.angle_from_xy(1, 1),
+               "x and y must be length 2 or more")
+
   # Equilateral triangle
   t <- seq(pi, -pi, length.out = 4)
   x <- cos(t)
@@ -28,6 +33,11 @@ test_that(".angle_from_xy gives correct results", {
 })
 
 test_that(".arclength_from_xy gives correct results", {
+
+  # We should get an error if there are inadequate points
+  expect_error(.arclength_from_xy(1, 1),
+               "x and y must be length 2 or more")
+
   # Vector mode
   lens   <- runif(50)
   angles <- runif(50, max = 2 * pi)
@@ -45,6 +55,12 @@ test_that(".arclength_from_xy gives correct results", {
   arclen <- .arclength_from_xy(x, y)
   expect_equal(arclen[25,], c(sum(lens[2:25]), sum(lens[27:50])))
 
+  # Matrix mode with NAs runs without complaint
+  x[c(5, 25), c(1, 2)] <- NA
+  y[c(5, 25), c(1, 2)] <- NA
+
+  expect_silent(.arclength_from_xy(x, y))
+
   # Ensure accuracy is improved with accuracy parameter
 
   t <- seq(0, 360, length.out = 1000) * pi / 180
@@ -58,6 +74,10 @@ test_that(".arclength_from_xy gives correct results", {
 })
 
 test_that(".get_offset offsets correctly", {
+
+  # We should get an error if there are inadequate points
+  expect_error(.get_offset(1, 1),
+               "x and y must be length 2 or more")
 
   x <- c(1:5)
   y <- c(1,2,3,2,1)
@@ -81,6 +101,10 @@ test_that(".get_offset offsets correctly", {
 })
 
 test_that("We can measure curvature accurately", {
+
+  # We should get an error if there are inadequate points
+  expect_error(.get_curvature(1, 1),
+               "x and y must be length 2 or more")
 
   # x and y describe a circle with radius 1:
   t <- seq(0, 360, length.out = 1000) * pi / 180

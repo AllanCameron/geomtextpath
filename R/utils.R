@@ -3,6 +3,7 @@
   if (is.null(x)) y else x
 }
 
+# ------------------------------------------------------------------------------
 # Row-bind a list of data.frames
 # `df_list` is a list of data.frames
 # `idcol` is a name for an id column, or NULL if it is to be omitted
@@ -16,6 +17,7 @@ rbind_dfs <- function(df_list, idcol = NULL) {
   ans
 }
 
+# ------------------------------------------------------------------------------
 # Simplified `rle(x)$lengths`
 run_len <- function(x) {
   if ({n <- length(x)} < 2) {
@@ -28,12 +30,14 @@ run_len <- function(x) {
   diff(c(0L, x))
 }
 
+# ------------------------------------------------------------------------------
 # Cheaper data.frame constructor for internal use.
 # Only use when `...` has valid names and content are valid data.frame columns
 data_frame <- function(...) {
   list_to_df(x = list(...))
 }
 
+# ------------------------------------------------------------------------------
 # Similar in scope to base::list2DF or ggplot2:::new_data_frame  or
 # vctrs::df_list
 # without bothering with 'n'/'size'
@@ -56,14 +60,18 @@ list_to_df <- function(x = list()) {
   x
 }
 
+# ------------------------------------------------------------------------------
+
 discretise <- function(x) {
   match(x, unique(x))
 }
 
+# ------------------------------------------------------------------------------
 # Function for `approx()`-ing a number of `y` variables. More efficient
 # than looping `approx()` due to not having to recalculate indices every
 # iteration. For non-numeric values, repeats first entry to match length.
 # Note: This also extrapolates based on the four extreme points.
+
 approx_multiple <- function(x, xout, y = matrix()) {
   if (length(y) == 0) {
     return(y)
@@ -111,4 +119,20 @@ approx_multiple <- function(x, xout, y = matrix()) {
     out <- drop(out)
   }
   return(out)
+}
+
+
+# ------------------------------------------------------------------------------
+# In general, missing (NA) points on a path can be interpolated between the
+# existing points without affecting the shape of the path. To keep all vectors
+# the same length, we therefore need a function to linearly interpolate at NAs
+
+.interp_na <- function(x) {
+
+  if(!any(is.na(x))) return(x)
+
+  stopifnot("Cannot interpolate NA in non-numeric vectors" = is.numeric(x),
+            "Cannot interpolate NA if no non-NA values" = !all(is.na(x)))
+
+  approx(seq_along(x), x, seq_along(x))$y
 }

@@ -5,6 +5,19 @@
 .halfpi  <- pi /2
 
 # ------------------------------------------------------------------------------
+# We can only define paths if they have two or more valid numeric points, and no
+# path can contain any infinite values
+
+.check_xy <- function(x, y) {
+
+  stopifnot("x and y must be the same length" = {(n <- length(x)) == length(y)},
+            "x and y must both be numeric" = {(is.numeric(x) & is.numeric(y))},
+            "x and y must be length 2 or more" = {n > 1},
+            "x and y must not contain infinite points" =
+              {all(is.finite(x[!is.na(x)]) & is.finite(y[!is.na(y)]))})
+}
+
+# ------------------------------------------------------------------------------
 # This is a safe way to get the direction along a path. Since we use approx
 # to interpolate angles later, we can't have any sudden transitions
 # where angles "wrap around" from +180 to -180, otherwise we might
@@ -15,7 +28,9 @@
 
 .angle_from_xy <- function(x, y, degrees = FALSE, norm = FALSE)
 {
-  stopifnot("x and y vectors must be the same length" = length(x) == length(y))
+  .check_xy(x, y)
+  x <- .interp_na(x)
+  y <- .interp_na(y)
 
   grad       <- diff(y) / diff(x)
   first     <- atan2(diff(y[1:2]), diff(x[1:2]))
@@ -34,23 +49,25 @@
 
 .arclength_from_xy <- function(x, y, accuracy = NA)
 {
-  stopifnot("x and y vectors must be the same length" = length(x) == length(y))
+  .check_xy(x, y)
 
   if (is.matrix(x) || is.matrix(y)) {
     stopifnot(
       "Both or neither x and y must be matrices" =
         is.matrix(x) && is.matrix(y)
     )
-    if (!is.na(accuracy)) {
-      # Call self for every column
+      # Call self for every column, even if accuracy is NA, so that any
+      # NA values are handled appropriately
+
       out <- Map(.arclength_from_xy, x = asplit(x, 2), y = asplit(y, 2),
                  accuracy = accuracy)
       out <- do.call(cbind, out)
-    } else {
-      out <- rbind(0, apply(sqrt(diff(x)^2 + diff(y)^2), 2, cumsum))
-    }
+
     return(out)
   }
+
+  x <- .interp_na(x)
+  y <- .interp_na(y)
 
   if(is.na(accuracy)) return(c(0, cumsum(sqrt(diff(x)^2 + diff(y)^2))))
 
@@ -76,9 +93,9 @@
 # and last elements are compared to themselves. These little utility functions
 # allow a shorthand method of doing this.
 
-.before <- function(x) x[c(1, seq_along(x))]
+.before <- function(x) if(length(x) == 0) x else x[c(1, seq_along(x))]
 
-.after  <- function(x) x[c(seq_along(x), length(x))]
+.after <- function(x) if(length(x) == 0) x else x[c(seq_along(x), length(x))]
 
 # Some features of a path are associated with its points, such as its x and y
 # coordinates, whereas others are associated with the *segments* joining the
@@ -100,6 +117,10 @@
 # it. The offset path is the set of points where adjacent offset lines meet.
 
 .get_offset <- function(x, y, d = 0) {
+
+  .check_xy(x, y)
+  x <- .interp_na(x)
+  y <- .interp_na(y)
 
   # Get angle normal to each segment of the path
   theta <- .angle_from_xy(x, y, norm = TRUE)
@@ -131,18 +152,23 @@
 
 .get_curvature <- function(x, y, samples = 1000)
 {
-  if((n <- length(x)) != length(y))
-    stop("x and y must be the same length")
+  .check_xy(x, y)
+  x <- .interp_na(x)
+  y <- .interp_na(y)
+
+  if(length(x) < 3) return(rep(0, length(x)))
 
   dx  <- diff(x)
   ddx <- diff(dx)
   dy  <- diff(y)
   ddy <- diff(dy)
-  dx <-  head(dx, -1)
-  dy <-  head(dy, -1)
+  dx  <- head(dx, -1)
+  dy  <- head(dy, -1)
 
   curv <- (dx * ddy - ddx * dy) / (dx^2 + dy^2)^(3/2)
 
+  # Duplicate first and last entries, since these are the best estimates
+  # of the curvature at these points, which is otherwise undefined.
   .before(.after(curv))
 }
 
