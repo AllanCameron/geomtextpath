@@ -124,3 +124,14 @@ test_that("approx_multiple works", {
   expect_equal(test$dummy, y$dummy[1:3])
   expect_s3_class(test, "data.frame")
 })
+
+
+# .interp_na
+
+test_that("We can interpolate NA correctly", {
+
+  expect_equal(.interp_na(c(1, 3, NA, 7)), c(1, 3, 5, 7))
+  expect_error(.interp_na(c(NA, NA)))
+
+})
+

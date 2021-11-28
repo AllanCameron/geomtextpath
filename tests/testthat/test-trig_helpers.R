@@ -1,15 +1,7 @@
-test_that(".stretch by one works", {
 
-  x <- 1:3
-
-  test <- .stretch_by_one(x)
-  expect_equal(test, c(1, 1 + 2/3, 2 + 1/3, 3))
-
-  test <- .stretch_by_one(x[1])
-  expect_equal(test, c(1, 1))
-})
 
 test_that(".angle_from_xy gives correct results", {
+
   # Equilateral triangle
   t <- seq(pi, -pi, length.out = 4)
   x <- cos(t)
@@ -37,6 +29,7 @@ test_that(".angle_from_xy gives correct results", {
 })
 
 test_that(".arclength_from_xy gives correct results", {
+
   # Vector mode
   lens   <- runif(50)
   angles <- runif(50, max = 2 * pi)
@@ -53,6 +46,17 @@ test_that(".arclength_from_xy gives correct results", {
 
   arclen <- .arclength_from_xy(x, y)
   expect_equal(arclen[25,], c(sum(lens[2:25]), sum(lens[27:50])))
+
+  # Ensure accuracy is improved with accuracy parameter
+
+  t <- seq(0, 360, length.out = 1000) * pi / 180
+  x <- cos(t)
+  y <- sin(t)
+
+  basic <- abs(max(.arclength_from_xy(x, y)) - 2 * pi)
+  accurate <-  abs(max(.arclength_from_xy(x, y, accuracy = 5)) - 2 * pi)
+
+  expect_lt(accurate, basic)
 })
 
 test_that(".get_offset offsets correctly", {
@@ -75,5 +79,29 @@ test_that(".get_offset offsets correctly", {
   expect_equal(
     offset$arc_length,
     cbind(c(0, 2, 5, 8, 10), c(0, 2, 6, 10, 12)) / sqrt(2)
+  )
+})
+
+test_that("We can measure curvature accurately", {
+
+  # x and y describe a circle with radius 1:
+  t <- seq(0, 360, length.out = 1000) * pi / 180
+  x <- cos(t)
+  y <- sin(t)
+
+  curv_1 <- .get_curvature(x, y)
+
+  # the curvature should be the reciprocal of the radius
+  radius_1 <- 1 / curv_1
+
+  expect_true(
+    all(abs(radius_1 - 1) < 0.001)
+  )
+
+  # Doubling the radius of the circle should half the curvature
+  curv_2 <- .get_curvature(2 * x, 2 * y)
+
+  expect_true(
+    all( abs((curv_1 / curv_2) - 2) < 0.001)
   )
 })

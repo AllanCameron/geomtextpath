@@ -189,7 +189,8 @@ makeContent.textpath <- function(x) {
   x
 }
 
-# Helpers -----------------------------------------------------------------
+
+# recycle_gp ---------------------------------------------------------------
 
 # Helper function to do safe(r) recycling on "gpar" class objects.
 recycle_gp <- function(gp, fun, ...) {
@@ -200,6 +201,8 @@ recycle_gp <- function(gp, fun, ...) {
   gp[lengths(gp) == 0] <- list(NULL)
   return(gp)
 }
+
+# split_gp ---------------------------------------------------------------
 
 # Helper function to split out "gpar" class objects by index
 split_gp <- function(gp, index) {
@@ -212,6 +215,8 @@ split_gp <- function(gp, index) {
   })
 }
 
+# gp_fill_defaults -------------------------------------------------------
+
 # Helper function to fill in missing parameters by defaults
 # Based on ggplot2:::modify_list
 gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {
@@ -221,10 +226,16 @@ gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {
   defaults
 }
 
+# dedup_path -------------------------------------------------------------
+
 # Path constructor that filters out subsequent duplicated points that can cause
-# problems for gradient/offset calculations
+# problems for gradient/offset calculations. Also interpolates any NA values in
+# the x, y values to avoid broken paths, and removes any points that have an
+# NA id.
+
 dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
-  vecs <- data_frame(x = x, y = y, id = id)
+
+  vecs <- data_frame(x = .interp_na(x), y = .interp_na(y), id = id)
   lens <- lengths(vecs)
   n    <- max(lengths(vecs))
   vecs[lens != n] <- lapply(vecs[lens != n], rep_len, length.out = n)
@@ -236,6 +247,7 @@ dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
     keep <- c(TRUE, sum(dups))
   }
   vecs <- vecs[keep, , drop = FALSE]
-  vecs
+
+  vecs[complete.cases(vecs),]
 }
 
