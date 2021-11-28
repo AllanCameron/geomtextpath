@@ -94,7 +94,6 @@
 #'   \item \code{hjust}
 #'   \item \code{size}
 #'   \item \code{vjust}
-#'   \item \code{hjust}
 #'   \item \code{linetype}
 #'   \item \code{linewidth}
 #'   \item \code{linecolour}
