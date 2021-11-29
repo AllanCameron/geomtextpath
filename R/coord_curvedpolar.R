@@ -75,6 +75,14 @@ coord_curvedpolar <- function(theta = "x", start = 0,
     if (is.null(panel_params$theta.major)) {
         return(element_render(theme, "panel.border"))
     }
+    txt_el <- calc_element("axis.text.x", theme)
+
+    # Early exit if text is blank
+    if (inherits(txt_el, "element_blank")) {
+      out <- grobTree(zeroGrob(), element_render(theme, "panel.border"))
+      return(out)
+    }
+
 
     theta <- ggplot2:::theta_rescale(self,
                                      panel_params$theta.major, panel_params)
@@ -98,7 +106,6 @@ coord_curvedpolar <- function(theta = "x", start = 0,
 
     # Rather than rendering a bespoke element_textpath via element_grob,
     # we harvest the appropriate parameters using calc_element directly
-    txt_el <- calc_element("axis.text.x", theme)
 
     element_gp <- gpar(fontsize = rep(txt_el$size, length(labels)),
                        col = rep(txt_el$colour, length(labels)),
