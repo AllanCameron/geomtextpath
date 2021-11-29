@@ -115,14 +115,9 @@ coord_curvedpolar <- function(theta = "x", start = 0,
 
     id <- rep(seq_along(labels), each = length(path_t))
 
-    x <- do.call(c, lapply(theta, function(x) {
-      0.45 * sin(x + path_t) + 0.5
-      }))
-
-    y <- do.call(c, lapply(theta, function(x) {
-      0.45 * cos(x + path_t) + 0.5
-      }))
-
+    theta <- as.vector(t(outer(theta, path_t, "+")))
+    x <- 0.45 * sin(theta) + 0.5
+    y <- 0.45 * cos(theta) + 0.5
 
     # We now have enough data to make our grob
     grid::grobTree(if (length(labels) > 0)
