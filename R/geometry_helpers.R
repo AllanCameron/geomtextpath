@@ -134,10 +134,14 @@
   path  <- path[rev(seq_len(nrow(path))), ]
   hjust <- 1 - hjust
 
-  .get_path_points(
+  out <- .get_path_points(
     path, label, hjust, halign,
     flip_inverted = FALSE
   )
+  # Invert length so path is trimmed correctly
+  length <- path$length %||% .arclength_from_xy(path$x, path$y)
+  out$length <- max(length) - out$length
+  out
 }
 
 
