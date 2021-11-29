@@ -93,11 +93,13 @@
     df <- letters
   }
 
-  if(any(df$exceed != 0))
-  {
-   warning("The text offset exceeds the curvature in one or more paths.\n",
-           "This will result in displaced letters.\n",
-           "Consider reducing the vjust or text size.")
+  if(any(df$exceed != 0)) {
+
+    ggplot2:::warning_wrap(
+      "The text offset exceeds the curvature in one or more paths. ",
+      "This will result in displaced letters. ",
+      "Consider reducing the vjust or text size, or use the hjust parameter ",
+      "to move the string to a different point on the path.")
   }
 
   df[!is.na(df$angle), ]
