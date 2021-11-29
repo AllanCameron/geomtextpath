@@ -2,6 +2,7 @@
 
 S3method(makeContent,textpath)
 export(GeomTextpath)
+export(coord_curvedpolar)
 export(geom_textpath)
 export(textpathGrob)
 import(ggplot2)
