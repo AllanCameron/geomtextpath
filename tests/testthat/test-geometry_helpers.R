@@ -174,3 +174,41 @@ test_that("Flipping logic is correct", {
   expect_equal(case$angle, ctrl$angle - 180)
 })
 
+test_that("Flipping appropriately adjusts offset", {
+
+  label <- measure_text(c("ABC"))[[1]]
+  attr(label, "offset") <- 1
+
+  xy <- data_frame(x = c(1, 0), y = 2)
+
+  ctrl <- .get_path_points(xy, label, flip_inverted = FALSE)
+  case <- .get_path_points(xy, label, flip_inverted = TRUE)
+
+  expect_equal(ctrl$y, c(1, 1, 1))
+  expect_equal(case$y, c(3, 3, 3))
+})
+
+test_that("Flipping leads to correctly clipped path", {
+
+  label <- measure_text(c("ABCD"))[[1]]
+  attr(label, "offset") <- 1
+
+  xy <- data_frame(x = c(2, 0), y = 2)
+  xy$length <- .arclength_from_xy(xy$x, xy$y)
+  xy$id <- 1
+
+  ctrl <- .get_path_points(xy, label, hjust = 0, flip_inverted = FALSE)
+  case <- .get_path_points(xy, label, hjust = 0, flip_inverted = TRUE)
+
+  # Should have reverse order
+  expect_equal(ctrl$length, sort(ctrl$length, decreasing = FALSE))
+  expect_equal(case$length, sort(case$length, decreasing = TRUE))
+
+  case$id <- ctrl$id <- 1L
+
+  ctrl <- .get_surrounding_lines(xy, ctrl)
+  case <- .get_surrounding_lines(xy, case)
+
+  # They aren't exactly equal due to letter spacing, but they should be similar
+  expect_equal(case$x, ctrl$x, tolerance = 0.01)
+})
