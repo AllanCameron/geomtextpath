@@ -44,24 +44,25 @@ multiple lines. All locations with the same \code{id} belong to the same line.}
 \item{hjust}{A numeric vector specifying horizontal justification.
     If specified, overrides the \code{just} setting.}
 
-\item{vjust}{A numeric vector specifying vertical justification.
-    If specified, overrides the \code{just} setting.}
+\item{vjust}{A \code{numeric} vector specifying justification orthogonal to the
+direction of the text. Alternatively a \code{\link[grid:unit]{unit()}} object to
+directly set the offset from the path.}
 
-\item{halign}{A \code{character(1)} setting text alignment amongst multi-line
-labels. Can be either \code{"left"} (default), \code{"center"} or \code{"right"}.}
+\item{halign}{A \code{character(1)} describing how multi-line labels should
+be justified. Can either be \code{"left"} (default), \code{"center"} or \code{"right"}.}
 
 \item{gp_text, gp_path}{An object of class \code{"gpar"}, typically the output from
 a call from the \code{\link[grid:gpar]{gpar()}} function. These are basically lists
 of graphical parameters for the text and path respectively.}
 
-\item{cut_path}{A single logical TRUE or FALSE which if TRUE breaks the path
-into two sections, one on either side of the string and if FALSE leaves the
-path unbroken. The default value is NA, which will break the line if the
-string has a vjust of between 0 and 1}
+\item{cut_path}{A \code{logical(1)} which if \code{TRUE} breaks the path
+into two sections, one on either side of the string. If \code{FALSE}, the
+path is plotted as a whole. The default, \code{NA}, will break the line if the
+string has a \code{vjust} of between 0 and 1.}
 
-\item{flip_inverted}{If TRUE, any string where the majority of letters would
-be upside down along the path are inverted to improve legibility. The
-default is FALSE.}
+\item{flip_inverted}{A \code{logical(1)} which if \code{TRUE}, inverts any string where
+the majority of letters would be upside down along the path are inverted to
+improve legibility. The default is \code{FALSE}, which leaves letters as-is.}
 
 \item{default.units}{A string indicating the default units to use
     if \code{x} or \code{y}
