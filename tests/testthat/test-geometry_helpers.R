@@ -185,7 +185,7 @@ test_that("Flipping appropriately adjusts offset", {
   case <- .get_path_points(xy, label, flip_inverted = TRUE)
 
   expect_equal(ctrl$y, c(1, 1, 1))
-  expect_equal(case$y, c(3, 3, 3))
+  expect_equal(case$y, c(1, 1, 1))
 })
 
 test_that("Flipping leads to correctly clipped path", {
