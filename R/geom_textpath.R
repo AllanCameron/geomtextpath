@@ -73,6 +73,8 @@
 #' @param halign A \code{character(1)} describing how multi-line labels should
 #'   be justified. Can either be \code{"left"} (default), \code{"center"} or
 #'   \code{"right"}.
+#' @param offset A `grid::unit()` of length 1 to determine the offset of the
+#'   text from the path. If not `NULL`, this overrules the `vjust` setting.
 #'
 #' @details The \code{spacing} aesthetic allows fine control of spacing of text,
 #'   which is called 'tracking' in typography. The default is 0 and units are
@@ -179,7 +181,7 @@ geom_textpath <- function(
   inherit.aes = TRUE,  ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
   include_line = TRUE, cut_path = NA, flip_inverted = FALSE,
-  halign = "left"
+  halign = "left", offset = NULL
   )
 {
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
@@ -194,6 +196,7 @@ geom_textpath <- function(
           cut_path      = cut_path,
           flip_inverted = flip_inverted,
           halign        = halign,
+          offset        = offset,
           ...
         ))
 }
@@ -238,7 +241,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   draw_panel = function(
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
-    cut_path = NA, flip_inverted = FALSE, halign = "left"
+    cut_path = NA, flip_inverted = FALSE, halign = "left",
+    offset = NULL
   ) {
 
     #---- type conversion, checks & warnings ---------------------------#
@@ -321,7 +325,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       y = data$y,
       id = data$group,
       hjust  = data$hjust[first],
-      vjust  = data$vjust,
+      vjust  = offset %||% data$vjust,
       halign = halign,
       cut_path = cut_path,
       gp_text = text_gp,

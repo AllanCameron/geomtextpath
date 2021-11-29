@@ -212,3 +212,27 @@ test_that("Flipping leads to correctly clipped path", {
   # They aren't exactly equal due to letter spacing, but they should be similar
   expect_equal(case$x, ctrl$x, tolerance = 0.01)
 })
+
+# Absolute offset ---------------------------------------------------------
+
+test_that("We can set a unit offset", {
+
+  grob <- textpathGrob(
+    label = "ABC",
+    x = c(0, 1), y = c(1, 1),
+    id = c(1, 1),
+    vjust = unit(0.5, "inch"),
+    default.units = "inch"
+  )
+  offset <- attr(grob$textpath$label[[1]], "offset")
+  offset <- convertUnit(offset, "inches", valueOnly = TRUE)
+
+  expect_equal(offset[1:2], c(0, 0.5))
+
+  content <- makeContent(grob)
+  txt <- content$children[[1]]
+
+  expect_equal(convertUnit(txt$y, "inch", valueOnly = TRUE),
+               rep(offset[3] + 1, 3))
+})
+
