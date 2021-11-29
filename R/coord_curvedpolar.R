@@ -111,11 +111,17 @@ coord_curvedpolar <- function(theta = "x", start = 0,
     # This constructs a circular path for the labels to sit on.
     wid <- mean(diff(theta))
 
-    path_t <- seq(wid/2, -wid/2, len = 100)
+    path_t <- seq(-wid/2, wid/2, len = 100)
 
     id <- rep(seq_along(labels), each = length(path_t))
-    x <- do.call(c, lapply(theta, function(x) 0.45 * sin(x + path_t) + 0.5))
-    y <- do.call(c, lapply(theta, function(x) 0.45 * cos(x + path_t) + 0.5))
+
+    x <- do.call(c, lapply(theta, function(x) {
+      0.45 * sin(x + path_t) + 0.5
+      }))
+
+    y <- do.call(c, lapply(theta, function(x) {
+      0.45 * cos(x + path_t) + 0.5
+      }))
 
 
     # We now have enough data to make our grob

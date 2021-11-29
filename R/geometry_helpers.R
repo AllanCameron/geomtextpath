@@ -134,6 +134,7 @@
   }
   # Invert path and hjust
   path  <- path[rev(seq_len(nrow(path))), ]
+  attr(label, "offset") <- 0 - attr(label, "offset")
   hjust <- 1 - hjust
 
   .get_path_points(
