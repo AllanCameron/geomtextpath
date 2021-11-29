@@ -60,11 +60,13 @@
   # We need a copy for a potential flip
   letters <- label
 
-  path$exceed <- .exceeds_curvature(path$x, path$y, d = attr(letters, "offset"))
   # Calculate offsets and anchorpoints
-
-
-  offset <- .get_offset(path$x, path$y, d = attr(letters, "offset"))
+  offset <- attr(letters, "offset")
+  if (is.unit(offset)) {
+    offset <- convertUnit(offset, "inches", valueOnly = TRUE)
+  }
+  path$exceed <- .exceeds_curvature(path$x, path$y, d = offset)
+  offset <- .get_offset(path$x, path$y, d = offset)
   anchor <- .anchor_points(offset$arc_length, attr(letters, "metrics")$width,
                            hjust = hjust, halign = halign)
 
@@ -137,10 +139,14 @@
   attr(label, "offset") <- 0 - attr(label, "offset")
   hjust <- 1 - hjust
 
-  .get_path_points(
+  out <- .get_path_points(
     path, label, hjust, halign,
     flip_inverted = FALSE
   )
+  # Invert length so path is trimmed correctly
+  length <- path$length %||% .arclength_from_xy(path$x, path$y)
+  out$length <- max(length) - out$length
+  out
 }
 
 
@@ -167,6 +173,10 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   halign <- match(halign, c("center", "left", "right"), nomatch = 2L)
   halign <- c("center", "left", "right")[halign]
 
+  if ({unit_vjust <- is.unit(vjust)}) {
+    offset_unit <- rep(vjust, length.out = length(label))
+    vjust  <- 0
+  }
   # Remedy for https://github.com/r-lib/systemfonts/issues/85
   vjust[vjust == 1] <- 1 + .Machine$double.eps
 
@@ -228,6 +238,15 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
     df      <- ans[[i]]
     offset  <- unique(c(0, df$ymin))
     df$y_id <- match(df$ymin, offset)
+    if (unit_vjust) {
+      if (any(df$y_id) == 1) {
+        df$y_id <- df$y_id + 1
+        offset  <- unit(offset, "inch")
+      } else {
+        offset  <- unit(offset[-1], "inch")
+      }
+      offset <- unit.c(unit(0, "inch"), offset + offset_unit[i])
+    }
     attr(df, "metrics") <- metrics[i, , drop = FALSE]
     attr(df, "offset")  <- offset
     df
@@ -385,6 +404,9 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 .get_surrounding_lines <- function(path, letters, cut_path = NA,
                                    breathing_room = 0.15, vjust = 0.5,
                                    vjust_lim = c(0, 1)) {
+  if (is.unit(vjust)) {
+    vjust <- rep_len(0.5, length(vjust))
+  }
 
   trim <- vjust >= vjust_lim[1] & vjust <= vjust_lim[2]
   trim <- if (!is.na(cut_path)) rep(cut_path, length(trim)) else trim
@@ -421,8 +443,6 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
     # Interpolate trimming points
     ipol <- c(mins[trim], maxs[trim])
     trim_xy <- approx_multiple(path$length, ipol, path[c("x", "y")])
-    # trim_x <- approx(path$length, path$x, ipol)$y
-    # trim_y <- approx(path$length, path$y, ipol)$y
 
     # Add trimming points to paths
     path <- data_frame(

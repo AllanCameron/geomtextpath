@@ -12,17 +12,11 @@
 #' @param gp_text,gp_path An object of class `"gpar"`, typically the output from
 #'   a call from the [`gpar()`][grid::gpar] function. These are basically lists
 #'   of graphical parameters for the text and path respectively.
-#' @param cut_path A single logical TRUE or FALSE which if TRUE breaks the path
-#'   into two sections, one on either side of the string and if FALSE leaves the
-#'   path unbroken. The default value is NA, which will break the line if the
-#'   string has a vjust of between 0 and 1
-#' @param flip_inverted If TRUE, any string where the majority of letters would
-#'   be upside down along the path are inverted to improve legibility. The
-#'   default is FALSE.
-#' @param halign A `character(1)` setting text alignment amongst multi-line
-#'   labels. Can be either `"left"` (default), `"center"` or `"right"`.
-#'
+#' @param vjust A `numeric` vector specifying justification orthogonal to the
+#'   direction of the text. Alternatively a [`unit()`][grid::unit()] object to
+#'   directly set the offset from the path.
 #' @inheritParams grid::textGrob
+#' @inheritParams geom_textpath
 #'
 #' @return An object of class `gTree`, containing grobs.
 #' @export
@@ -244,7 +238,7 @@ dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
   if (n > 2) {
     keep <- c(TRUE, rowSums(dups) < 3L)
   } else {
-    keep <- c(TRUE, sum(dups))
+    keep <- c(TRUE, sum(dups) < 3L)
   }
   vecs <- vecs[keep, , drop = FALSE]
 

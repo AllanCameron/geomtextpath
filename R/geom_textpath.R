@@ -11,18 +11,45 @@
 
 # Constructor -------------------------------------------------------------
 
-#' Add Curved Text Along Paths in \code{ggplot2}
+#' Add Curved Text Along Paths in \pkg{ggplot2}
 #'
-#' @description The existing text-based geom layers in ggplot2
-#' (\code{geom_text} and \code{geom_label}) are ideal for the majority of plots,
+#' @description The existing text-based geom layers in \pkg{ggplot2}
+#' ([`geom_text()`][ggplot2::geom_text()] and
+#' [`geom_label()`][ggplot2::geom_label()]) are ideal for the majority of plots,
 #' since typically textual annotations are short, straight and in line with the
 #' axes of the plot. However, there are some occasions when it is useful to have
 #' text follow a curved path. This may be to create or recreate a specific
 #' visual effect, or it may be to label a circular / polar plot in a more
 #' "natural" way.
 #'
+#' @inheritParams ggplot2::layer
+#' @inheritParams ggplot2::geom_path
+#' @param ... other arguments passed on to [`layer()`][ggplot2::layer].
+#'   These are often aesthetics, used to set an aesthetic to a fixed value,
+#'   like `colour = "red"` or `size = 3`. They may also be parameters to the
+#'   paired geom/stat.
+#' @param na.rm If `FALSE` (default), missing points or labels are removed from
+#'   the text path with a warning.
+#' @param include_line A `logical(1)`, indicating whether a
+#'   line should be plotted along with the text (`TRUE`, the default). If
+#'   `FALSE`, any parameters or aesthetics relating to the drawing of the path
+#'   in the layer will be ignored.
+#' @param cut_path A `logical(1)` which if `TRUE` breaks the path
+#'   into two sections, one on either side of the string. If `FALSE`, the
+#'   path is plotted as a whole. The default, `NA`, will break the line if the
+#'   string has a `vjust` of between 0 and 1.
+#' @param flip_inverted A `logical(1)` which if `TRUE`, inverts any string where
+#'   the majority of letters would be upside down along the path are inverted to
+#'   improve legibility. The default is `FALSE`, which leaves letters as-is.
+#' @param halign A `character(1)` describing how multi-line labels should
+#'   be justified. Can either be `"left"` (default), `"center"` or `"right"`.
+#' @param offset A [`unit()`][grid::unit()] of length 1 to determine the offset
+#'   of the text from the path. If not `NULL`, this overrules the `vjust`
+#'   setting.
+#'
+#' @details
 #' There are limitations inherent in the plotting of text elements in
-#' \code{ggplot} due to the way that the underlying \code{grid} graphics handles
+#' \pkg{ggplot2} due to the way that the underlying \pkg{grid} graphics handles
 #' text. A text string is dealt with as a zero-width object, and therefore the
 #' rotation and spacing of the letters making up the string can only be dealt
 #' with by treating each letter separately.
@@ -37,9 +64,9 @@
 #' longer path. Spacing the letters equally along the path would mean there is
 #' too much space between the letters for the label to remain legible. A single
 #' text string is therefore kept "together" according to the point size of the
-#' text in \code{geom_textpath}. This then leaves the problem of where on the
+#' text in `geom_textpath()`. This then leaves the problem of where on the
 #' path the text should be placed. This can be dealt with by the aesthetic
-#' mapping \code{hjust}, which allows the user to place the labels
+#' mapping `hjust`, which allows the user to place the labels
 #' at the desired position along the path, including separate positions for
 #' each label.
 #'
@@ -49,61 +76,37 @@
 #' This means that if we have a data frame with an x column, a y column and a
 #' grouping variable column, there can only be a single label for the group.
 #' Typically, this will be the grouping variable itself (see the examples,
-#' particularly those using the built-in \code{iris} data set.)
-#'
-#'
-#' @inheritParams ggplot2::layer
-#' @inheritParams ggplot2::geom_path
-#' @param ... other arguments passed on to \code{\link{layer}}. These are often
-#' aesthetics, used to set an aesthetic to a fixed value, like \code{colour =
-#' "red"} or \code{size = 3}. They may also be parameters to the paired
-#'  geom/stat.
-#' @param na.rm Removes missing points or labels from the text path.
-#' @param include_line A single logical TRUE or FALSE, indicating whether a
-#'   line should be plotted along with the text. If FALSE, any parameters or
-#'   aesthetics relating to the drawing of the line in the layer will be
-#'   ignored.
-#' @param cut_path A single logical TRUE or FALSE which if TRUE breaks the path
-#'   into two sections, one on either side of the string and if FALSE leaves the
-#'   path unbroken. The default value is NA, which will break the line if the
-#'   string has a vjust of between 0 and 1.
-#' @param flip_inverted If TRUE, any string where the majority of letters would
-#'   be upside down along the path are inverted to improve legibility. The
-#'   default is FALSE.
-#' @param halign A \code{character(1)} describing how multi-line labels should
-#'   be justified. Can either be \code{"left"} (default), \code{"center"} or
-#'   \code{"right"}.
-#'
-#' @details The \code{spacing} aesthetic allows fine control of spacing of text,
-#'   which is called 'tracking' in typography. The default is 0 and units are
-#'   measured in 1/1000 em. Numbers greater than zero increase the spacing,
-#'   whereas negative numbers decrease the spacing.
+#' particularly those using the built-in `iris` data set.)
 #'
 #' @section Aesthetics:
-#' \code{geom_textpath()} understands the following aesthetics (required
+#' The `spacing` aesthetic allows fine control of spacing of text,
+#' which is called 'tracking' in typography. The default is 0 and units are
+#' measured in 1/1000 em. Numbers greater than zero increase the spacing,
+#' whereas negative numbers decrease the spacing.
+#' `geom_textpath()` understands the following aesthetics (required
 #' aesthetics are in bold):
 #' \itemize{
-#'   \item \strong{\code{x}}
-#'   \item \strong{\code{y}}
-#'   \item \strong{\code{label}}
-#'   \item \code{alpha}
-#'   \item \code{colour}
-#'   \item \code{family}
-#'   \item \code{fontface}
-#'   \item \code{group}
-#'   \item \code{hjust}
-#'   \item \code{size}
-#'   \item \code{vjust}
-#'   \item \code{linetype}
-#'   \item \code{linewidth}
-#'   \item \code{linecolour}
-#'   \item \code{spacing}
+#'   \item \strong{`x`}
+#'   \item \strong{`y`}
+#'   \item \strong{`label`}
+#'   \item `alpha`
+#'   \item `colour`
+#'   \item `family`
+#'   \item `fontface`
+#'   \item `group`
+#'   \item `hjust`
+#'   \item `size`
+#'   \item `vjust`
+#'   \item `linetype`
+#'   \item `linewidth`
+#'   \item `linecolour`
+#'   \item `spacing`
 #' }
 #'
 #' @export
+#' @md
 #'
 #' @examples
-#'
 #'# Plot text along an arbitrary path
 #'  t <- seq(-1, 5, length.out = 1000) * pi
 #'  spiral <- data.frame(
@@ -179,7 +182,7 @@ geom_textpath <- function(
   inherit.aes = TRUE,  ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
   include_line = TRUE, cut_path = NA, flip_inverted = FALSE,
-  halign = "left"
+  halign = "left", offset = NULL
   )
 {
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
@@ -194,6 +197,7 @@ geom_textpath <- function(
           cut_path      = cut_path,
           flip_inverted = flip_inverted,
           halign        = halign,
+          offset        = offset,
           ...
         ))
 }
@@ -238,7 +242,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   draw_panel = function(
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
-    cut_path = NA, flip_inverted = FALSE, halign = "left"
+    cut_path = NA, flip_inverted = FALSE, halign = "left",
+    offset = NULL
   ) {
 
     #---- type conversion, checks & warnings ---------------------------#
@@ -321,7 +326,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       y = data$y,
       id = data$group,
       hjust  = data$hjust[first],
-      vjust  = data$vjust,
+      vjust  = offset %||% data$vjust,
       halign = halign,
       cut_path = cut_path,
       gp_text = text_gp,
