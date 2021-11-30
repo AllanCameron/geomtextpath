@@ -220,7 +220,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   default_aes = aes(colour = "black", size = 3.88, hjust = 0.5, vjust = 0.5,
                     family = "", fontface = 1, lineheight = 1.2, alpha = 1,
                     linewidth = 0.5, linetype = 1, spacing = 0,
-                    linecolour = "_copy_text_colour_"),
+                    linecolour = "_copy_text_colour_", angle = 0),
 
   extra_params = c("na.rm", "include_line"),
 
@@ -280,20 +280,13 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     # If row-wise data is given (i.e. as if it were geom_text), we assume
     # the intention is to have geom_text like labels that can curve in polar
     # co-ordinates
-    if (!anyDuplicated(data$group)) {
-       wids <- shape_string(data$label, size = data$size)$metrics$width / 72
-       wids <- wids  * diff(panel_params$theta.range %||% panel_params$x.range)
-       wids <- sapply(seq_along(wids), function(i) {
-         seq(-wids[i], wids[i], len = 50) + data$x[i]})
-       data <- data[rep(seq(nrow(data)), each = 50),]
-       data$x <- as.vector((wids))
-       data$linetype <- 0
-    }
+    if (!anyDuplicated(data$group)) data <- .pathify(data, coord, panel_params)
+
+    # All data should now be on paths, after which angle doesn't make sense
+    data$angle <- NULL
 
     # All our transformations occur after the coord transform:
     data <- coord_munch(coord, data, panel_params)
-
-
 
     # Drop paths with less than two points
     group_lens <- stats::ave(seq_len(nrow(data)), data$group, FUN = length)
@@ -346,3 +339,43 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     )
   }
 )
+
+
+# Convert point-like textpaths into proper text paths.
+
+.pathify <- function(data, coord, panel_params) {
+
+   angle <- data$angle * pi / 180
+   if(!is.null(coord$theta))
+   {
+     if(coord$theta == "y") {
+        xrange <- panel_params$r.range
+        yrange <- panel_params$theta.range
+     } else {
+        xrange <- panel_params$theta.range
+        yrange <- panel_params$r.range
+     }
+   }
+   else {
+     xrange <- panel_params$x.range
+     yrange <- panel_params$y.range
+   }
+
+   data$x <- (data$x - xrange[1]) / diff(xrange)
+   data$y <- (data$y - yrange[1]) / diff(yrange)
+   wids  <- shape_string(data$label, size = data$size)$metrics$width
+   width <- 5 * wids / dev.size("px")[1]
+   xmin  <- data$x + cos(angle + pi) * width * data$hjust
+   xmax  <- data$x + cos(angle) * width * (1 - data$hjust)
+   ymin  <- data$y + sin(angle + pi) * width * data$hjust
+   ymax  <- data$y + sin(angle) * width * (1 - data$hjust)
+
+   multi_seq <- Vectorize(seq.default)
+   x <- c(multi_seq(xmin, xmax, length.out = 100))
+   y <- c(multi_seq(ymin, ymax, length.out = 100))
+   data <- data[rep(seq(nrow(data)), each = 100),]
+   data$x <- x * diff(xrange) + xrange[1]
+   data$y <- y * diff(yrange) + yrange[1]
+   data$linetype <- 0
+   data
+}
