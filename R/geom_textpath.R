@@ -262,12 +262,6 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     # We need to change groups to numeric to order them appropriately
     data$group <- discretise(data$group)
 
-    # Standard warning if row-wise data is passed instead of columnar groups.
-    if (!anyDuplicated(data$group)) {
-        ggplot2:::message_wrap("geom_textpath: Each group consists of only",
-        "one observation. Do you need to adjust the group aesthetic?")
-    }
-
     # If there is more than one text string associated with any of the groups,
     # we warn that only the first is used
     if(!all(sapply(split(data, data$group),
@@ -282,8 +276,24 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     # Now we can sort the data by group
     data <- data[order(data$group), , drop = FALSE]
 
+
+    # If row-wise data is given (i.e. as if it were geom_text), we assume
+    # the intention is to have geom_text like labels that can curve in polar
+    # co-ordinates
+    if (!anyDuplicated(data$group)) {
+       wids <- shape_string(data$label, size = data$size)$metrics$width / 72
+       wids <- wids  * diff(range(data$x))
+       wids <- sapply(seq_along(wids), function(i) {
+         seq(-wids[i], wids[i], len = 50) + data$x[i]})
+       data <- data[rep(seq(nrow(data)), each = 50),]
+       data$x <- as.vector((wids))
+       data$linetype <- 0
+    }
+
     # All our transformations occur after the coord transform:
     data <- coord_munch(coord, data, panel_params)
+
+
 
     # Drop paths with less than two points
     group_lens <- stats::ave(seq_len(nrow(data)), data$group, FUN = length)
