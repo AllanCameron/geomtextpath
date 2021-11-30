@@ -282,7 +282,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     # co-ordinates
     if (!anyDuplicated(data$group)) {
        wids <- shape_string(data$label, size = data$size)$metrics$width / 72
-       wids <- wids  * diff(range(data$x))
+       wids <- wids  * diff(panel_params$theta.range %||% panel_params$x.range)
        wids <- sapply(seq_along(wids), function(i) {
          seq(-wids[i], wids[i], len = 50) + data$x[i]})
        data <- data[rep(seq(nrow(data)), each = 50),]
