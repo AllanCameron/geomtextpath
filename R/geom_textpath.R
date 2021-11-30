@@ -267,7 +267,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     if(!all(sapply(split(data, data$group),
            function(x) all(x$label == x$label[1]))))
     {
-         ggplot2:::message_wrap("geom_textpath: Multiple strings found in at",
+         ggplot2:::message_wrap("geom_textpath: Multiple strings found in at ",
          "least one group. Only the first will be used.")
     }
 
@@ -276,22 +276,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     # Now we can sort the data by group
     data <- data[order(data$group), , drop = FALSE]
 
-
-    # If row-wise data is given (i.e. as if it were geom_text), we assume
-    # the intention is to have geom_text like labels that can curve in polar
-    # co-ordinates
-    if (!anyDuplicated(data$group)) data <- .pathify(data, coord, panel_params)
-
-    # All data should now be on paths, after which angle doesn't make sense
-    data$angle <- NULL
-
     # All our transformations occur after the coord transform:
     data <- coord_munch(coord, data, panel_params)
-
-    # Drop paths with less than two points
-    group_lens <- stats::ave(seq_len(nrow(data)), data$group, FUN = length)
-    data <- data[group_lens >= 2, , drop = FALSE]
-    if (nrow(data) < 2) return(zeroGrob())
 
     #---- Set graphical parameters --------------------------#
 
@@ -335,52 +321,12 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       gp_text = text_gp,
       gp_path = path_gp,
       flip_inverted = flip_inverted,
-      default.units = "npc"
+      default.units = "npc",
+      angle = data$angle,
+      polar_params = if (inherits(coord, "CoordPolar")) list(x = 0.5, y = 0.5)
+                     else NULL
     )
   }
 )
 
 
-# Convert point-like textpaths into proper text paths.
-
-.pathify <- function(data, coord, panel_params) {
-
-   angle <- data$angle * pi / 180
-   if(!is.null(coord$theta))
-   {
-     if(coord$theta == "y") {
-        xrange <- panel_params$r.range
-        yrange <- panel_params$theta.range
-     } else {
-        xrange <- panel_params$theta.range
-        yrange <- panel_params$r.range
-     }
-   }
-   else {
-     if(inherits(coord, "CoordFlip")) {
-       yrange <- panel_params$x.range
-       xrange <- panel_params$y.range
-     } else {
-       xrange <- panel_params$x.range
-       yrange <- panel_params$y.range
-     }
-   }
-
-   data$x <- (data$x - xrange[1]) / diff(xrange)
-   data$y <- (data$y - yrange[1]) / diff(yrange)
-   wids  <- shape_string(data$label, size = data$size)$metrics$width
-   width <- 5 * wids / dev.size("px")[1]
-   xmin  <- data$x + cos(angle + pi) * width * data$hjust
-   xmax  <- data$x + cos(angle) * width * (1 - data$hjust)
-   ymin  <- data$y + sin(angle + pi) * width * data$hjust
-   ymax  <- data$y + sin(angle) * width * (1 - data$hjust)
-
-   multi_seq <- Vectorize(seq.default)
-   x <- c(multi_seq(xmin, xmax, length.out = 100))
-   y <- c(multi_seq(ymin, ymax, length.out = 100))
-   data <- data[rep(seq(nrow(data)), each = 100),]
-   data$x <- x * diff(xrange) + xrange[1]
-   data$y <- y * diff(yrange) + yrange[1]
-   data$linetype <- 0
-   data
-}

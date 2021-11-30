@@ -15,6 +15,11 @@
 #' @param vjust A `numeric` vector specifying justification orthogonal to the
 #'   direction of the text. Alternatively a [`unit()`][grid::unit()] object to
 #'   directly set the offset from the path.
+#' @param angle a `numeric` vector either length 1 or the same length as `id`
+#'   describing the angle at which text should be rotated.
+#' @param polar_params a list consisting of an x, y, and r component that
+#'   specifies the central point and radius of a circle around which
+#'   single-point labels will be wrapped.
 #' @inheritParams grid::textGrob
 #' @inheritParams geom_textpath
 #'
@@ -49,10 +54,12 @@ textpathGrob <- function(
   hjust = NULL,
   vjust = NULL,
   halign = "left",
+  angle = 0,
   gp_text = gpar(),
   gp_path = gpar(),
   cut_path = NA,
   flip_inverted = FALSE,
+  polar_params = NULL,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -68,11 +75,13 @@ textpathGrob <- function(
 
   stopifnot(
     "`x` is not of the same length as `id`" =
-      length(x) == length(id) || length(id) == 1 || length(x) == 1,
+      length(x) == length(id),
     "`y` is not the same length as `x`" =
-      length(x) == length(y)  || length(y) == 1  || length(x) == 1,
+      length(x) == length(y),
     "Cannot match labels to paths." =
-      n_label == length(id_lens)
+      n_label == length(id_lens),
+    "`angle` must be length 1 or the same length as `x`." =
+      (length(x) == length(angle)) || length(angle) == 1
   )
 
   # Match justification to labels length
@@ -91,6 +100,14 @@ textpathGrob <- function(
     y <- unit(y, default.units)
   }
 
+  if (!is.null(polar_params))
+  {
+    polar_params$x <- unit(polar_params$x, default.units)
+    polar_params$y <- unit(polar_params$y, default.units)
+  } else {
+    polar_params <- list(x = NA, y = NA)
+  }
+
   path <- data_frame(x = x, y = y, id = rep(seq_along(id_lens), id_lens))
 
   gTree(
@@ -103,7 +120,9 @@ textpathGrob <- function(
       cut_path      = cut_path,
       gp_text       = gp_text,
       gp_path       = gp_path,
-      flip_inverted = flip_inverted
+      flip_inverted = flip_inverted,
+      polar_params  = polar_params %||% list(x = NA, y = NA),
+      angle         = angle
     ),
     name = name,
     vp = vp,
@@ -115,13 +134,20 @@ textpathGrob <- function(
 
 #' @export
 makeContent.textpath <- function(x) {
+
   v <- x$textpath
   path <- dedup_path(
     x = convertX(v$data$x, "inches", valueOnly = TRUE),
     y = convertY(v$data$y, "inches", valueOnly = TRUE),
     id = v$data$id
   )
+  if(is.unit(v$polar_params$x) & is.unit(v$polar_params$y))
+  {
+    v$polar_params$x <- convertX(v$polar_params$x, "inches", valueOnly = TRUE)
+    v$polar_params$y <- convertY(v$polar_params$y, "inches", valueOnly = TRUE)
+  }
   x$textpath <- NULL
+
 
   ## ---- Data manipulation -------------------------------------------- #
 
@@ -129,11 +155,22 @@ makeContent.textpath <- function(x) {
 
   # Get gradients, angles and path lengths for each group
   path <- split(path, path$id)
+  wid <- sapply(v$label, function(x) max(x$xmax, na.rm = TRUE))
 
-  path <- lapply(path, function(x){
-    x$length <- .arclength_from_xy(x$x, x$y)
-    x
-  })
+  # Handle point-like textpaths
+  if(any({singletons <- sapply(path, nrow) == 1})){
+    path[singletons] <- Map(.pathify,
+                            data    = path[singletons],
+                            hjust   = v$hjust[singletons],
+                            angle   = v$angle,
+                            width   = wid[singletons],
+                            polar_x = v$polar_params$x,
+                            polar_y = v$polar_params$y)
+    v$gp_path$lty[singletons] <- 0
+  }
+
+
+  path <- lapply(path, function(p) within(p, length <-.arclength_from_xy(x, y)))
 
   # Get the actual text string positions and angles for each group
   text <- Map(
@@ -233,6 +270,7 @@ dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
   lens <- lengths(vecs)
   n    <- max(lengths(vecs))
   vecs[lens != n] <- lapply(vecs[lens != n], rep_len, length.out = n)
+
   dups <- vapply(vecs, function(x){abs(x[-1] - x[-length(x)]) < tolerance},
                  logical(n - 1))
   if (n > 2) {
@@ -245,3 +283,41 @@ dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
   vecs[complete.cases(vecs),]
 }
 
+
+# Convert point-like textpaths into proper text paths.
+
+.pathify <- function(data, hjust, angle, width, polar_x, polar_y) {
+
+  angle <- pi * angle / 180
+  multi_seq <- Vectorize(seq.default)
+
+   if(!is.na(polar_x) & !is.na(polar_y)) {
+     angle <- angle - pi/2
+     r <- sqrt((data$x - polar_x)^2 + (data$y - polar_y)^2)
+     theta <- atan2(data$y - polar_y, data$x - polar_x)
+     theta_min  <- theta + cos(angle + pi) * width * hjust
+     theta_max  <- theta + cos(angle) * width * (1 - hjust)
+     r_min   <- r + sin(angle + pi) * width * hjust
+     r_max   <- r + sin(angle) * width * (1 - hjust)
+
+     theta <- c(multi_seq(theta_min, theta_max, length.out = 100))
+     r <- c(multi_seq(r_min, r_max, length.out = 100))
+     x <- polar_x + r * cos(theta)
+     y <- polar_y + r * sin(theta)
+   }
+   else
+   {
+     xmin  <- data$x + cos(angle + pi) * width * hjust
+     xmax  <- data$x + cos(angle) * width * (1 - hjust)
+     ymin  <- data$y + sin(angle + pi) * width * hjust
+     ymax  <- data$y + sin(angle) * width * (1 - hjust)
+     x <- c(multi_seq(xmin, xmax, length.out = 100))
+     y <- c(multi_seq(ymin, ymax, length.out = 100))
+   }
+
+   data <- data[rep(seq(nrow(data)), each = 100),]
+   data$x <- x
+   data$y <- y
+   data$linetype <- 0
+   data
+}
