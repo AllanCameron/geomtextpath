@@ -1,0 +1,60 @@
+---
+title: "Gallery of Examples"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Gallery of Examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7.16, 
+  fig.height = 6,
+  dev = "ragg_png"
+)
+```
+
+This vignette demonstrates some of the use cases for curved text in ggplot.
+
+```{r setup}
+library(ggplot2)
+library(geomtextpath)
+```
+
+## Planetary orbits
+
+```{r planetary_orbits}
+set.seed(1)
+planets <- c("Jupiter", "Saturn", "Uranus", "Neptune")
+t  <- seq(0, pi * 2, len = 500)
+AU <- c(5.203, 9.539, 19.18, 30.06)
+
+df <- data.frame(x = as.vector(outer(cos(t), AU)),
+                 y = as.vector(outer(sin(t), AU)),
+                 Planet = rep(planets, each = 500),
+                 position = rep(c(0.75, 0.2, 0.4, 0.1)))
+
+ggplot(df, aes(x, y, color = Planet)) +
+  geom_point(inherit.aes = FALSE, 
+             data = data.frame(x = runif(1000, -30, 30),
+                               y = runif(1000, -30, 30),
+                               intens = runif(1000)/2),
+             mapping = aes(x, y, alpha = intens), color = "white", size = 0.2) +
+  geom_textpath(aes(label = Planet), linewidth = 0.3,
+                hjust = rep(c(0, 0.25, 0.75, 1), each = 500),
+                vjust = 1.1, size = 5, flip_inverted = TRUE, fontface = 2) +
+  geom_point(data = df[c(170, 600, 1385, 1965),], size = c(4, 3.5, 1.5, 1.5)) +
+  geom_point(x = 0, y = 0, size = 5, color = "#FFFFA0", inherit.aes = FALSE) +
+  scale_alpha_identity() +
+  scale_color_manual(values = c(Jupiter = "orangered",
+                                Uranus ="violet", 
+                                Neptune = "skyblue", 
+                                Saturn = "gold")) +
+  coord_equal() +
+  theme_void() +
+  theme(plot.background = element_rect(fill = "black"),
+        legend.position = "none")
+```

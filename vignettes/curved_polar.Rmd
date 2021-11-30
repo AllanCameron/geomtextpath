@@ -11,7 +11,7 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.width = 8, 
+  fig.width = 7.16,
   fig.height = 6,
   dev = "ragg_png"
 )
@@ -64,7 +64,7 @@ The usual theme adjustments are available via `theme(axis.text.x = element_text(
 
 ```{r weather_plot_coordcurvedpolar_theme}
 p + coord_curvedpolar() + 
-  theme(axis.text.x = element_text(face = 2, color = "orangered3", vjust = 2))
+  theme(axis.text.x = element_text(face = 2, color = "orangered3", hjust = 0))
 ```
 
 Note that the text that would normally be upside down is automatically flipped to improve legibility.
