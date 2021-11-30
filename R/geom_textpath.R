@@ -357,8 +357,13 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
      }
    }
    else {
-     xrange <- panel_params$x.range
-     yrange <- panel_params$y.range
+     if(inherits(coord, "CoordFlip")) {
+       yrange <- panel_params$x.range
+       xrange <- panel_params$y.range
+     } else {
+       xrange <- panel_params$x.range
+       yrange <- panel_params$y.range
+     }
    }
 
    data$x <- (data$x - xrange[1]) / diff(xrange)
