@@ -13,10 +13,12 @@ textpathGrob(
   hjust = NULL,
   vjust = NULL,
   halign = "left",
+  angle = 0,
   gp_text = gpar(),
   gp_path = gpar(),
   cut_path = NA,
   flip_inverted = FALSE,
+  polar_params = NULL,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -51,6 +53,9 @@ directly set the offset from the path.}
 \item{halign}{A \code{character(1)} describing how multi-line labels should
 be justified. Can either be \code{"left"} (default), \code{"center"} or \code{"right"}.}
 
+\item{angle}{a \code{numeric} vector either length 1 or the same length as \code{id}
+describing the angle at which text should be rotated.}
+
 \item{gp_text, gp_path}{An object of class \code{"gpar"}, typically the output from
 a call from the \code{\link[grid:gpar]{gpar()}} function. These are basically lists
 of graphical parameters for the text and path respectively.}
@@ -63,6 +68,10 @@ string has a \code{vjust} of between 0 and 1.}
 \item{flip_inverted}{A \code{logical(1)} which if \code{TRUE}, inverts any string where
 the majority of letters would be upside down along the path are inverted to
 improve legibility. The default is \code{FALSE}, which leaves letters as-is.}
+
+\item{polar_params}{a list consisting of an x, y, and r component that
+specifies the central point and radius of a circle around which
+single-point labels will be wrapped.}
 
 \item{default.units}{A string indicating the default units to use
     if \code{x} or \code{y}

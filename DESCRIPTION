@@ -22,13 +22,15 @@ Depends:
 Imports:
     grid,
     scales,
-    systemfonts
+    systemfonts,
+    rlang
 RoxygenNote: 7.1.2
 Suggests: 
     testthat (>= 3.0.0),
     covr,
     knitr,
     rmarkdown,
-    ragg
+    ragg,
+    qpdf
 Config/testthat/edition: 3
 VignetteBuilder: knitr

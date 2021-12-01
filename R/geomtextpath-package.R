@@ -9,7 +9,9 @@
 #' @importFrom graphics strwidth
 #' @importFrom systemfonts shape_string
 #' @importFrom stats approxfun
+#' @importFrom stats complete.cases
 #' @importFrom grDevices dev.size
+#' @importFrom rlang warn
 NULL
 
 # The following block is used by usethis to automatically manage

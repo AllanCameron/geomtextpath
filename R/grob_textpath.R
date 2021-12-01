@@ -170,7 +170,10 @@ makeContent.textpath <- function(x) {
   }
 
 
-  path <- lapply(path, function(p) within(p, length <-.arclength_from_xy(x, y)))
+  path <- lapply(path, function(p) {
+    p$length <-.arclength_from_xy(p$x, p$y)
+    p
+  })
 
   # Get the actual text string positions and angles for each group
   text <- Map(

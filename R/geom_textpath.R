@@ -267,8 +267,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     if(!all(sapply(split(data, data$group),
            function(x) all(x$label == x$label[1]))))
     {
-         ggplot2:::message_wrap("geom_textpath: Multiple strings found in at ",
-         "least one group. Only the first will be used.")
+         warn(paste("geom_textpath: Multiple strings found in at",
+         "least one group. Only the first will be used."))
     }
 
     #---- Data manipulation ---------------------------------#
