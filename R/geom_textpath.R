@@ -181,7 +181,7 @@ geom_textpath <- function(
   position = "identity", na.rm = FALSE, show.legend = NA,
   inherit.aes = TRUE,  ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
-  include_line = TRUE, cut_path = NA, flip_inverted = FALSE,
+  include_line = TRUE, cut_path = NA, flip_inverted = TRUE,
   halign = "left", offset = NULL
   )
 {
@@ -242,7 +242,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   draw_panel = function(
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
-    cut_path = NA, flip_inverted = FALSE, halign = "left",
+    cut_path = NA, flip_inverted = TRUE, halign = "left",
     offset = NULL
   ) {
 
