@@ -365,17 +365,4 @@ Another issue is that we may wish to use a short curved label on a much
 longer path. Spacing the letters equally along the path would mean there
 is too much space between the letters for the label to remain legible. A
 single text string is therefore kept “together” according to the point
-size of the text in `geom_textpath`. This then leaves the problem of
-where on the path the text should be placed. This can be dealt with by
-the aesthetic mapping `hjust`, which allows the user to place the labels
-at the desired position along the path, including separate positions for
-each label.
-
-A final point to note is that a path is usually a group-based geom
-(i.e. a path typically comprises x, y points from two columns over
-several rows of a data frame), whereas text labels can come from single
-rows in a data frame. This means that if we have a data frame with an x
-column, a y column and a grouping variable column, there can only be a
-single label for the group. Typically, this will be the grouping
-variable itself (see the examples, particularly those using the built-in
-iris data set.)
+size of the text in `geom_textpath`.
