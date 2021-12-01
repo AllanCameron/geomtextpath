@@ -323,8 +323,9 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       flip_inverted = flip_inverted,
       default.units = "npc",
       angle = data$angle,
-      polar_params = if (inherits(coord, "CoordPolar")) list(x = 0.5, y = 0.5)
-                     else NULL
+      polar_params = if (inherits(coord, "CoordPolar")){
+                       list(x = 0.5, y = 0.5, theta = coord$theta)
+                     } else NULL
     )
   }
 )

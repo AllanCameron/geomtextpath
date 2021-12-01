@@ -105,7 +105,7 @@ textpathGrob <- function(
     polar_params$x <- unit(polar_params$x, default.units)
     polar_params$y <- unit(polar_params$y, default.units)
   } else {
-    polar_params <- list(x = NA, y = NA)
+    polar_params <- list(x = NA, y = NA, theta = NA)
   }
 
   path <- data_frame(x = x, y = y, id = rep(seq_along(id_lens), id_lens))
@@ -121,7 +121,7 @@ textpathGrob <- function(
       gp_text       = gp_text,
       gp_path       = gp_path,
       flip_inverted = flip_inverted,
-      polar_params  = polar_params %||% list(x = NA, y = NA),
+      polar_params  = polar_params %||% list(x = NA, y = NA, theta = NA),
       angle         = angle
     ),
     name = name,
@@ -165,7 +165,8 @@ makeContent.textpath <- function(x) {
                             angle   = v$angle,
                             width   = wid[singletons],
                             polar_x = v$polar_params$x,
-                            polar_y = v$polar_params$y)
+                            polar_y = v$polar_params$y,
+                            thet    = v$polar_params$theta)
     v$gp_path$lty[singletons] <- 0
   }
 
@@ -289,14 +290,16 @@ dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
 
 # Convert point-like textpaths into proper text paths.
 
-.pathify <- function(data, hjust, angle, width, polar_x, polar_y) {
+.pathify <- function(data, hjust, angle, width, polar_x, polar_y, thet) {
 
   angle <- pi * angle / 180
   multi_seq <- Vectorize(seq.default)
 
    if(!is.na(polar_x) & !is.na(polar_y)) {
-     angle <- angle - pi/2
+
+     if(thet == "y") angle <- angle - pi/2
      r <- sqrt((data$x - polar_x)^2 + (data$y - polar_y)^2)
+     width <- width / r
      theta <- atan2(data$y - polar_y, data$x - polar_x)
      theta_min  <- theta + cos(angle + pi) * width * hjust
      theta_max  <- theta + cos(angle) * width * (1 - hjust)
@@ -321,6 +324,5 @@ dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
    data <- data[rep(seq(nrow(data)), each = 100),]
    data$x <- x
    data$y <- y
-   data$linetype <- 0
    data
 }
