@@ -32,37 +32,42 @@ You can install the development version of geomtextpath from
 remotes::install_github("AllanCameron/geomtextpath")
 ```
 
-## Examples
+## Using **geomtextpath**
+
+Once installed, we simply call:
 
 ``` r
 library(geomtextpath)
 #> Loading required package: ggplot2
 ```
 
-### Plotting text along an arbitrary path
+The main function in this package, `geom_textpath`, functions much as
+any other `geom` in `ggplot2`, taking its x co-ordinates, its y
+co-ordinates and its text label from an aesthetic mapping. At its most
+basic, this allows the `label` to be plotted on an arbitrary path, as
+shown in the following example:
 
 ``` r
-t <- seq(-1, 5, length.out = 1000) * pi
-spiral <- data.frame(
-  x = rev(sin(t) * 1000:1),
-  y = rev(cos(t) * 1000:1),
-  s = seq(1, 10, length.out = 100),
-  text = paste(
-    "Like a circle in a spiral, like a wheel within a wheel,",
-    "never ending or beginning on an ever spinning reel"
-  )
-)
+t <- seq(5, -1, length.out = 1000) * pi
+
+spiral <- data.frame(x    = sin(t) * 1:1000, 
+                     y    = cos(t) * 1:1000,
+                     text = paste("Like a circle in a spiral,",
+                                  "like a wheel within a wheel,",
+                                  "never ending or beginning,",
+                                  "on an ever spinning reel")
+                     )
 
 ggplot(spiral, aes(x, y, label = text)) +
-  geom_textpath(size = 7, vjust = 2, linewidth = 0) +
+  geom_textpath(size = 7, vjust = 2, include_line = FALSE) +
   coord_equal(xlim = c(-1500, 1500), ylim = c(-1500, 1500))
 ```
 
 <img src="man/figures/README-spiral-1.png" width="100%" style="display: block; margin: auto;" />
 
-### Produce labelled density lines
-
-By default, the paths are broken to allow the names in-line.
+Of course, we can create the path data from various “stat”
+transformations, and generate the labels from the grouping variables we
+are plotting. This allows very easy labeling of density curves:
 
 ``` r
 ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
@@ -72,8 +77,60 @@ ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
 
 <img src="man/figures/README-density_demo-1.png" width="100%" style="display: block; margin: auto;" />
 
-If the `vjust` parameter moves the text above or below the line, the
-line is automatically filled in.
+We can also use `stat_smooth` to get labelled trend lines through
+scatterplots:
+
+``` r
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point(alpha = 0.1) +
+  geom_textpath(aes(label = Species, colour = Species),
+                stat = "smooth", method = "loess", formula = y ~ x,
+                size = 7, linetype = 3, fontface = 2, linewidth = 1) +
+  scale_colour_manual(values = c("forestgreen", "deepskyblue4", "tomato4")) +
+  theme_bw()
+```
+
+<img src="man/figures/README-smooth-1.png" width="100%" style="display: block; margin: auto;" />
+
+And of course, arbitrary functions can be labelled with paths created in
+`stat_function`:
+
+``` r
+ggplot() + 
+  xlim(c(0, 1)) + 
+  stat_function(geom = "textpath",
+                fun = dgamma, color = "red4",
+                label = "gamma distribution with shape = 1",
+                size = 5, vjust = -0.2, hjust = 0.1, args = list(shape = 1)) +
+  stat_function(geom = "textpath",
+                fun = dgamma, color = "blue4",
+                label = "gamma distribution with shape = 2",
+                size = 5, vjust = -0.2, hjust = 0.1, args = list(shape = 2)) +
+  stat_function(geom = "textpath",
+                fun = dgamma, color = "green4",
+                label = "gamma distribution with shape = 3",
+                size = 5, vjust = -0.2, hjust = 0.1, args = list(shape = 3)) +
+  theme_bw()
+```
+
+<img src="man/figures/README-stat_function-1.png" width="100%" style="display: block; margin: auto;" />
+
+### Controlling text position
+
+Just like `geom_text`, the `vjust` parameter controls vertical
+justification of the text, though in `geom_textpath` the text is
+justified relative to the path rather than a single point. If the
+`vjust` parameter moves the text above or below the line, the line is
+automatically “filled in”.
+
+For short text labels applied to long paths, we need a parameter to
+control how far along the path the text is placed. For this we use the
+horizontal justification (`hjust`) parameter.
+
+The behaviour of the `vjust` and `hjust` parameters is described in more
+detail in the “aesthetics” vignette.
+
+Here is an example of text justified above the line of the path:
 
 ``` r
 ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
@@ -111,20 +168,6 @@ p + facet_grid(Species~.)
 The text will continue to rotate appropriately as the plotting window is
 rescaled.
 
-### Labelling groups of point along their trend line
-
-``` r
-ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
-  geom_point(alpha = 0.1) +
-  geom_textpath(aes(label = Species, colour = Species),
-                stat = "smooth", method = "loess", formula = y ~ x,
-                size = 7, linetype = 3, fontface = 2, linewidth = 1) +
-  scale_colour_manual(values = c("forestgreen", "deepskyblue4", "tomato4")) +
-  theme_bw()
-```
-
-<img src="man/figures/README-smooth-1.png" width="100%" style="display: block; margin: auto;" />
-
 ### Text paths in polar coordinates
 
 Straight text paths in Cartesian coordinates become curved in polar
@@ -134,18 +177,73 @@ coordinates.
 df <- data.frame(x = c(1, 1000), y = 1, text = "This is a perfectly flat label")
 
 p <- ggplot(df, aes(x, y, label = text)) +
-  geom_textpath(size = 6) +
+  geom_textpath(size = 6, include_line = FALSE) +
   ylim(c(0.9, 1.1))
+
 p
 ```
 
 <img src="man/figures/README-coords_cartesian-1.png" width="100%" style="display: block; margin: auto;" />
 
 ``` r
-p + coord_polar(start = pi)
+p + coord_polar()
 ```
 
 <img src="man/figures/README-coords_polar-1.png" width="100%" style="display: block; margin: auto;" />
+
+We have even included the ability to have *point-like* text paths. While
+this sounds paradoxical, it means that `geom_textpath` can be used as a
+drop-in for `geom_text`, and will behave in much the same way, with the
+exception that the text will automatically curve in polar co-ordinates.
+The best way to show this is with a head-to-head comparison.
+
+``` r
+df <- data.frame(x = 1:4, y = c(4, 7, 6, 3),
+                 color = c("royalblue", "orangered", "deepskyblue4", "violet"))
+
+p <- ggplot(df, aes(x, y, color = color, label = color)) +
+       geom_point(size = 3) +
+       scale_color_identity() +
+       lims(x = c(0, 6), y = c(0, 8)) +
+       theme_bw()
+
+p_text     <- p + geom_text(size = 8, hjust = -0.1)
+p_textpath <- p + geom_textpath(size = 8, hjust = -0.1)
+```
+
+Note that `p_text` and `p_textpath` are made with the same base plot and
+data. In normal Cartesian Co-ordinates they are essentially identical:
+
+``` r
+p_text
+```
+
+<img src="man/figures/README-cartesian_compare-1.png" width="100%" style="display: block; margin: auto;" />
+
+``` r
+p_textpath
+```
+
+<img src="man/figures/README-cartesian_compare-2.png" width="100%" style="display: block; margin: auto;" />
+
+But note the difference when we switch to polar co-ordinates:
+
+``` r
+p_text + coord_polar()
+```
+
+<img src="man/figures/README-polar_compare-1.png" width="100%" style="display: block; margin: auto;" />
+
+``` r
+p_textpath + coord_polar()
+```
+
+<img src="man/figures/README-polar_compare-2.png" width="100%" style="display: block; margin: auto;" />
+
+By default, any labels that would have been upside down (or even mostly
+upside down) are automatically flipped to be facing in a legible
+direction. This can be turned off using `flip_inverted = FALSE` in the
+call to `geom_textpath`.
 
 We can even construct complex diagrammatic plots:
 
@@ -190,11 +288,63 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 
 <img src="man/figures/README-fancy_polar-1.png" width="100%" style="display: block; margin: auto;" />
+
+## `coord_curvedpolar`
+
+Another function exported from this package is `coord_curvedpolar`. This
+behaves identically to `coord_polar`, except that the circumferential
+axis labels are curved. For example:
+
+``` r
+set.seed(1)
+nums <- as.character(as.roman(1:12))
+df <- data.frame(x = factor(nums, nums), y = runif(12))
+
+p <- ggplot(df, aes(x, y)) + 
+      geom_col(width = 0.1) +
+      theme_void() + 
+      theme(axis.text.x = element_text(size = 24, face = 2))
+
+p + coord_polar(start = pi/12)
+```
+
+<img src="man/figures/README-coord_curvedpolar-1.png" width="100%" style="display: block; margin: auto;" />
+
+``` r
+p + coord_curvedpolar(start = pi/12)
+```
+
+<img src="man/figures/README-coord_curvedpolar-2.png" width="100%" style="display: block; margin: auto;" />
+
+This can be useful to achieve a particular aesthetic effect (as above),
+but can also be of practical utility when axis labels are long, which
+can produce some problems in standard `coord_polar`:
+
+``` r
+df <- data.frame(x = c("A long axis label", "Another long label",
+                       "The longest label of all", "Yet another label"),
+                 y = c(8, 6, 10, 4))
+
+p <- ggplot(df, aes(x, y)) + 
+      geom_col(width = 0.5) +
+      theme(axis.text.x = element_text(size = 18))
+
+p + coord_polar()
+```
+
+<img src="man/figures/README-coord_curvedpolar2-1.png" width="100%" style="display: block; margin: auto;" />
+
+``` r
+p + coord_curvedpolar()
+```
+
+<img src="man/figures/README-coord_curvedpolar2-2.png" width="100%" style="display: block; margin: auto;" />
+
+You can see more examples in the vignettes.
 
 ## Limitations
 
