@@ -12,6 +12,8 @@
 #' @importFrom stats complete.cases
 #' @importFrom grDevices dev.size
 #' @importFrom rlang warn
+#' @importFrom scales rescale
+#' @importFrom scales squish_infinite
 NULL
 
 # The following block is used by usethis to automatically manage

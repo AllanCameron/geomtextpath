@@ -17,7 +17,7 @@ textpathGrob(
   gp_text = gpar(),
   gp_path = gpar(),
   cut_path = NA,
-  flip_inverted = FALSE,
+  flip_inverted = TRUE,
   polar_params = NULL,
   default.units = "npc",
   name = NULL,

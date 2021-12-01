@@ -18,7 +18,7 @@ geom_textpath(
   linemitre = 10,
   include_line = TRUE,
   cut_path = NA,
-  flip_inverted = FALSE,
+  flip_inverted = TRUE,
   halign = "left",
   offset = NULL
 )

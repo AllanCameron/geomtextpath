@@ -84,8 +84,7 @@ coord_curvedpolar <- function(theta = "x", start = 0,
     }
 
 
-    theta <- ggplot2:::theta_rescale(self,
-                                     panel_params$theta.major, panel_params)
+    theta <- .theta_rescale(self, panel_params$theta.major, panel_params)
     labels <- panel_params$theta.labels
     theta <- theta[!is.na(theta)]
     ends_apart <- (theta[length(theta)] - theta[1])%%(2 * pi)
@@ -146,3 +145,13 @@ coord_curvedpolar <- function(theta = "x", start = 0,
   )
 }
 
+
+# A straight reimplementation of ggplot2:::theta_rescale to avoid using
+# non-exported functions
+
+.theta_rescale <- function (coord, x, panel_params)
+{
+    x <- scales::squish_infinite(x, panel_params$theta.range)
+    rotate <- function(x) (x + coord$start)%%(2 * pi) * coord$direction
+    rotate(scales::rescale(x, c(0, 2 * pi), panel_params$theta.range))
+}
