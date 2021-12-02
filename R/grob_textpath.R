@@ -192,7 +192,7 @@ makeContent.textpath <- function(x) {
 
   text <- rbind_dfs(text)
 
-  if (!all(v$gp_path$lty == 0)) {
+  if (!all(v$gp_path$lty %in% c("0", "blank", NA))) {
     path <- rbind_dfs(path)
 
     # Get bookends by trimming paths when it intersects text

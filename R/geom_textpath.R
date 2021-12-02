@@ -248,14 +248,6 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
 
     #---- type conversion, checks & warnings ---------------------------#
 
-    # We want to be able to convert factors and strings into numbers to apply
-    # the linetype aesthetic. It feels like thus is the wrong way to do it.
-    # Presumably ggplot has a function to map strings/factors to scales
-    if(is.character(data$linetype))
-       data$linetype <- as.numeric(data$linetype)
-    if(is.factor(data$linetype))
-      data$linetype <- as.numeric(data$linetype)
-
     copy_colour <- data$linecolour == "_copy_text_colour_"
     data$linecolour[copy_colour] <- data$colour[copy_colour]
 
@@ -293,7 +285,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       tracking   = data$spacing[first]
     )
 
-    if (all(data$linetype == 0)) {
+    if (all(data$linetype %in% c("0", "blank", NA))) {
       path_gp <- gpar(lty = 0)
     } else {
       path_gp <- gpar(
