@@ -38,9 +38,9 @@
 #'   into two sections, one on either side of the string. If `FALSE`, the
 #'   path is plotted as a whole. The default, `NA`, will break the line if the
 #'   string has a `vjust` of between 0 and 1.
-#' @param flip_inverted A `logical(1)` which if `TRUE`, inverts any string where
-#'   the majority of letters would be upside down along the path are inverted to
-#'   improve legibility. The default is `FALSE`, which leaves letters as-is.
+#' @param flip_inverted A `logical(1)` which if `TRUE` (default), inverts any
+#'   string where the majority of letters would be upside down along the path
+#'   are inverted to improve legibility. If `FALSE` letters are left as-is.
 #' @param halign A `character(1)` describing how multi-line labels should
 #'   be justified. Can either be `"left"` (default), `"center"` or `"right"`.
 #' @param offset A [`unit()`][grid::unit()] of length 1 to determine the offset
@@ -256,8 +256,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
 
     # If there is more than one text string associated with any of the groups,
     # we warn that only the first is used
-    if(!all(sapply(split(data, data$group),
-           function(x) all(x$label == x$label[1]))))
+    if(!all(vapply(split(data$label, data$group),
+           function(x) all(x == x[1]), logical(1))))
     {
          warn(paste("geom_textpath: Multiple strings found in at",
          "least one group. Only the first will be used."))

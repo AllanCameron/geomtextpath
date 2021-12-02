@@ -154,14 +154,12 @@ makeContent.textpath <- function(x) {
 
   ## ---- Data manipulation -------------------------------------------- #
 
-  path$size <- rep(v$gp_text$fontsize, run_len(path$id))
-
   # Get gradients, angles and path lengths for each group
   path <- split(path, path$id)
-  wid <- sapply(v$label, function(x) max(x$xmax, na.rm = TRUE))
 
   # Handle point-like textpaths
-  if(any({singletons <- sapply(path, nrow) == 1})){
+  if(any({singletons <- vapply(path, nrow, integer(1)) == 1})){
+    wid <- vapply(v$label, function(x) max(x$xmax, na.rm = TRUE), numeric(1))
     path[singletons] <- Map(.pathify,
                             data    = path[singletons],
                             hjust   = v$hjust[singletons],
