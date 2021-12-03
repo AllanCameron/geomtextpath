@@ -136,3 +136,19 @@ approx_multiple <- function(x, xout, y = matrix()) {
 
   approx(seq_along(x), x, seq_along(x))$y
 }
+
+
+
+safe_parse <- function (text)
+{
+  if (!is.character(text)) stop("`text` must be a character vector")
+
+  out <- vector("expression", length(text))
+  for (i in seq_along(text)) {
+      expr <- parse(text = text[[i]])
+      out[[i]] <- if (length(expr) == 0)
+          NA
+      else expr[[1]]
+  }
+  out
+}

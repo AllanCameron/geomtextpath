@@ -46,6 +46,8 @@
 #' @param offset A [`unit()`][grid::unit()] of length 1 to determine the offset
 #'   of the text from the path. If not `NULL`, this overrules the `vjust`
 #'   setting.
+#' @param parse If set to **TRUE** this will coerce the labels into expressions,
+#'   allowing plotmath syntax to be used.
 #'
 #' @details
 #' There are limitations inherent in the plotting of text elements in
@@ -182,7 +184,7 @@ geom_textpath <- function(
   inherit.aes = TRUE,  ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
   include_line = TRUE, cut_path = NA, flip_inverted = TRUE,
-  halign = "left", offset = NULL
+  halign = "left", offset = NULL, parse = FALSE
   )
 {
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
@@ -198,6 +200,7 @@ geom_textpath <- function(
           flip_inverted = flip_inverted,
           halign        = halign,
           offset        = offset,
+          parse         = parse,
           ...
         ))
 }
@@ -243,7 +246,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
     cut_path = NA, flip_inverted = TRUE, halign = "left",
-    offset = NULL
+    offset = NULL, parse = FALSE
   ) {
 
     #---- type conversion, checks & warnings ---------------------------#
@@ -299,10 +302,16 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       )
     }
 
+    safe_labels <- if(parse) {
+        safe_parse(as.character(data$label[first]))
+      } else {
+        data$label[first]
+      }
+
     #---- Dispatch data to grob -----------------------------#
 
     textpathGrob(
-      label = data$label[first],
+      label = safe_labels,
       x = data$x,
       y = data$y,
       id = data$group,
