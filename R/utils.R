@@ -17,7 +17,8 @@ rbind_dfs <- function(df_list, idcol = NULL) {
   ans
 }
 
-# ------------------------------------------------------------------------------
+# Run length utilities ----------------------------------------------------
+
 # Simplified `rle(x)$lengths`
 run_len <- function(x) {
   if ({n <- length(x)} < 2) {
@@ -28,6 +29,20 @@ run_len <- function(x) {
   }
   x <- c(which(x[-1] != x[-n]), n)
   diff(c(0L, x))
+}
+
+run_start <- function(x, is_lengths = FALSE) {
+  if (!is_lengths) {
+    x <- run_len(x)
+  }
+  cumsum(x) - x + 1L
+}
+
+run_end <- function(x, is_lengths = FALSE) {
+  if (!is_lengths) {
+    x <- run_len(x)
+  }
+  cumsum(x)
 }
 
 # ------------------------------------------------------------------------------

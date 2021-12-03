@@ -277,7 +277,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     #---- Set graphical parameters --------------------------#
 
     # Get first observation of each group
-    first <- c(TRUE, data$group[-1] != data$group[-nrow(data)])
+    first <- run_start(data$group)
 
     text_gp <- gpar(
       col  = alpha(data$colour, data$alpha)[first],
@@ -316,7 +316,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       y = data$y,
       id = data$group,
       hjust  = data$hjust[first],
-      vjust  = offset %||% data$vjust,
+      vjust  = offset %||% data$vjust[first],
       halign = halign,
       cut_path = cut_path,
       gp_text = text_gp,
