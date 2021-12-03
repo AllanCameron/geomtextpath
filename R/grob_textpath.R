@@ -165,7 +165,6 @@ makeContent.textpath <- function(x) {
 
   ## ---- Data manipulation -------------------------------------------- #
 
-
   path$size <- rep(v$gp_text$fontsize, run_len(path$id))
 
   # Get gradients, angles and path lengths for each group
@@ -203,7 +202,7 @@ makeContent.textpath <- function(x) {
   text_lens <- vapply(text, nrow, integer(1))
   text <- rbind_dfs(text)
 
-  if (!all(v$gp_path$lty == 0)) {
+  if (!all(v$gp_path$lty %in% c("0", "blank", NA))) {
     path <- rbind_dfs(path)
 
     # Get bookends by trimming paths when it intersects text
