@@ -72,7 +72,7 @@
 
   # Offset text by anchorpoints
   xpos <- c("xmin", "xmid", "xmax")
-  letters[, xpos] <- letters[, xpos] + anchor[letters$y_id]
+  letters[xpos] <- sapply(letters[xpos], `+`, anchor[letters$y_id])
 
   # Project text to curves
   letters <- .project_text(letters, offset)
@@ -255,6 +255,31 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   return(ans)
 }
 
+# This is a simpler version of measure_text for expressions only
+
+measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
+{
+  size <- gp$fontsize %||% 11
+  if(length(size) != length(label) & length(size) != 1)
+  {
+    stop("The fontsize vector in gpar does not match the number of labels.")
+  }
+  width  <- convertUnit(stringWidth(label), unitTo = "in", valueOnly = TRUE)
+  height <- convertUnit(stringHeight(label), unitTo = "in", valueOnly = TRUE)
+  width  <- width * size / 11
+  height <- height * size / 11
+  ymin   <- -(height * (vjust - 0.5))
+  lapply(seq_along(label), function(i) {
+    structure(list(glyph = label[i],
+                   xmin = 0,
+                   xmid = width[i] / 2,
+                   xmax = width[i],
+                   y_id = 1),
+              offset = ymin,
+              metrics = list(width = width[i]))
+  })
+}
+
 #' Get anchor points
 #'
 #' This is a helper function that calculates for every offset what the anchor
@@ -315,7 +340,7 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 #' NULL
 .project_text <- function(text, offset) {
   arclength <- offset$arc_length
-  index <- x <- unlist(text[, c("xmin", "xmid", "xmax")])
+  index <- x <- unlist(text[c("xmin", "xmid", "xmax")])
   membr <- rep(text$y_id, 3)
 
   # Find indices along arc lengths
@@ -341,7 +366,8 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 
   # Restore dimensions
   # Column 1 comes from `xmin`, 2 from `xmid` and 3 from `xmax`
-  dim(old_len) <- dim(new_x) <- dim(new_y) <- dim(lengs) <- c(nrow(text), 3)
+  nrows <- length(text$glyph) # nrow(text) will return null for expressions
+  dim(old_len) <- dim(new_x) <- dim(new_y) <- dim(lengs) <- c(nrows, 3)
 
   # Calculate text angles
   dx <- new_x[, 3] - new_x[, 1]

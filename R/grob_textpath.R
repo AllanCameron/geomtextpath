@@ -93,7 +93,19 @@ textpathGrob <- function(
 
   # Reconstitute data
   gp_text <- gp_fill_defaults(gp_text)
-  label   <- measure_text(label, gp_text, vjust = vjust, halign = halign)
+
+  if(length(gp_text$fontsize) == 1) {
+    gp_text$fontsize <- rep(gp_text$fontsize, n_label)
+  }
+
+  if(is.language(label))
+  {
+    label <- measure_exp(label, gp_text, vjust = vjust)
+
+  } else {
+    label <- as.character(label)
+    label <- measure_text(label, gp_text, vjust = vjust, halign = halign)
+  }
 
   if (!is.unit(x)) {
     x <- unit(x, default.units)
@@ -151,17 +163,18 @@ makeContent.textpath <- function(x) {
   }
   x$textpath <- NULL
 
-
   ## ---- Data manipulation -------------------------------------------- #
+
 
   path$size <- rep(v$gp_text$fontsize, run_len(path$id))
 
   # Get gradients, angles and path lengths for each group
   path <- split(path, path$id)
+
   wid <- sapply(v$label, function(x) max(x$xmax, na.rm = TRUE))
 
   # Handle point-like textpaths
-  if(any({singletons <- sapply(path, nrow) == 1})){
+  if (any({singletons <- sapply(path, nrow) == 1})) {
     path[singletons] <- Map(.pathify,
                             data    = path[singletons],
                             hjust   = v$hjust[singletons],
@@ -179,17 +192,15 @@ makeContent.textpath <- function(x) {
     p
   })
 
+
   # Get the actual text string positions and angles for each group
   text <- Map(
-    .get_path_points,
-    path = path, label = v$label,
-    hjust = v$hjust, halign = v$halign,
-    flip_inverted = v$flip_inverted
-  )
+      .get_path_points,
+      path = path, label = v$label,
+      hjust = v$hjust, halign = v$halign,
+      flip_inverted = v$flip_inverted
+    )
   text_lens <- vapply(text, nrow, integer(1))
-
-  ## ---- Build text grob ---------------------------------------------- #
-
   text <- rbind_dfs(text)
 
   if (!all(v$gp_path$lty == 0)) {
@@ -329,3 +340,6 @@ dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
    data$y <- y
    data
 }
+
+
+

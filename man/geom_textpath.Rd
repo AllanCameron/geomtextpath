@@ -20,7 +20,8 @@ geom_textpath(
   cut_path = NA,
   flip_inverted = TRUE,
   halign = "left",
-  offset = NULL
+  offset = NULL,
+  parse = FALSE
 )
 }
 \arguments{
@@ -95,6 +96,9 @@ be justified. Can either be \code{"left"} (default), \code{"center"} or \code{"r
 \item{offset}{A \code{\link[grid:unit]{unit()}} of length 1 to determine the offset
 of the text from the path. If not \code{NULL}, this overrules the \code{vjust}
 setting.}
+
+\item{parse}{If set to \strong{TRUE} this will coerce the labels into expressions,
+allowing plotmath syntax to be used.}
 }
 \description{
 The existing text-based geom layers in \pkg{ggplot2}

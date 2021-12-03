@@ -37,6 +37,16 @@ test_that("textpathGrobs can be created", {
                              angle = 0,
                              polar_params = list(x = .5, y = .5, theta = "x")))
 
+  # Plotmath expression with point-like path
+  expect_silent(textpathGrob(label = expression(paste("y = ", x^2))))
+
+  # Plotmath expressions with paths
+  expect_silent(textpathGrob(label = c(expression(paste("y = ", x^2)),
+                                      expression(paste("x = ", y^2))),
+                              x = c(0, 1, 0, 1),
+                              y = c(0, 1, 0, 0.5),
+                              id = c(1, 1, 2, 2)))
+
   # Error should be thrown with invalid input
   expect_error(textpathGrob(label = c("Hello", "World", "lorem", "ipsum"),
                              x = c(0, 1, 1.5, 2, 3, 4),
