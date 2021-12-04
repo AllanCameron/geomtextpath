@@ -135,3 +135,13 @@ test_that("We can interpolate NA correctly", {
 
 })
 
+# safe_parse
+
+test_that("text is safely parsed to expressions", {
+
+  expect_identical(safe_parse("x^2"), expression(x^2))
+  expect_error(safe_parse("y = :x^2"), "unexpected ':'")
+  expect_error(safe_parse(1), "`text` must be a character vector")
+  expect_identical(safe_parse(""), expression(NA))
+
+})

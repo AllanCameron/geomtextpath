@@ -72,6 +72,7 @@ coord_curvedpolar <- function(theta = "x", start = 0,
     halign = halign,
 
     render_fg = function (self, panel_params, theme) {
+
     if (is.null(panel_params$theta.major)) {
         return(element_render(theme, "panel.border"))
     }
