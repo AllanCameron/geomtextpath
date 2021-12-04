@@ -31,6 +31,19 @@ test_that("Text angles are correct", {
   expect_equal(test$x[test$label != " "], 3 * sqrt(2))
 })
 
+test_that("We can measure plotmath expressions", {
+
+  out <- measure_exp(expression(cos(theta)))
+
+  expect_true(abs(attr(out[[1]], "metrics")$width - 0.4) < 0.2)
+
+  # Multiple expressions
+
+  out <- measure_exp(c(expression(cos(theta)), expression(sin(theta))))
+
+  expect_equal(length(out), 2L)
+})
+
 # Path trimming -----------------------------------------------------------
 
 test_that("Path trimming is correct", {
