@@ -200,8 +200,8 @@ makeContent.textpath <- function(x) {
       hjust = v$hjust, halign = v$halign,
       flip_inverted = v$flip_inverted
     )
-  text_lens <- vapply(text, nrow, integer(1))
-  text <- rbind_dfs(text)
+  text_lens <- sapply(text, function(x) length(x$label))
+  text <- Reduce(function(...) Map(c, ...), text)
 
   if (!all(v$gp_path$lty == 0)) {
     path <- rbind_dfs(path)

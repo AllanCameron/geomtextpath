@@ -288,7 +288,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 
@@ -301,22 +300,28 @@ behaves identically to `coord_polar`, except that the circumferential
 axis labels are curved. For example:
 
 ``` r
-set.seed(1)
-nums <- as.character(as.roman(1:12))
-df <- data.frame(x = factor(nums, nums), y = runif(12))
+clock <- function(x) {
+  
+  hours <- c(rep(x[1] %% 12 + tail(x, 1) / 60, 2), 0, 3)
+  minutes <- c(rep(tail(x, 1)/5, 2), 0, 5)
 
-p <- ggplot(df, aes(x, y)) + 
-      geom_col(width = 0.1) +
+  ggplot(as.data.frame(rbind(hours, minutes)), aes(V1, V3)) + 
+      geom_segment(aes(xend = V2, yend = V4), 
+                   size = c(3, 2.5), lineend = "round") +
+      geom_point(x = 0, y = 0, size = 5) +
+      scale_x_continuous(limits = c(0, 12), breaks = 1:12,
+                         label = as.roman) +
       theme_void() + 
-      theme(axis.text.x = element_text(size = 24, face = 2))
+      theme(axis.text.x = element_text(size = 30, face = 2))
+}
 
-p + coord_polar(start = pi/12)
+clock(03:35) + coord_polar()
 ```
 
 <img src="man/figures/README-coord_curvedpolar-1.png" width="100%" style="display: block; margin: auto;" />
 
 ``` r
-p + coord_curvedpolar(start = pi/12)
+clock(19:15) + coord_curvedpolar()
 ```
 
 <img src="man/figures/README-coord_curvedpolar-2.png" width="100%" style="display: block; margin: auto;" />

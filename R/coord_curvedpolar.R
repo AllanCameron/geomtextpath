@@ -117,7 +117,7 @@ coord_curvedpolar <- function(theta = "x", start = 0,
     # This constructs a circular path for the labels to sit on.
     wid <- mean(diff(theta))
 
-    path_t <- seq(-wid/2, wid/2, len = 100)
+    path_t <- seq(-wid/2, wid/2, len = 1000)
 
     id <- rep(seq_along(labels), each = length(path_t))
 

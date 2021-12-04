@@ -52,17 +52,19 @@ test_that("Path trimming is correct", {
   xy     <- rbind_dfs(xy)
 
   # Breathing room
-  br <- c(-0.15, 0.15)
+  br <- 0.15
+  lefts  <- sapply(label, function(x) x$xmid - x$xmin) + br
+  rights <- sapply(label, function(x) x$xmax - x$xmid) + br
 
   # TRUE cut_path
   test <- .get_surrounding_lines(xy, glyphs, cut_path = TRUE,
-                                 breathing_room = br[2], vjust = vjust)
+                                 breathing_room = br, vjust = vjust)
   expect_length(test$x, nrow(xy) * 2)
   expect_equal(
     test$x,
-    c(1, 1.5 + br, 2,
-      3, 3.5 + br, 4,
-      5, 5.5 + br, 6)
+    c(1, 1.5 - lefts[1], 1.5 + rights[1], 2,
+      3, 3.5 - lefts[2], 3.5 + rights[2], 4,
+      5, 5.5 - lefts[3], 5.5 + rights[3], 6)
   )
   expect_equal(unique(test$y), 1)
 
@@ -80,24 +82,24 @@ test_that("Path trimming is correct", {
 
   # Variable cut_path
   test <- .get_surrounding_lines(xy, glyphs, cut_path = NA,
-                                 breathing_room = br[2], vjust = vjust)
+                                 breathing_room = br, vjust = vjust)
   expect_length(test$x, nrow(xy) + 2)
   expect_equal(
     test$x,
     c(1, 2,
-      3, 3.5 + br, 4,
+      3, 3.5 - lefts[2], 3.5 + rights[2], 4,
       5, 6)
   )
   expect_equal(unique(test$y), 1)
 
   # Test variable vjust is respected
   test <- .get_surrounding_lines(xy, glyphs, cut_path = NA, vjust = vjust,
-                                 breathing_room = br[2], vjust_lim = c(0, 3))
+                                 breathing_room = br, vjust_lim = c(0, 3))
   expect_length(test$x, nrow(xy) + 4)
   expect_equal(
     test$x,
-    c(1, 1.5 + br, 2,
-      3, 3.5 + br, 4,
+    c(1, 1.5 - lefts[1], 1.5 + rights[1], 2,
+      3, 3.5 - lefts[2], 3.5 + rights[2], 4,
       5, 6)
   )
   expect_equal(unique(test$y), 1)
@@ -154,7 +156,7 @@ test_that("Flipping logic is correct", {
 
   # Should return data.frame on approved flip
   test <- .attempt_flip(xy, label, angle = angle, flip_inverted = TRUE)
-  expect_s3_class(test, "data.frame")
+  expect_equal(class(test), "list")
 
   # Angles should not be amenable to flip
   xy <- data_frame(x = 2:1, y = 2:1)
@@ -208,6 +210,7 @@ test_that("Flipping leads to correctly clipped path", {
 
   ctrl <- .get_surrounding_lines(xy, ctrl)
   case <- .get_surrounding_lines(xy, case)
+
 
   # They aren't exactly equal due to letter spacing, but they should be similar
   expect_equal(case$x, ctrl$x, tolerance = 0.01)

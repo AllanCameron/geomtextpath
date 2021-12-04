@@ -86,11 +86,11 @@
   # Interpolate whatever else is in `path` at text positions
   path$length <- .arclength_from_xy(path$x, path$y)
 
-  protect_column <- c("x", "y", "angle", "length", "id")
+  protect_column <- c("x", "y", "angle", "length", "id", "left", "right")
   df <- as.list(path[setdiff(names(path), protect_column)])
   if (length(df)) {
     df <- approx_multiple(path$length, letters$base_length, df)
-    df <- cbind(list_to_df(df), letters, id = path$id[1] %||% 1L)
+    df <- c(df, letters, list(id = rep(path$id[1] %||% 1L, length(df[[1]]))))
   } else {
     df <- letters
   }
@@ -104,7 +104,8 @@
       "to move the string to a different point on the path."))
   }
 
-  df[!is.na(df$angle), ]
+  valid <- !is.na(df$angle)
+  lapply(df, function(x) x[valid])
 }
 
 #' Maybe flip text
@@ -146,6 +147,11 @@
   # Invert length so path is trimmed correctly
   length <- path$length %||% .arclength_from_xy(path$x, path$y)
   out$length <- max(length) - out$length
+  rights <-  max(length) - out$right
+  out$right <- max(length) - out$left
+  out$left <- rights
+
+
   out
 }
 
@@ -322,7 +328,7 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
 #' arc-length space to Cartesian coordinates and calculates the appropriate
 #' angle of the text.
 #'
-#' @param text A `data.frame` with a row for every letter and at least the
+#' @param text A `list` with a row for every letter and at least the
 #'   following columns: `xmin`, `xmid`, `xmax` for the positions of the glyph
 #'   along the arc-length of a path and `y_id` for to which offset a letter
 #'   belongs.
@@ -375,13 +381,15 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
   angle <- atan2(dy, dx) * .rad2deg
 
   # Format output
-  data_frame(
+  list(
     label  = text$glyph,
     length = lengs[, 2],
     base_length = old_len[,1],
     angle  = angle,
     x = new_x[, 2],
-    y = new_y[, 2]
+    y = new_y[, 2],
+    left = lengs[, 1],
+    right = lengs[, 3]
   )
 }
 
@@ -442,8 +450,11 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
     path$section <- "all"
   } else {
     # Get locations where strings start and end
-    ranges <- vapply(split(letters$length, letters$id), range,
-                     numeric(2), USE.NAMES = FALSE)
+    lefts <- vapply(split(letters$left, letters$id), min,
+                     numeric(1), USE.NAMES = FALSE)
+    rights <- vapply(split(letters$right, letters$id), max,
+                     numeric(1), USE.NAMES = FALSE)
+    ranges <- rbind(lefts, rights)
 
     # Create breathing space around letters
     path_max <- vapply(split(path$length, path$id), max,
