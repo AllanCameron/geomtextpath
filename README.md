@@ -168,6 +168,31 @@ p + facet_grid(Species~.)
 The text will continue to rotate appropriately as the plotting window is
 rescaled.
 
+### `Plotmath` support
+
+If you want to use plotmath expressions you can do so much as you would
+with `geom_text`. Just tell `geom_textpath` that your labels should be
+parsed using `parse = TRUE`
+
+``` r
+lab <- expression(paste("y = ", frac(1, sigma*sqrt(2*pi)), " ",
+                            plain(e)^{frac(-(x-mu)^2, 2*sigma^2)}))
+
+df <- data.frame(x = seq(-2, 0, len = 100),
+                 y = dnorm(seq(-2, 0, len = 100)),
+                 z = as.character(lab))
+
+ggplot(df, aes(x, y)) + 
+  geom_textpath(aes(label = z), vjust = -0.2, hjust = 0.1, size = 8, parse = TRUE)
+```
+
+<img src="man/figures/README-plotmath-1.png" width="100%" style="display: block; margin: auto;" />
+
+Note that, due to the way the `grid` package draws plotmath expressions,
+all plotmath labels will be straight rather than curved. However, as in
+the example above, they will still be angled according to the gradient
+of the curve.
+
 ### Text paths in polar coordinates
 
 Straight text paths in Cartesian coordinates become curved in polar
@@ -191,8 +216,8 @@ p + coord_polar()
 
 <img src="man/figures/README-coords_polar-1.png" width="100%" style="display: block; margin: auto;" />
 
-We have even included the ability to have *point-like* text paths. While
-this sounds paradoxical, it means that `geom_textpath` can be used as a
+We have included the ability to have *point-like* text paths. While this
+sounds paradoxical, it means that `geom_textpath` can be used as a
 drop-in for `geom_text`, and will behave in much the same way, with the
 exception that the text will automatically curve in polar co-ordinates.
 The best way to show this is with a head-to-head comparison.
@@ -288,7 +313,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 
