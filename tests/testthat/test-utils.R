@@ -87,6 +87,10 @@ test_that("approx_multiple works", {
   x <- 1:10
   xout <- c(2.5, 5, 7.5)
 
+  # Zero-length input gives zero-length output
+  y <- numeric()
+  expect_equal(length(approx_multiple(x, xout, y)), 0L)
+
   # Single vector modus
   y <- (x - 5.5)^2
   test <- approx_multiple(x, xout, y)

@@ -16,6 +16,9 @@ test_that("Text angles are correct", {
 
   labels <- measure_text("O")[[1]]
 
+  # measure_text can handle unit vjust
+  expect_silent(measure_text("O", vjust = unit(0, "mm")))
+
   # Test angles of `.get_path_points`
   test <- .get_path_points(xy, labels, hjust = 0.25)
   expect_equal(test$angle[test$label != " "], 45)
@@ -29,6 +32,23 @@ test_that("Text angles are correct", {
 
   # Test location of letters
   expect_equal(test$x[test$label != " "], 3 * sqrt(2))
+
+})
+
+
+test_that("Appropriate warning with excess curvature", {
+
+  t <- seq(0, 2 * pi, len = 100)
+  xy <- data.frame(x = 0.01 * cos(t), y = 0.01 * sin(t), size = 5)
+
+  angles    <- .angle_from_xy(xy$x, xy$y, degrees = TRUE)
+  arclength <- .arclength_from_xy(xy$x, xy$y)
+
+  labels <- measure_text("O", vjust = -4)[[1]]
+
+  # Test angles of `.get_path_points`
+  expect_warning(.get_path_points(xy, labels, hjust = 0.25),
+                 "curvature")
 })
 
 test_that("We can measure plotmath expressions", {
@@ -38,10 +58,14 @@ test_that("We can measure plotmath expressions", {
   expect_true(abs(attr(out[[1]], "metrics")$width - 0.4) < 0.2)
 
   # Multiple expressions
-
-  out <- measure_exp(c(expression(cos(theta)), expression(sin(theta))))
+  test_exp <- c(expression(cos(theta)), expression(sin(theta)))
+  out <- measure_exp(test_exp)
 
   expect_equal(length(out), 2L)
+
+  gp <- gpar(fontsize = c(3, 3, 3))
+
+  expect_error(measure_exp(test_exp, gp = gp), "fontsize")
 })
 
 # Path trimming -----------------------------------------------------------
@@ -81,6 +105,11 @@ test_that("Path trimming is correct", {
   )
   expect_equal(unique(test$y), 1)
 
+  # vjust can be passed as unit object
+  expect_silent(.get_surrounding_lines(xy, glyphs, cut_path = TRUE,
+                                 breathing_room = br, vjust = unit(0, "mm")))
+
+
   # FALSE cut_path
   test <- .get_surrounding_lines(xy, glyphs, cut_path = FALSE,
                                  breathing_room = br[2], vjust = vjust)
@@ -116,6 +145,9 @@ test_that("Path trimming is correct", {
       5, 6)
   )
   expect_equal(unique(test$y), 1)
+
+
+
 })
 
 # Short paths -------------------------------------------------------------
@@ -158,6 +190,7 @@ test_that("Anchor point calculations are correct", {
 # Flipping ----------------------------------------------------------------
 
 test_that("Flipping logic is correct", {
+
   label <- measure_text("ABC")[[1]]
   xy <- data_frame(x = 2:1, y = 1:2)
   angle <- .angle_from_xy(xy$x, xy$y, norm = TRUE, degrees = TRUE)

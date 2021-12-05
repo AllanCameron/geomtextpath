@@ -251,19 +251,6 @@ recycle_gp <- function(gp, fun, ...) {
   return(gp)
 }
 
-# split_gp ---------------------------------------------------------------
-
-# Helper function to split out "gpar" class objects by index
-split_gp <- function(gp, index) {
-  do_split <- lengths(gp) > 1
-  lapply(index, function(i) {
-    ans <- gp
-    ans[do_split] <- lapply(unclass(gp)[do_split], `[`, i)
-    ans[lengths(ans) == 0] <- list(NULL)
-    ans
-  })
-}
-
 # gp_fill_defaults -------------------------------------------------------
 
 # Helper function to fill in missing parameters by defaults

@@ -88,12 +88,9 @@
 
   protect_column <- c("x", "y", "angle", "length", "id", "left", "right")
   df <- as.list(path[setdiff(names(path), protect_column)])
-  if (length(df)) {
-    df <- approx_multiple(path$length, letters$base_length, df)
-    df <- c(df, letters, list(id = rep(path$id[1] %||% 1L, length(df[[1]]))))
-  } else {
-    df <- letters
-  }
+  df <- approx_multiple(path$length, letters$base_length, df)
+  df <- c(df, letters, list(id = rep(path$id[1] %||% 1L, length(df[[1]]))))
+
 
   if(any(df$exceed != 0)) {
 
@@ -245,12 +242,10 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
     offset  <- unique(c(0, df$ymin))
     df$y_id <- match(df$ymin, offset)
     if (unit_vjust) {
-      if (any(df$y_id) == 1) {
-        df$y_id <- df$y_id + 1
-        offset  <- unit(offset, "inch")
-      } else {
-        offset  <- unit(offset[-1], "inch")
-      }
+
+      df$y_id <- df$y_id + 1
+      offset  <- unit(offset, "inch")
+
       offset <- unit.c(unit(0, "inch"), offset + offset_unit[i])
     }
     attr(df, "metrics") <- metrics[i, , drop = FALSE]
@@ -493,18 +488,14 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
     path <- path[path$section != "", , drop = FALSE]
   }
 
-  if (nrow(path) > 0) {
-    # Get first point of individual paths
-    new_id <- paste0(path$id, "&", path$section)
-    new_id <- discretise(new_id)
-    start  <- c(TRUE, new_id[-1] != new_id[-length(new_id)])
+  # Get first point of individual paths
+  new_id <- paste0(path$id, "&", path$section)
+  new_id <- discretise(new_id)
+  start  <- c(TRUE, new_id[-1] != new_id[-length(new_id)])
 
-    path$new_id <- new_id
-    path$start  <- start
-  } else {
-    path$new_id <- integer(0)
-    path$start  <- logical(0)
-  }
+  path$new_id <- new_id
+  path$start  <- start
+
 
   return(path)
 }
