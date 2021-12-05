@@ -48,6 +48,10 @@
 #'   setting.
 #' @param parse If set to **TRUE** this will coerce the labels into expressions,
 #'   allowing plotmath syntax to be used.
+#' @param keep_straight a logical **TRUE** or **FALSE** indicating whether the
+#'   text should be straight rather than following the curve. This might be
+#'   helpful for noisy paths. If **TRUE** the text will still follow the angle
+#'   of the curve. The default is **FALSE**
 #'
 #' @details
 #' There are limitations inherent in the plotting of text elements in
@@ -184,7 +188,7 @@ geom_textpath <- function(
   inherit.aes = TRUE,  ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
   include_line = TRUE, cut_path = NA, flip_inverted = TRUE,
-  halign = "left", offset = NULL, parse = FALSE
+  halign = "left", offset = NULL, parse = FALSE, keep_straight = FALSE
   )
 {
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
@@ -201,6 +205,7 @@ geom_textpath <- function(
           halign        = halign,
           offset        = offset,
           parse         = parse,
+          keep_straight = keep_straight,
           ...
         ))
 }
@@ -246,7 +251,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
     cut_path = NA, flip_inverted = TRUE, halign = "left",
-    offset = NULL, parse = FALSE
+    offset = NULL, parse = FALSE, keep_straight = FALSE
   ) {
 
     #---- type conversion, checks & warnings ---------------------------#
@@ -329,6 +334,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       cut_path = cut_path,
       gp_text = text_gp,
       gp_path = path_gp,
+      keep_straight = keep_straight,
       flip_inverted = flip_inverted,
       default.units = "npc",
       angle = data$angle,

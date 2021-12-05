@@ -14,6 +14,7 @@ textpathGrob(
   vjust = NULL,
   halign = "left",
   angle = 0,
+  keep_straight = FALSE,
   gp_text = gpar(),
   gp_path = gpar(),
   cut_path = NA,
@@ -55,6 +56,11 @@ be justified. Can either be \code{"left"} (default), \code{"center"} or \code{"r
 
 \item{angle}{a \code{numeric} vector either length 1 or the same length as \code{id}
 describing the angle at which text should be rotated.}
+
+\item{keep_straight}{a logical \strong{TRUE} or \strong{FALSE} indicating whether the
+text should be straight rather than following the curve. This might be
+helpful for noisy paths. If \strong{TRUE} the text will still follow the angle
+of the curve. The default is \strong{FALSE}}
 
 \item{gp_text, gp_path}{An object of class \code{"gpar"}, typically the output from
 a call from the \code{\link[grid:gpar]{gpar()}} function. These are basically lists

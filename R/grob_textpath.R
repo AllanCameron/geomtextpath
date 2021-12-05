@@ -17,6 +17,10 @@
 #'   directly set the offset from the path.
 #' @param angle a `numeric` vector either length 1 or the same length as `id`
 #'   describing the angle at which text should be rotated.
+#' @param keep_straight a logical **TRUE** or **FALSE** indicating whether the
+#'   text should be straight rather than following the curve. This might be
+#'   helpful for noisy paths. If **TRUE** the text will still follow the angle
+#'   of the curve. The default is **FALSE**
 #' @param polar_params a list consisting of an x, y, and r component that
 #'   specifies the central point and radius of a circle around which
 #'   single-point labels will be wrapped.
@@ -55,6 +59,7 @@ textpathGrob <- function(
   vjust = NULL,
   halign = "left",
   angle = 0,
+  keep_straight = FALSE,
   gp_text = gpar(),
   gp_path = gpar(),
   cut_path = NA,
@@ -98,7 +103,7 @@ textpathGrob <- function(
     gp_text$fontsize <- rep(gp_text$fontsize, n_label)
   }
 
-  if(is.language(label))
+  if(is.language(label) || keep_straight)
   {
     label <- measure_exp(label, gp_text, vjust = vjust)
 
