@@ -113,7 +113,7 @@ coord_curvedpolar <- function(theta = "x", start = 0,
                        fontface = txt_el$face,
                        lineheight = txt_el$lineheight)
 
-    path_gp <- gpar(col = "black", fill = "black", lwd = 1, lty  = 1)
+    path_gp <- gpar(col = "black", fill = "black", lwd = 1, lty  = 0)
 
     # This constructs a circular path for the labels to sit on.
     wid <- mean(diff(theta))
@@ -136,7 +136,7 @@ coord_curvedpolar <- function(theta = "x", start = 0,
                     vjust = txt_el$vjust,
                     halign = halign,
                     gp_text = element_gp,
-                    gp_path = gpar(),
+                    gp_path = gpar(linetype = 0, lty = 0),
                     flip_inverted = TRUE,
                     default.units = "native"
                   ),
