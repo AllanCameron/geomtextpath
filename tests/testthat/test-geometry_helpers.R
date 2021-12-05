@@ -279,7 +279,7 @@ test_that("We can set a unit offset", {
   expect_equal(offset[1:2], c(0, 0.5))
 
   content <- makeContent(grob)
-  txt <- content$children[[1]]
+  txt <- content$children[[2]]
 
   expect_equal(convertUnit(txt$y, "inch", valueOnly = TRUE),
                rep(offset[3] + 1, 3))

@@ -203,7 +203,7 @@ makeContent.textpath <- function(x) {
   text_lens <- sapply(text, function(x) length(x$label))
   text <- Reduce(function(...) Map(c, ...), text)
 
-  if (!all(v$gp_path$lty == 0)) {
+  if (!all((v$gp_path$lty %||% 1) == 0)) {
     path <- rbind_dfs(path)
 
     # Get bookends by trimming paths when it intersects text

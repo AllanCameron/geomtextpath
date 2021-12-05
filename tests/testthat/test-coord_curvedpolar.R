@@ -36,3 +36,43 @@ test_that("We can create a grob output from coord_curvedpolar", {
 
   expect_identical(lab, pan$theta.labels)
 })
+
+test_that("element_blank case is handled correctly", {
+
+  p <- ggplot(data.frame(x = 1:10, y = 1:10), aes(x, y)) +
+    geom_point() +
+    coord_curvedpolar()
+
+  out <- ggplot_gtable( ggplot_build(p))
+  panel <- out$grobs[[which(out$layout$name == "panel")]]
+  axis_labels <- panel$children[[5]]$children[[1]]
+
+  expect_equal(class(axis_labels)[1], "textpath")
+
+  out <- ggplot_gtable( ggplot_build(p + theme(axis.text.x = element_blank())))
+  panel <- out$grobs[[which(out$layout$name == "panel")]]
+  axis_labels <- panel$children[[5]]$children[[1]]
+
+  expect_equal(class(axis_labels)[1], "zeroGrob")
+})
+
+test_that("wrapping first and last labels works as expected", {
+
+  p <- ggplot(data.frame(x = 1:10, y = 1:10), aes(x, y)) +
+    geom_point() +
+    coord_curvedpolar()
+
+  out <- ggplot_gtable(ggplot_build(p + scale_x_continuous(breaks = 1:10)))
+  panel <- out$grobs[[which(out$layout$name == "panel")]]
+  axis_labels <- panel$children[[5]]$children[[1]]
+
+  expect_equal(axis_labels$textpath$label[[9]]$glyph, c("1", "/", "1", "0"))
+
+  out <- ggplot_gtable(ggplot_build(p + scale_x_continuous(breaks = 1:10,
+                                                      labels = as.expression)))
+  panel <- out$grobs[[which(out$layout$name == "panel")]]
+  axis_labels <- panel$children[[5]]$children[[1]]
+
+  expect_identical(axis_labels$textpath$label[[9]]$glyph,
+                   expression(paste(1, "/", 10)))
+})
