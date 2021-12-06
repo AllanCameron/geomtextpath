@@ -1,6 +1,8 @@
 
 test_that("textpathGrobs can be created", {
 
+  grid.newpage()
+
   # Default empty textpathGrob
   expect_silent(textpathGrob())
 
@@ -30,12 +32,25 @@ test_that("textpathGrobs can be created", {
                              id = c(1, 1, 2, 2, 3, 4)))
 
   # Mixed points and paths with angles and polar parameters
-  expect_silent(textpathGrob(label = c("Hello", "World", "lorem", "ipsum"),
+  expect_silent(makeContent(textpathGrob(label = c("He", "Wo", "lorem", "ipsu"),
                              x = c(0, 1, 1.5, 2, 3, 4),
                              y = c(0, 1, 2, 1, 3, 4),
                              id = c(1, 1, 2, 2, 3, 4),
+                             gp_path = gpar(lty = 1),
                              angle = 0,
-                             polar_params = list(x = .5, y = .5, theta = "x")))
+                             polar_params = list(x = .5, y = .5, theta = "x"))))
+
+  # Mixed points and paths with angles and unit polar parameters
+  expect_silent({a <- textpathGrob(label = c("Hello", "World", "lorem", "ipsu"),
+                             x = c(0, 1, 1.5, 2, 3, 4),
+                             y = c(0, 1, 2, 1, 3, 4),
+                             id = c(1, 1, 2, 2, 3, 4),
+                             gp_path = gpar(lty = 1),
+                             angle = 0,
+                             polar_params = list(x = unit(.5, "in"),
+                                                 y = unit(.5, "in"),
+                                                 theta = "x"));
+                  makeContent(a)})
 
   # Plotmath expression with point-like path
   expect_silent(textpathGrob(label = expression(paste("y = ", x^2))))
@@ -56,6 +71,14 @@ test_that("textpathGrobs can be created", {
                              polar_params = list(x = .5, y = .5, theta = "x")),
                "not of the same length")
 
+  # Textpath grobs without a textpath member produce a zeroGrob
+
+  b <- textpathGrob("b")
+  b$textpath <- NULL
+  res <- makeContent(b)
+  expect_equal(class(res), c("zeroGrob", "grob", "gDesc"))
+
+
 })
 
 test_that("We can correctly pathify points", {
@@ -75,4 +98,11 @@ test_that("We can correctly pathify points", {
   expect_true(abs(polar$x[1] - 0.2290784) < 1e-6)
   expect_true(abs(linear$x[1] - 0.3964466) < 1e-6)
 
+})
+
+
+test_that("We can add to default gpar", {
+
+  expect_equal(gp_fill_defaults(gpar(size = 5))$size, 5L)
+  expect_equal(gp_fill_defaults(gpar(size = 5), smell = 6)$smell, 6L)
 })

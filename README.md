@@ -168,6 +168,31 @@ p + facet_grid(Species~.)
 The text will continue to rotate appropriately as the plotting window is
 rescaled.
 
+### `Plotmath` support
+
+If you want to use plotmath expressions you can do so much as you would
+with `geom_text`. Just tell `geom_textpath` that your labels should be
+parsed using `parse = TRUE`
+
+``` r
+lab <- expression(paste("y = ", frac(1, sigma*sqrt(2*pi)), " ",
+                            plain(e)^{frac(-(x-mu)^2, 2*sigma^2)}))
+
+df <- data.frame(x = seq(-2, 0, len = 100),
+                 y = dnorm(seq(-2, 0, len = 100)),
+                 z = as.character(lab))
+
+ggplot(df, aes(x, y)) + 
+  geom_textpath(aes(label = z), vjust = -0.2, hjust = 0.1, size = 8, parse = TRUE)
+```
+
+<img src="man/figures/README-plotmath-1.png" width="100%" style="display: block; margin: auto;" />
+
+Note that, due to the way the `grid` package draws plotmath expressions,
+all plotmath labels will be straight rather than curved. However, as in
+the example above, they will still be angled according to the gradient
+of the curve.
+
 ### Text paths in polar coordinates
 
 Straight text paths in Cartesian coordinates become curved in polar
@@ -191,8 +216,8 @@ p + coord_polar()
 
 <img src="man/figures/README-coords_polar-1.png" width="100%" style="display: block; margin: auto;" />
 
-We have even included the ability to have *point-like* text paths. While
-this sounds paradoxical, it means that `geom_textpath` can be used as a
+We have included the ability to have *point-like* text paths. While this
+sounds paradoxical, it means that `geom_textpath` can be used as a
 drop-in for `geom_text`, and will behave in much the same way, with the
 exception that the text will automatically curve in polar co-ordinates.
 The best way to show this is with a head-to-head comparison.
@@ -301,22 +326,28 @@ behaves identically to `coord_polar`, except that the circumferential
 axis labels are curved. For example:
 
 ``` r
-set.seed(1)
-nums <- as.character(as.roman(1:12))
-df <- data.frame(x = factor(nums, nums), y = runif(12))
+clock <- function(x) {
+  
+  hours <- c(rep(x[1] %% 12 + tail(x, 1) / 60, 2), 0, 3)
+  minutes <- c(rep(tail(x, 1)/5, 2), 0, 5)
 
-p <- ggplot(df, aes(x, y)) + 
-      geom_col(width = 0.1) +
+  ggplot(as.data.frame(rbind(hours, minutes)), aes(V1, V3)) + 
+      geom_segment(aes(xend = V2, yend = V4), 
+                   size = c(3, 2.5), lineend = "round") +
+      geom_point(x = 0, y = 0, size = 5) +
+      scale_x_continuous(limits = c(0, 12), breaks = 1:12,
+                         label = as.roman) +
       theme_void() + 
-      theme(axis.text.x = element_text(size = 24, face = 2))
+      theme(axis.text.x = element_text(size = 30, face = 2))
+}
 
-p + coord_polar(start = pi/12)
+clock(03:35) + coord_polar()
 ```
 
 <img src="man/figures/README-coord_curvedpolar-1.png" width="100%" style="display: block; margin: auto;" />
 
 ``` r
-p + coord_curvedpolar(start = pi/12)
+clock(19:15) + coord_curvedpolar()
 ```
 
 <img src="man/figures/README-coord_curvedpolar-2.png" width="100%" style="display: block; margin: auto;" />

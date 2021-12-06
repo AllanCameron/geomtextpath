@@ -17,6 +17,10 @@
 #'   directly set the offset from the path.
 #' @param angle a `numeric` vector either length 1 or the same length as `id`
 #'   describing the angle at which text should be rotated.
+#' @param keep_straight a logical **TRUE** or **FALSE** indicating whether the
+#'   text should be straight rather than following the curve. This might be
+#'   helpful for noisy paths. If **TRUE** the text will still follow the angle
+#'   of the curve. The default is **FALSE**
 #' @param polar_params a list consisting of an x, y, and r component that
 #'   specifies the central point and radius of a circle around which
 #'   single-point labels will be wrapped.
@@ -55,6 +59,7 @@ textpathGrob <- function(
   vjust = NULL,
   halign = "left",
   angle = 0,
+  keep_straight = FALSE,
   gp_text = gpar(),
   gp_path = gpar(),
   cut_path = NA,
@@ -98,7 +103,7 @@ textpathGrob <- function(
     gp_text$fontsize <- rep(gp_text$fontsize, n_label)
   }
 
-  if(is.language(label))
+  if(is.language(label) || keep_straight)
   {
     label <- measure_exp(label, gp_text, vjust = vjust)
 
@@ -199,8 +204,8 @@ makeContent.textpath <- function(x) {
       hjust = v$hjust, halign = v$halign,
       flip_inverted = v$flip_inverted
     )
-  text_lens <- vapply(text, nrow, integer(1))
-  text <- rbind_dfs(text)
+  text_lens <- sapply(text, function(x) length(x$label))
+  text <- Reduce(function(...) Map(c, ...), text)
 
   if (!all(v$gp_path$lty %in% c("0", "blank", NA))) {
     path <- rbind_dfs(path)
@@ -248,19 +253,6 @@ recycle_gp <- function(gp, fun, ...) {
   # Never ever have zero-length objects in the gpar
   gp[lengths(gp) == 0] <- list(NULL)
   return(gp)
-}
-
-# split_gp ---------------------------------------------------------------
-
-# Helper function to split out "gpar" class objects by index
-split_gp <- function(gp, index) {
-  do_split <- lengths(gp) > 1
-  lapply(index, function(i) {
-    ans <- gp
-    ans[do_split] <- lapply(unclass(gp)[do_split], `[`, i)
-    ans[lengths(ans) == 0] <- list(NULL)
-    ans
-  })
 }
 
 # gp_fill_defaults -------------------------------------------------------

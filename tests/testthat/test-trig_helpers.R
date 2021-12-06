@@ -1,4 +1,15 @@
 
+test_that(".before and .after give sensible outputs", {
+
+  x <- numeric()
+
+  expect_equal(length(.before(x)), 0)
+  expect_equal(length(.after(x)), 0)
+
+  x <- 1:5
+  expect_equal(.before(x), c(1, 1:5))
+  expect_equal(.after(x), c(1:5, 5))
+})
 
 test_that(".angle_from_xy gives correct results", {
 
