@@ -21,7 +21,8 @@ geom_textpath(
   flip_inverted = TRUE,
   halign = "left",
   offset = NULL,
-  parse = FALSE
+  parse = FALSE,
+  keep_straight = FALSE
 )
 }
 \arguments{
@@ -99,6 +100,11 @@ setting.}
 
 \item{parse}{If set to \strong{TRUE} this will coerce the labels into expressions,
 allowing plotmath syntax to be used.}
+
+\item{keep_straight}{a logical \strong{TRUE} or \strong{FALSE} indicating whether the
+text should be straight rather than following the curve. This might be
+helpful for noisy paths. If \strong{TRUE} the text will still follow the angle
+of the curve. The default is \strong{FALSE}}
 }
 \description{
 The existing text-based geom layers in \pkg{ggplot2}

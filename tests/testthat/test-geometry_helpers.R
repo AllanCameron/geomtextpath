@@ -16,6 +16,9 @@ test_that("Text angles are correct", {
 
   labels <- measure_text("O")[[1]]
 
+  # measure_text can handle unit vjust
+  expect_silent(measure_text("O", vjust = unit(0, "mm")))
+
   # Test angles of `.get_path_points`
   test <- .get_path_points(xy, labels, hjust = 0.25)
   expect_equal(test$angle[test$label != " "], 45)
@@ -29,6 +32,59 @@ test_that("Text angles are correct", {
 
   # Test location of letters
   expect_equal(test$x[test$label != " "], 3 * sqrt(2))
+
+})
+
+
+test_that("Appropriate warning with excess curvature", {
+
+  t <- seq(0, 2 * pi, len = 100)
+  xy <- data.frame(x = 0.01 * cos(t), y = 0.01 * sin(t), size = 5)
+
+  angles    <- .angle_from_xy(xy$x, xy$y, degrees = TRUE)
+  arclength <- .arclength_from_xy(xy$x, xy$y)
+
+  labels <- measure_text("O", vjust = -4)[[1]]
+
+  # Test angles of `.get_path_points`
+  expect_warning(.get_path_points(xy, labels, hjust = 0.25),
+                 "curvature")
+})
+
+test_that("We can measure plotmath expressions", {
+
+  out <- measure_exp(expression(cos(theta)))
+
+  expect_true(abs(attr(out[[1]], "metrics")$width - 0.4) < 0.2)
+
+  # Multiple expressions
+  test_exp <- c(expression(cos(theta)), expression(sin(theta)))
+  out <- measure_exp(test_exp)
+
+  expect_equal(length(out), 2L)
+
+  gp <- gpar(fontsize = c(3, 3, 3))
+
+  expect_error(measure_exp(test_exp, gp = gp), "fontsize")
+})
+
+test_that("We can have flat labels when requested", {
+
+  df <- data.frame(x = seq(0, 2 * pi, length = 1000) / (2 * pi),
+                   y = (sin(seq(0, 2 * pi, length = 1000)) + 1)/2,
+                   z = rep(as.character(expression(sin(x))), 1000))
+
+  grob <- textpathGrob(label = parse(text = df$z[1]),
+                       x = df$x,
+                       y = df$y,
+                       id = rep(1, 1000),
+                       vjust = 0.5)
+
+  out <- makeContent(grob)
+
+  expect_equal(as.character(out$children[[2]]$label), "sin(x)")
+
+
 })
 
 # Path trimming -----------------------------------------------------------
@@ -52,19 +108,26 @@ test_that("Path trimming is correct", {
   xy     <- rbind_dfs(xy)
 
   # Breathing room
-  br <- c(-0.15, 0.15)
+  br <- 0.15
+  lefts  <- sapply(label, function(x) x$xmid - x$xmin) + br
+  rights <- sapply(label, function(x) x$xmax - x$xmid) + br
 
   # TRUE cut_path
   test <- .get_surrounding_lines(xy, glyphs, cut_path = TRUE,
-                                 breathing_room = br[2], vjust = vjust)
+                                 breathing_room = br, vjust = vjust)
   expect_length(test$x, nrow(xy) * 2)
   expect_equal(
     test$x,
-    c(1, 1.5 + br, 2,
-      3, 3.5 + br, 4,
-      5, 5.5 + br, 6)
+    c(1, 1.5 - lefts[1], 1.5 + rights[1], 2,
+      3, 3.5 - lefts[2], 3.5 + rights[2], 4,
+      5, 5.5 - lefts[3], 5.5 + rights[3], 6)
   )
   expect_equal(unique(test$y), 1)
+
+  # vjust can be passed as unit object
+  expect_silent(.get_surrounding_lines(xy, glyphs, cut_path = TRUE,
+                                 breathing_room = br, vjust = unit(0, "mm")))
+
 
   # FALSE cut_path
   test <- .get_surrounding_lines(xy, glyphs, cut_path = FALSE,
@@ -80,27 +143,30 @@ test_that("Path trimming is correct", {
 
   # Variable cut_path
   test <- .get_surrounding_lines(xy, glyphs, cut_path = NA,
-                                 breathing_room = br[2], vjust = vjust)
+                                 breathing_room = br, vjust = vjust)
   expect_length(test$x, nrow(xy) + 2)
   expect_equal(
     test$x,
     c(1, 2,
-      3, 3.5 + br, 4,
+      3, 3.5 - lefts[2], 3.5 + rights[2], 4,
       5, 6)
   )
   expect_equal(unique(test$y), 1)
 
   # Test variable vjust is respected
   test <- .get_surrounding_lines(xy, glyphs, cut_path = NA, vjust = vjust,
-                                 breathing_room = br[2], vjust_lim = c(0, 3))
+                                 breathing_room = br, vjust_lim = c(0, 3))
   expect_length(test$x, nrow(xy) + 4)
   expect_equal(
     test$x,
-    c(1, 1.5 + br, 2,
-      3, 3.5 + br, 4,
+    c(1, 1.5 - lefts[1], 1.5 + rights[1], 2,
+      3, 3.5 - lefts[2], 3.5 + rights[2], 4,
       5, 6)
   )
   expect_equal(unique(test$y), 1)
+
+
+
 })
 
 # Short paths -------------------------------------------------------------
@@ -143,6 +209,7 @@ test_that("Anchor point calculations are correct", {
 # Flipping ----------------------------------------------------------------
 
 test_that("Flipping logic is correct", {
+
   label <- measure_text("ABC")[[1]]
   xy <- data_frame(x = 2:1, y = 1:2)
   angle <- .angle_from_xy(xy$x, xy$y, norm = TRUE, degrees = TRUE)
@@ -154,7 +221,7 @@ test_that("Flipping logic is correct", {
 
   # Should return data.frame on approved flip
   test <- .attempt_flip(xy, label, angle = angle, flip_inverted = TRUE)
-  expect_s3_class(test, "data.frame")
+  expect_equal(class(test), "list")
 
   # Angles should not be amenable to flip
   xy <- data_frame(x = 2:1, y = 2:1)
@@ -209,6 +276,7 @@ test_that("Flipping leads to correctly clipped path", {
   ctrl <- .get_surrounding_lines(xy, ctrl)
   case <- .get_surrounding_lines(xy, case)
 
+
   # They aren't exactly equal due to letter spacing, but they should be similar
   expect_equal(case$x, ctrl$x, tolerance = 0.01)
 })
@@ -230,7 +298,7 @@ test_that("We can set a unit offset", {
   expect_equal(offset[1:2], c(0, 0.5))
 
   content <- makeContent(grob)
-  txt <- content$children[[1]]
+  txt <- content$children[[2]]
 
   expect_equal(convertUnit(txt$y, "inch", valueOnly = TRUE),
                rep(offset[3] + 1, 3))

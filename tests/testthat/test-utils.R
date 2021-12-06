@@ -87,6 +87,10 @@ test_that("approx_multiple works", {
   x <- 1:10
   xout <- c(2.5, 5, 7.5)
 
+  # Zero-length input gives zero-length output
+  y <- numeric()
+  expect_equal(length(approx_multiple(x, xout, y)), 0L)
+
   # Single vector modus
   y <- (x - 5.5)^2
   test <- approx_multiple(x, xout, y)
@@ -135,3 +139,30 @@ test_that("We can interpolate NA correctly", {
 
 })
 
+# safe_parse
+
+test_that("text is safely parsed to expressions", {
+
+  expect_identical(safe_parse("x^2"), expression(x^2))
+  expect_error(safe_parse("y = :x^2"), "unexpected ':'")
+  expect_error(safe_parse(1), "`text` must be a character vector")
+  expect_identical(safe_parse(""), expression(NA))
+
+})
+
+# is.multichar
+
+test_that("We can identify flat components", {
+
+expect_true(is.multichar(expression(a)))
+
+expect_false(is.multichar(c("a", "b")))
+
+expect_true(is.multichar(c("ab", "b")))
+
+expect_true(is.multichar(c(expression(a), expression(b))))
+
+expect_false(is.multichar(factor(LETTERS)))
+
+expect_true(is.multichar(factor(month.name)))
+})
