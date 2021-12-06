@@ -175,3 +175,15 @@ is.multichar <- function(x) {
   if(is.character(x)) return(any(nchar(x) > 1))
   is.language(x)
 }
+
+# Based on ggplot2:::draw_axis handling of labels
+make_label <- function(x) {
+  if (!is.list(x)) {
+    return(x)
+  }
+  if (any(vapply(x, is.language, logical(1)))) {
+    do.call(expression, x)
+  } else {
+    unlist(x, FALSE, FALSE)
+  }
+}

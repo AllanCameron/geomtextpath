@@ -77,7 +77,7 @@
 
   # Offset text by anchorpoints
   xpos <- c("xmin", "xmid", "xmax")
-  letters[xpos] <- sapply(letters[xpos], `+`, anchor[letters$y_id])
+  letters[, xpos] <- letters[, xpos] + anchor[letters$y_id]
 
   # Project text to curves
 
@@ -95,8 +95,7 @@
   protect_column <- c("x", "y", "angle", "length", "id", "left", "right")
   df <- as.list(path[setdiff(names(path), protect_column)])
   df <- approx_multiple(path$length, letters$base_length, df)
-  df <- c(df, letters, list(id = rep(path$id[1] %||% 1L, length(df[[1]]))))
-
+  df <- cbind(df, letters, id = path$id[1] %||% 1L)
 
   if(any(df$exceed != 0) & !is.multichar(label$glyph)) {
 
@@ -107,8 +106,7 @@
       "to move the string to a different point on the path."))
   }
 
-  valid <- !is.na(df$angle)
-  lapply(df, function(x) x[valid])
+  df[!is.na(df$angle), ]
 }
 
 #' Maybe flip text
@@ -267,24 +265,33 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
 measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
 {
   size <- gp$fontsize %||% 11
-  if(length(size) != length(label) & length(size) != 1)
-  {
-    stop("The fontsize vector in gpar does not match the number of labels.")
-  }
-  width  <- convertUnit(stringWidth(label), unitTo = "in", valueOnly = TRUE)
+  stopifnot(
+    "The fontsize vector in gpar does not match the number of labels." =
+      length(size) == length(label) || length(size) == 1
+  )
+  width  <- convertUnit(stringWidth(label),  unitTo = "in", valueOnly = TRUE)
   height <- convertUnit(stringHeight(label), unitTo = "in", valueOnly = TRUE)
-  width  <- width * size / 11
+  width  <- width  * size / 11
   height <- height * size / 11
   ymin   <- -(height * (vjust - 0.5))
-  lapply(seq_along(label), function(i) {
-    structure(list(glyph = label[i],
-                   xmin = 0,
-                   xmid = width[i] / 2,
-                   xmax = width[i],
-                   y_id = 1),
-              offset = ymin,
-              metrics = list(width = width[i]))
-  })
+
+  Map(
+    function(label, width, height) {
+      ans <- data_frame(
+        glyph = list(label),
+        xmin  = 0,
+        xmid  = width / 2,
+        xmax  = width,
+        y_id  = 1L
+      )
+      attr(ans, "offset")  <- ymin
+      attr(ans, "metrics") <- data_frame(width = width, height = height)
+      ans
+    },
+    label  = as.list(label),
+    width  = width,
+    height = height
+  )
 }
 
 #' Get anchor points
@@ -345,9 +352,9 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
 #'
 #' @examples
 #' NULL
-.project_text <- function(text, offset) {
+.project_text <- function(text, offset, xpos = c("xmin", "xmid", "xmax")) {
   arclength <- offset$arc_length
-  index <- x <- unlist(text[c("xmin", "xmid", "xmax")])
+  index <- x <- unlist(text[, xpos], FALSE, FALSE)
   membr <- rep(text$y_id, 3)
 
   # Find indices along arc lengths
@@ -373,8 +380,8 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
 
   # Restore dimensions
   # Column 1 comes from `xmin`, 2 from `xmid` and 3 from `xmax`
-  nrows <- length(text$glyph) # nrow(text) will return null for expressions
-  dim(old_len) <- dim(new_x) <- dim(new_y) <- dim(lengs) <- c(nrows, 3)
+  dim(old_len) <- dim(new_x) <- dim(new_y) <- dim(lengs) <-
+    c(nrow(text), length(xpos))
 
   # Calculate text angles
   dx <- new_x[, 3] - new_x[, 1]
@@ -382,14 +389,14 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
   angle <- atan2(dy, dx) * .rad2deg
 
   # Format output
-  list(
+  data_frame(
     label  = text$glyph,
     length = lengs[, 2],
     base_length = old_len[,1],
     angle  = angle,
     x = new_x[, 2],
     y = new_y[, 2],
-    left = lengs[, 1],
+    left  = lengs[, 1],
     right = lengs[, 3]
   )
 }
