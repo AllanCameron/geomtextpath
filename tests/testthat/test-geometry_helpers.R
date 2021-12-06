@@ -68,6 +68,25 @@ test_that("We can measure plotmath expressions", {
   expect_error(measure_exp(test_exp, gp = gp), "fontsize")
 })
 
+test_that("We can have flat labels when requested", {
+
+  df <- data.frame(x = seq(0, 2 * pi, length = 1000) / (2 * pi),
+                   y = (sin(seq(0, 2 * pi, length = 1000)) + 1)/2,
+                   z = rep(as.character(expression(sin(x))), 1000))
+
+  grob <- textpathGrob(label = parse(text = df$z[1]),
+                       x = df$x,
+                       y = df$y,
+                       id = rep(1, 1000),
+                       vjust = 0.5)
+
+  out <- makeContent(grob)
+
+  expect_equal(as.character(out$children[[2]]$label), "sin(x)")
+
+
+})
+
 # Path trimming -----------------------------------------------------------
 
 test_that("Path trimming is correct", {
