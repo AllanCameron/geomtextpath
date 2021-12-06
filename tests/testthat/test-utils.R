@@ -149,3 +149,20 @@ test_that("text is safely parsed to expressions", {
   expect_identical(safe_parse(""), expression(NA))
 
 })
+
+# is.multichar
+
+test_that("We can identify flat components", {
+
+expect_true(is.multichar(expression(a)))
+
+expect_false(is.multichar(c("a", "b")))
+
+expect_true(is.multichar(c("ab", "b")))
+
+expect_true(is.multichar(c(expression(a), expression(b))))
+
+expect_false(is.multichar(factor(LETTERS)))
+
+expect_true(is.multichar(factor(month.name)))
+})
