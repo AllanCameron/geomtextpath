@@ -67,7 +67,11 @@
   }
 
   path$exceed <- .exceeds_curvature(path$x, path$y, d = offset)
-  offset <- .get_offset(path$x, path$y, d = offset)
+  offset <- if(is.multichar(letters$glyph)) {
+    .get_smooth_offset(path$x, path$y, d = offset)
+  } else {
+    .get_offset(path$x, path$y, d = offset)
+  }
   anchor <- .anchor_points(offset$arc_length, attr(letters, "metrics")$width,
                            hjust = hjust, halign = halign)
 
@@ -77,9 +81,7 @@
 
   # Project text to curves
 
-  letters <- if(is.multichar(letters$glyph)) {
-    .project_flat(letters, offset)
-  } else { .project_text(letters, offset) }
+  letters <-  .project_text(letters, offset)
 
   # Consider flipping the text
   df <- .attempt_flip(path, label, letters$angle, hjust, halign, flip_inverted)
@@ -393,33 +395,6 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
 }
 
 
-.project_flat <- function(text, offset)
-{
-  x <- offset$x[,1]
-  y <- offset$y[,1]
-  arclength <- offset$arc_length[,1]
-
-  ss <- which(arclength > text$xmin & arclength < text$xmax)
-  x <- x[ss]
-  y <- y[ss]
-  t <- seq_along(x)
-
-  y_ends <- predict(lm(y ~ t), newdata = list(t = c(1, length(t))))
-  x_ends <- predict(lm(x ~ t), newdata = list(t = c(1, length(t))))
-
-
-  list(
-    label  = text$glyph,
-    length = text$xmid,
-    base_length = text$xmid,
-    angle  = atan2(diff(y_ends), diff(x_ends)) * 180 / pi,
-    x = sum(x_ends) / 2,
-    y = sum(y_ends) / 2,
-    left = arclength[ss[1]],
-    right = arclength[tail(ss, 1)]
-  )
-
-}
 ## Getting surrounding lines -----------------------------------------------
 
 #' Trim text area from path

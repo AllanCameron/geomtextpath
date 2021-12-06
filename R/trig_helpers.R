@@ -153,6 +153,24 @@
   return(list(x = xout, y = yout, arc_length = arc_length))
 }
 
+.get_smooth_offset <- function(x, y, d, width = 0.02) {
+
+  dist <- .arclength_from_xy(x, y)
+  sd   <- max(dist) * width
+
+  x <- sapply(dist, function(i) {
+    dn <- dnorm(dist, mean = i, sd = sd)
+    sum(x * dn/sum(dn))
+  })
+
+  y <- sapply(dist, function(i) {
+    dn <- dnorm(dist, mean = i, sd = sd)
+    sum(y * dn/sum(dn))
+  })
+
+  .get_offset(x, y, d)
+}
+
 # ------------------------------------------------------------------------------
 # Finds the curvature (change in angle per change in arc length)
 # This in effect finds 1/R, where R is the radius of the curve
