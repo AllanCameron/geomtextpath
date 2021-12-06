@@ -170,21 +170,19 @@ makeContent.textpath <- function(x) {
 
   ## ---- Data manipulation -------------------------------------------- #
 
-
   path$size <- rep(v$gp_text$fontsize, run_len(path$id))
 
   # Get gradients, angles and path lengths for each group
   path <- split(path, path$id)
 
-  wid <- sapply(v$label, function(x) max(x$xmax, na.rm = TRUE))
-
   # Handle point-like textpaths
-  if (any({singletons <- sapply(path, nrow) == 1})) {
+  if (any({singletons <- vapply(path, nrow, integer(1)) == 1})) {
+    width <- vapply(v$label, function(x) max(x$xmax, na.rm = TRUE), numeric(1))
     path[singletons] <- Map(.pathify,
                             data    = path[singletons],
                             hjust   = v$hjust[singletons],
                             angle   = v$angle,
-                            width   = wid[singletons],
+                            width   = width[singletons],
                             polar_x = v$polar_params$x,
                             polar_y = v$polar_params$y,
                             thet    = v$polar_params$theta)
@@ -205,10 +203,10 @@ makeContent.textpath <- function(x) {
       hjust = v$hjust, halign = v$halign,
       flip_inverted = v$flip_inverted
     )
-  text_lens <- sapply(text, function(x) length(x$label))
-  text <- Reduce(function(...) Map(c, ...), text)
+  text_lens <- vapply(text, nrow, integer(1))
+  text <- rbind_dfs(text)
 
-  if (!all((v$gp_path$lty %||% 1) == 0)) {
+  if (!all((v$gp_path$lty %||% 1) %in% c("0", "blank", NA))) {
     path <- rbind_dfs(path)
 
     # Get bookends by trimming paths when it intersects text
@@ -234,7 +232,7 @@ makeContent.textpath <- function(x) {
   # Write text grob
   x <- addGrob(
     x, textGrob(
-      label = text$label,
+      label = make_label(text$label),
       x = text$x, y = text$y, rot = text$angle,
       vjust = 0.5, hjust = 0.5, gp = gp_text,
       default.units = "inches"

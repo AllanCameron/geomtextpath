@@ -4,7 +4,9 @@
 .deg2rad <- pi / 180
 .halfpi  <- pi /2
 
-# ------------------------------------------------------------------------------
+
+# Checkers ----------------------------------------------------------------
+
 # We can only define paths if they have two or more valid numeric points, and no
 # path can contain any infinite values
 
@@ -17,7 +19,8 @@
               {all(is.finite(x[!is.na(x)]) & is.finite(y[!is.na(y)]))})
 }
 
-# ------------------------------------------------------------------------------
+# Angles ------------------------------------------------------------------
+
 # This is a safe way to get the direction along a path. Since we use approx
 # to interpolate angles later, we can't have any sudden transitions
 # where angles "wrap around" from +180 to -180, otherwise we might
@@ -42,7 +45,8 @@
   if(degrees) rads * .rad2deg else rads
 }
 
-# ------------------------------------------------------------------------------
+# Arclength ---------------------------------------------------------------
+
 # Get the cumulative length of an x, y path. The accuracy can be improved by
 # setting accuracy to 1 or more, which will interpolate the points with splines
 # to emulate a smooth curve through the points.
@@ -88,7 +92,8 @@
 
 }
 
-# ------------------------------------------------------------------------------
+# Before / After ----------------------------------------------------------
+
 # We sometimes need to compare angles along a path, but ensure that the first
 # and last elements are compared to themselves. These little utility functions
 # allow a shorthand method of doing this.
@@ -97,8 +102,6 @@
 
   if(length(x) == 0) x else x[c(1, seq_along(x))]
 }
-
-# ------------------------------------------------------------------------------
 
 .after <- function(x) {
 
@@ -122,7 +125,8 @@
   (.before(x) + .after(x)) / 2
 }
 
-# ------------------------------------------------------------------------------
+# Bisect offset -----------------------------------------------------------
+
 # Finds the offset path at distance d. This method effectively looks at each
 # segment of the path and finds the line at distance d that runs parallel to
 # it. The offset path is the set of points where adjacent offset lines meet.
@@ -153,6 +157,8 @@
   return(list(x = xout, y = yout, arc_length = arc_length))
 }
 
+# Smooth offset -----------------------------------------------------------
+
 .get_smooth_offset <- function(x, y, d, width = 0.02) {
 
   dist <- .arclength_from_xy(x, y)
@@ -171,7 +177,8 @@
   .get_offset(x, y, d)
 }
 
-# ------------------------------------------------------------------------------
+# Curvature ---------------------------------------------------------------
+
 # Finds the curvature (change in angle per change in arc length)
 # This in effect finds 1/R, where R is the radius of the curve
 

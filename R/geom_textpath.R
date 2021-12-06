@@ -38,9 +38,9 @@
 #'   into two sections, one on either side of the string. If `FALSE`, the
 #'   path is plotted as a whole. The default, `NA`, will break the line if the
 #'   string has a `vjust` of between 0 and 1.
-#' @param flip_inverted A `logical(1)` which if `TRUE`, inverts any string where
-#'   the majority of letters would be upside down along the path are inverted to
-#'   improve legibility. The default is `FALSE`, which leaves letters as-is.
+#' @param flip_inverted A `logical(1)` which if `TRUE` (default), inverts any
+#'   string where the majority of letters would be upside down along the path
+#'   are inverted to improve legibility. If `FALSE` letters are left as-is.
 #' @param halign A `character(1)` describing how multi-line labels should
 #'   be justified. Can either be `"left"` (default), `"center"` or `"right"`.
 #' @param offset A [`unit()`][grid::unit()] of length 1 to determine the offset
@@ -256,14 +256,6 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
 
     #---- type conversion, checks & warnings ---------------------------#
 
-    # We want to be able to convert factors and strings into numbers to apply
-    # the linetype aesthetic. It feels like thus is the wrong way to do it.
-    # Presumably ggplot has a function to map strings/factors to scales
-    if(is.character(data$linetype))
-       data$linetype <- as.numeric(data$linetype)
-    if(is.factor(data$linetype))
-      data$linetype <- as.numeric(data$linetype)
-
     copy_colour <- data$linecolour == "_copy_text_colour_"
     data$linecolour[copy_colour] <- data$colour[copy_colour]
 
@@ -272,8 +264,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
 
     # If there is more than one text string associated with any of the groups,
     # we warn that only the first is used
-    if(!all(sapply(split(data, data$group),
-           function(x) all(x$label == x$label[1]))))
+    if(!all(vapply(split(data$label, data$group),
+           function(x) all(x == x[1]), logical(1))))
     {
          warn(paste("geom_textpath: Multiple strings found in at",
          "least one group. Only the first will be used."))
@@ -290,7 +282,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     #---- Set graphical parameters --------------------------#
 
     # Get first observation of each group
-    first <- c(TRUE, data$group[-1] != data$group[-nrow(data)])
+    first <- run_start(data$group)
 
     text_gp <- gpar(
       col  = alpha(data$colour, data$alpha)[first],
@@ -301,7 +293,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       tracking   = data$spacing[first]
     )
 
-    if (all(data$linetype == 0)) {
+    if (all(data$linetype %in% c("0", "blank", NA))) {
       path_gp <- gpar(lty = 0)
     } else {
       path_gp <- gpar(
@@ -329,7 +321,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       y = data$y,
       id = data$group,
       hjust  = data$hjust[first],
-      vjust  = offset %||% data$vjust,
+      vjust  = offset %||% data$vjust[first],
       halign = halign,
       cut_path = cut_path,
       gp_text = text_gp,

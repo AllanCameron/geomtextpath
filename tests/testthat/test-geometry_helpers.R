@@ -221,7 +221,7 @@ test_that("Flipping logic is correct", {
 
   # Should return data.frame on approved flip
   test <- .attempt_flip(xy, label, angle = angle, flip_inverted = TRUE)
-  expect_equal(class(test), "list")
+  expect_equal(class(test), "data.frame")
 
   # Angles should not be amenable to flip
   xy <- data_frame(x = 2:1, y = 2:1)

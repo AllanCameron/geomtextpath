@@ -73,6 +73,6 @@ test_that("wrapping first and last labels works as expected", {
   panel <- out$grobs[[which(out$layout$name == "panel")]]
   axis_labels <- panel$children[[5]]$children[[1]]
 
-  expect_identical(axis_labels$textpath$label[[9]]$glyph,
+  expect_identical(make_label(axis_labels$textpath$label[[9]]$glyph),
                    expression(paste(1, "/", 10)))
 })
