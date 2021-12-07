@@ -447,6 +447,9 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
 .get_surrounding_lines <- function(path, letters, cut_path = NA,
                                    breathing_room = 0.15, vjust = 0.5,
                                    vjust_lim = c(0, 1)) {
+  if (is.unit(breathing_room)) {
+    breathing_room <- convertUnit(breathing_room, "inch", valueOnly = TRUE)
+  }
   if (is.unit(vjust)) {
     vjust <- rep_len(0.5, length(vjust))
   }

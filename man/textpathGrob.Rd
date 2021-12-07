@@ -20,6 +20,7 @@ textpathGrob(
   cut_path = NA,
   flip_inverted = TRUE,
   polar_params = NULL,
+  padding = unit(0.15, "inch"),
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -71,13 +72,17 @@ into two sections, one on either side of the string. If \code{FALSE}, the
 path is plotted as a whole. The default, \code{NA}, will break the line if the
 string has a \code{vjust} of between 0 and 1.}
 
-\item{flip_inverted}{A \code{logical(1)} which if \code{TRUE}, inverts any string where
-the majority of letters would be upside down along the path are inverted to
-improve legibility. The default is \code{FALSE}, which leaves letters as-is.}
+\item{flip_inverted}{A \code{logical(1)} which if \code{TRUE} (default), inverts any
+string where the majority of letters would be upside down along the path
+are inverted to improve legibility. If \code{FALSE} letters are left as-is.}
 
 \item{polar_params}{a list consisting of an x, y, and r component that
 specifies the central point and radius of a circle around which
 single-point labels will be wrapped.}
+
+\item{padding}{A \code{\link[grid:unit]{unit()}} of length 1 to determine the
+padding between path and text when the \code{cut_path} parameter trims the
+path.}
 
 \item{default.units}{A string indicating the default units to use
     if \code{x} or \code{y}

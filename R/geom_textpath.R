@@ -52,6 +52,9 @@
 #'   text should be straight rather than following the curve. This might be
 #'   helpful for noisy paths. If **TRUE** the text will still follow the angle
 #'   of the curve. The default is **FALSE**
+#' @param padding A [`unit()`][grid::unit()] of length 1 to determine the
+#'   padding between path and text when the `cut_path` parameter trims the
+#'   path.
 #'
 #' @details
 #' There are limitations inherent in the plotting of text elements in
@@ -188,7 +191,8 @@ geom_textpath <- function(
   inherit.aes = TRUE,  ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
   include_line = TRUE, cut_path = NA, flip_inverted = TRUE,
-  halign = "left", offset = NULL, parse = FALSE, keep_straight = FALSE
+  halign = "left", offset = NULL, parse = FALSE, keep_straight = FALSE,
+  padding = unit(0.15, "inch")
   )
 {
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
@@ -206,6 +210,7 @@ geom_textpath <- function(
           offset        = offset,
           parse         = parse,
           keep_straight = keep_straight,
+          padding       = padding,
           ...
         ))
 }
@@ -251,7 +256,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
     cut_path = NA, flip_inverted = TRUE, halign = "left",
-    offset = NULL, parse = FALSE, keep_straight = FALSE
+    offset = NULL, parse = FALSE, keep_straight = FALSE,
+    padding = unit(0.15, "inch")
   ) {
 
     #---- type conversion, checks & warnings ---------------------------#
@@ -332,7 +338,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       angle = data$angle,
       polar_params = if (inherits(coord, "CoordPolar")){
                        list(x = 0.5, y = 0.5, theta = coord$theta)
-                     } else NULL
+                     } else NULL,
+      padding = padding
     )
   }
 )
