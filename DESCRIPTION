@@ -34,3 +34,5 @@ Suggests:
     qpdf
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+URL: https://allancameron.github.io/geomtextpath,
+    https://teunbrand.github.io/geomtextpath
