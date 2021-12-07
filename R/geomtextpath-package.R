@@ -4,7 +4,7 @@
 #' @import ggplot2
 #' @import grid
 #' @importFrom scales alpha
-#' @importFrom stats approx
+#' @importFrom stats approx dnorm
 #' @importFrom utils head tail
 #' @importFrom graphics strwidth
 #' @importFrom systemfonts shape_string
