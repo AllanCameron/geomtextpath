@@ -213,7 +213,7 @@ makeContent.textpath <- function(x) {
 
     # Get bookends by trimming paths when it intersects text
     path <- .get_surrounding_lines(path, text, vjust = v$vjust, v$cut_path,
-                                   breathing_room = v$padding)
+                                   padding = v$padding)
 
     if (nrow(path) > 1) {
       # Recycle graphical parameters to match lengths of path
