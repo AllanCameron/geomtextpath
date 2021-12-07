@@ -22,7 +22,8 @@ geom_textpath(
   halign = "left",
   offset = NULL,
   parse = FALSE,
-  keep_straight = FALSE
+  keep_straight = FALSE,
+  padding = unit(0.15, "inch")
 )
 }
 \arguments{
@@ -87,9 +88,9 @@ into two sections, one on either side of the string. If \code{FALSE}, the
 path is plotted as a whole. The default, \code{NA}, will break the line if the
 string has a \code{vjust} of between 0 and 1.}
 
-\item{flip_inverted}{A \code{logical(1)} which if \code{TRUE}, inverts any string where
-the majority of letters would be upside down along the path are inverted to
-improve legibility. The default is \code{FALSE}, which leaves letters as-is.}
+\item{flip_inverted}{A \code{logical(1)} which if \code{TRUE} (default), inverts any
+string where the majority of letters would be upside down along the path
+are inverted to improve legibility. If \code{FALSE} letters are left as-is.}
 
 \item{halign}{A \code{character(1)} describing how multi-line labels should
 be justified. Can either be \code{"left"} (default), \code{"center"} or \code{"right"}.}
@@ -98,13 +99,17 @@ be justified. Can either be \code{"left"} (default), \code{"center"} or \code{"r
 of the text from the path. If not \code{NULL}, this overrules the \code{vjust}
 setting.}
 
-\item{parse}{If set to \strong{TRUE} this will coerce the labels into expressions,
+\item{parse}{If set to \code{TRUE} this will coerce the labels into expressions,
 allowing plotmath syntax to be used.}
 
-\item{keep_straight}{a logical \strong{TRUE} or \strong{FALSE} indicating whether the
-text should be straight rather than following the curve. This might be
-helpful for noisy paths. If \strong{TRUE} the text will still follow the angle
-of the curve. The default is \strong{FALSE}}
+\item{keep_straight}{a \code{logical(1)}, which if \code{TRUE}, keeps the letters of
+a label on the same, straight baseline and if \code{FALSE} (default),
+lets individual letters follow the curve. This might be helpful for noisy
+paths.}
+
+\item{padding}{A \code{\link[grid:unit]{unit()}} of length 1 to determine the
+padding between path and text when the \code{cut_path} parameter trims the
+path.}
 }
 \description{
 The existing text-based geom layers in \pkg{ggplot2}

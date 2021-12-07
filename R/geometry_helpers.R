@@ -445,8 +445,11 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
 #' glyphs <- .get_path_points(xy)
 #' .get_surrounding_lines(xy, glyphs)
 .get_surrounding_lines <- function(path, letters, cut_path = NA,
-                                   breathing_room = 0.15, vjust = 0.5,
+                                   padding = 0.15, vjust = 0.5,
                                    vjust_lim = c(0, 1)) {
+  if (is.unit(padding)) {
+    padding <- convertUnit(padding, "inch", valueOnly = TRUE)
+  }
   if (is.unit(vjust)) {
     vjust <- rep_len(0.5, length(vjust))
   }
@@ -470,8 +473,8 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
                        numeric(1), USE.NAMES = FALSE)
     trim <- rep_len(trim, length(path_max))
 
-    mins <- pmax(0,        ranges[1, ] - breathing_room)
-    maxs <- pmin(path_max, ranges[2, ] + breathing_room)
+    mins <- pmax(0,        ranges[1, ] - padding)
+    maxs <- pmin(path_max, ranges[2, ] + padding)
 
     # Consider path length as following one another to avoid a loop
     sumlen <- c(0, path_max[-length(path_max)])

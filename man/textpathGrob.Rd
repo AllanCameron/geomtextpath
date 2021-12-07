@@ -20,6 +20,7 @@ textpathGrob(
   cut_path = NA,
   flip_inverted = TRUE,
   polar_params = NULL,
+  padding = unit(0.15, "inch"),
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -55,12 +56,12 @@ directly set the offset from the path.}
 be justified. Can either be \code{"left"} (default), \code{"center"} or \code{"right"}.}
 
 \item{angle}{a \code{numeric} vector either length 1 or the same length as \code{id}
-describing the angle at which text should be rotated.}
+describing the angle in degrees at which text should be rotated.}
 
-\item{keep_straight}{a logical \strong{TRUE} or \strong{FALSE} indicating whether the
-text should be straight rather than following the curve. This might be
-helpful for noisy paths. If \strong{TRUE} the text will still follow the angle
-of the curve. The default is \strong{FALSE}}
+\item{keep_straight}{a \code{logical(1)}, which if \code{TRUE}, keeps the letters of
+a label on the same, straight baseline and if \code{FALSE} (default),
+lets individual letters follow the curve. This might be helpful for noisy
+paths.}
 
 \item{gp_text, gp_path}{An object of class \code{"gpar"}, typically the output from
 a call from the \code{\link[grid:gpar]{gpar()}} function. These are basically lists
@@ -71,13 +72,17 @@ into two sections, one on either side of the string. If \code{FALSE}, the
 path is plotted as a whole. The default, \code{NA}, will break the line if the
 string has a \code{vjust} of between 0 and 1.}
 
-\item{flip_inverted}{A \code{logical(1)} which if \code{TRUE}, inverts any string where
-the majority of letters would be upside down along the path are inverted to
-improve legibility. The default is \code{FALSE}, which leaves letters as-is.}
+\item{flip_inverted}{A \code{logical(1)} which if \code{TRUE} (default), inverts any
+string where the majority of letters would be upside down along the path
+are inverted to improve legibility. If \code{FALSE} letters are left as-is.}
 
 \item{polar_params}{a list consisting of an x, y, and r component that
 specifies the central point and radius of a circle around which
 single-point labels will be wrapped.}
+
+\item{padding}{A \code{\link[grid:unit]{unit()}} of length 1 to determine the
+padding between path and text when the \code{cut_path} parameter trims the
+path.}
 
 \item{default.units}{A string indicating the default units to use
     if \code{x} or \code{y}
