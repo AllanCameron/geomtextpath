@@ -114,7 +114,7 @@ test_that("Path trimming is correct", {
 
   # TRUE cut_path
   test <- .get_surrounding_lines(xy, glyphs, cut_path = TRUE,
-                                 breathing_room = br, vjust = vjust)
+                                 padding = br, vjust = vjust)
   expect_length(test$x, nrow(xy) * 2)
   expect_equal(
     test$x,
@@ -126,12 +126,12 @@ test_that("Path trimming is correct", {
 
   # vjust can be passed as unit object
   expect_silent(.get_surrounding_lines(xy, glyphs, cut_path = TRUE,
-                                 breathing_room = br, vjust = unit(0, "mm")))
+                                       padding = br, vjust = unit(0, "mm")))
 
 
   # FALSE cut_path
   test <- .get_surrounding_lines(xy, glyphs, cut_path = FALSE,
-                                 breathing_room = br[2], vjust = vjust)
+                                 padding = br[2], vjust = vjust)
   expect_length(test$x, nrow(xy))
   expect_equal(
     test$x,
@@ -143,7 +143,7 @@ test_that("Path trimming is correct", {
 
   # Variable cut_path
   test <- .get_surrounding_lines(xy, glyphs, cut_path = NA,
-                                 breathing_room = br, vjust = vjust)
+                                 padding = br, vjust = vjust)
   expect_length(test$x, nrow(xy) + 2)
   expect_equal(
     test$x,
@@ -155,7 +155,7 @@ test_that("Path trimming is correct", {
 
   # Test variable vjust is respected
   test <- .get_surrounding_lines(xy, glyphs, cut_path = NA, vjust = vjust,
-                                 breathing_room = br, vjust_lim = c(0, 3))
+                                 padding = br, vjust_lim = c(0, 3))
   expect_length(test$x, nrow(xy) + 4)
   expect_equal(
     test$x,
