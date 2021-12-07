@@ -46,12 +46,12 @@
 #' @param offset A [`unit()`][grid::unit()] of length 1 to determine the offset
 #'   of the text from the path. If not `NULL`, this overrules the `vjust`
 #'   setting.
-#' @param parse If set to **TRUE** this will coerce the labels into expressions,
+#' @param parse If set to `TRUE` this will coerce the labels into expressions,
 #'   allowing plotmath syntax to be used.
-#' @param keep_straight a logical **TRUE** or **FALSE** indicating whether the
-#'   text should be straight rather than following the curve. This might be
-#'   helpful for noisy paths. If **TRUE** the text will still follow the angle
-#'   of the curve. The default is **FALSE**
+#' @param keep_straight a `logical(1)`, which if `TRUE`, keeps the letters of
+#'   a label on the same, straight baseline and if `FALSE` (default),
+#'   lets individual letters follow the curve. This might be helpful for noisy
+#'   paths.
 #' @param padding A [`unit()`][grid::unit()] of length 1 to determine the
 #'   padding between path and text when the `cut_path` parameter trims the
 #'   path.

@@ -16,11 +16,7 @@
 #'   direction of the text. Alternatively a [`unit()`][grid::unit()] object to
 #'   directly set the offset from the path.
 #' @param angle a `numeric` vector either length 1 or the same length as `id`
-#'   describing the angle at which text should be rotated.
-#' @param keep_straight a logical **TRUE** or **FALSE** indicating whether the
-#'   text should be straight rather than following the curve. This might be
-#'   helpful for noisy paths. If **TRUE** the text will still follow the angle
-#'   of the curve. The default is **FALSE**
+#'   describing the angle in degrees at which text should be rotated.
 #' @param polar_params a list consisting of an x, y, and r component that
 #'   specifies the central point and radius of a circle around which
 #'   single-point labels will be wrapped.

@@ -56,12 +56,12 @@ directly set the offset from the path.}
 be justified. Can either be \code{"left"} (default), \code{"center"} or \code{"right"}.}
 
 \item{angle}{a \code{numeric} vector either length 1 or the same length as \code{id}
-describing the angle at which text should be rotated.}
+describing the angle in degrees at which text should be rotated.}
 
-\item{keep_straight}{a logical \strong{TRUE} or \strong{FALSE} indicating whether the
-text should be straight rather than following the curve. This might be
-helpful for noisy paths. If \strong{TRUE} the text will still follow the angle
-of the curve. The default is \strong{FALSE}}
+\item{keep_straight}{a \code{logical(1)}, which if \code{TRUE}, keeps the letters of
+a label on the same, straight baseline and if \code{FALSE} (default),
+lets individual letters follow the curve. This might be helpful for noisy
+paths.}
 
 \item{gp_text, gp_path}{An object of class \code{"gpar"}, typically the output from
 a call from the \code{\link[grid:gpar]{gpar()}} function. These are basically lists
