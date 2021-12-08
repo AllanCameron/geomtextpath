@@ -1,8 +1,3 @@
-# Similar to rlang::`%||%` or utils:::`%||%`
-`%||%` <- function(x, y) {
-  if (is.null(x)) y else x
-}
-
 # ------------------------------------------------------------------------------
 # Row-bind a list of data.frames
 # `df_list` is a list of data.frames
