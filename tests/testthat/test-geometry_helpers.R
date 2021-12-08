@@ -51,23 +51,6 @@ test_that("Appropriate warning with excess curvature", {
                  "curvature")
 })
 
-test_that("We can measure plotmath expressions", {
-
-  out <- measure_exp(expression(cos(theta)))
-
-  expect_true(abs(attr(out[[1]], "metrics")$width - 0.4) < 0.2)
-
-  # Multiple expressions
-  test_exp <- c(expression(cos(theta)), expression(sin(theta)))
-  out <- measure_exp(test_exp)
-
-  expect_equal(length(out), 2L)
-
-  gp <- gpar(fontsize = c(3, 3, 3))
-
-  expect_error(measure_exp(test_exp, gp = gp), "fontsize")
-})
-
 test_that("We can have flat labels when requested", {
 
   df <- data.frame(x = seq(0, 2 * pi, length = 1000) / (2 * pi),
