@@ -143,8 +143,11 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
 # base character through zero-width glyphs, which I don't expect to be robust
 # in all cases.
 resolve_composite_glyphs <- function(txt) {
+  if (!any({zero_width <- txt$x_midpoint == 0})) {
+    return(txt)
+  }
   # Need to find runs in case of multiple modifiers to the base character
-  run   <- rle(txt$x_midpoint == 0)
+  run   <- rle(zero_width)
   end   <- run_end(run$lengths, TRUE)
   start <- end - run$lengths + 1
   # Init vector for rows to remove afterwards
