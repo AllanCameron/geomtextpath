@@ -66,6 +66,9 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   txt <- txt$shape
   txt <- txt[!(txt$glyph %in% c("\r", "\n", "\t")), , drop = FALSE]
 
+  # Combine glyphs of compound characters (#31)
+  txt <- resolve_composite_glyphs(txt)
+
   # Adjust shape
   txt$x_offset   <- txt$x_offset   / ppi
   txt$x_midpoint <- txt$x_midpoint / ppi
@@ -133,4 +136,34 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
     width  = width,
     height = height
   )
+}
+
+# Ideally remove the need for this function through dedicated text shaping
+# library. Currently, we have a hacky way of identifying modifications to a
+# base character through zero-width glyphs, which I don't expect to be robust
+# in all cases.
+resolve_composite_glyphs <- function(txt) {
+  # Need to find runs in case of multiple modifiers to the base character
+  run   <- rle(txt$x_midpoint == 0)
+  end   <- run_end(run$lengths, TRUE)
+  start <- end - run$lengths + 1
+  # Init vector for rows to remove afterwards
+  remo  <- integer(0)
+  # Runs of modifiers
+  mod_run <- setdiff(which(run$values), 1) # Exclude a first run
+  for (i in mod_run) {
+    # Current run of modifiers
+    this_run <- start[i]:end[i]
+    # Preceding base character
+    base_char <- this_run[1] - 1
+    # Combine glyphs
+    txt$glyph[base_char] <- paste0(
+      txt$glyph[base_char],
+      paste0(txt$glyph[this_run], collapse = "")
+    )
+    # Append rows to remove
+    remo <- c(remo, this_run)
+  }
+  # Remove rows of modifiers
+  txt[-remo, , drop = FALSE]
 }
