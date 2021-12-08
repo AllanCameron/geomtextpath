@@ -187,3 +187,19 @@ make_label <- function(x) {
     unlist(x, FALSE, FALSE)
   }
 }
+
+as_inch <- function(value, from = "x") {
+  if (is.unit(value)) {
+    switch(
+      from,
+      x      = {axis <- "x"; type <- "location"},
+      y      = {axis <- "y"; type <- "location"},
+      width  = {axis <- "x"; type <- "dimension"},
+      height = {axis <- "y"; type <- "dimension"}
+    )
+    value <- convertUnit(x = value, unitTo = "inch",
+                         axisFrom = axis, typeFrom = type,
+                         valueOnly = TRUE)
+  }
+  value
+}

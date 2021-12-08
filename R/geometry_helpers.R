@@ -61,10 +61,7 @@
   letters <- label
 
   # Calculate offsets and anchorpoints
-  offset <- attr(letters, "offset")
-  if (is.unit(offset)) {
-    offset <- convertUnit(offset, "inches", valueOnly = TRUE)
-  }
+  offset <- as_inch(attr(letters, "offset"))
 
   path$exceed <- .exceeds_curvature(path$x, path$y, d = offset)
   offset <- if(is.multichar(letters$glyph)) {
@@ -269,8 +266,8 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
     "The fontsize vector in gpar does not match the number of labels." =
       length(size) == length(label) || length(size) == 1
   )
-  width  <- convertUnit(stringWidth(label),  unitTo = "in", valueOnly = TRUE)
-  height <- convertUnit(stringHeight(label), unitTo = "in", valueOnly = TRUE)
+  width  <- as_inch(stringWidth(label),  "width")
+  height <- as_inch(stringHeight(label), "height")
   width  <- width  * size / 11
   height <- height * size / 11
   ymin   <- -(height * (vjust - 0.5))
@@ -447,9 +444,7 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
 .get_surrounding_lines <- function(path, letters, cut_path = NA,
                                    padding = 0.15, vjust = 0.5,
                                    vjust_lim = c(0, 1)) {
-  if (is.unit(padding)) {
-    padding <- convertUnit(padding, "inch", valueOnly = TRUE)
-  }
+  padding <- as_inch(padding)
   if (is.unit(vjust)) {
     vjust <- rep_len(0.5, length(vjust))
   }
