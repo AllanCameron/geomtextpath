@@ -45,3 +45,4 @@ Collate:
     'grob_textpath.R'
     'trig_helpers.R'
     'utils.R'
+    'text_helpers.R'
