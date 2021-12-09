@@ -43,6 +43,6 @@ Collate:
     'geometry_helpers.R'
     'geomtextpath-package.R'
     'grob_textpath.R'
+    'text_helpers.R'
     'trig_helpers.R'
     'utils.R'
-    'text_helpers.R'

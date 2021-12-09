@@ -51,7 +51,7 @@ will be used as the layer data. A \code{function} can be created
 from a \code{formula} (e.g. \code{~ head(.x, 10)}).}
 
 \item{stat}{The statistical transformation to use on the data for this
-layer, as a string.}
+layer, as a string}
 
 \item{position}{Position adjustment, either as a string, or the result of
 a call to a position adjustment function.}

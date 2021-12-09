@@ -15,14 +15,6 @@ Allows text to follow curved paths in ggplot2.
 Useful links:
 \itemize{
   \item \url{https://allancameron.github.io/geomtextpath}
-  \item \url{https://teunbrand.github.io/geomtextpath}
-}
-
-}
-\seealso{
-Useful links:
-\itemize{
-  \item \url{https://allancameron.github.io/geomtextpath}
   \item Report bugs at \url{https://github.com/AllanCameron/geomtextpath/issues}
 }
 
