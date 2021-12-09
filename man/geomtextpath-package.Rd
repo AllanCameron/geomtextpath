@@ -8,7 +8,16 @@
 \description{
 \if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
 
-Allows text to follow curved paths in ggplot2. This allows for neat labelling of curves and of plots in polar co-ordinates.
+Allows text to follow curved paths in ggplot2.
+    This allows for neat labelling of curves and of plots in polar co-ordinates.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://allancameron.github.io/geomtextpath}
+  \item \url{https://teunbrand.github.io/geomtextpath}
+}
+
 }
 \seealso{
 Useful links:

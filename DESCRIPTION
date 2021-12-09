@@ -36,3 +36,14 @@ Suggests:
     qpdf
 Config/testthat/edition: 3
 VignetteBuilder: knitr
+URL: https://allancameron.github.io/geomtextpath,
+    https://teunbrand.github.io/geomtextpath
+Collate: 
+    'coord_curvedpolar.R'
+    'geom_textpath.R'
+    'geom_labelcontour.R'
+    'geometry_helpers.R'
+    'geomtextpath-package.R'
+    'grob_textpath.R'
+    'trig_helpers.R'
+    'utils.R'

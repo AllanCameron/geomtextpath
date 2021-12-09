@@ -115,6 +115,40 @@ ggplot() +
 
 <img src="man/figures/README-stat_function-1.png" width="100%" style="display: block; margin: auto;" />
 
+### Labelled contour lines
+
+Adding labels to the level of your contour lines is now as simple as
+calling `geom_labelcontour` instead of `geom_contour`:
+
+``` r
+
+df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
+df$z <- as.vector(volcano)
+
+ggplot(df, aes(x, y, z = z)) + 
+  geom_contour_filled(bins = 6, alpha = 0.6) + 
+  geom_labelcontour(bins = 6, size = 2.5) + 
+  scale_fill_manual(values = terrain.colors(11)) + 
+  theme_classic() +
+  theme(legend.position = "none")
+```
+
+<img src="man/figures/README-volcano-1.png" width="100%" style="display: block; margin: auto;" />
+
+or even in `stat_density2d`:
+
+``` r
+set.seed(1)
+
+df  <- data.frame(x = rnorm(100), y = rnorm(100))
+
+ggplot(df, aes(x, y)) + 
+  stat_density2d(geom = "textpath", aes(label = after_stat(level))) +
+  theme_classic()
+```
+
+<img src="man/figures/README-density2d-1.png" width="100%" style="display: block; margin: auto;" />
+
 ### Controlling text position
 
 Just like `geom_text`, the `vjust` parameter controls vertical

@@ -166,3 +166,25 @@ expect_false(is.multichar(factor(LETTERS)))
 
 expect_true(is.multichar(factor(month.name)))
 })
+
+
+# make_label
+
+test_that("Labels can be created from expressions", {
+
+  exp_list <- list(quote(sin(x)), quote(cos(x)))
+  exp_vec <- expression(sin(x), cos(x))
+  chars <- c("sin(x)", "cos(x)")
+
+  expect_equal(make_label(chars), chars)
+  expect_identical(make_label(exp_list), exp_vec)
+})
+
+test_that("run_end behaves as expected", {
+
+  x <- 5:10
+
+  expect_equal(run_end(x, is_lengths = TRUE), cumsum(x))
+  expect_equal(run_end(x, is_lengths = FALSE), cumsum(run_len(x)))
+
+})

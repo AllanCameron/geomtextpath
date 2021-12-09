@@ -166,6 +166,7 @@ safe_parse <- function (text)
 
 is.multichar <- function(x) {
 
+  if(is.list(x)) return(any(vapply(x, is.multichar, logical(1))))
   if(is.factor(x)) x <- as.character(x)
   if(is.character(x)) return(any(nchar(x) > 1))
   is.language(x)
