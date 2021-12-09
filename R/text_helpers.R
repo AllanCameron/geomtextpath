@@ -1,6 +1,6 @@
 #' Wrapper for text measurement
 #'
-#' This wrap the `systemfonts::shape_string()` function to return positions for
+#' This wrap the `textshaping::shape_text()` function to return positions for
 #' every letter.
 #'
 #' @param label A `character` vector of labels.
@@ -17,12 +17,13 @@
 #' measure_text("Hello there,\nGeneral Kenobi")
 measure_text <- function(
   label,
-  gp = gpar(),
-  ppi = 72,
-  vjust = 0.5,
-  hjust = 0,
+  gp     = gpar(),
+  ppi    = 72,
+  vjust  = 0.5,
+  hjust  = 0,
   halign = "center"
 ) {
+
   halign <- match(halign, c("center", "left", "right"), nomatch = 2L)
   halign <- c("center", "left", "right")[halign]
 
@@ -156,9 +157,9 @@ glyph_index <- function(family = "") {
   }
 
   # Get all unicode characters
-  idx <- intToUtf8(1:64000, multiple = TRUE)
+  idx <- intToUtf8(1:65535, multiple = TRUE)
   idx <- systemfonts::glyph_info(idx, family = family)
-  idx$int <- 1:64000
+  idx$int <- 1:65535
 
   # Filter invalid glyphs
   idx <- idx[idx$index > 0 & !is.na(idx$glyph), c("index", "int")]
