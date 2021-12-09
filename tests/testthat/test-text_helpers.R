@@ -26,3 +26,18 @@ test_that("Composite glyphs are joined", {
   test <- measure_text(case)[[1]]
   expect_equal(nrow(test), nchar(case) - 3L)
 })
+
+test_that("Bidirectional text is flipped", {
+
+  case <- "Sarah is \u05e9\u05e8\u05d4 with \u05e9 on R"
+
+  test <- measure_text(case)[[1]]
+  test <- paste0(test$glyph, collapse = "")
+  test <- utf8ToInt(test)
+  test[test == 160] <- 32 # weird space / no-break space thing going on
+
+  expect_equal(
+    test,
+    utf8ToInt("Sarah is \u05d4\u05e8\u05e9 with \u05e9 on R")
+  )
+})
