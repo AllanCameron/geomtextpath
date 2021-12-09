@@ -20,6 +20,8 @@
 #'
 #' @inheritParams ggplot2::layer
 #' @inheritParams ggplot2::geom_contour
+#' @param stat 	The statistical transformation to use on the data for this
+#'   layer, as a string
 #' @param ... other arguments passed on to [`layer()`][ggplot2::layer].
 #'   These are often aesthetics, used to set an aesthetic to a fixed value,
 #'   like `colour = "red"` or `size = 3`. They may also be parameters to the
