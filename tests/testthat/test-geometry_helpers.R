@@ -133,7 +133,8 @@ test_that("Path trimming is correct", {
     test$x,
     c(1, 2,
       3, 3.5 - lefts[2], 3.5 + rights[2], 4,
-      5, 6)
+      5, 6),
+    tolerance = 1e-4
   )
   expect_equal(unique(test$y), 1)
 
@@ -145,7 +146,8 @@ test_that("Path trimming is correct", {
     test$x,
     c(1, 1.5 - lefts[1], 1.5 + rights[1], 2,
       3, 3.5 - lefts[2], 3.5 + rights[2], 4,
-      5, 6)
+      5, 6),
+    tolerance = 1e-4
   )
   expect_equal(unique(test$y), 1)
 
