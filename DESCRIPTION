@@ -24,7 +24,8 @@ Imports:
     grid,
     scales,
     systemfonts,
-    rlang
+    rlang,
+    textshaping
 RoxygenNote: 7.1.2
 Suggests: 
     testthat (>= 3.0.0),

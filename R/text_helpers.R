@@ -15,7 +15,7 @@
 #'
 #' @examples
 #' measure_text("Hello there,\nGeneral Kenobi")
-measure_text <- function(label, gp = gpar(), ppi = 72,
+measure_text_old <- function(label, gp = gpar(), ppi = 72,
                          vjust = 0.5, hjust = 0, halign = "center") {
 
   halign <- match(halign, c("center", "left", "right"), nomatch = 2L)
@@ -102,6 +102,125 @@ measure_text <- function(label, gp = gpar(), ppi = 72,
   })
 
   return(ans)
+}
+
+measure_text <- function(
+  label,
+  gp = gpar(),
+  ppi = 72,
+  vjust = 0.5,
+  hjust = 0,
+  halign = "center"
+) {
+  halign <- match(halign, c("center", "left", "right"), nomatch = 2L)
+  halign <- c("center", "left", "right")[halign]
+
+  if ({unit_vjust <- is.unit(vjust)}) {
+    offset_unit <- rep(vjust, length.out = length(label))
+    vjust <- 0
+  }
+  # Remedy for https://github.com/r-lib/systemfonts/issues/85
+  vjust[vjust == 1] <- 1 + .Machine$double.eps
+
+  # Parametrise call to shape_text
+  string_args <- list(
+    strings    =  label,
+    family     =  gp$fontfamily %||% "",
+    italic     = (gp$font       %||% 1) %in% c(3, 4),
+    bold       = (gp$font       %||% 1) %in% c(2, 4),
+    size       =  gp$fontsize   %||% 12,
+    lineheight =  gp$lineheight %||% 1.2,
+    tracking   =  gp$tracking   %||% 0,
+    res   = ppi,
+    vjust = vjust,
+    hjust = hjust,
+    align = halign
+  )
+
+  txt <- do.call(textshaping::shape_text, string_args)
+
+  # Acquire x-height
+  string_args$strings <- rep("x", length(label))
+  string_args$vjust   <- 0.5
+  x_adjust <- do.call(textshaping::shape_text, string_args)$shape$y_offset
+
+  # Extract text and metrics
+  metrics <- txt$metrics
+  txt     <- txt$shape
+
+  # Translate and cluster glyphs
+  txt$letter <- translate_glyph(txt$index, txt$metric_id, gp)
+  clusters   <- interaction(txt$glyph, txt$metric_id, drop = TRUE)
+  txt$letter <- ave(txt$letter, clusters, FUN = function(x) {
+    paste0(x, collapse = "")
+  })
+  txt$x_midpoint <- ave(txt$x_midpoint, clusters, FUN = max)
+
+  # Filter non-letters
+  keep <- txt$letter %in% c("\r", "\n", "\t", "")
+  keep <- !(keep | duplicated(txt[, c("glyph", "metric_id")]))
+  txt  <- txt[keep, , drop = FALSE]
+
+  # Adjust shape for resolution
+  metrics$width  <-  metrics$width  / ppi
+  metrics$height <-  metrics$height / ppi
+  txt$x_offset   <-  txt$x_offset   / ppi
+  txt$x_midpoint <-  txt$x_midpoint / ppi
+  txt$y_offset   <- (txt$y_offset - x_adjust[txt$metric_id]) / ppi
+
+  # Format shape
+  ans <- data_frame(
+    glyph =  txt$letter,
+    ymin  =  txt$y_offset,
+    xmin  =  txt$x_offset,
+    xmid  = (txt$x_offset + txt$x_midpoint),
+    xmax  = (txt$x_offset + txt$x_midpoint * 2)
+  )
+
+  # Split and assign group-specific attributes
+  ans <- split(ans, txt$metric_id)
+  ans <- lapply(seq_along(ans), function(i) {
+    df      <- ans[[i]]
+    offset  <- unique(c(0, df$ymin))
+    df$y_id <- match(df$ymin, offset)
+    if (unit_vjust) {
+      df$y_id <- df$y_id + 1
+      offset  <- unit(offset, "inch")
+      offset  <- unit.c(unit(0, "inch"), offset + offset_unit[i])
+    }
+    attr(df, "metrics") <- metrics[i, , drop = FALSE]
+    attr(df, "offset")  <- offset
+    df
+  })
+
+  return(ans)
+}
+
+index_cache <- new.env(parent = emptyenv())
+
+glyph_index <- function(family = "") {
+  name <- if (family == "") "_default_" else family
+  if (name %in% names(index_cache)) {
+    return(index_cache[[name]])
+  }
+  idx <- intToUtf8(1:64000, multiple = TRUE)
+  idx <- systemfonts::glyph_info(idx, family = family)
+  idx$int <- 1:64000
+  idx <- idx[idx$index > 0 & !is.na(idx$glyph), c("index", "int")]
+  ans <- rep(0L, max(idx$index) + 1)
+  ans[idx$index + 1] <- idx$int
+  index_cache[[name]] <- ans
+  ans
+}
+
+translate_glyph <- function(index, id, gp = gpar()) {
+  ints <- lapply(gp$fontfamily %||% "", glyph_index)
+  split(index, id) <- Map(
+    function(int, idx) int[idx + 1],
+    int = ints,
+    idx = split(index, id)
+  )
+  intToUtf8(index, multiple = TRUE)
 }
 
 # This is a simpler version of measure_text for expressions only
