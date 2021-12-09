@@ -15,15 +15,17 @@ Authors@R: c(
 Description: Allows text to follow curved paths in ggplot2.
     This allows for neat labelling of curves and of plots in polar co-ordinates.
 License: MIT + file LICENSE
+URL: https://allancameron.github.io/geomtextpath
+BugReports: https://github.com/AllanCameron/geomtextpath/issues
 Encoding: UTF-8
-LazyData: true
 Depends:
     ggplot2
 Imports:
     grid,
     scales,
     systemfonts,
-    rlang
+    rlang,
+    textshaping
 RoxygenNote: 7.1.2
 Suggests: 
     testthat (>= 3.0.0),

@@ -155,14 +155,14 @@ makeContent.textpath <- function(x) {
   if(is.null(x$textpath)) return(zeroGrob())
   v <- x$textpath
   path <- dedup_path(
-    x = convertX(v$data$x, "inches", valueOnly = TRUE),
-    y = convertY(v$data$y, "inches", valueOnly = TRUE),
+    x = as_inch(v$data$x, "x"),
+    y = as_inch(v$data$y, "y"),
     id = v$data$id
   )
   if(is.unit(v$polar_params$x) & is.unit(v$polar_params$y))
   {
-    v$polar_params$x <- convertX(v$polar_params$x, "inches", valueOnly = TRUE)
-    v$polar_params$y <- convertY(v$polar_params$y, "inches", valueOnly = TRUE)
+    v$polar_params$x <- as_inch(v$polar_params$x, "x")
+    v$polar_params$y <- as_inch(v$polar_params$y, "y")
   }
   x$textpath <- NULL
 

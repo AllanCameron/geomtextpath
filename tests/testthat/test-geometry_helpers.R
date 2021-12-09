@@ -21,17 +21,17 @@ test_that("Text angles are correct", {
 
   # Test angles of `.get_path_points`
   test <- .get_path_points(xy, labels, hjust = 0.25)
-  expect_equal(test$angle[test$label != " "], 45)
+  expect_equal(test$angle, 45)
 
   test <- .get_path_points(xy, labels, hjust = 0.75)
-  expect_equal(test$angle[test$label != " "], -45)
+  expect_equal(test$angle, -45)
 
   # This should be at the exact top of the triangle, where angle should be 0
   test <- .get_path_points(xy, labels, hjust = 0.5)
-  expect_equal(test$angle[test$label != " "], 0)
+  expect_equal(test$angle, 0, tolerance = 360 * 1e-3)
 
   # Test location of letters
-  expect_equal(test$x[test$label != " "], 3 * sqrt(2))
+  expect_equal(test$x[test$label != " "], 3 * sqrt(2), tolerance = 1e-4)
 
 })
 
@@ -49,23 +49,6 @@ test_that("Appropriate warning with excess curvature", {
   # Test angles of `.get_path_points`
   expect_warning(.get_path_points(xy, labels, hjust = 0.25),
                  "curvature")
-})
-
-test_that("We can measure plotmath expressions", {
-
-  out <- measure_exp(expression(cos(theta)))
-
-  expect_true(abs(attr(out[[1]], "metrics")$width - 0.4) < 0.2)
-
-  # Multiple expressions
-  test_exp <- c(expression(cos(theta)), expression(sin(theta)))
-  out <- measure_exp(test_exp)
-
-  expect_equal(length(out), 2L)
-
-  gp <- gpar(fontsize = c(3, 3, 3))
-
-  expect_error(measure_exp(test_exp, gp = gp), "fontsize")
 })
 
 test_that("We can have flat labels when requested", {
@@ -120,7 +103,8 @@ test_that("Path trimming is correct", {
     test$x,
     c(1, 1.5 - lefts[1], 1.5 + rights[1], 2,
       3, 3.5 - lefts[2], 3.5 + rights[2], 4,
-      5, 5.5 - lefts[3], 5.5 + rights[3], 6)
+      5, 5.5 - lefts[3], 5.5 + rights[3], 6),
+    tolerance = 1e-4
   )
   expect_equal(unique(test$y), 1)
 
@@ -149,7 +133,8 @@ test_that("Path trimming is correct", {
     test$x,
     c(1, 2,
       3, 3.5 - lefts[2], 3.5 + rights[2], 4,
-      5, 6)
+      5, 6),
+    tolerance = 1e-4
   )
   expect_equal(unique(test$y), 1)
 
@@ -161,7 +146,8 @@ test_that("Path trimming is correct", {
     test$x,
     c(1, 1.5 - lefts[1], 1.5 + rights[1], 2,
       3, 3.5 - lefts[2], 3.5 + rights[2], 4,
-      5, 6)
+      5, 6),
+    tolerance = 1e-4
   )
   expect_equal(unique(test$y), 1)
 

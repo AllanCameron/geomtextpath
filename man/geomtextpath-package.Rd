@@ -19,6 +19,14 @@ Useful links:
 }
 
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://allancameron.github.io/geomtextpath}
+  \item Report bugs at \url{https://github.com/AllanCameron/geomtextpath/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Allan Cameron \email{Allan.Cameron@nhs.scot}
 
