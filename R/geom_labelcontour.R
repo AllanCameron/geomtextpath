@@ -42,6 +42,9 @@
 #'   text should be straight rather than following the curve. This might be
 #'   helpful for noisy paths. If **TRUE** the text will still follow the angle
 #'   of the curve. The default is **FALSE**
+#' @param padding A [`unit()`][grid::unit()] of length 1 to determine the
+#'   padding between path and text when the `cut_path` parameter trims the
+#'   path.
 #'
 #' @section Aesthetics:
 #' The `spacing` aesthetic allows fine control of spacing of text,
@@ -88,7 +91,8 @@ geom_labelcontour <- function(
   lineend = "butt", linejoin = "round", linemitre = 10,
   cut_path = NA, flip_inverted = TRUE,
   offset = NULL, keep_straight = FALSE, bins = NULL,
-  binwidth = NULL, breaks = NULL, ...
+  binwidth = NULL, breaks = NULL, padding = unit(0.15, "inch"),
+  ...
   )
 {
   layer(geom = GeomLabelContour, mapping = mapping, data = data,
@@ -107,6 +111,7 @@ geom_labelcontour <- function(
           bins          = bins,
           binwidth      = binwidth,
           breaks        = breaks,
+          padding       = padding,
           ...
         ))
 }

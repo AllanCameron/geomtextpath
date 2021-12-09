@@ -26,6 +26,7 @@ geom_labelcontour(
   bins = NULL,
   binwidth = NULL,
   breaks = NULL,
+  padding = unit(0.15, "inch"),
   ...
 )
 }
@@ -101,6 +102,10 @@ of the curve. The default is \strong{FALSE}}
 \item{breaks}{Numeric vector to set the contour breaks.
 Overrides \code{binwidth} and \code{bins}. By default, this is a vector of
 length ten with \code{\link[=pretty]{pretty()}} breaks.}
+
+\item{padding}{A \code{\link[grid:unit]{unit()}} of length 1 to determine the
+padding between path and text when the \code{cut_path} parameter trims the
+path.}
 
 \item{...}{other arguments passed on to \code{\link[ggplot2:layer]{layer()}}.
 These are often aesthetics, used to set an aesthetic to a fixed value,
