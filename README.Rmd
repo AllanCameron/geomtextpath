@@ -113,21 +113,22 @@ df$z <- as.vector(volcano)
 
 ggplot(df, aes(x, y, z = z)) + 
   geom_contour_filled(bins = 6, alpha = 0.6) + 
-  geom_labelcontour(bins = 6, size = 2.5) + 
+  geom_labelcontour(bins = 6, size = 2.5, padding = unit(0.05, "in")) + 
   scale_fill_manual(values = terrain.colors(11)) + 
   theme_classic() +
   theme(legend.position = "none")
 
 ```
 
-or even in `stat_density2d`:
+We also have `geom_labeldensity2d` for the common use case of 2D density contours:
+
 ```{r density2d}
 set.seed(1)
 
 df  <- data.frame(x = rnorm(100), y = rnorm(100))
 
 ggplot(df, aes(x, y)) + 
-  stat_density2d(geom = "textpath", aes(label = after_stat(level))) +
+  geom_labeldensity2d() +
   theme_classic()
 ```
 

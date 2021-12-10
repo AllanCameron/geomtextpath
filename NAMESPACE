@@ -2,10 +2,12 @@
 
 S3method(makeContent,textpath)
 export(GeomLabelContour)
+export(GeomLabelDensity2d)
 export(GeomTextpath)
 export(StatLabelContour)
 export(coord_curvedpolar)
 export(geom_labelcontour)
+export(geom_labeldensity2d)
 export(geom_textpath)
 export(stat_labelcontour)
 export(textpathGrob)

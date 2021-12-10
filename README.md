@@ -121,13 +121,12 @@ Adding labels to the level of your contour lines is now as simple as
 calling `geom_labelcontour` instead of `geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
 ggplot(df, aes(x, y, z = z)) + 
   geom_contour_filled(bins = 6, alpha = 0.6) + 
-  geom_labelcontour(bins = 6, size = 2.5) + 
+  geom_labelcontour(bins = 6, size = 2.5, padding = unit(0.05, "in")) + 
   scale_fill_manual(values = terrain.colors(11)) + 
   theme_classic() +
   theme(legend.position = "none")
@@ -135,7 +134,8 @@ ggplot(df, aes(x, y, z = z)) +
 
 <img src="man/figures/README-volcano-1.png" width="100%" style="display: block; margin: auto;" />
 
-or even in `stat_density2d`:
+We also have `geom_labeldensity2d` for the common use case of 2D density
+contours:
 
 ``` r
 set.seed(1)
@@ -143,7 +143,7 @@ set.seed(1)
 df  <- data.frame(x = rnorm(100), y = rnorm(100))
 
 ggplot(df, aes(x, y)) + 
-  stat_density2d(geom = "textpath", aes(label = after_stat(level))) +
+  geom_labeldensity2d() +
   theme_classic()
 ```
 
@@ -347,7 +347,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 
