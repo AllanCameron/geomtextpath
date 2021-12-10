@@ -178,6 +178,7 @@ test_that("Labels can be created from expressions", {
 
   expect_equal(make_label(chars), chars)
   expect_identical(make_label(exp_list), exp_vec)
+  expect_equal(make_label(list(1, 2)), 1:2)
 })
 
 test_that("run_end behaves as expected", {

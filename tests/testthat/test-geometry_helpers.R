@@ -290,3 +290,13 @@ test_that("We can set a unit offset", {
                rep(offset[3] + 1, 3))
 })
 
+
+test_that("character hjust is converted to numeric", {
+
+  data <- data.frame(x = rep(1:5, 3), y = rep(1:5, 3),
+                     group = rep(1:3, each = 5), hjust = "auto")
+  data <- interpret_hjust(data)
+  expect_true(is.numeric(data$hjust))
+
+
+})

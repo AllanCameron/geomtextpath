@@ -116,3 +116,18 @@ test_that("We can measure curvature accurately", {
     all( abs((curv_1 / curv_2) - 2) < 0.001)
   )
 })
+
+test_that("We can roll our own means", {
+
+  val <- c(4.25, 5.75, 5.75, 6, 5.5, 5.5, 5, 6, 5, 3.5, 4)
+  expect_equal(val, .safe_rollmean(c(3, 8, 9, 3, 4, 6, 9, 1, 8, 2, 3), k = 4))
+  expect_equal(val, .safe_rollmean(val, k = 1))
+})
+
+
+test_that("We can find the flattest point of a curve", {
+
+  x <- 1:100
+  y <- sin(seq(0, 2 * pi, len = 100))
+  expect_equal(.minimum_curvature(x, y), 0)
+})

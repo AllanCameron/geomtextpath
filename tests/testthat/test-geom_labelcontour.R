@@ -4,5 +4,5 @@ test_that("We can produce labelled contour plots", {
   df$z <- as.vector(volcano)
 
   expect_silent(ggplot(df, aes(x, y, z = z)) + geom_labelcontour())
-
+  expect_silent(ggplot(df, aes(x, y, z = z)) + stat_labelcontour())
 })
