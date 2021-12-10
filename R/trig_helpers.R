@@ -209,4 +209,24 @@
         }), 1, any))
 }
 
+.safe_rollmean <- function(vec, k = 10) {
 
+  if(k < 2) return(vec)
+
+  mat <- sapply(-(k/2 - 1):(length(vec) - k/2), function(x) x + 0:(k - 1))
+  mat[mat < 1] <- 1
+  mat[mat > length(vec)] <- length(vec)
+  mat <- round(mat)
+  dm <- dim(mat)
+  mat <- vec[mat]
+  return(colMeans(`dim<-`(mat, dm)))
+}
+
+
+.minimum_curvature <- function(x, y, k = 10) {
+  len <- .arclength_from_xy(x, y)
+  len <- len / max(len)
+  curv <- abs(.get_curvature(x, y))
+  mean_curv <- .safe_rollmean(curv, k)
+  len[median(which(abs(mean_curv) == min(abs(mean_curv))))]
+}

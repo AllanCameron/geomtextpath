@@ -374,3 +374,19 @@
   return(path)
 }
 
+
+interpret_hjust <- function(data) {
+
+  stopifnot("hjust not present in aesthetic parameters" = !is.null(data$hjust))
+  if(is.numeric(data$hjust)) return(data)
+
+  groups <- split(data, data$group)
+  groups <- lapply(groups, function(group) {
+    if(group$hjust[1] == "auto") {
+      group$hjust <- .minimum_curvature(group$x, group$y)
+    }
+    group
+  })
+  do.call(rbind, groups)
+
+}

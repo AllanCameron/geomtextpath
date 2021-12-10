@@ -260,6 +260,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     padding = unit(0.15, "inch")
   ) {
 
+
     #---- type conversion, checks & warnings ---------------------------#
 
     copy_colour <- data$linecolour == "_copy_text_colour_"
@@ -284,6 +285,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
 
     # All our transformations occur after the coord transform:
     data <- coord_munch(coord, data, panel_params)
+
+    data <- interpret_hjust(data)
 
     #---- Set graphical parameters --------------------------#
 
