@@ -38,7 +38,13 @@
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
-      <ul class="navbar-nav"></ul></div>
+      <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/AllanCameron/geomtextpath/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div>
 
     
   </div>
@@ -46,7 +52,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      
+      <small>Source: <a href="https://github.com/AllanCameron/geomtextpath/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
@@ -54,12 +60,17 @@
 <ul><li>Added a <code>NEWS.md</code> file to track changes to the package.</li>
 <li>Plot text atop curve for readability purposes.</li>
 <li>Support for <code>lineend</code>, <code>linejoin</code>, <code>linemitre</code> parameters.</li>
-<li>Letter angles should now be stable for regardless of aspect ratios and recomputed when the plot device is resized (#6)</li>
-<li>Line breaks now implemented (#4)</li>
+<li>Letter angles should now be stable for regardless of aspect ratios and recomputed when the plot device is resized (<a href="https://github.com/AllanCameron/geomtextpath/issues/6" class="external-link">#6</a>)</li>
+<li>Line breaks now implemented (<a href="https://github.com/AllanCameron/geomtextpath/issues/4" class="external-link">#4</a>)</li>
 <li>Added support for user-defined text spacing.</li>
 <li>Text angles are now correct for straight paths.</li>
 <li>Duplicated labels are now allowed.</li>
 <li>Multi-line text can be justified horizontally using the <code>halign</code> parameter.</li>
+<li>Added support for bidirectional text and composite Unicode glyphs</li>
+<li>Added plotmath support</li>
+<li>Added <code>coord_curvedpolar</code> for curved polar axis labels</li>
+<li>Labels on single points will now be placed on paths to allow them to curve in polar co-ordinates. This means <code>geom_textpath</code> can be used as a drop-in for <code>geom_text</code> in most circumstances.</li>
+<li>Added <code>geom_labelcontour</code> and <code>geom_labeldensity2d</code> for labelled contour plots</li>
 </ul></div>
   </main></div>
 

@@ -52,7 +52,13 @@ visual effect, or it may be to label a circular / polar plot in a more
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
-      <ul class="navbar-nav"></ul></div>
+      <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/AllanCameron/geomtextpath/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div>
 
     
   </div>
@@ -60,7 +66,7 @@ visual effect, or it may be to label a circular / polar plot in a more
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Add Curved Text Along Paths in <span class="pkg">ggplot2</span></h1>
-      
+      <small class="dont-index">Source: <a href="https://github.com/AllanCameron/geomtextpath/blob/HEAD/R/geom_textpath.R" class="external-link"><code>R/geom_textpath.R</code></a></small>
       <div class="d-none name"><code>geom_textpath.Rd</code></div>
     </div>
 
@@ -95,7 +101,8 @@ visual effect, or it may be to label a circular / polar plot in a more
   halign <span class="op">=</span> <span class="st">"left"</span>,
   offset <span class="op">=</span> <span class="cn">NULL</span>,
   parse <span class="op">=</span> <span class="cn">FALSE</span>,
-  keep_straight <span class="op">=</span> <span class="cn">FALSE</span>
+  keep_straight <span class="op">=</span> <span class="cn">FALSE</span>,
+  padding <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.15</span>, <span class="st">"inch"</span><span class="op">)</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -160,9 +167,9 @@ into two sections, one on either side of the string. If <code>FALSE</code>, the
 path is plotted as a whole. The default, <code>NA</code>, will break the line if the
 string has a <code>vjust</code> of between 0 and 1.</p></dd>
 <dt>flip_inverted</dt>
-<dd><p>A <code>logical(1)</code> which if <code>TRUE</code>, inverts any string where
-the majority of letters would be upside down along the path are inverted to
-improve legibility. The default is <code>FALSE</code>, which leaves letters as-is.</p></dd>
+<dd><p>A <code>logical(1)</code> which if <code>TRUE</code> (default), inverts any
+string where the majority of letters would be upside down along the path
+are inverted to improve legibility. If <code>FALSE</code> letters are left as-is.</p></dd>
 <dt>halign</dt>
 <dd><p>A <code>character(1)</code> describing how multi-line labels should
 be justified. Can either be <code>"left"</code> (default), <code>"center"</code> or <code>"right"</code>.</p></dd>
@@ -171,13 +178,17 @@ be justified. Can either be <code>"left"</code> (default), <code>"center"</code>
 of the text from the path. If not <code>NULL</code>, this overrules the <code>vjust</code>
 setting.</p></dd>
 <dt>parse</dt>
-<dd><p>If set to <strong>TRUE</strong> this will coerce the labels into expressions,
+<dd><p>If set to <code>TRUE</code> this will coerce the labels into expressions,
 allowing plotmath syntax to be used.</p></dd>
 <dt>keep_straight</dt>
-<dd><p>a logical <strong>TRUE</strong> or <strong>FALSE</strong> indicating whether the
-text should be straight rather than following the curve. This might be
-helpful for noisy paths. If <strong>TRUE</strong> the text will still follow the angle
-of the curve. The default is <strong>FALSE</strong></p></dd>
+<dd><p>a <code>logical(1)</code>, which if <code>TRUE</code>, keeps the letters of
+a label on the same, straight baseline and if <code>FALSE</code> (default),
+lets individual letters follow the curve. This might be helpful for noisy
+paths.</p></dd>
+<dt>padding</dt>
+<dd><p>A <code><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit()</a></code> of length 1 to determine the
+padding between path and text when the <code>cut_path</code> parameter trims the
+path.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
