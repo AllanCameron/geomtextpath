@@ -10,3 +10,8 @@
 * Text angles are now correct for straight paths.
 * Duplicated labels are now allowed.
 * Multi-line text can be justified horizontally using the `halign` parameter.
+* Added support for bidirectional text and composite Unicode glyphs
+* Added plotmath support
+* Added `coord_curvedpolar` for curved polar axis labels
+* Labels on single points will now be placed on paths to allow them to curve in polar co-ordinates. This means `geom_textpath` can be used as a drop-in for `geom_text` in most circumstances.
+* Added `geom_labelcontour` and `geom_labeldensity2d` for labelled contour plots
