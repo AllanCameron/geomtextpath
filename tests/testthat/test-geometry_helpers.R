@@ -178,6 +178,9 @@ test_that("text can be placed on 2-point paths", {
 
 test_that("Anchor point calculations are correct", {
   lens  <- cbind(0:5, 0:5 * 2)
+  x <- cbind(0:5, 0:5 * 2)
+  y <- cbind(rep(1, 6), rep(1, 6))
+  offset <- list(arc_length = lens, x = x, y = y)
   width <- 2
 
   grid <- expand.grid(halign = c("left", "center", "right"),
@@ -185,7 +188,7 @@ test_that("Anchor point calculations are correct", {
                       stringsAsFactors = FALSE)
 
   test <- vapply(seq_len(nrow(grid)), function(i) {
-    .anchor_points(lens, width, hjust = grid$hjust[i], halign = grid$halign[i])
+    .anchor_points(offset, width, hjust = grid$hjust[i], halign =grid$halign[i])
   }, numeric(2))
 
   expect_equal(test[1, ], rep(c(0, 1.5, 3), each = 3))
@@ -291,12 +294,4 @@ test_that("We can set a unit offset", {
 })
 
 
-test_that("character hjust is converted to numeric", {
 
-  data <- data.frame(x = rep(1:5, 3), y = rep(1:5, 3),
-                     group = rep(1:3, each = 5), hjust = "auto")
-  data <- interpret_hjust(data)
-  expect_true(is.numeric(data$hjust))
-
-
-})

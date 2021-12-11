@@ -286,8 +286,6 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     # All our transformations occur after the coord transform:
     data <- coord_munch(coord, data, panel_params)
 
-    data <- interpret_hjust(data)
-
     #---- Set graphical parameters --------------------------#
 
     # Get first observation of each group

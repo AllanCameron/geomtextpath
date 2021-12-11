@@ -69,7 +69,7 @@
   } else {
     .get_offset(path$x, path$y, d = offset)
   }
-  anchor <- .anchor_points(offset$arc_length, attr(letters, "metrics")$width,
+  anchor <- .anchor_points(offset, attr(letters, "metrics")$width,
                            hjust = hjust, halign = halign)
 
   # Offset text by anchorpoints
@@ -136,7 +136,8 @@
   # Invert path and hjust
   path  <- path[rev(seq_len(nrow(path))), ]
   attr(label, "offset") <- 0 - attr(label, "offset")
-  hjust <- 1 - hjust
+
+  if(is.numeric(hjust)) hjust <- 1 - hjust
 
   out <- .get_path_points(
     path, label, hjust, halign,
@@ -173,17 +174,26 @@
 #' arclength <- cbind(0:5, 0:5 * 2)
 #' .anchor_points(arclength, 2.5, 0.5, "left")
 .anchor_points <- function(
-  arc_length, text_width, hjust = 0.5, halign = "center"
+  offset, text_width, hjust = 0.5, halign = "center"
 ) {
   # Convert halign to a weight
   halign <- (match(halign, c("right", "center", "left")) - 1) / 2
 
-  anchor <- hjust[1] * arc_length[nrow(arc_length), 1]
+  text_hjust <- if(is.numeric(hjust)) hjust[1] else 0.5
+
+  if(hjust[1] == "auto") hjust <- .minimum_curvature(offset$x[,1], offset$y[,1])
+
+  room <- 0.5 * text_width / max(offset$arc_length[, 1])
+
+  if(text_hjust == 0.5 & ((hjust < room) | (hjust > (1 - room))))
+    text_hjust <- hjust
+
+  anchor <- hjust * offset$arc_length[nrow(offset$arc_length), 1]
   # Get left and right positions
-  anchor <- anchor - (hjust + c(0, -1)) * text_width
+  anchor <- anchor - (text_hjust + c(0, -1)) * text_width
 
   # Interpolate for offset paths
-  anchor <- approx_multiple(arc_length[, 1], anchor, arc_length)
+  anchor <- approx_multiple(offset$arc_length[, 1], anchor, offset$arc_length)
 
   # Weigh left and right anchors according to halign
   anchor[1, ] * halign + (1 - halign) * (anchor[2, ] - text_width)
@@ -374,19 +384,3 @@
   return(path)
 }
 
-
-interpret_hjust <- function(data) {
-
-  stopifnot("hjust not present in aesthetic parameters" = !is.null(data$hjust))
-  if(is.numeric(data$hjust)) return(data)
-
-  groups <- split(data, data$group)
-  groups <- lapply(groups, function(group) {
-    if(group$hjust[1] == "auto") {
-      group$hjust <- .minimum_curvature(group$x, group$y)
-    }
-    group
-  })
-  do.call(rbind, groups)
-
-}
