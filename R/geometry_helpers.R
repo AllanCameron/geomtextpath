@@ -181,12 +181,7 @@
 
   text_hjust <- if(is.numeric(hjust)) hjust[1] else 0.5
 
-  if(hjust[1] == "auto") hjust <- .minimum_curvature(offset$x[,1], offset$y[,1])
-
-  room <- 0.5 * text_width / max(offset$arc_length[, 1])
-
-  if(text_hjust == 0.5 & ((hjust < room) | (hjust > (1 - room))))
-    text_hjust <- hjust
+  if(is.character(hjust)) hjust <- interpret_hjust(hjust[1], offset, text_width)
 
   anchor <- hjust * offset$arc_length[nrow(offset$arc_length), 1]
   # Get left and right positions
@@ -384,3 +379,85 @@
   return(path)
 }
 
+interpret_hjust <- function(hjust, offset, width) {
+
+  options <- c("auto", "xmin", "xmid", "xmax", "ymin", "ymid", "ymax")
+  funs <- list(hjust_auto, hjust_xmin, hjust_xmid, hjust_xmax, hjust_ymin,
+               hjust_ymid, hjust_ymax)
+  n_func <- match(hjust, options)
+  if(is.na(n_func)) {
+    warn(paste0("The hjust value '", hjust, "' is unrecognised. ",
+                "Defaulting to 'auto'."))
+    n_func <- 1
+  }
+
+  do.call(funs[[n_func]], list(x = offset$x[,1],
+                               y = offset$y[,1],
+                               width = width))
+}
+
+hjust_auto <- function(x, y, width) {
+
+  path <- .arclength_from_xy(x, y)
+  room <- 0.5 * width / max(path)
+
+  curv <- .minimum_curvature(x[path > room & path < (max(path) - room)],
+                             y[path > room & path < (max(path) - room)])
+
+  0.5 + (curv - 0.5) * max(path) / (max(path) - width)
+
+}
+
+hjust_xmin <- function(x, y, width) {
+
+  path <- .arclength_from_xy(x, y)
+  room <- 0.5 * width / max(path)
+  subset <- path > room & path < (max(path) - room)
+  path <- path / max(path)
+  path[subset][which.min(x[subset])]
+}
+
+hjust_xmax <- function(x, y, width) {
+
+  path <- .arclength_from_xy(x, y)
+  room <- 0.5 * width / max(path)
+  subset <- path > room & path < (max(path) - room)
+  path <- path / max(path)
+  path[subset][which.max(x[subset])]
+}
+
+hjust_xmid <- function(x, y, width) {
+
+  path <- .arclength_from_xy(x, y)
+  room <- 0.5 * width / max(path)
+  subset <- path > room & path < (max(path) - room)
+  path <- path / max(path)
+  path[subset][which.min(abs(mean(x) - x[subset]))]
+}
+
+hjust_ymin <- function(x, y, width) {
+
+  path <- .arclength_from_xy(x, y)
+  room <- 0.5 * width / max(path)
+  subset <- path > room & path < (max(path) - room)
+  path <- path / max(path)
+  path[subset][which.min(y[subset])]
+}
+
+hjust_ymax <- function(x, y, width) {
+
+  path <- .arclength_from_xy(x, y)
+  room <- 0.5 * width / max(path)
+  subset <- path > room & path < (max(path) - room)
+  path <- path / max(path)
+  path[subset][which.max(y[subset])]
+}
+
+hjust_ymid <- function(x, y, width) {
+
+  path <- .arclength_from_xy(x, y)
+  room <- 0.5 * width / max(path)
+  subset <- path > room & path < (max(path) - room)
+  path <- path / max(path)
+  path[subset][which.min(abs(mean(y) - y[subset]))]
+}
