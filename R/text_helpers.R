@@ -142,7 +142,8 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
         y_id  = 1L
       )
       attr(ans, "offset")  <- ymin
-      attr(ans, "metrics") <- data_frame(width = width, height = height)
+      attr(ans, "metrics") <- data_frame(width = width, height = height,
+                                         x_adj = (height * (vjust - 0.5)))
       ans
     },
     label  = as.list(label),
