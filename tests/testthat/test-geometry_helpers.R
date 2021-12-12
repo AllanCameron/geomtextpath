@@ -193,6 +193,7 @@ test_that("Anchor point calculations are correct", {
 
   expect_equal(test[1, ], rep(c(0, 1.5, 3), each = 3))
   expect_equal(test[2, ], 0:8)
+  expect_silent(.anchor_points(offset, width, hjust = "auto", halign = "left"))
 })
 
 # Flipping ----------------------------------------------------------------
@@ -294,4 +295,22 @@ test_that("We can set a unit offset", {
 })
 
 
+# interpret hjust
 
+test_that("We can get the correct values for hjust passed as characters.", {
+
+  x <- seq(0, 2 * pi, len = 100)
+  offset <- list(x = matrix(x, ncol = 1),
+                 y = matrix(cos(x), ncol = 1),
+                 arc_length = matrix(.arclength_from_xy(x, cos(x)), ncol = 1))
+
+  expect_lt(abs(interpret_hjust("auto", offset, 0.1) - 0.75), 0.01)
+  expect_lt(abs(interpret_hjust("xmin", offset, 0.1) - 0.00), 0.01)
+  expect_lt(abs(interpret_hjust("xmax", offset, 0.1) - 1.00), 0.01)
+  expect_lt(abs(interpret_hjust("xmid", offset, 0.1) - 0.50), 0.01)
+  expect_lt(abs(interpret_hjust("ymin", offset, 0.1) - 0.50), 0.01)
+  expect_lt(abs(interpret_hjust("ymax", offset, 0.1) - 0.00), 0.01)
+  expect_lt(abs(interpret_hjust("ymid", offset, 0.1) - 0.75), 0.01)
+  expect_warning(interpret_hjust("blah", offset, 0.1))
+
+})
