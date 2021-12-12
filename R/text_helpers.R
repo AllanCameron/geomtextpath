@@ -26,9 +26,10 @@ measure_text <- function(
 
   halign <- match(halign, c("center", "left", "right"), nomatch = 2L)
   halign <- c("center", "left", "right")[halign]
+  nlabel <- length(label)
 
   if ({unit_vjust <- is.unit(vjust)}) {
-    offset_unit <- rep(vjust, length.out = length(label))
+    offset_unit <- rep(vjust, length.out = nlabel)
     vjust <- 0
   }
   # Remedy for https://github.com/r-lib/systemfonts/issues/85
@@ -49,12 +50,12 @@ measure_text <- function(
     align = halign
   )
 
-  txt <- do.call(textshaping::shape_text, string_args)
+  txt <- do.call(shape_text, string_args)
 
   # Acquire x-height
   string_args$strings <- rep("x", length(label))
   string_args$vjust   <- 0.5
-  x_adjust <- do.call(textshaping::shape_text, string_args)$shape$y_offset
+  x_adjust <- do.call(shape_text, string_args)$shape$y_offset
 
   # Extract text and metrics
   metrics <- txt$metrics
@@ -72,6 +73,13 @@ measure_text <- function(
   keep <- txt$letter %in% c("\r", "\n", "\t", "")
   keep <- !(keep | duplicated(txt[, c("glyph", "metric_id")]))
   txt  <- txt[keep, , drop = FALSE]
+  if (length(unique(txt$metric_id)) != nlabel) {
+    if (nrow(txt)) {
+      warn("Not all glyphs for the labels could be retrieved.")
+    } else {
+      abort("No glyphs could be retrieved for these labels.")
+    }
+  }
 
   # Adjust shape for resolution
   metrics$width  <-  metrics$width  / ppi
