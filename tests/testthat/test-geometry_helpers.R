@@ -178,6 +178,9 @@ test_that("text can be placed on 2-point paths", {
 
 test_that("Anchor point calculations are correct", {
   lens  <- cbind(0:5, 0:5 * 2)
+  x <- cbind(0:5, 0:5 * 2)
+  y <- cbind(rep(1, 6), rep(1, 6))
+  offset <- list(arc_length = lens, x = x, y = y)
   width <- 2
 
   grid <- expand.grid(halign = c("left", "center", "right"),
@@ -185,7 +188,7 @@ test_that("Anchor point calculations are correct", {
                       stringsAsFactors = FALSE)
 
   test <- vapply(seq_len(nrow(grid)), function(i) {
-    .anchor_points(lens, width, hjust = grid$hjust[i], halign = grid$halign[i])
+    .anchor_points(offset, width, hjust = grid$hjust[i], halign =grid$halign[i])
   }, numeric(2))
 
   expect_equal(test[1, ], rep(c(0, 1.5, 3), each = 3))
@@ -289,4 +292,6 @@ test_that("We can set a unit offset", {
   expect_equal(convertUnit(txt$y, "inch", valueOnly = TRUE),
                rep(offset[3] + 1, 3))
 })
+
+
 

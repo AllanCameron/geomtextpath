@@ -260,6 +260,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     padding = unit(0.15, "inch")
   ) {
 
+
     #---- type conversion, checks & warnings ---------------------------#
 
     copy_colour <- data$linecolour == "_copy_text_colour_"
