@@ -181,12 +181,7 @@
 
   text_hjust <- if(is.numeric(hjust)) hjust[1] else 0.5
 
-  if(hjust[1] == "auto") hjust <- .minimum_curvature(offset$x[,1], offset$y[,1])
-
-  room <- 0.5 * text_width / max(offset$arc_length[, 1])
-
-  if(text_hjust == 0.5 & ((hjust < room) | (hjust > (1 - room))))
-    text_hjust <- hjust
+  if(is.character(hjust)) hjust <- interpret_hjust(hjust[1], offset, text_width)
 
   anchor <- hjust * offset$arc_length[nrow(offset$arc_length), 1]
   # Get left and right positions
@@ -384,6 +379,34 @@
   return(path)
 }
 
+interpret_hjust <- function(hjust, offset, width) {
+
+  x <- offset$x[, 1]
+  y <- offset$y[, 1]
+  path <- offset$arc_length[, 1]
+  room <- 0.5 * width
+  subset <- path > room & path < (max(path) - room)
+
+  path <- path / max(path)
+
+  switch(EXPR = hjust,
+         auto = path[subset][which.min_curvature(x[subset], y[subset])],
+         xmin = path[subset][which.min(x[subset])],
+         xmax = path[subset][which.max(x[subset])],
+         xmid = path[subset][which.min(abs(mean(x) - x[subset]))],
+         ymin = path[subset][which.min(y[subset])],
+         ymax = path[subset][which.max(y[subset])],
+         ymid = path[subset][which.min(abs(mean(y) - y[subset]))],
+
+                {
+                   warn(paste0("hjust value '", hjust, "' not recognised. ",
+                              "Defaulting to hjust = 0.5"));
+                   return(0.5)
+                }
+         )
+
+}
+
 #' Making a curved textbox
 #'
 #' @param path A `data.frame` containing `x` and `y` columns with numeric values.
@@ -447,5 +470,3 @@
   }
   return(data_frame(x = x, y = y, id = text$id[1]))
 }
-
-

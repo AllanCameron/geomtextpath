@@ -129,5 +129,5 @@ test_that("We can find the flattest point of a curve", {
 
   x <- 1:100
   y <- sin(seq(0, 2 * pi, len = 100))
-  expect_equal(.minimum_curvature(x, y), 0)
+  expect_equal(which.min_curvature(x, y), 1)
 })

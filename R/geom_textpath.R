@@ -191,7 +191,7 @@ geom_textpath <- function(
   inherit.aes = TRUE,  ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
   include_line = TRUE, cut_path = NA, flip_inverted = TRUE,
-  halign = "left", offset = NULL, parse = FALSE, keep_straight = FALSE,
+  halign = "center", offset = NULL, parse = FALSE, keep_straight = FALSE,
   padding = unit(0.15, "inch")
   )
 {

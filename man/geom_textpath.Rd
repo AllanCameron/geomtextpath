@@ -20,7 +20,7 @@ geom_textpath(
   include_line = TRUE,
   cut_path = NA,
   flip_inverted = TRUE,
-  halign = "left",
+  halign = "center",
   offset = NULL,
   parse = FALSE,
   keep_straight = FALSE,
