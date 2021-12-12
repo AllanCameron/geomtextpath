@@ -234,3 +234,64 @@
   best <- best[which.min(abs(best - length(x)/2))]
   len[best]
 }
+
+# Rounding corners --------------------------------------------------------
+
+# Rounds corners of a closed x,y polygon with some radius at positions marked
+# by the 'at' variable by making 'n' new points on a circle. Doesn't round first
+# or last point.
+# Example:
+# # Make rectangle
+# x <- c(0, 1, 1, 0, 0)
+# y <- c(0, 0, 1, 1, 0)
+# plot(.round_corners(x, y, 0.2, c(2, 4)), type = 'l')
+.round_corners <- function(x, y, radius, at, n = 10) {
+  len  <- .arclength_from_xy(x, y)
+
+  # Find surrounding points around corners at radius distance
+  pts <- len[at]
+  pts <- cbind(pts + radius, pts, pts - radius)
+
+  # Find which points are inside those radii, to delete later
+  drop <- outer(len, pts[, 3], "<=")
+  drop <- drop | outer(len, pts[, 1], ">=")
+  drop <- which(rowSums(drop) != nrow(pts))
+
+  # Find appropriate x/y for surrounding points
+  proj <- approx_multiple(len, as.vector(pts), cbind(x, y))
+  xx <- `dim<-`(proj[, 1], dim(pts))
+  yy <- `dim<-`(proj[, 2], dim(pts))
+
+  # Find center-points of circles at corners
+  ang <- atan2(yy[, 2] - yy[, 1], xx[, 2] - xx[, 1])
+  cen_x <- cos(ang - .halfpi) * radius + xx[, 1]
+  cen_y <- sin(ang - .halfpi) * radius + yy[, 1]
+
+  # Calculate angle from center to surrounding points
+  ang_start <- atan2(yy[, 1] - cen_y, xx[, 1] - cen_x)
+  ang_end   <- atan2(yy[, 3] - cen_y, xx[, 3] - cen_x)
+  ang_delta <- ang_end - ang_start
+
+  # Correct angle difference for difference in phases
+  ang_delta <- ang_delta - (2 * pi) * sign(ang_delta) * (abs(ang_delta) > pi)
+
+  # Sequence from ang_start to ang_end (but vectorised)
+  weight <- seq(0, 1, length.out = n)
+  ang_seq <- outer(ang_delta, weight) + ang_start
+
+  # Find points on circle pieces
+  new_x <- cos(ang_seq) * radius + cen_x
+  new_y <- sin(ang_seq) * radius + cen_y
+
+  # Find positions where new points should be inserted
+  arcs <- outer(pts[, 3] - pts[, 1], weight) + pts[, 1]
+  ord  <- setdiff(order(c(len, as.vector(arcs))), drop)
+
+  # Insert new positions
+  list(
+    x = c(x, new_x)[ord],
+    y = c(y, new_y)[ord]
+  )
+}
+
+
