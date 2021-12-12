@@ -223,14 +223,10 @@
 }
 
 
-.minimum_curvature <- function(x, y, k = 10) {
+which.min_curvature <- function(x, y, k = 10) {
   len <- .arclength_from_xy(x, y)
   len <- len / max(len)
   curv <- abs(.get_curvature(x, y))
   mean_curv <- .safe_rollmean(curv, k)
-  best <- which(abs(mean_curv) - min(abs(mean_curv)) < 0.05)
-  contiguous_best <- split(best, cumsum(c(1, diff(best)) != 1))
-  best <- sapply(contiguous_best, function(x) x[which.min(abs(mean_curv[x]))])
-  best <- best[which.min(abs(best - length(x)/2))]
-  len[best]
+  which.min(abs(mean_curv) - min(abs(mean_curv)))
 }
