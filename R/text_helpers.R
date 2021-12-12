@@ -82,8 +82,9 @@ measure_text <- function(
   }
 
   # Adjust shape for resolution
+  fontsize <- as_inch(unit(gp$fontsize %||% 12 * gp$lineheight %||% 1.2, "pt"))
   metrics$width  <-  metrics$width  / ppi
-  metrics$height <-  metrics$height / ppi
+  metrics$height <-  metrics$height / ppi - fontsize
   txt$x_offset   <-  txt$x_offset   / ppi
   txt$x_midpoint <-  txt$x_midpoint / ppi
   txt$y_offset   <- (txt$y_offset - x_adjust[txt$metric_id]) / ppi
