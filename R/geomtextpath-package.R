@@ -3,15 +3,13 @@
 
 #' @import ggplot2
 #' @import grid
-#' @importFrom scales alpha
 #' @importFrom stats approx dnorm approxfun complete.cases ave
 #' @importFrom utils head tail
 #' @importFrom graphics strwidth
 #' @importFrom systemfonts glyph_info
 #' @importFrom grDevices dev.size
-#' @importFrom rlang warn `%||%`
-#' @importFrom scales rescale
-#' @importFrom scales squish_infinite
+#' @importFrom rlang abort warn `%||%`
+#' @importFrom scales rescale squish_infinite alpha
 #' @importFrom textshaping shape_text
 NULL
 
