@@ -43,3 +43,10 @@ test_that("Bidirectional text is flipped", {
     utf8ToInt("Sarah is \u05d4\u05e8\u05e9 with \u05e9 on R")
   )
 })
+
+test_that("Warn/error upon font fallback issues", {
+
+  expect_error(measure_text("\u3053"), "No glyphs")
+  expect_warning(measure_text(c("ABC", "\u3053")), "Not all glyphs")
+
+})

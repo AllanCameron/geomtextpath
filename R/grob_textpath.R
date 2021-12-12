@@ -12,6 +12,9 @@
 #' @param gp_text,gp_path An object of class `"gpar"`, typically the output from
 #'   a call from the [`gpar()`][grid::gpar] function. These are basically lists
 #'   of graphical parameters for the text and path respectively.
+#' @param gp_box (Optional) an object of class `"gpar"`, typically the output
+#'   from a call to the [`gpar()`][grid::gpar] function. If this is an empty
+#'   list, no text box will be drawn.
 #' @param vjust A `numeric` vector specifying justification orthogonal to the
 #'   direction of the text. Alternatively a [`unit()`][grid::unit()] object to
 #'   directly set the offset from the path.
@@ -58,10 +61,13 @@ textpathGrob <- function(
   keep_straight = FALSE,
   gp_text = gpar(),
   gp_path = gpar(),
+  gp_box  = gpar(),
   cut_path = NA,
   flip_inverted = TRUE,
   polar_params = NULL,
   padding = unit(0.15, "inch"),
+  label.padding = unit(0.25, "lines"),
+  label.r = unit(0.15, "lines"),
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -136,10 +142,13 @@ textpathGrob <- function(
       cut_path      = cut_path,
       gp_text       = gp_text,
       gp_path       = gp_path,
+      gp_box        = gp_box,
       flip_inverted = flip_inverted,
       polar_params  = polar_params %||% list(x = NA, y = NA, theta = NA),
       angle         = angle,
-      padding       = padding
+      padding       = padding,
+      label.padding = label.padding,
+      label.r       = label.r
     ),
     name = name,
     vp = vp,
@@ -193,7 +202,6 @@ makeContent.textpath <- function(x) {
     p
   })
 
-
   # Get the actual text string positions and angles for each group
   text <- Map(
       .get_path_points,
@@ -201,6 +209,16 @@ makeContent.textpath <- function(x) {
       hjust = v$hjust, halign = v$halign,
       flip_inverted = v$flip_inverted
     )
+
+  if ({make_box <- sum(lengths(v$gp_box))}) {
+    box <- Map(
+      .curved_textbox,
+      path = path, label = v$label, text = text,
+      padding = v$label.padding, radius = v$label.r
+    )
+    box <- rbind_dfs(box)
+  }
+
   text_lens <- vapply(text, nrow, integer(1))
   text <- rbind_dfs(text)
 
@@ -223,6 +241,15 @@ makeContent.textpath <- function(x) {
         )
       )
     }
+  }
+
+  if (make_box) {
+    x <- addGrob(
+      x, polygonGrob(
+        x = box$x, y = box$y, id = box$id,
+        default.units = "inches", gp = v$gp_box
+      )
+    )
   }
 
   # Recycle graphical parameters to match lengths of letters

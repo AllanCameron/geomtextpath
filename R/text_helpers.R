@@ -26,9 +26,10 @@ measure_text <- function(
 
   halign <- match(halign, c("center", "left", "right"), nomatch = 2L)
   halign <- c("center", "left", "right")[halign]
+  nlabel <- length(label)
 
   if ({unit_vjust <- is.unit(vjust)}) {
-    offset_unit <- rep(vjust, length.out = length(label))
+    offset_unit <- rep(vjust, length.out = nlabel)
     vjust <- 0
   }
   # Remedy for https://github.com/r-lib/systemfonts/issues/85
@@ -49,12 +50,12 @@ measure_text <- function(
     align = halign
   )
 
-  txt <- do.call(textshaping::shape_text, string_args)
+  txt <- do.call(shape_text, string_args)
 
   # Acquire x-height
   string_args$strings <- rep("x", length(label))
   string_args$vjust   <- 0.5
-  x_adjust <- do.call(textshaping::shape_text, string_args)$shape$y_offset
+  x_adjust <- do.call(shape_text, string_args)$shape$y_offset
 
   # Extract text and metrics
   metrics <- txt$metrics
@@ -72,10 +73,19 @@ measure_text <- function(
   keep <- txt$letter %in% c("\r", "\n", "\t", "")
   keep <- !(keep | duplicated(txt[, c("glyph", "metric_id")]))
   txt  <- txt[keep, , drop = FALSE]
+  if (length(unique(txt$metric_id)) != nlabel) {
+    if (nrow(txt)) {
+      warn("Not all glyphs for the labels could be retrieved.")
+    } else {
+      abort("No glyphs could be retrieved for these labels.")
+    }
+  }
 
   # Adjust shape for resolution
+  fontsize <- as_inch(unit(gp$fontsize %||% 12 * gp$lineheight %||% 1.2, "pt"))
   metrics$width  <-  metrics$width  / ppi
-  metrics$height <-  metrics$height / ppi
+  metrics$height <-  metrics$height / ppi - fontsize
+  metrics$x_adj  <-  x_adjust / ppi
   txt$x_offset   <-  txt$x_offset   / ppi
   txt$x_midpoint <-  txt$x_midpoint / ppi
   txt$y_offset   <- (txt$y_offset - x_adjust[txt$metric_id]) / ppi
@@ -132,7 +142,8 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
         y_id  = 1L
       )
       attr(ans, "offset")  <- ymin
-      attr(ans, "metrics") <- data_frame(width = width, height = height)
+      attr(ans, "metrics") <- data_frame(width = width, height = height,
+                                         x_adj = (height * (vjust - 0.5)))
       ans
     },
     label  = as.list(label),

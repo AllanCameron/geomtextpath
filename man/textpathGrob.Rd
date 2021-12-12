@@ -17,10 +17,13 @@ textpathGrob(
   keep_straight = FALSE,
   gp_text = gpar(),
   gp_path = gpar(),
+  gp_box = gpar(),
   cut_path = NA,
   flip_inverted = TRUE,
   polar_params = NULL,
   padding = unit(0.15, "inch"),
+  label.padding = unit(0.25, "lines"),
+  label.r = unit(0.15, "lines"),
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -67,6 +70,10 @@ paths.}
 a call from the \code{\link[grid:gpar]{gpar()}} function. These are basically lists
 of graphical parameters for the text and path respectively.}
 
+\item{gp_box}{(Optional) an object of class \code{"gpar"}, typically the output
+from a call to the \code{\link[grid:gpar]{gpar()}} function. If this is an empty
+list, no text box will be drawn.}
+
 \item{cut_path}{A \code{logical(1)} which if \code{TRUE} breaks the path
 into two sections, one on either side of the string. If \code{FALSE}, the
 path is plotted as a whole. The default, \code{NA}, will break the line if the
@@ -83,6 +90,10 @@ single-point labels will be wrapped.}
 \item{padding}{A \code{\link[grid:unit]{unit()}} of length 1 to determine the
 padding between path and text when the \code{cut_path} parameter trims the
 path.}
+
+\item{label.padding}{Amount of padding around label. Defaults to 0.25 lines.}
+
+\item{label.r}{Radius of rounded corners. Defaults to 0.15 lines.}
 
 \item{default.units}{A string indicating the default units to use
     if \code{x} or \code{y}
