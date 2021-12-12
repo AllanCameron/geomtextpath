@@ -12,6 +12,9 @@
 #' @param gp_text,gp_path An object of class `"gpar"`, typically the output from
 #'   a call from the [`gpar()`][grid::gpar] function. These are basically lists
 #'   of graphical parameters for the text and path respectively.
+#' @param gp_box (Optional) an object of class `"gpar"`, typically the output
+#'   from a call to the [`gpar()`][grid::gpar] function. If this is an empty
+#'   list, no text box will be drawn.
 #' @param vjust A `numeric` vector specifying justification orthogonal to the
 #'   direction of the text. Alternatively a [`unit()`][grid::unit()] object to
 #'   directly set the offset from the path.
