@@ -384,3 +384,68 @@
   return(path)
 }
 
+#' Making a curved textbox
+#'
+#' @param path A `data.frame` containing `x` and `y` columns with numeric values.
+#' @param text A `data.frame` containing `left` and `right` vectors with values
+#'   along the arc-length of a path where text appears, and an `id` column.
+#' @param label A `data.frame` as produced by `measure_text()`.
+#' @param padding A `grid::unit()`.
+#' @param radius A `grid::unit()`.
+#'
+#' @return A `data.frame` containing `x`, `y` and `id` columns for a closed
+#'   polygon.
+#' @noRd
+#'
+#' @examples
+#' NULL
+.curved_textbox <- function(
+  path,
+  text,
+  label,
+  padding = unit(0.25, "lines"),
+  radius  = unit(0.15, "lines")
+) {
+  padding <- as_inch(padding)
+  metrics <- attr(label, "metrics")
+  height <- c(0, 1) * metrics$height + c(-1, 1) * padding
+
+  offset <- as_inch(attr(label, "offset"))[unique(label$y_id)]
+  offset <- min(offset) + metrics$x_adj
+  offset <- c(0, offset + height)
+  offset <- .get_offset(path$x, path$y, offset)
+
+  lims <- range(text$left, text$right) + c(-1, 1) * padding
+
+  corners <- approx_multiple(offset$arc_length[, 1], lims,
+                             y = cbind(offset$x[, 2:3], offset$y[, 2:3]))
+  keep  <- offset$arc_length[, 1] > lims[1] & offset$arc_length[, 1] < lims[2]
+  nkeep <- sum(keep)
+
+  x <- c(corners[1, 1], offset$x[keep, 2], corners[2, 1], corners[2, 2],
+         rev(offset$x[keep, 3]), corners[1, 2])
+  y <- c(corners[1, 3], offset$y[keep, 2], corners[2, 3], corners[2, 4],
+         rev(offset$y[keep, 3]), corners[1, 4])
+  n <- length(x)
+
+  radius <- as_inch(radius)
+  if (radius > 0.01) {
+    if (radius > 0.5 * diff(height)) {
+      radius  <- 0.5 * diff(height)
+    }
+    # Make closed polygon by inserting midpoint between start and end
+    x_start <- (x[1] + x[n]) / 2
+    y_start <- (y[1] + y[n]) / 2
+    x <- c(x_start, x, x_start)
+    y <- c(y_start, y, y_start)
+
+    # Round corners
+    corners <- c(2, 3 + nkeep, 4 + nkeep, 5 + 2 * nkeep)
+    xy <- .round_corners(x, y, radius, at = corners)
+    x <- xy$x
+    y <- xy$y
+  }
+  return(data_frame(x = x, y = y, id = text$id[1]))
+}
+
+
