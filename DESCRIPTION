@@ -39,9 +39,9 @@ VignetteBuilder: knitr
 Collate: 
     'coord_curvedpolar.R'
     'geom_textpath.R'
-    'geom_labelcontour.R'
-    'geom_labeldensity2d.R'
     'geom_labelpath.R'
+    'geom_textcontour.R'
+    'geom_textdensity2d.R'
     'geometry_helpers.R'
     'geomtextpath-package.R'
     'grob_textpath.R'

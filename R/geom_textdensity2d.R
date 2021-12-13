@@ -1,6 +1,6 @@
 ##---------------------------------------------------------------------------##
 ##                                                                           ##
-##  geom_labeldensity2d main                                                 ##
+##  geom_textdensity2d main                                                  ##
 ##                                                                           ##
 ##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
 ##                                                                           ##
@@ -16,7 +16,7 @@
 #' @description Contour lines representing 2D density are available already in
 #'   \pkg{ggplot2}, but the native [`geom_density_2d`][ggplot2::geom_density_2d]
 #'   does not allow the lines to be labelled with the level of each contour.
-#'   `geom_labeldensity2d` adds this ability.
+#'   `geom_textdensity2d` adds this ability.
 #'
 #' @inheritParams ggplot2::layer
 #' @inheritParams ggplot2::geom_density_2d
@@ -51,7 +51,7 @@
 #' which is called 'tracking' in typography. The default is 0 and units are
 #' measured in 1/1000 em. Numbers greater than zero increase the spacing,
 #' whereas negative numbers decrease the spacing.
-#' `geom_labeldensity2d()` understands the following aesthetics (required
+#' `geom_textdensity2d()` understands the following aesthetics (required
 #' aesthetics are in bold):
 #' \itemize{
 #'   \item \strong{`x`}
@@ -79,11 +79,11 @@
 #' df  <- data.frame(x = rnorm(100), y = rnorm(100))
 #'
 #' ggplot(df, aes(x, y)) +
-#'   geom_labeldensity2d() +
+#'   geom_textdensity2d() +
 #'   theme_classic()
 
 
-geom_labeldensity2d <- function(mapping = NULL,
+geom_textdensity2d <- function(mapping = NULL,
                                 data = NULL,
                                 stat = "density_2d",
                                 position = "identity",
@@ -104,7 +104,7 @@ geom_labeldensity2d <- function(mapping = NULL,
     data = data,
     mapping = mapping,
     stat = stat,
-    geom = GeomLabelDensity2d,
+    geom = GeomTextDensity2d,
     position = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
@@ -126,11 +126,12 @@ geom_labeldensity2d <- function(mapping = NULL,
 }
 
 
-#' @rdname geom_labeldensity2d
+#' @rdname geom_textdensity2d
 #' @format NULL
 #' @usage NULL
 #' @export
-GeomLabelDensity2d <- ggproto("GeomLabelDensity2d", GeomTextpath,
+#' @include geom_textpath.R
+GeomTextDensity2d <- ggproto("GeomTextDensity2d", GeomTextpath,
   required_aes = c("x", "y"),
   default_aes = aes(colour = "black", size = 3.88, hjust = 0.5, vjust = 0.5,
     family = "", fontface = 1, lineheight = 1.2, alpha = 1, linewidth = 0.5,

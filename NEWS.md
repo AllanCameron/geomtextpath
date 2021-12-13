@@ -14,4 +14,4 @@
 * Added plotmath support
 * Added `coord_curvedpolar` for curved polar axis labels
 * Labels on single points will now be placed on paths to allow them to curve in polar co-ordinates. This means `geom_textpath` can be used as a drop-in for `geom_text` in most circumstances.
-* Added `geom_labelcontour` and `geom_labeldensity2d` for labelled contour plots
+* Added `geom_textcontour` and `geom_textdensity2d` for labelled contour plots
