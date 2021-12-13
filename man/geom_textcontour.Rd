@@ -170,26 +170,6 @@ aesthetics are in bold):
    represents bin boundaries.
   }
 }
-
-`stat_textcontour()` understands the following aesthetics (required
-aesthetics are in bold):
-\itemize{
-  \item \strong{`x`}
-  \item \strong{`y`}
-  \item \strong{`z`}
-  \item `alpha`
-  \item `colour`
-  \item `family`
-  \item `fontface`
-  \item `group`
-  \item `hjust`
-  \item `size`
-  \item `vjust`
-  \item `linetype`
-  \item `linewidth`
-  \item `linecolour`
-  \item `spacing`
-}
 }
 
 \examples{
