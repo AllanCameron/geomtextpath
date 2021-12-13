@@ -66,13 +66,13 @@ will be used as the layer data. A \code{function} can be created
 from a \code{formula} (e.g. \code{~ head(.x, 10)}).}
 
 \item{stat}{The statistical transformation to use on the data for this
-layer, as a string}
+layer, as a string.}
 
 \item{position}{Position adjustment, either as a string, or the result of
 a call to a position adjustment function.}
 
-\item{na.rm}{If \code{FALSE} (default), missing points or labels are removed from
-the text path with a warning.}
+\item{na.rm}{If \code{FALSE}, the default, missing values are removed with
+a warning. If \code{TRUE}, missing values are silently removed.}
 
 \item{show.legend}{logical. Should this layer be included in the legends?
 \code{NA}, the default, includes if any aesthetics are mapped.
@@ -104,10 +104,10 @@ are inverted to improve legibility. If \code{FALSE} letters are left as-is.}
 of the text from the path. If not \code{NULL}, this overrules the \code{vjust}
 setting.}
 
-\item{keep_straight}{a logical \strong{TRUE} or \strong{FALSE} indicating whether the
-text should be straight rather than following the curve. This might be
-helpful for noisy paths. If \strong{TRUE} the text will still follow the angle
-of the curve. The default is \strong{FALSE}}
+\item{keep_straight}{a \code{logical(1)}, which if \code{TRUE}, keeps the letters of
+a label on the same, straight baseline and if \code{FALSE} (default),
+lets individual letters follow the curve. This might be helpful for noisy
+paths.}
 
 \item{bins}{Number of contour bins. Overridden by \code{binwidth}.}
 
@@ -121,10 +121,10 @@ length ten with \code{\link[=pretty]{pretty()}} breaks.}
 padding between path and text when the \code{cut_path} parameter trims the
 path.}
 
-\item{...}{other arguments passed on to \code{\link[ggplot2:layer]{layer()}}.
-These are often aesthetics, used to set an aesthetic to a fixed value,
-like \code{colour = "red"} or \code{size = 3}. They may also be parameters to the
-paired geom/stat.}
+\item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{layer()}}. These are
+often aesthetics, used to set an aesthetic to a fixed value, like
+\code{colour = "red"} or \code{size = 3}. They may also be parameters
+to the paired geom/stat.}
 
 \item{geom}{The geometric object to use display the data}
 }

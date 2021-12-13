@@ -9,8 +9,6 @@
 ##                                                                           ##
 ##---------------------------------------------------------------------------##
 
-# Constructor -------------------------------------------------------------
-
 #' Produce labelled contour lines of 2D density in  \pkg{ggplot2}
 #'
 #' @description Contour lines representing 2D density are available already in
@@ -20,31 +18,11 @@
 #'
 #' @inheritParams ggplot2::layer
 #' @inheritParams ggplot2::geom_density_2d
-#' @param stat 	The statistical transformation to use on the data for this
-#'   layer, as a string
+#' @inheritParams geom_textpath
 #' @param ... other arguments passed on to [`layer()`][ggplot2::layer].
 #'   These are often aesthetics, used to set an aesthetic to a fixed value,
 #'   like `colour = "red"` or `size = 3`. They may also be parameters to the
 #'   paired geom/stat.
-#' @param na.rm If `FALSE` (default), missing points or labels are removed from
-#'   the text path with a warning.
-#' @param cut_path A `logical(1)` which if `TRUE` breaks the path
-#'   into two sections, one on either side of the string. If `FALSE`, the
-#'   path is plotted as a whole. The default, `NA`, will break the line if the
-#'   string has a `vjust` of between 0 and 1.
-#' @param flip_inverted A `logical(1)` which if `TRUE` (default), inverts any
-#'   string where the majority of letters would be upside down along the path
-#'   are inverted to improve legibility. If `FALSE` letters are left as-is.
-#' @param offset A [`unit()`][grid::unit()] of length 1 to determine the offset
-#'   of the text from the path. If not `NULL`, this overrules the `vjust`
-#'   setting.
-#' @param keep_straight a logical **TRUE** or **FALSE** indicating whether the
-#'   text should be straight rather than following the curve. This might be
-#'   helpful for noisy paths. If **TRUE** the text will still follow the angle
-#'   of the curve. The default is **FALSE**
-#' @param padding A [`unit()`][grid::unit()] of length 1 to determine the
-#'   padding between path and text when the `cut_path` parameter trims the
-#'   path.
 #'
 #' @section Aesthetics:
 #' The `spacing` aesthetic allows fine control of spacing of text,
@@ -70,6 +48,7 @@
 #'   \item `spacing`
 #' }
 #'
+#' @include geom_textpath.R
 #' @export
 #' @md
 #'

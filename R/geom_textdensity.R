@@ -11,14 +11,13 @@
 
 # Constructor -------------------------------------------------------------
 
-#' Produce labelled density plots om \pkg{ggplot2}
+#' Produce smoothly labelled density plots in \pkg{ggplot2}
 #'
 #' @description Line plots of smoothed kernel density estimates are available
 #'   in \pkg{ggplot2} via [`geom_density`][ggplot2::geom_density]. This geom
 #'   layer simply adds a text label to each curve that follow the contour of
 #'   the density line when used as a drop-in replacement for
 #'   [`geom_density`][ggplot2::geom_density]
-#'
 #' @inheritParams ggplot2::layer
 #' @inheritParams geom_textpath
 #' @param bw The smoothing bandwidth to be used.
@@ -36,27 +35,6 @@
 #'   These are often aesthetics, used to set an aesthetic to a fixed value,
 #'   like `colour = "red"` or `size = 3`. They may also be parameters to the
 #'   paired geom/stat.
-#' @param na.rm If `FALSE` (default), missing points or labels are removed from
-#'   the text path with a warning.
-#' @param cut_path A `logical(1)` which if `TRUE` breaks the path
-#'   into two sections, one on either side of the string. If `FALSE`, the
-#'   path is plotted as a whole. The default, `NA`, will break the line if the
-#'   string has a `vjust` of between 0 and 1.
-#' @param flip_inverted A `logical(1)` which if `TRUE` (default), inverts any
-#'   string where the majority of letters would be upside down along the path
-#'   are inverted to improve legibility. If `FALSE` letters are left as-is.
-#' @param offset A [`unit()`][grid::unit()] of length 1 to determine the offset
-#'   of the text from the path. If not `NULL`, this overrules the `vjust`
-#'   setting.
-#' @param keep_straight a logical **TRUE** or **FALSE** indicating whether the
-#'   text should be straight rather than following the curve. This might be
-#'   helpful for noisy paths. If **TRUE** the text will still follow the angle
-#'   of the curve. The default is **FALSE**
-#' @param padding A [`unit()`][grid::unit()] of length 1 to determine the
-#'   padding between path and text when the `cut_path` parameter trims the
-#'   path.
-#' @param halign A `character(1)` describing how multi-line labels should
-#'   be justified. Can either be `"left"`, `"center"` (default) or `"right"`.
 #'
 #' @section Aesthetics:
 #' The `spacing` aesthetic allows fine control of spacing of text,
@@ -84,7 +62,7 @@
 #'
 #' @export
 #' @md
-#'
+#' @include geom_textpath.R
 #' @examples
 #' ggplot(iris, aes(Sepal.Length, label = Species, color = Species)) +
 #'   geom_textdensity()
@@ -145,10 +123,20 @@ geom_textdensity    <- function(mapping = NULL,
 #' @usage NULL
 #' @export
 #' @include geom_textpath.R
-GeomTextDensity <- ggproto("GeomTextDensity", GeomTextpath,
-  required_aes = c("x", "label"),
-  default_aes = aes(colour = "black", size = 3.88, hjust = 0.5, vjust = 0.5,
-    family = "", fontface = 1, lineheight = 1.2, alpha = 1, linewidth = 0.5,
-    linetype = 1, spacing = 0, linecolour = "_copy_text_colour_",
-    angle = 0)
+GeomTextDensity <- ggproto("GeomTextDensity",
+                      GeomTextpath,
+                      required_aes = c("x", "label"),
+                      default_aes  = aes(colour     = "black",
+                                         size       = 3.88,
+                                         hjust      = 0.5,
+                                         vjust      = 0.5,
+                                         family     = "",
+                                         fontface   = 1,
+                                         lineheight = 1.2,
+                                         alpha      = 1,
+                                         linewidth  = 0.5,
+                                         linetype   = 1,
+                                         spacing    = 0,
+                                         linecolour = "_copy_text_colour_",
+                                         angle      = 0)
 )

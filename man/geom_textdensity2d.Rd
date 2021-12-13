@@ -48,7 +48,7 @@ will be used as the layer data. A \code{function} can be created
 from a \code{formula} (e.g. \code{~ head(.x, 10)}).}
 
 \item{stat}{The statistical transformation to use on the data for this
-layer, as a string}
+layer, as a string.}
 
 \item{position}{Position adjustment, either as a string, or the result of
 a call to a position adjustment function.}
@@ -71,10 +71,10 @@ are inverted to improve legibility. If \code{FALSE} letters are left as-is.}
 of the text from the path. If not \code{NULL}, this overrules the \code{vjust}
 setting.}
 
-\item{keep_straight}{a logical \strong{TRUE} or \strong{FALSE} indicating whether the
-text should be straight rather than following the curve. This might be
-helpful for noisy paths. If \strong{TRUE} the text will still follow the angle
-of the curve. The default is \strong{FALSE}}
+\item{keep_straight}{a \code{logical(1)}, which if \code{TRUE}, keeps the letters of
+a label on the same, straight baseline and if \code{FALSE} (default),
+lets individual letters follow the curve. This might be helpful for noisy
+paths.}
 
 \item{padding}{A \code{\link[grid:unit]{unit()}} of length 1 to determine the
 padding between path and text when the \code{cut_path} parameter trims the
@@ -90,8 +90,8 @@ on computed variables for details.}
 
 \item{linemitre}{Line mitre limit (number greater than 1).}
 
-\item{na.rm}{If \code{FALSE} (default), missing points or labels are removed from
-the text path with a warning.}
+\item{na.rm}{If \code{FALSE}, the default, missing values are removed with
+a warning. If \code{TRUE}, missing values are silently removed.}
 
 \item{show.legend}{logical. Should this layer be included in the legends?
 \code{NA}, the default, includes if any aesthetics are mapped.
