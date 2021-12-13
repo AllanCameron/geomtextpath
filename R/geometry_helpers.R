@@ -432,29 +432,34 @@ interpret_hjust <- function(hjust, offset, width) {
   padding <- as_inch(padding)
   metrics <- attr(label, "metrics")
   height <- c(0, 1) * metrics$height + c(-1, 1) * padding
+  height <- c(height[1], sum(height) / 2, height[2])
 
   offset <- as_inch(attr(label, "offset"))[unique(label$y_id)]
   offset <- min(offset) + metrics$x_adj
   offset <- c(0, offset + height)
   offset <- .get_offset(path$x, path$y, offset)
 
-  lims <- range(text$left, text$right) + c(-1, 1) * padding
+  lims <- range(text$left, text$right)
+  lims <- approx_multiple(offset$arc_length[, 1], lims, offset$arc_length[, 3])
+  lims <- lims + c(-1, 1) * padding
 
-  corners <- approx_multiple(offset$arc_length[, 1], lims,
-                             y = cbind(offset$x[, 2:3], offset$y[, 2:3]))
-  keep  <- offset$arc_length[, 1] > lims[1] & offset$arc_length[, 1] < lims[2]
+  corners <- approx_multiple(
+    offset$arc_length[, 3], lims,
+    y = cbind(offset$x[, c(2, 4)], offset$y[, c(2, 4)])
+  )
+  keep  <- offset$arc_length[, 3] > lims[1] & offset$arc_length[, 3] < lims[2]
   nkeep <- sum(keep)
 
-  x <- c(corners[1, 1], offset$x[keep, 2], corners[2, 1], corners[2, 2],
-         rev(offset$x[keep, 3]), corners[1, 2])
-  y <- c(corners[1, 3], offset$y[keep, 2], corners[2, 3], corners[2, 4],
-         rev(offset$y[keep, 3]), corners[1, 4])
+  x <- c(corners[1, 1], offset$x[keep, 2],      corners[2, 1],
+         corners[2, 2], rev(offset$x[keep, 4]), corners[1, 2])
+  y <- c(corners[1, 3], offset$y[keep, 2],      corners[2, 3],
+         corners[2, 4], rev(offset$y[keep, 4]), corners[1, 4])
   n <- length(x)
 
   radius <- as_inch(radius)
   if (radius > 0.01) {
-    if (radius > 0.5 * diff(height)) {
-      radius  <- 0.5 * diff(height)
+    if (radius > 0.5 * diff(range(height))) {
+      radius  <- 0.5 * diff(range(height))
     }
     # Make closed polygon by inserting midpoint between start and end
     x_start <- (x[1] + x[n]) / 2

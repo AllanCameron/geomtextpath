@@ -82,9 +82,8 @@ measure_text <- function(
   }
 
   # Adjust shape for resolution
-  fontsize <- as_inch(unit(gp$fontsize %||% 12 * gp$lineheight %||% 1.2, "pt"))
-  metrics$width  <-  metrics$width  / ppi
-  metrics$height <-  metrics$height / ppi - fontsize
+  metrics$width  <- metrics$width  / ppi
+  metrics$height <- measure_text_dim(label, gp, "height")
   metrics$x_adj  <-  x_adjust / ppi
   txt$x_offset   <-  txt$x_offset   / ppi
   txt$x_midpoint <-  txt$x_midpoint / ppi
@@ -126,10 +125,8 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
     "The fontsize vector in gpar does not match the number of labels." =
       length(size) == length(label) || length(size) == 1
   )
-  width  <- as_inch(stringWidth(label),  "width")
-  height <- as_inch(stringHeight(label), "height")
-  width  <- width  * size / 11
-  height <- height * size / 11
+  width  <- measure_text_dim(label, gp, "width")
+  height <- measure_text_dim(label, gp, "height")
   ymin   <- -(height * (vjust - 0.5))
 
   Map(
@@ -143,7 +140,7 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
       )
       attr(ans, "offset")  <- ymin
       attr(ans, "metrics") <- data_frame(width = width, height = height,
-                                         x_adj = (height * (vjust - 0.5)))
+                                         x_adj = -0.5 * height)
       ans
     },
     label  = as.list(label),
@@ -195,4 +192,20 @@ translate_glyph <- function(index, id, gp = gpar()) {
     idx = split(index, id)
   )
   intToUtf8(index, multiple = TRUE)
+}
+
+measure_text_dim <- function(labels, gp, dim = "height") {
+  dimfun <- switch(
+    dim,
+    height = grobHeight,
+    width  = grobWidth
+  )
+  gp <- lapply(seq_along(labels), function(i) {
+    recycle_gp(gp, `[`, i)
+  })
+  grobs <- Map(
+    textGrob, gp = gp, label = labels
+  )
+  ans <- do.call(unit.c, lapply(grobs, dimfun))
+  as_inch(ans, dim)
 }
