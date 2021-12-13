@@ -41,6 +41,7 @@ Collate:
     'geom_textpath.R'
     'geom_labelpath.R'
     'geom_textcontour.R'
+    'geom_textdensity.R'
     'geom_textdensity2d.R'
     'geometry_helpers.R'
     'geomtextpath-package.R'

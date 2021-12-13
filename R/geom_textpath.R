@@ -42,7 +42,7 @@
 #'   string where the majority of letters would be upside down along the path
 #'   are inverted to improve legibility. If `FALSE` letters are left as-is.
 #' @param halign A `character(1)` describing how multi-line labels should
-#'   be justified. Can either be `"left"` (default), `"center"` or `"right"`.
+#'   be justified. Can either be `"left"`, `"center"` (default) or `"right"`.
 #' @param offset A [`unit()`][grid::unit()] of length 1 to determine the offset
 #'   of the text from the path. If not `NULL`, this overrules the `vjust`
 #'   setting.

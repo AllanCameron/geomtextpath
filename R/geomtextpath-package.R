@@ -3,7 +3,7 @@
 
 #' @import ggplot2
 #' @import grid
-#' @importFrom stats approx dnorm approxfun complete.cases ave
+#' @importFrom stats approx dnorm approxfun complete.cases ave bw.nrd
 #' @importFrom utils head tail
 #' @importFrom graphics strwidth
 #' @importFrom systemfonts glyph_info

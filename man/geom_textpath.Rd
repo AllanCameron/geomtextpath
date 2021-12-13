@@ -118,7 +118,7 @@ string where the majority of letters would be upside down along the path
 are inverted to improve legibility. If \code{FALSE} letters are left as-is.}
 
 \item{halign}{A \code{character(1)} describing how multi-line labels should
-be justified. Can either be \code{"left"} (default), \code{"center"} or \code{"right"}.}
+be justified. Can either be \code{"left"}, \code{"center"} (default) or \code{"right"}.}
 
 \item{offset}{A \code{\link[grid:unit]{unit()}} of length 1 to determine the offset
 of the text from the path. If not \code{NULL}, this overrules the \code{vjust}
