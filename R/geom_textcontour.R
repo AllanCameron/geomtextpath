@@ -51,7 +51,7 @@
 #' which is called 'tracking' in typography. The default is 0 and units are
 #' measured in 1/1000 em. Numbers greater than zero increase the spacing,
 #' whereas negative numbers decrease the spacing.
-#' `geom_labelcontour()` understands the following aesthetics (required
+#' `geom_textcontour()` understands the following aesthetics (required
 #' aesthetics are in bold):
 #' \itemize{
 #'   \item \strong{`x`}
@@ -84,8 +84,6 @@
 #'   scale_fill_manual(values = terrain.colors(11)) +
 #'   theme_classic() +
 #'   theme(legend.position = "none")
-
-
 geom_textcontour <- function(
   mapping = NULL, data = NULL, stat = "text_contour",
   position = "identity", na.rm = FALSE, show.legend = NA,
@@ -118,11 +116,40 @@ geom_textcontour <- function(
         ))
 }
 
-#' @rdname geom_textcontour
-#' @format NULL
-#' @usage NULL
+
+#' @inheritParams geom_textcontour
+#' @param geom The geometric object to use display the data
 #' @export
-#' @include geom_textpath.R
+#' @section Computed variables:
+#'  The variable `level` is a numeric or a factor
+#'   depending on whether lines or bands are calculated.
+#' \describe{
+#'  \item{`level`}{Height of contour. This is a numeric vector that
+#'    represents bin boundaries.
+#'   }
+#' }
+#'
+#' `stat_textcontour()` understands the following aesthetics (required
+#' aesthetics are in bold):
+#' \itemize{
+#'   \item \strong{`x`}
+#'   \item \strong{`y`}
+#'   \item \strong{`z`}
+#'   \item `alpha`
+#'   \item `colour`
+#'   \item `family`
+#'   \item `fontface`
+#'   \item `group`
+#'   \item `hjust`
+#'   \item `size`
+#'   \item `vjust`
+#'   \item `linetype`
+#'   \item `linewidth`
+#'   \item `linecolour`
+#'   \item `spacing`
+#' }
+#'
+#' @rdname geom_textcontour
 stat_textcontour <- function(mapping = NULL, data = NULL,
                              geom = "text_contour",
                          position = "identity",

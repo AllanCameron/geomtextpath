@@ -29,6 +29,20 @@ geom_textcontour(
   padding = unit(0.15, "inch"),
   ...
 )
+
+stat_textcontour(
+  mapping = NULL,
+  data = NULL,
+  geom = "text_contour",
+  position = "identity",
+  ...,
+  bins = NULL,
+  binwidth = NULL,
+  breaks = NULL,
+  na.rm = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE
+)
 }
 \arguments{
 \item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{aes()}} or
@@ -126,7 +140,7 @@ The \code{spacing} aesthetic allows fine control of spacing of text,
 which is called 'tracking' in typography. The default is 0 and units are
 measured in 1/1000 em. Numbers greater than zero increase the spacing,
 whereas negative numbers decrease the spacing.
-\code{geom_labelcontour()} understands the following aesthetics (required
+\code{geom_textcontour()} understands the following aesthetics (required
 aesthetics are in bold):
 \itemize{
 \item \strong{\code{x}}
@@ -144,6 +158,37 @@ aesthetics are in bold):
 \item \code{linewidth}
 \item \code{linecolour}
 \item \code{spacing}
+}
+}
+
+\section{Computed variables}{
+
+ The variable `level` is a numeric or a factor
+  depending on whether lines or bands are calculated.
+\describe{
+ \item{`level`}{Height of contour. This is a numeric vector that
+   represents bin boundaries.
+  }
+}
+
+`stat_textcontour()` understands the following aesthetics (required
+aesthetics are in bold):
+\itemize{
+  \item \strong{`x`}
+  \item \strong{`y`}
+  \item \strong{`z`}
+  \item `alpha`
+  \item `colour`
+  \item `family`
+  \item `fontface`
+  \item `group`
+  \item `hjust`
+  \item `size`
+  \item `vjust`
+  \item `linetype`
+  \item `linewidth`
+  \item `linecolour`
+  \item `spacing`
 }
 }
 
