@@ -25,8 +25,7 @@ Imports:
     scales,
     systemfonts,
     rlang,
-    textshaping,
-    withr
+    textshaping
 RoxygenNote: 7.1.2
 Suggests: 
     testthat (>= 3.0.0),
@@ -34,6 +33,7 @@ Suggests:
     knitr,
     rmarkdown,
     ragg,
+    withr,
     qpdf
 Config/testthat/edition: 3
 VignetteBuilder: knitr

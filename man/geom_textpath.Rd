@@ -2,6 +2,7 @@
 % Please edit documentation in R/geom_textpath.R, R/geom_labelpath.R
 \name{geom_textpath}
 \alias{geom_textpath}
+\alias{geom_textline}
 \alias{geom_labelpath}
 \title{Add Curved Text Along Paths in \pkg{ggplot2}}
 \usage{
@@ -25,6 +26,18 @@ geom_textpath(
   parse = FALSE,
   keep_straight = FALSE,
   padding = unit(0.15, "inch")
+)
+
+geom_textline(
+  mapping = NULL,
+  data = NULL,
+  stat = "identity",
+  position = "identity",
+  na.rm = FALSE,
+  orientation = NA,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  ...
 )
 
 geom_labelpath(
@@ -136,6 +149,12 @@ paths.}
 padding between path and text when the \code{cut_path} parameter trims the
 path.}
 
+\item{orientation}{The orientation of the layer. The default (NA)
+automatically determines the orientation from the aesthetic mapping.
+In the rare event that this fails it can be given explicitly by
+setting orientation to either "x" or "y". See the Orientation section
+for more detail.}
+
 \item{label.padding}{Amount of padding around label. Defaults to 0.25 lines.}
 
 \item{label.r}{Radius of rounded corners. Defaults to 0.15 lines.}
@@ -183,29 +202,35 @@ particularly those using the built-in \code{iris} data set.)
 }
 \section{Aesthetics}{
 
-The \code{spacing} aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography. The default is 0 and units are
-measured in 1/1000 em. Numbers greater than zero increase the spacing,
-whereas negative numbers decrease the spacing.
-\code{geom_textpath()} understands the following aesthetics (required
-aesthetics are in bold):
+\code{geom_textpath()} understands the following aesthetics (required aesthetics are in bold):
 \itemize{
-\item \strong{\code{x}}
-\item \strong{\code{y}}
-\item \strong{\code{label}}
-\item \code{alpha}
-\item \code{colour}
-\item \code{family}
-\item \code{fontface}
-\item \code{group}
-\item \code{hjust}
-\item \code{size}
-\item \code{vjust}
-\item \code{linetype}
-\item \code{linewidth}
-\item \code{linecolour}
-\item \code{spacing}
+  \item \strong{\code{x}}
+  \item \strong{\code{y}}
+  \item \strong{\code{label}}
+  \item \code{alpha}
+  \item \code{angle}
+  \item \code{colour}
+  \item \code{family}
+  \item \code{fontface}
+  \item \code{group}
+  \item \code{hjust}
+  \item \code{linecolour}
+  \item \code{lineheight}
+  \item \code{linetype}
+  \item \code{linewidth}
+  \item \code{size}
+  \item \code{spacing}
+  \item \code{vjust}
 }
+The `spacing` aesthetic allows fine control of spacing of text,
+which is called 'tracking' in typography.
+The default is 0 and units are measured in 1/1000 em.
+Numbers greater than zero increase the spacing,
+whereas negative numbers decrease the spacing.
+
+
+Learn more about setting these aesthetics 
+in \code{vignette("ggplot2-specs")}.
 }
 
 \examples{
@@ -225,55 +250,16 @@ aesthetics are in bold):
    geom_textpath(size = 7, vjust = 2, linewidth = 0) +
    coord_equal(xlim = c(-1500, 1500), ylim = c(-1500, 1500))
 
-# Produce labelled density lines:
+# Use geom_textline as a drop-in for geom_line
 
-# By default the paths are broken to allow the names in-line
+ df <- data.frame(x = rep(1:100, 3),
+                  y = sin(c(seq(0, pi, len = 100),
+                            seq(pi, 2*pi, len = 100),
+                            rep(0, 100))),
+                  label = rep(c("y is increasing",
+                                "y is falling",
+                                "y is flat"), each = 100))
 
- ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-   geom_textpath(aes(label = Species), stat = "density",
-                 size = 6, fontface = 2, hjust = 0.2, vjust = 0.3)
-
-# If the vjust parameter moves the text above or below the line,
-# the line is automatically filled in:
-
- ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-   geom_textpath(aes(label = Species), stat = "density",
-                 size = 6, fontface = 2, hjust = 0.2, vjust = -0.2)
-
-# Correction of angles across different aspect ratios:
-
-# The angle of the text continues to follow the path even if the
-# aspect ratio of the plot changes, for example, during faceting.
-# Compare faceting horizontally:
-
- p <- ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-        geom_textpath(aes(label = Species), stat = "density",
-                      size = 6, fontface = 2, hjust = 0.1, vjust = -0.2) +
-        scale_y_continuous(limits = c(0, 1.5))
-
- p + facet_grid(.~Species)
-
-# and faceting vertically:
-
- p + facet_grid(Species~.)
-
-# label groups of points along their trend line:
-
- ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
-   geom_point(alpha = 0.1) +
-   geom_textpath(aes(label = Species, colour = Species),
-                 stat = "smooth", method = "loess", formula = y ~ x,
-                 size = 7, linetype = 3, fontface = 2, linewidth = 1) +
-   scale_colour_manual(values = c("forestgreen", "deepskyblue4", "tomato4")) +
-   theme_bw()
-
-# Straight text paths in Cartesian Co-ordinates curve in Polar Co-ordinates
-
- df <- data.frame(x = 1:1000, y = 1, text = "This is a perfectly flat label")
-
- p <- ggplot(df, aes(x, y, label = text)) +
-   geom_textpath(size = 6)
- p
-
-p + coord_polar(start = pi)
+ggplot(df, aes(x, y, label = label, color = label)) +
+   geom_textline(size = 6) + theme(legend.position = "none")
 }
