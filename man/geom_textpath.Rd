@@ -55,7 +55,7 @@ geom_labelpath(
   include_line = TRUE,
   cut_path = FALSE,
   flip_inverted = TRUE,
-  halign = "left",
+  halign = "center",
   offset = NULL,
   parse = FALSE,
   keep_straight = FALSE,
@@ -231,6 +231,15 @@ whereas negative numbers decrease the spacing.
 
 Learn more about setting these aesthetics 
 in \code{vignette("ggplot2-specs")}.
+
+
+In addition to aforementioned aesthetics, \code{geom_labelpath()} also
+understands the following aesthetics related to the textbox:
+\itemize{
+ \item{\code{boxcolour}}
+ \item{\code{boxlinetype}}
+ \item{\code{boxlinewidth}}
+}
 }
 
 \examples{
