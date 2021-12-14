@@ -41,11 +41,11 @@ library(geomtextpath)
 #> Loading required package: ggplot2
 ```
 
-The main function in this package, `geom_textpath`, functions much as
-any other `geom` in `ggplot2`, taking its x co-ordinates, its y
-co-ordinates and its text label from an aesthetic mapping. At its most
-basic, this allows the `label` to be plotted on an arbitrary path, as
-shown in the following example:
+The core function in this package, `geom_textpath`, works like any other
+`geom` in `ggplot2`. It takes its x co-ordinates, its y co-ordinates and
+its text label from an aesthetic mapping. At its most basic, this allows
+the `label` to be plotted on an arbitrary path, as shown in the
+following example:
 
 ``` r
 t <- seq(5, -1, length.out = 1000) * pi
@@ -65,14 +65,45 @@ ggplot(spiral, aes(x, y, label = text)) +
 
 <img src="man/figures/README-spiral-1.png" width="100%" style="display: block; margin: auto;" />
 
-Of course, we can create the path data from various “stat”
-transformations, and generate the labels from the grouping variables we
-are plotting. This allows very easy labeling of density curves:
+Just as `geom_path` is the foundation for several other geoms in
+`ggplot2`, so too is `geom_textpath` the foundation of the other geoms
+in this package, which include:
+
+-   `geom_textline`
+-   `geom_textdensity`
+-   `geom_textcontour`
+-   `geom_textdensity2d`
+
+Each of which aims to replicate all the functionality of the equivalent
+`ggplot2` function, but with direct text labels that follow the shape of
+the lines drawn.
+
+### `geom_textline`
+
+You can use `geom_textline` as a drop in for `geom_text` if you want it
+directly labelled. Just pass the `label` you want as an argument to
+`geom_textline` (or if you have grouped data you can pass the label as
+an aesthetic mapping).
 
 ``` r
-ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-  geom_textpath(aes(label = Species), stat = "density",
-                size = 6, fontface = 2, hjust = 0.2, vjust = 0.3)
+df <- data.frame(Year  = c(2016, 2017, 2018, 2019, 2020, 2020.1, 2021, 2022), 
+                 Value = c(23, 27, 30, 33, 34, 19, 20, 22))
+
+ggplot(df, aes(Year, Value)) + 
+  geom_point() +
+  geom_textline(label = "Happiness", size = 6, hjust = "auto", vjust = -0.2)
+```
+
+<img src="man/figures/README-textline_demo-1.png" width="100%" style="display: block; margin: auto;" />
+
+### `geom_textdensity`
+
+This is the analogue of `geom_density` that allows for smoothly curved
+labels on density plots
+
+``` r
+ggplot(iris, aes(x = Sepal.Length, colour = Species, label = Species)) +
+  geom_textdensity(size = 6, fontface = 2, hjust = 0.2, vjust = 0.3)
 ```
 
 <img src="man/figures/README-density_demo-1.png" width="100%" style="display: block; margin: auto;" />
@@ -121,7 +152,6 @@ Adding labels to the level of your contour lines is now as simple as
 calling `geom_textcontour` instead of `geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -372,7 +402,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 
