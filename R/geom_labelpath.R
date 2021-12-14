@@ -15,6 +15,14 @@
 #' @rdname geom_textpath
 #' @param label.padding Amount of padding around label. Defaults to 0.25 lines.
 #' @param label.r Radius of rounded corners. Defaults to 0.15 lines.
+#' @section Aesthetics:
+#' In addition to aforementioned aesthetics, \code{geom_labelpath()} also
+#' understands the following aesthetics related to the textbox:
+#' \itemize{
+#'  \item{\code{boxcolour}}
+#'  \item{\code{boxlinetype}}
+#'  \item{\code{boxlinewidth}}
+#' }
 geom_labelpath <- function(
   mapping = NULL, data = NULL,
   stat = "identity", position = "identity",
@@ -23,7 +31,7 @@ geom_labelpath <- function(
   ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
   include_line = TRUE, cut_path = FALSE, flip_inverted = TRUE,
-  halign = "left", offset = NULL, parse = FALSE,
+  halign = "center", offset = NULL, parse = FALSE,
   keep_straight = FALSE,
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
@@ -65,11 +73,25 @@ geom_labelpath <- function(
 GeomLabelpath <- ggproto(
   "GeomLabelpath", GeomTextpath,
 
-  default_aes = aes(colour = "black", size = 3.88, hjust = 0.5, vjust = 0.5,
-                    family = "", fontface = 1, lineheight = 1.2, alpha = 1,
-                    linewidth = 0.5, linetype = 1, spacing = 0,
-                    linecolour = "_copy_text_colour_", angle = 0,
-                    fill = "white"),
+  default_aes = aes(
+    colour       = "black",
+    alpha        = 1,
+    size         = 3.88,
+    hjust        = 0.5,
+    vjust        = 0.5,
+    family       = "",
+    fontface     = 1,
+    lineheight   = 1.2,
+    linewidth    = 0.5,
+    linetype     = 1,
+    spacing      = 0,
+    linecolour   = "_copy_text_colour_",
+    angle        = 0,
+    fill         = "white",
+    boxcolour    = "_copy_text_colour_",
+    boxlinetype  = 1,
+    boxlinewidth = NULL
+  ),
 
   draw_panel = function(
     data, panel_params, coord,
@@ -83,8 +105,14 @@ GeomLabelpath <- ggproto(
 
     #---- type conversion, checks & warnings ---------------------------#
 
-    copy_colour <- data$linecolour == "_copy_text_colour_"
-    data$linecolour[copy_colour] <- data$colour[copy_colour]
+    copy_me <- data$linecolour == "_copy_text_colour_"
+    data$linecolour[copy_me]   <- data$colour[copy_me]
+    copy_me <- data$boxcolour  == "_copy_text_colour_"
+    data$boxcolour[copy_me]    <- data$colour[copy_me]
+
+    if (is.null(data$boxlinewidth)) {
+      data$boxlinewidth <- data$linewidth
+    }
 
     # We need to change groups to numeric to order them appropriately
     data$group <- discretise(data$group)
@@ -120,12 +148,22 @@ GeomLabelpath <- ggproto(
       tracking   = data$spacing[first]
     )
 
+    box_gp <- gpar(
+      col  = alpha(data$boxcolour, data$alpha)[first],
+      fill = alpha(data$fill, data$alpha)[first],
+      lwd  = data$boxlinewidth[first] * .pt,
+      lty  = data$boxlinetype[first],
+      lineend   = lineend,
+      linejoin  = linejoin,
+      linemitre = linemitre
+    )
+
     if (all(data$linetype %in% c("0", "blank", NA))) {
       path_gp <- gpar(lty = 0)
     } else {
       path_gp <- gpar(
         col  = alpha(data$linecolour, data$alpha)[first],
-        fill = alpha(data$fill, data$alpha)[first],
+        fill = alpha(data$linecolour, data$alpha)[first],
         lwd  = data$linewidth[first] * .pt,
         lty  = data$linetype[first],
         lineend   = lineend,
@@ -153,7 +191,7 @@ GeomLabelpath <- ggproto(
       cut_path = cut_path,
       gp_text  = text_gp,
       gp_path  = path_gp,
-      gp_box   = path_gp,
+      gp_box   = box_gp,
       keep_straight = keep_straight,
       flip_inverted = flip_inverted,
       default.units = "npc",

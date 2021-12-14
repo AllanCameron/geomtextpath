@@ -1,4 +1,4 @@
-cairo_pdf()
+cairo_pdf(tmp <- tempfile(fileext = ".pdf"))
 
 test_that("We can measure plotmath expressions", {
 
@@ -54,4 +54,4 @@ test_that("Warn/error upon font fallback issues", {
 })
 
 dev.off()
-withr::defer(unlink("Rplot001.pdf"))
+unlink(tmp)

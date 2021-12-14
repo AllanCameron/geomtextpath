@@ -33,7 +33,6 @@ Suggests:
     knitr,
     rmarkdown,
     ragg,
-    withr,
     qpdf
 Config/testthat/edition: 3
 VignetteBuilder: knitr

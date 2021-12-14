@@ -104,7 +104,7 @@ grid.newpage(); grid.draw(gt)
 
 # Save plot ---------------------------------------------------------------
 
-agg_png(width = 4.39, height = 5.02, units = "cm", res = 3000,
+agg_png(width = 4.39, height = 5.02, units = "cm", res = 300,
         filename = logo_file, scaling = 0.25, background = "transparent")
 plot.new()
 grid.draw(gt)

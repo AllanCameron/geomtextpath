@@ -432,29 +432,49 @@ interpret_hjust <- function(hjust, offset, width) {
   padding <- as_inch(padding)
   metrics <- attr(label, "metrics")
   height <- c(0, 1) * metrics$height + c(-1, 1) * padding
-  height <- c(height[1], sum(height) / 2, height[2])
 
-  offset <- as_inch(attr(label, "offset"))[unique(label$y_id)]
-  offset <- min(offset) + metrics$x_adj
-  offset <- c(0, offset + height)
-  offset <- .get_offset(path$x, path$y, offset)
+  if (nrow(text) > 1) {
+    # Get min / mid / max height
+    height <- c(0, 1) * metrics$height + c(-1, 1) * padding
+    height <- c(height[1], sum(height) / 2, height[2])
 
-  lims <- range(text$left, text$right)
-  lims <- approx_multiple(offset$arc_length[, 1], lims, offset$arc_length[, 3])
-  lims <- lims + c(-1, 1) * padding
+    # Apply height to minimal offset
+    offset <- as_inch(attr(label, "offset"))[unique(label$y_id)]
+    offset <- min(offset) + metrics$x_adj
+    offset <- c(0, offset + height)
 
-  corners <- approx_multiple(
-    offset$arc_length[, 3], lims,
-    y = cbind(offset$x[, c(2, 4)], offset$y[, c(2, 4)])
-  )
-  keep  <- offset$arc_length[, 3] > lims[1] & offset$arc_length[, 3] < lims[2]
-  nkeep <- sum(keep)
+    # Calculate offsets
+    offset <- .get_offset(path$x, path$y, offset)
 
-  x <- c(corners[1, 1], offset$x[keep, 2],      corners[2, 1],
-         corners[2, 2], rev(offset$x[keep, 4]), corners[1, 2])
-  y <- c(corners[1, 3], offset$y[keep, 2],      corners[2, 3],
-         corners[2, 4], rev(offset$y[keep, 4]), corners[1, 4])
-  n <- length(x)
+    # Set start / end at 0-offset, then translate to mid-height offset
+    lims <- range(text$left, text$right)
+    lims <- approx_multiple(offset$arc_length[, 1], lims, offset$arc_length[, 3])
+    lims <- lims + c(-1, 1) * padding
+
+    # Translate mid-height offset to min / max height offsets to get corners
+    corners <- approx_multiple(
+      offset$arc_length[, 3], lims,
+      y = cbind(offset$x[, c(2, 4)], offset$y[, c(2, 4)])
+    )
+
+    # Check which points fall between corners
+    keep  <- offset$arc_length[, 3] > lims[1] & offset$arc_length[, 3] < lims[2]
+    nkeep <- sum(keep)
+
+    # Add points in-between corners
+    x <- c(corners[1, 1], offset$x[keep, 2],      corners[2, 1],
+           corners[2, 2], rev(offset$x[keep, 4]), corners[1, 2])
+    y <- c(corners[1, 3], offset$y[keep, 2],      corners[2, 3],
+           corners[2, 4], rev(offset$y[keep, 4]), corners[1, 4])
+  } else {
+    # Simple rotation of a rectangle
+    xx <- (metrics$width  * c(-0.5, 0.5) + c(-padding, padding))[c(1, 2, 2, 1)]
+    yy <- (diff(height)   * c(-0.5, 0.5))[c(1, 1, 2, 2)]
+    rot <- text$angle * .deg2rad
+    x <- xx * cos(rot) - yy * sin(rot) + text$x
+    y <- xx * sin(rot) + yy * cos(rot) + text$y
+    nkeep <- 0
+  }
 
   radius <- as_inch(radius)
   if (radius > 0.01) {
@@ -462,6 +482,7 @@ interpret_hjust <- function(hjust, offset, width) {
       radius  <- 0.5 * diff(range(height))
     }
     # Make closed polygon by inserting midpoint between start and end
+    n <- length(x)
     x_start <- (x[1] + x[n]) / 2
     y_start <- (y[1] + y[n]) / 2
     x <- c(x_start, x, x_start)
