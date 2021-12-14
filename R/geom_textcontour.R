@@ -21,31 +21,7 @@
 #' @inheritParams ggplot2::layer
 #' @inheritParams ggplot2::geom_contour
 #' @inheritParams geom_textpath
-#'
-#' @section Aesthetics:
-#' The `spacing` aesthetic allows fine control of spacing of text,
-#' which is called 'tracking' in typography. The default is 0 and units are
-#' measured in 1/1000 em. Numbers greater than zero increase the spacing,
-#' whereas negative numbers decrease the spacing.
-#' `geom_textcontour()` understands the following aesthetics (required
-#' aesthetics are in bold):
-#' \itemize{
-#'   \item \strong{`x`}
-#'   \item \strong{`y`}
-#'   \item \strong{`z`}
-#'   \item `alpha`
-#'   \item `colour`
-#'   \item `family`
-#'   \item `fontface`
-#'   \item `group`
-#'   \item `hjust`
-#'   \item `size`
-#'   \item `vjust`
-#'   \item `linetype`
-#'   \item `linewidth`
-#'   \item `linecolour`
-#'   \item `spacing`
-#' }
+#' @eval rd_aesthetics("geom", "text_contour")
 #'
 #' @include geom_textpath.R
 #' @export
@@ -110,14 +86,14 @@ geom_textcontour <- function(
 #' @rdname geom_textcontour
 stat_textcontour <- function(mapping = NULL, data = NULL,
                              geom = "text_contour",
-                         position = "identity",
-                         ...,
-                         bins = NULL,
-                         binwidth = NULL,
-                         breaks = NULL,
-                         na.rm = FALSE,
-                         show.legend = NA,
-                         inherit.aes = TRUE) {
+                             position = "identity",
+                             ...,
+                             bins = NULL,
+                             binwidth = NULL,
+                             breaks = NULL,
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
   layer(
     data = data,
     mapping = mapping,

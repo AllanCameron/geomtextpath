@@ -17,38 +17,20 @@
 #'   `geom_textdensity2d` adds this ability.
 #'
 #' @inheritParams ggplot2::layer
-#' @inheritParams ggplot2::geom_density_2d
 #' @inheritParams geom_textpath
-#' @param ... other arguments passed on to [`layer()`][ggplot2::layer].
-#'   These are often aesthetics, used to set an aesthetic to a fixed value,
-#'   like `colour = "red"` or `size = 3`. They may also be parameters to the
-#'   paired geom/stat.
+#' @inheritParams ggplot2::stat_density_2d
+#' @param n Number of grid points in each direction.
+#' @param h Bandwidth (vector of length two). If `NULL`, estimated
+#'   using [MASS::bandwidth.nrd()].
+#' @param adjust A multiplicative bandwidth adjustment to be used if 'h' is
+#'    'NULL'. This makes it possible to adjust the bandwidth while still
+#'    using the a bandwidth estimator. For example, `adjust = 1/2` means
+#'    use half of the default bandwidth.
 #'
-#' @section Aesthetics:
-#' The `spacing` aesthetic allows fine control of spacing of text,
-#' which is called 'tracking' in typography. The default is 0 and units are
-#' measured in 1/1000 em. Numbers greater than zero increase the spacing,
-#' whereas negative numbers decrease the spacing.
-#' `geom_textdensity2d()` understands the following aesthetics (required
-#' aesthetics are in bold):
-#' \itemize{
-#'   \item \strong{`x`}
-#'   \item \strong{`y`}
-#'   \item `alpha`
-#'   \item `colour`
-#'   \item `family`
-#'   \item `fontface`
-#'   \item `group`
-#'   \item `hjust`
-#'   \item `size`
-#'   \item `vjust`
-#'   \item `linetype`
-#'   \item `linewidth`
-#'   \item `linecolour`
-#'   \item `spacing`
-#' }
+#' @eval rd_aesthetics("geom", "text_density2d")
 #'
 #' @include geom_textpath.R
+#' @include utils.R
 #' @export
 #' @md
 #'
@@ -73,6 +55,9 @@ geom_textdensity2d <- function(mapping = NULL,
                                 keep_straight = FALSE,
                                 padding = unit(0.15, "inch"),
                                 contour_var = "density",
+                                n = 100,
+                                h = NULL,
+                                adjust = c(1, 1),
                                 lineend = "butt",
                                 linejoin = "round",
                                 linemitre = 10,
@@ -80,26 +65,28 @@ geom_textdensity2d <- function(mapping = NULL,
                                 show.legend = NA,
                                 inherit.aes = TRUE) {
   layer(
-    data = data,
-    mapping = mapping,
-    stat = stat,
-    geom = GeomTextDensity2d,
-    position = position,
+    data        = data,
+    mapping     = mapping,
+    stat        = stat,
+    geom        = GeomTextDensity2d,
+    position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = list(
-      cut_path      = cut_path,
-      flip_inverted = flip_inverted,
-      offset        = offset,
-      keep_straight = keep_straight,
-      lineend = lineend,
-      linejoin = linejoin,
-      linemitre = linemitre,
-      contour = TRUE,
-      contour_var = contour_var,
-      na.rm = na.rm,
-      padding = padding,
-      ...
+    params      = list(cut_path      = cut_path,
+                       flip_inverted = flip_inverted,
+                       offset        = offset,
+                       keep_straight = keep_straight,
+                       lineend       = lineend,
+                       linejoin      = linejoin,
+                       linemitre     = linemitre,
+                       contour       = TRUE,
+                       contour_var   = contour_var,
+                       na.rm         = na.rm,
+                       padding       = padding,
+                       n             = n,
+                       h             = h,
+                       adjust        = adjust,
+                       ...
     )
   )
 }
@@ -112,16 +99,23 @@ geom_textdensity2d <- function(mapping = NULL,
 #' @include geom_textpath.R
 GeomTextDensity2d <- ggproto("GeomTextDensity2d", GeomTextpath,
   required_aes = c("x", "y"),
-  default_aes = aes(colour = "black", size = 3.88, hjust = 0.5, vjust = 0.5,
-    family = "", fontface = 1, lineheight = 1.2, alpha = 1, linewidth = 0.5,
-    linetype = 1, spacing = 0, linecolour = "_copy_text_colour_",
-    angle = 0),
+  default_aes = aes(colour = "black",
+                    size = 3.88,
+                    hjust = 0.5,
+                    vjust = 0.5,
+                    family = "",
+                    fontface = 1,
+                    lineheight = 1.2,
+                    alpha = 1,
+                    linewidth = 0.5,
+                    linetype = 1,
+                    spacing = 0,
+                    linecolour = "_copy_text_colour_",
+                    angle = 0),
 
   setup_data = function(data, params) {
 
     data$label <- as.character(data$level)
     data
   }
-
-
 )

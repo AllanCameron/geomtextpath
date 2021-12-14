@@ -31,34 +31,8 @@
 #' @param n number of equally spaced points at which the density is to be
 #'   estimated, should be a power of two, see [density()] for
 #'   details
-#' @param ... other arguments passed on to [`layer()`][ggplot2::layer].
-#'   These are often aesthetics, used to set an aesthetic to a fixed value,
-#'   like `colour = "red"` or `size = 3`. They may also be parameters to the
-#'   paired geom/stat.
 #'
-#' @section Aesthetics:
-#' The `spacing` aesthetic allows fine control of spacing of text,
-#' which is called 'tracking' in typography. The default is 0 and units are
-#' measured in 1/1000 em. Numbers greater than zero increase the spacing,
-#' whereas negative numbers decrease the spacing.
-#' `geom_textdensity()` understands the following aesthetics (required
-#' aesthetics are in bold):
-#' \itemize{
-#'   \item \strong{`x`}
-#'   \item \strong{`label`}
-#'   \item `alpha`
-#'   \item `colour`
-#'   \item `family`
-#'   \item `fontface`
-#'   \item `group`
-#'   \item `hjust`
-#'   \item `size`
-#'   \item `vjust`
-#'   \item `linetype`
-#'   \item `linewidth`
-#'   \item `linecolour`
-#'   \item `spacing`
-#' }
+#' @eval rd_aesthetics("geom", "text_density")
 #'
 #' @export
 #' @md

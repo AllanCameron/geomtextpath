@@ -18,6 +18,9 @@ geom_textdensity2d(
   keep_straight = FALSE,
   padding = unit(0.15, "inch"),
   contour_var = "density",
+  n = 100,
+  h = NULL,
+  adjust = c(1, 1),
   lineend = "butt",
   linejoin = "round",
   linemitre = 10,
@@ -84,14 +87,24 @@ path.}
 by. Can be one of \code{"density"}, \code{"ndensity"}, or \code{"count"}. See the section
 on computed variables for details.}
 
+\item{n}{Number of grid points in each direction.}
+
+\item{h}{Bandwidth (vector of length two). If \code{NULL}, estimated
+using \code{\link[MASS:bandwidth.nrd]{MASS::bandwidth.nrd()}}.}
+
+\item{adjust}{A multiplicative bandwidth adjustment to be used if 'h' is
+'NULL'. This makes it possible to adjust the bandwidth while still
+using the a bandwidth estimator. For example, \code{adjust = 1/2} means
+use half of the default bandwidth.}
+
 \item{lineend}{Line end style (round, butt, square).}
 
 \item{linejoin}{Line join style (round, mitre, bevel).}
 
 \item{linemitre}{Line mitre limit (number greater than 1).}
 
-\item{na.rm}{If \code{FALSE}, the default, missing values are removed with
-a warning. If \code{TRUE}, missing values are silently removed.}
+\item{na.rm}{If \code{FALSE} (default), missing points or labels are removed from
+the text path with a warning.}
 
 \item{show.legend}{logical. Should this layer be included in the legends?
 \code{NA}, the default, includes if any aesthetics are mapped.
@@ -112,28 +125,34 @@ does not allow the lines to be labelled with the level of each contour.
 }
 \section{Aesthetics}{
 
-The \code{spacing} aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography. The default is 0 and units are
-measured in 1/1000 em. Numbers greater than zero increase the spacing,
-whereas negative numbers decrease the spacing.
-\code{geom_textdensity2d()} understands the following aesthetics (required
-aesthetics are in bold):
+\code{geom_text_density2d()} understands the following aesthetics (required aesthetics are in bold):
 \itemize{
-\item \strong{\code{x}}
-\item \strong{\code{y}}
-\item \code{alpha}
-\item \code{colour}
-\item \code{family}
-\item \code{fontface}
-\item \code{group}
-\item \code{hjust}
-\item \code{size}
-\item \code{vjust}
-\item \code{linetype}
-\item \code{linewidth}
-\item \code{linecolour}
-\item \code{spacing}
+  \item \strong{\code{x}}
+  \item \strong{\code{y}}
+  \item \code{alpha}
+  \item \code{angle}
+  \item \code{colour}
+  \item \code{family}
+  \item \code{fontface}
+  \item \code{group}
+  \item \code{hjust}
+  \item \code{linecolour}
+  \item \code{lineheight}
+  \item \code{linetype}
+  \item \code{linewidth}
+  \item \code{size}
+  \item \code{spacing}
+  \item \code{vjust}
 }
+The `spacing` aesthetic allows fine control of spacing of text,
+which is called 'tracking' in typography.
+The default is 0 and units are measured in 1/1000 em.
+Numbers greater than zero increase the spacing,
+whereas negative numbers decrease the spacing.
+
+
+Learn more about setting these aesthetics 
+in \code{vignette("ggplot2-specs")}.
 }
 
 \examples{

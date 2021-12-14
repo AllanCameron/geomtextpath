@@ -199,3 +199,96 @@ as_inch <- function(value, from = "x") {
   }
   value
 }
+
+
+# Documentation functions modified from ggplot2
+
+as_lower <- function(x) {
+  chartr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", x)
+}
+
+as_upper <- function(x) {
+  chartr("abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", x)
+}
+
+camelize <- function (x, first = FALSE)
+{
+    x <- gsub("_(.)", "\\U\\1", x, perl = TRUE)
+    if (first)
+    {
+        x <- paste0(as_upper(substring(x, 1, 1)), substring(x, 2))
+    }
+    x
+}
+
+find_global <- function (name, env, mode = "any")
+{
+    if (exists(name, envir = env, mode = mode)) {
+        return(get(name, envir = env, mode = mode))
+    }
+    nsenv <- asNamespace("geomtextpath")
+    if (exists(name, envir = nsenv, mode = mode)) {
+        return(get(name, envir = nsenv, mode = mode))
+    }
+    NULL
+}
+
+check_subclass <- function (x, subclass, argname = as_lower(subclass),
+                            env = parent.frame())
+{
+    if (inherits(x, subclass)) {
+        x
+    }
+    else if (is.character(x) && length(x) == 1) {
+
+        name <- paste0(subclass, camelize(x, first = TRUE))
+        obj <- find_global(name, env = env)
+        if (is.null(obj) || !inherits(obj, subclass)) {
+            abort(paste0("Can't find `", argname, "` called '", x, "'"))
+        }
+        else {
+            obj
+        }
+    }
+    else {
+        abort(paste0("`", argname, "` must be either a string or a ",
+                     subclass, " object"))
+    }
+}
+
+rd_aesthetics_item <- function (x)
+{
+    req <- x$required_aes
+    req <- sub("|", "} \\emph{or} \\code{", req,
+        fixed = TRUE)
+    req_aes <- unlist(strsplit(x$required_aes, "|", fixed = TRUE))
+    optional_aes <- setdiff(x$aesthetics(), req_aes)
+    all <- union(req, sort(optional_aes))
+    ifelse(all %in% req, paste0("\\strong{\\code{", all,
+        "}}"), paste0("\\code{", all, "}"))
+}
+
+# Documentation adapted from ggplot2
+
+rd_aesthetics <- function (type, name)
+{
+    obj <- switch(type, geom = check_subclass(name, "Geom",
+        env = globalenv()), stat = check_subclass(name, "Stat",
+        env = globalenv()))
+    aes <- rd_aesthetics_item(obj)
+    c("@section Aesthetics:",
+      paste0("\\code{", type,
+        "_", name, "()} ",
+        "understands the following aesthetics ",
+        "(required aesthetics are in bold):"),
+        "\\itemize{", paste0("  \\item ", aes), "}",
+        "The `spacing` aesthetic allows fine control of spacing of text,",
+        "which is called 'tracking' in typography.",
+        "The default is 0 and units are measured in 1/1000 em.",
+        "Numbers greater than zero increase the spacing,",
+        "whereas negative numbers decrease the spacing.",
+        "\n\nLearn more about setting these aesthetics ",
+        "in \\code{vignette(\"ggplot2-specs\")}."
+
+      )
+}

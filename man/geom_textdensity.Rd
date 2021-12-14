@@ -131,28 +131,34 @@ the density line when used as a drop-in replacement for
 }
 \section{Aesthetics}{
 
-The \code{spacing} aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography. The default is 0 and units are
-measured in 1/1000 em. Numbers greater than zero increase the spacing,
-whereas negative numbers decrease the spacing.
-\code{geom_textdensity()} understands the following aesthetics (required
-aesthetics are in bold):
+\code{geom_text_density()} understands the following aesthetics (required aesthetics are in bold):
 \itemize{
-\item \strong{\code{x}}
-\item \strong{\code{label}}
-\item \code{alpha}
-\item \code{colour}
-\item \code{family}
-\item \code{fontface}
-\item \code{group}
-\item \code{hjust}
-\item \code{size}
-\item \code{vjust}
-\item \code{linetype}
-\item \code{linewidth}
-\item \code{linecolour}
-\item \code{spacing}
+  \item \strong{\code{x}}
+  \item \strong{\code{label}}
+  \item \code{alpha}
+  \item \code{angle}
+  \item \code{colour}
+  \item \code{family}
+  \item \code{fontface}
+  \item \code{group}
+  \item \code{hjust}
+  \item \code{linecolour}
+  \item \code{lineheight}
+  \item \code{linetype}
+  \item \code{linewidth}
+  \item \code{size}
+  \item \code{spacing}
+  \item \code{vjust}
 }
+The `spacing` aesthetic allows fine control of spacing of text,
+which is called 'tracking' in typography.
+The default is 0 and units are measured in 1/1000 em.
+Numbers greater than zero increase the spacing,
+whereas negative numbers decrease the spacing.
+
+
+Learn more about setting these aesthetics 
+in \code{vignette("ggplot2-specs")}.
 }
 
 \examples{
