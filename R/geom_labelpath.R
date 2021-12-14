@@ -61,6 +61,7 @@ geom_labelpath <- function(
 #' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
+#' @include geom_textpath.R
 GeomLabelpath <- ggproto(
   "GeomLabelpath", GeomTextpath,
 

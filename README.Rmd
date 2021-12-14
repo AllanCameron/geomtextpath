@@ -104,7 +104,7 @@ ggplot() +
 
 ### Labelled contour lines
 
-Adding labels to the level of your contour lines is now as simple as calling `geom_labelcontour` instead of `geom_contour`:
+Adding labels to the level of your contour lines is now as simple as calling `geom_textcontour` instead of `geom_contour`:
 
 ```{r volcano}
 
@@ -113,14 +113,14 @@ df$z <- as.vector(volcano)
 
 ggplot(df, aes(x, y, z = z)) + 
   geom_contour_filled(bins = 6, alpha = 0.6) + 
-  geom_labelcontour(bins = 6, size = 2.5, padding = unit(0.05, "in")) + 
+  geom_textcontour(bins = 6, size = 2.5, padding = unit(0.05, "in")) + 
   scale_fill_manual(values = terrain.colors(11)) + 
   theme_classic() +
   theme(legend.position = "none")
 
 ```
 
-We also have `geom_labeldensity2d` for the common use case of 2D density contours:
+We also have `geom_textdensity2d` for the common use case of 2D density contours:
 
 ```{r density2d}
 set.seed(1)
@@ -128,7 +128,7 @@ set.seed(1)
 df  <- data.frame(x = rnorm(100), y = rnorm(100))
 
 ggplot(df, aes(x, y)) + 
-  geom_labeldensity2d() +
+  geom_textdensity2d() +
   theme_classic()
 ```
 
@@ -136,11 +136,9 @@ ggplot(df, aes(x, y)) +
 
 Just like `geom_text`, the `vjust` parameter controls vertical justification of the text, though in `geom_textpath` the text is justified relative to the path rather than a single point. If the `vjust` parameter moves the text above or below the line, the line is automatically "filled in". 
 
-For short text labels applied to long paths, we need a parameter to control how far along the path the text is placed. For this we use the horizontal justification (`hjust`) parameter.
+For short text labels applied to long paths, we need a parameter to control how far along the path the text is placed. For this we use the horizontal justification (`hjust`) parameter..
 
-The behaviour of the `vjust` and `hjust` parameters is described in more detail in the "aesthetics" vignette.
-
-Here is an example of text justified above the line of the path:
+Here is an example of text justified above the line of the path using a small negative value of `vjust`:
 
 ```{r density_vjust}
 ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
@@ -148,6 +146,21 @@ ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
                 size = 6, fontface = 2, hjust = 0.2, vjust = -0.2)
 ```
 
+As well as specifying a numeric value for `hjust`, a number of text descriptions can be used instead, such as "xmin", "xmid", "xmax", "ymin", "ymid" and "ymax". These can be useful because the numeric `hjust` value describes a position _along the path_, which may not coincide with distance along a particular axis. Here's an example of "ymax":
+
+```{r density_ymax}
+ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
+  geom_textpath(aes(label = Species), stat = "density",
+                size = 6, fontface = 2, hjust = "ymax", vjust = -0.2)
+```
+
+There is also an "auto" mode, which will attempt to find the least curved place on the path to place the text:
+
+```{r density_auto}
+ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
+  geom_textpath(aes(label = Species), stat = "density",
+                size = 6, fontface = 2, hjust = "auto", vjust = -0.2)
+```
 
 ### Correction of angles across different aspect ratios
 

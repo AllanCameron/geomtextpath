@@ -42,7 +42,7 @@
 #'   string where the majority of letters would be upside down along the path
 #'   are inverted to improve legibility. If `FALSE` letters are left as-is.
 #' @param halign A `character(1)` describing how multi-line labels should
-#'   be justified. Can either be `"left"` (default), `"center"` or `"right"`.
+#'   be justified. Can either be `"left"`, `"center"` (default) or `"right"`.
 #' @param offset A [`unit()`][grid::unit()] of length 1 to determine the offset
 #'   of the text from the path. If not `NULL`, this overrules the `vjust`
 #'   setting.
@@ -55,6 +55,11 @@
 #' @param padding A [`unit()`][grid::unit()] of length 1 to determine the
 #'   padding between path and text when the `cut_path` parameter trims the
 #'   path.
+#' @param orientation The orientation of the layer. The default (NA)
+#'    automatically determines the orientation from the aesthetic mapping.
+#'    In the rare event that this fails it can be given explicitly by
+#'    setting orientation to either "x" or "y". See the Orientation section
+#'    for more detail.
 #'
 #' @details
 #' There are limitations inherent in the plotting of text elements in
@@ -87,30 +92,7 @@
 #' Typically, this will be the grouping variable itself (see the examples,
 #' particularly those using the built-in `iris` data set.)
 #'
-#' @section Aesthetics:
-#' The `spacing` aesthetic allows fine control of spacing of text,
-#' which is called 'tracking' in typography. The default is 0 and units are
-#' measured in 1/1000 em. Numbers greater than zero increase the spacing,
-#' whereas negative numbers decrease the spacing.
-#' `geom_textpath()` understands the following aesthetics (required
-#' aesthetics are in bold):
-#' \itemize{
-#'   \item \strong{`x`}
-#'   \item \strong{`y`}
-#'   \item \strong{`label`}
-#'   \item `alpha`
-#'   \item `colour`
-#'   \item `family`
-#'   \item `fontface`
-#'   \item `group`
-#'   \item `hjust`
-#'   \item `size`
-#'   \item `vjust`
-#'   \item `linetype`
-#'   \item `linewidth`
-#'   \item `linecolour`
-#'   \item `spacing`
-#' }
+#' @eval rd_aesthetics("geom", "textpath")
 #'
 #' @export
 #' @md
@@ -132,57 +114,18 @@
 #'    geom_textpath(size = 7, vjust = 2, linewidth = 0) +
 #'    coord_equal(xlim = c(-1500, 1500), ylim = c(-1500, 1500))
 #'
-#'# Produce labelled density lines:
+#' # Use geom_textline as a drop-in for geom_line
 #'
-#' # By default the paths are broken to allow the names in-line
+#'  df <- data.frame(x = rep(1:100, 3),
+#'                   y = sin(c(seq(0, pi, len = 100),
+#'                             seq(pi, 2*pi, len = 100),
+#'                             rep(0, 100))),
+#'                   label = rep(c("y is increasing",
+#'                                 "y is falling",
+#'                                 "y is flat"), each = 100))
 #'
-#'  ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-#'    geom_textpath(aes(label = Species), stat = "density",
-#'                  size = 6, fontface = 2, hjust = 0.2, vjust = 0.3)
-#'
-#' # If the vjust parameter moves the text above or below the line,
-#' # the line is automatically filled in:
-#'
-#'  ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-#'    geom_textpath(aes(label = Species), stat = "density",
-#'                  size = 6, fontface = 2, hjust = 0.2, vjust = -0.2)
-#'
-#'# Correction of angles across different aspect ratios:
-#'
-#' # The angle of the text continues to follow the path even if the
-#' # aspect ratio of the plot changes, for example, during faceting.
-#' # Compare faceting horizontally:
-#'
-#'  p <- ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-#'         geom_textpath(aes(label = Species), stat = "density",
-#'                       size = 6, fontface = 2, hjust = 0.1, vjust = -0.2) +
-#'         scale_y_continuous(limits = c(0, 1.5))
-#'
-#'  p + facet_grid(.~Species)
-#'
-#' # and faceting vertically:
-#'
-#'  p + facet_grid(Species~.)
-#'
-#'# label groups of points along their trend line:
-#'
-#'  ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
-#'    geom_point(alpha = 0.1) +
-#'    geom_textpath(aes(label = Species, colour = Species),
-#'                  stat = "smooth", method = "loess", formula = y ~ x,
-#'                  size = 7, linetype = 3, fontface = 2, linewidth = 1) +
-#'    scale_colour_manual(values = c("forestgreen", "deepskyblue4", "tomato4")) +
-#'    theme_bw()
-#'
-#' # Straight text paths in Cartesian Co-ordinates curve in Polar Co-ordinates
-#'
-#'  df <- data.frame(x = 1:1000, y = 1, text = "This is a perfectly flat label")
-#'
-#'  p <- ggplot(df, aes(x, y, label = text)) +
-#'    geom_textpath(size = 6)
-#'  p
-#'
-#' p + coord_polar(start = pi)
+#' ggplot(df, aes(x, y, label = label, color = label)) +
+#'    geom_textline(size = 6) + theme(legend.position = "none")
 
 
 geom_textpath <- function(
@@ -345,4 +288,48 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   }
 )
 
+#' @export
+#' @rdname geom_textpath
+geom_textline <- function(mapping = NULL, data = NULL, stat = "identity",
+                      position = "identity", na.rm = FALSE, orientation = NA,
+                      show.legend = NA, inherit.aes = TRUE, ...) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomTextLine,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      na.rm = na.rm,
+      orientation = orientation,
+      ...
+    )
+  )
+}
 
+#' The Geom object for a textpath
+#'
+#' This is the \code{ggproto} class that creates the textline layer. It is not
+#' intended to be used directly by the end user.
+#'
+#' @format NULL
+#' @usage NULL
+#' @export
+
+GeomTextLine <- ggproto("GeomLine", GeomTextpath,
+  setup_params = function(data, params) {
+    params$flipped_aes <- has_flipped_aes(data, params, ambiguous = TRUE)
+    params
+  },
+
+  extra_params = c("na.rm", "orientation"),
+
+  setup_data = function(data, params) {
+    data$flipped_aes <- params$flipped_aes
+    data <- flip_data(data, params$flipped_aes)
+    data <- data[order(data$PANEL, data$group, data$x), ]
+    flip_data(data, params$flipped_aes)
+  }
+)

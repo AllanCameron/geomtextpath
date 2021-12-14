@@ -56,7 +56,7 @@ direction of the text. Alternatively a \code{\link[grid:unit]{unit()}} object to
 directly set the offset from the path.}
 
 \item{halign}{A \code{character(1)} describing how multi-line labels should
-be justified. Can either be \code{"left"} (default), \code{"center"} or \code{"right"}.}
+be justified. Can either be \code{"left"}, \code{"center"} (default) or \code{"right"}.}
 
 \item{angle}{a \code{numeric} vector either length 1 or the same length as \code{id}
 describing the angle in degrees at which text should be rotated.}
