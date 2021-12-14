@@ -20,8 +20,8 @@ textual annotations are short, straight and in line with the axes of the
 plot. However, there are some occasions when it is useful to have text
 follow a curved path. This may be to create or recreate a specific
 visual effect, or it may be to label a circular / polar plot in a more
-“natural” way. Direct labels that can adhere closesly to the associated
-line can also provide a neat alternative to legends.
+“natural” way. Direct labels that can adhere closesly to the
+associated line can also provide a neat alternative to legends.
 
 ## Installation
 
@@ -70,18 +70,11 @@ Just as `geom_path` is the foundation for several other geoms in
 `ggplot2`, so too is `geom_textpath` the foundation of the other geoms
 in this package, which include:
 
-<<<<<<< HEAD
--   `geom_textline`
--   `geom_textdensity`
--   `geom_textsmooth`
--   `geom_textcontour`
--   `geom_textdensity2d`
-=======
   - `geom_textline`
   - `geom_textdensity`
+  - `geom_textsmooth`
   - `geom_textcontour`
   - `geom_textdensity2d`
->>>>>>> 83c7171dd4c19901b3d40ee906f234ff380db5dd
 
 Each of which aims to replicate all the functionality of the equivalent
 `ggplot2` function, but with direct text labels that follow the shape of
@@ -135,7 +128,8 @@ ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
 
 <img src="man/figures/README-smooth-1.png" width="100%" style="display: block; margin: auto;" />
 
-Another use might be to label lines that are too “noisy”
+Another use might be to label lines that are too “noisy” for direct
+labels to remain legible if they adhere too closely to the line.
 
 ``` r
 ggplot(economics, aes(date, unemploy)) +
