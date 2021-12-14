@@ -1,3 +1,5 @@
+cairo_pdf()
+
 test_that("We can measure plotmath expressions", {
 
   out <- measure_exp(expression(cos(theta)))
@@ -50,3 +52,6 @@ test_that("Warn/error upon font fallback issues", {
   expect_warning(measure_text(c("ABC", "\u3053")), "Not all glyphs")
 
 })
+
+dev.off()
+withr::defer(unlink("Rplot001.pdf"))

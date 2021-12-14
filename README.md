@@ -121,7 +121,6 @@ Adding labels to the level of your contour lines is now as simple as
 calling `geom_textcontour` instead of `geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -372,7 +371,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 
