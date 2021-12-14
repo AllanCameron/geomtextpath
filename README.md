@@ -70,11 +70,18 @@ Just as `geom_path` is the foundation for several other geoms in
 `ggplot2`, so too is `geom_textpath` the foundation of the other geoms
 in this package, which include:
 
+<<<<<<< HEAD
 -   `geom_textline`
 -   `geom_textdensity`
 -   `geom_textsmooth`
 -   `geom_textcontour`
 -   `geom_textdensity2d`
+=======
+  - `geom_textline`
+  - `geom_textdensity`
+  - `geom_textcontour`
+  - `geom_textdensity2d`
+>>>>>>> 83c7171dd4c19901b3d40ee906f234ff380db5dd
 
 Each of which aims to replicate all the functionality of the equivalent
 `ggplot2` function, but with direct text labels that follow the shape of
@@ -146,6 +153,7 @@ Adding labels to the level of your contour lines is now as simple as
 calling `geom_textcontour` instead of `geom_contour`:
 
 ``` r
+
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -422,6 +430,7 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
+
 p + coord_polar()
 ```
 
