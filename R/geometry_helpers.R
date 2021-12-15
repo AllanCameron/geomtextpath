@@ -323,6 +323,8 @@
   if (!any(trim)) {
     path$section <- "all"
   } else {
+    path$length <- path$length %||% .arclength_from_xy(path$x, path$y, path$id)
+
     # Get locations where strings start and end
     lefts <- vapply(split(letters$left, letters$id), min,
                      numeric(1), USE.NAMES = FALSE)
@@ -386,25 +388,27 @@ interpret_hjust <- function(hjust, offset, width) {
   path <- offset$arc_length[, 1]
   room <- 0.5 * width
   subset <- path > room & path < (max(path) - room)
+  if (sum(subset) < 2) {
+    subset <- rep(TRUE, length(path))
+  }
 
   path <- path / max(path)
 
-  switch(EXPR = hjust,
-         auto = path[subset][which.min_curvature(x[subset], y[subset])],
-         xmin = path[subset][which.min(x[subset])],
-         xmax = path[subset][which.max(x[subset])],
-         xmid = path[subset][which.min(abs(mean(x) - x[subset]))],
-         ymin = path[subset][which.min(y[subset])],
-         ymax = path[subset][which.max(y[subset])],
-         ymid = path[subset][which.min(abs(mean(y) - y[subset]))],
-
-                {
-                   warn(paste0("hjust value '", hjust, "' not recognised. ",
-                              "Defaulting to hjust = 0.5"));
-                   return(0.5)
-                }
-         )
-
+  switch(
+    EXPR = hjust,
+    auto = path[subset][which.min_curvature(x[subset], y[subset])],
+    xmin = path[subset][which.min(x[subset])],
+    xmax = path[subset][which.max(x[subset])],
+    xmid = path[subset][which.min(abs(mean(x) - x[subset]))],
+    ymin = path[subset][which.min(y[subset])],
+    ymax = path[subset][which.max(y[subset])],
+    ymid = path[subset][which.min(abs(mean(y) - y[subset]))],
+    {
+      warn(paste0("hjust value '", hjust, "' not recognised. ",
+                  "Defaulting to hjust = 0.5"));
+      return(0.5)
+    }
+  )
 }
 
 #' Making a curved textbox

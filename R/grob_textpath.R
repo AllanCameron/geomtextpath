@@ -12,9 +12,6 @@
 #' @param gp_text,gp_path An object of class `"gpar"`, typically the output from
 #'   a call from the [`gpar()`][grid::gpar] function. These are basically lists
 #'   of graphical parameters for the text and path respectively.
-#' @param gp_box (Optional) an object of class `"gpar"`, typically the output
-#'   from a call to the [`gpar()`][grid::gpar] function. If this is an empty
-#'   list, no text box will be drawn.
 #' @param vjust A `numeric` vector specifying justification orthogonal to the
 #'   direction of the text. Alternatively a [`unit()`][grid::unit()] object to
 #'   directly set the offset from the path.
@@ -102,32 +99,15 @@ textpathGrob <- function(
   # Reconstitute data
   gp_text <- gp_fill_defaults(gp_text)
 
-  if(length(gp_text$fontsize) == 1) {
-    gp_text$fontsize <- rep(gp_text$fontsize, n_label)
-  }
+  label <- measure_text(label, gp_text, vjust = vjust, halign = halign,
+                        straight = keep_straight)
 
-  if(is.language(label) || keep_straight)
-  {
-    label <- measure_exp(label, gp_text, vjust = vjust)
+  x <- as_unit(x, default.units)
+  y <- as_unit(y, default.units)
 
-  } else {
-    label <- as.character(label)
-    label <- measure_text(label, gp_text, vjust = vjust, halign = halign)
-  }
-
-  if (!is.unit(x)) {
-    x <- unit(x, default.units)
-  }
-  if (!is.unit(y)) {
-    y <- unit(y, default.units)
-  }
-
-  if (!is.null(polar_params))
-  {
+  if (!is.null(polar_params)) {
     polar_params$x <- unit(polar_params$x, default.units)
     polar_params$y <- unit(polar_params$y, default.units)
-  } else {
-    polar_params <- list(x = NA, y = NA, theta = NA)
   }
 
   path <- data_frame(x = x, y = y, id = rep(seq_along(id_lens), id_lens))
@@ -136,19 +116,21 @@ textpathGrob <- function(
     textpath = list(
       data          = path,
       label         = label,
-      hjust         = hjust,
-      vjust         = vjust,
-      halign        = halign,
-      cut_path      = cut_path,
       gp_text       = gp_text,
       gp_path       = gp_path,
       gp_box        = gp_box,
-      flip_inverted = flip_inverted,
-      polar_params  = polar_params %||% list(x = NA, y = NA, theta = NA),
-      angle         = angle,
-      padding       = padding,
-      label.padding = label.padding,
-      label.r       = label.r
+      params = list(
+        flip_inverted = flip_inverted,
+        polar_params  = polar_params,
+        angle         = angle,
+        padding       = padding,
+        label.padding = label.padding,
+        label.r       = label.r,
+        hjust         = hjust,
+        vjust         = vjust,
+        halign        = halign,
+        cut_path      = cut_path
+      )
     ),
     name = name,
     vp = vp,
@@ -163,110 +145,92 @@ makeContent.textpath <- function(x) {
 
   if(is.null(x$textpath)) return(zeroGrob())
   v <- x$textpath
-  path <- dedup_path(
-    x = as_inch(v$data$x, "x"),
-    y = as_inch(v$data$y, "y"),
-    id = v$data$id
-  )
-  if(is.unit(v$polar_params$x) & is.unit(v$polar_params$y))
-  {
-    v$polar_params$x <- as_inch(v$polar_params$x, "x")
-    v$polar_params$y <- as_inch(v$polar_params$y, "y")
-  }
   x$textpath <- NULL
+  params <- v$params
 
-  ## ---- Data manipulation -------------------------------------------- #
-
-  path$size <- rep(v$gp_text$fontsize, run_len(path$id))
-
-  # Get gradients, angles and path lengths for each group
-  path <- split(path, path$id)
-
-  # Handle point-like textpaths
-  if (any({singletons <- vapply(path, nrow, integer(1)) == 1})) {
-    width <- vapply(v$label, function(x) max(x$xmax, na.rm = TRUE), numeric(1))
-    path[singletons] <- Map(.pathify,
-                            data    = path[singletons],
-                            hjust   = v$hjust[singletons],
-                            angle   = v$angle,
-                            width   = width[singletons],
-                            polar_x = v$polar_params$x,
-                            polar_y = v$polar_params$y,
-                            thet    = v$polar_params$theta)
-    v$gp_path$lty[singletons] <- 0
-  }
-
-
-  path <- lapply(path, function(p) {
-    p$length <-.arclength_from_xy(p$x, p$y)
-    p
-  })
+  path <- .prepare_path(v$data, v$label, v$gp_path, params)
 
   # Get the actual text string positions and angles for each group
   text <- Map(
       .get_path_points,
       path = path, label = v$label,
-      hjust = v$hjust, halign = v$halign,
-      flip_inverted = v$flip_inverted
+      hjust = params$hjust, halign = params$halign,
+      flip_inverted = params$flip_inverted
     )
-
-  if ({make_box <- sum(lengths(v$gp_box))}) {
-    box <- Map(
-      .curved_textbox,
-      path = path, label = v$label, text = text,
-      padding = v$label.padding, radius = v$label.r
-    )
-    box <- rbind_dfs(box)
-  }
-
-  text_lens <- vapply(text, nrow, integer(1))
   text <- rbind_dfs(text)
 
-  if (!all((v$gp_path$lty %||% 1) %in% c("0", "blank", NA))) {
-    path <- rbind_dfs(path)
+  x <- .add_path_grob(x, path, text, attr(path, "gp"), params)
+  x <- .add_text_grob(x, text, v$gp_text)
+  x
+}
+
+.prepare_path <- function(data, label, gp, params) {
+  path <- dedup_path(
+    x = as_inch(data$x, "x"),
+    y = as_inch(data$y, "y"),
+    id = data$id
+  )
+  path <- split(path, path$id)
+
+  if (any({singletons <- vapply(path, nrow, integer(1)) == 1})) {
+    width <- vapply(label, function(x) max(x$xmax, na.rm = TRUE), numeric(1))
+    path[singletons] <- Map(.pathify,
+                            data    = path[singletons],
+                            hjust   = params$hjust[singletons],
+                            angle   = params$angle,
+                            width   = width[singletons],
+                            polar_x = list(params$polar_params$x),
+                            polar_y = list(params$polar_params$y),
+                            thet    = list(params$polar_params$theta))
+    gp$lty[singletons] <- 0
+  }
+  attr(path, "gp") <- gp
+  return(path)
+}
+
+.add_path_grob <- function(grob, data, text, gp, params) {
+  if (!all((gp$lty %||% 1) %in% c("0", "blank", NA))) {
+    data <- rbind_dfs(data)
 
     # Get bookends by trimming paths when it intersects text
-    path <- .get_surrounding_lines(path, text, vjust = v$vjust, v$cut_path,
-                                   padding = v$padding)
-
-    if (nrow(path) > 1) {
+    data <- .get_surrounding_lines(
+      data, text,
+      vjust    = params$vjust    %||% 0.5,
+      cut_path = params$cut_path %||% NA,
+      padding  = params$padding  %||% 0.15
+    )
+    if (nrow(data) > 1) {
       # Recycle graphical parameters to match lengths of path
-      gp_path <- recycle_gp(v$gp_path, `[`, i = path$id[path$start])
+      gp <- recycle_gp(gp, `[`, i = data$id[data$start])
 
       # Write path grob
-      x <- addGrob(
-        x, polylineGrob(
-          x = path$x, y = path$y, id = path$new_id, gp = gp_path,
+      grob <- addGrob(
+        grob, polylineGrob(
+          x = data$x, y = data$y, id = data$new_id, gp = gp,
           default.units = "inches"
         )
       )
     }
   }
+  return(grob)
+}
 
-  if (make_box) {
-    x <- addGrob(
-      x, polygonGrob(
-        x = box$x, y = box$y, id = box$id,
-        default.units = "inches", gp = v$gp_box
-      )
-    )
-  }
+.add_text_grob <- function(grob, text, gp) {
+  text_lens <- run_len(text$id)
 
   # Recycle graphical parameters to match lengths of letters
-  gp_text <- recycle_gp(v$gp_text, rep, times = text_lens)
+  gp <- recycle_gp(gp, rep, times = text_lens)
 
   # Write text grob
-  x <- addGrob(
-    x, textGrob(
+  grob <- addGrob(
+    grob, textGrob(
       label = make_label(text$label),
       x = text$x, y = text$y, rot = text$angle,
-      vjust = 0.5, hjust = 0.5, gp = gp_text,
+      vjust = 0.5, hjust = 0.5, gp = gp,
       default.units = "inches"
     )
   )
-  x
 }
-
 
 # recycle_gp ---------------------------------------------------------------
 
@@ -320,12 +284,16 @@ dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
 
 # Convert point-like textpaths into proper text paths.
 
-.pathify <- function(data, hjust, angle, width, polar_x, polar_y, thet) {
+.pathify <- function(data, hjust, angle, width,
+                     polar_x = NULL, polar_y = NULL, thet = NULL) {
 
   angle <- pi * angle / 180
   multi_seq <- Vectorize(seq.default)
 
-   if(!is.na(polar_x) & !is.na(polar_y)) {
+   if(!is.null(polar_x) & !is.null(polar_y) & !is.null(thet)) {
+
+     polar_x <- as_inch(polar_x, "x")
+     polar_y <- as_inch(polar_y, "y")
 
      if(thet == "y") angle <- angle - pi/2
      r <- sqrt((data$x - polar_x)^2 + (data$y - polar_y)^2)

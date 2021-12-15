@@ -144,7 +144,8 @@ approx_multiple <- function(x, xout, y = matrix()) {
   stopifnot("Cannot interpolate NA in non-numeric vectors" = is.numeric(x),
             "Cannot interpolate NA if no non-NA values" = !all(is.na(x)))
 
-  approx(seq_along(x), x, seq_along(x))$y
+  x[] <- approx(seq_along(x), x, seq_along(x))$y
+  x
 }
 
 
@@ -200,6 +201,12 @@ as_inch <- function(value, from = "x") {
   value
 }
 
+as_unit <- function(x, units = NULL, ...) {
+  if (!is.unit(x) && !is.null(units)) {
+    x <- unit(x, units, ...)
+  }
+  x
+}
 
 # Documentation functions modified from ggplot2
 

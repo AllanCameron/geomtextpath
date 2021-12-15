@@ -51,24 +51,33 @@
 # setting accuracy to 1 or more, which will interpolate the points with splines
 # to emulate a smooth curve through the points.
 
-.arclength_from_xy <- function(x, y, accuracy = NA)
+.arclength_from_xy <- function(x, y, id = NULL)
 {
   .check_xy(x, y)
+  x <- .interp_na(x)
+  y <- .interp_na(y)
 
-  if (is.matrix(x) || is.matrix(y)) {
-    stopifnot(
-      "Both or neither x and y must be matrices" =
-        is.matrix(x) && is.matrix(y)
-    )
-      # Call self for every column, even if accuracy is NA, so that any
-      # NA values are handled appropriately
-
-      out <- Map(.arclength_from_xy, x = asplit(x, 2), y = asplit(y, 2),
-                 accuracy = accuracy)
-      out <- do.call(cbind, out)
-
-    return(out)
+  if (is.null(id)) {
+    id <- rep(seq_len(NCOL(x)), each = NROW(x))
   }
+
+  start <- run_start(id)
+
+  dist <- sqrt(diff(x)^2 + diff(y)^2)
+
+  # Should ideally be something like vctrs::vec_c(0, dist)
+  if (is.null(dim(dist))) {
+    dist <- c(0, dist)
+  } else {
+    dist <- rbind(0, dist)
+  }
+  dist[start] <- 0
+
+  ave(dist, id, FUN = cumsum)
+}
+
+.arclength_spline <- function(x, y, accuracy = NA) {
+  .check_xy(x, y)
 
   x <- .interp_na(x)
   y <- .interp_na(y)
@@ -89,7 +98,6 @@
   dist <- c(0, cumsum(sqrt(diff(new_x$y)^2 + diff(new_y)^2)))
 
   return(dist[match(t, new_x$x)])
-
 }
 
 # Before / After ----------------------------------------------------------

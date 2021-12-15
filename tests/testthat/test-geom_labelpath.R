@@ -16,7 +16,7 @@ test_that("Text path grob has correct types", {
   grobs <- layer_grob(p)[[1]]
 
   expect_s3_class(grobs, "gTree")
-  expect_s3_class(grobs, "textpath")
+  expect_s3_class(grobs, "labelpath")
   expect_length(grobs$children, 0)
 
   grobs <- makeContent(grobs)
