@@ -54,18 +54,20 @@
 .arclength_from_xy <- function(x, y, accuracy = NA)
 {
   .check_xy(x, y)
+.arclength_spline <- function(x, y, accuracy = NA) {
+  .check_xy(x, y)
 
   if (is.matrix(x) || is.matrix(y)) {
     stopifnot(
       "Both or neither x and y must be matrices" =
         is.matrix(x) && is.matrix(y)
     )
-      # Call self for every column, even if accuracy is NA, so that any
-      # NA values are handled appropriately
+    # Call self for every column, even if accuracy is NA, so that any
+    # NA values are handled appropriately
 
-      out <- Map(.arclength_from_xy, x = asplit(x, 2), y = asplit(y, 2),
-                 accuracy = accuracy)
-      out <- do.call(cbind, out)
+    out <- Map(.arclength_from_xy, x = asplit(x, 2), y = asplit(y, 2),
+               accuracy = accuracy)
+    out <- do.call(cbind, out)
 
     return(out)
   }
@@ -89,7 +91,6 @@
   dist <- c(0, cumsum(sqrt(diff(new_x$y)^2 + diff(new_y)^2)))
 
   return(dist[match(t, new_x$x)])
-
 }
 
 # Before / After ----------------------------------------------------------
