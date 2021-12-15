@@ -148,8 +148,6 @@ makeContent.textpath <- function(x) {
   x$textpath <- NULL
   params <- v$params
 
-
-  ## ---- Data manipulation -------------------------------------------- #
   path <- .prepare_path(v$data, v$label, v$gp_path, params)
 
   # Get the actual text string positions and angles for each group
@@ -159,29 +157,9 @@ makeContent.textpath <- function(x) {
       hjust = params$hjust, halign = params$halign,
       flip_inverted = params$flip_inverted
     )
-
-  if ({make_box <- sum(lengths(v$gp_box))}) {
-    box <- Map(
-      .curved_textbox,
-      path = path, label = v$label, text = text,
-      padding = params$label.padding, radius = params$label.r
-    )
-    box <- rbind_dfs(box)
-  }
-
   text <- rbind_dfs(text)
 
   x <- .add_path_grob(x, path, text, attr(path, "gp"), params)
-
-  if (make_box) {
-    x <- addGrob(
-      x, polygonGrob(
-        x = box$x, y = box$y, id = box$id,
-        default.units = "inches", gp = v$gp_box
-      )
-    )
-  }
-
   x <- .add_text_grob(x, text, v$gp_text)
   x
 }
