@@ -127,11 +127,6 @@ measure_text <- function(
 # This is a simpler version of measure_text for expressions only
 measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
 {
-  size <- gp$fontsize %||% 11
-  stopifnot(
-    "The fontsize vector in gpar does not match the number of labels." =
-      length(size) == length(label) || length(size) == 1
-  )
   width  <- measure_text_dim(label, gp, "width")
   height <- measure_text_dim(label, gp, "height")
   ymin   <- -(height * (vjust - 0.5))

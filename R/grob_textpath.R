@@ -102,11 +102,6 @@ textpathGrob <- function(
   # Reconstitute data
   gp_text <- gp_fill_defaults(gp_text)
 
-  if(length(gp_text$fontsize) == 1) {
-    gp_text$fontsize <- rep(gp_text$fontsize, n_label)
-  }
-
-
   label <- measure_text(label, gp_text, vjust = vjust, halign = halign,
                         straight = keep_straight)
 
@@ -167,8 +162,6 @@ makeContent.textpath <- function(x) {
   x$textpath <- NULL
 
   ## ---- Data manipulation -------------------------------------------- #
-
-  path$size <- rep(v$gp_text$fontsize, run_len(path$id))
 
   # Get gradients, angles and path lengths for each group
   path <- split(path, path$id)

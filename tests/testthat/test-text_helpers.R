@@ -11,10 +11,6 @@ test_that("We can measure plotmath expressions", {
   out <- measure_exp(test_exp)
 
   expect_equal(length(out), 2L)
-
-  gp <- gpar(fontsize = c(3, 3, 3))
-
-  expect_error(measure_exp(test_exp, gp = gp), "fontsize")
 })
 
 test_that("Composite glyphs are joined", {
