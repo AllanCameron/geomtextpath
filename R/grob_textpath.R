@@ -192,10 +192,22 @@ makeContent.textpath <- function(x) {
     box <- rbind_dfs(box)
   }
 
-  text_lens <- vapply(text, nrow, integer(1))
   text <- rbind_dfs(text)
 
   x <- .add_path_grob(x, path, text, v$gp_path, params)
+
+  if (make_box) {
+    x <- addGrob(
+      x, polygonGrob(
+        x = box$x, y = box$y, id = box$id,
+        default.units = "inches", gp = v$gp_box
+      )
+    )
+  }
+
+  x <- .add_text_grob(x, text, v$gp_text)
+  x
+}
 
 .add_path_grob <- function(grob, data, text, gp, params) {
   if (!all((gp$lty %||% 1) %in% c("0", "blank", NA))) {
@@ -224,30 +236,22 @@ makeContent.textpath <- function(x) {
   return(grob)
 }
 
-  if (make_box) {
-    x <- addGrob(
-      x, polygonGrob(
-        x = box$x, y = box$y, id = box$id,
-        default.units = "inches", gp = v$gp_box
-      )
-    )
-  }
+.add_text_grob <- function(grob, text, gp) {
+  text_lens <- run_len(text$id)
 
   # Recycle graphical parameters to match lengths of letters
-  gp_text <- recycle_gp(v$gp_text, rep, times = text_lens)
+  gp <- recycle_gp(gp, rep, times = text_lens)
 
   # Write text grob
-  x <- addGrob(
-    x, textGrob(
+  grob <- addGrob(
+    grob, textGrob(
       label = make_label(text$label),
       x = text$x, y = text$y, rot = text$angle,
-      vjust = 0.5, hjust = 0.5, gp = gp_text,
+      vjust = 0.5, hjust = 0.5, gp = gp,
       default.units = "inches"
     )
   )
-  x
 }
-
 
 # recycle_gp ---------------------------------------------------------------
 
