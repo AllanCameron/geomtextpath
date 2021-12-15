@@ -86,8 +86,7 @@ test_that("We can correctly pathify points", {
   data   <- data.frame(x = 0.75, y = 0.2, id = 1)
 
   # linear pathify
-  linear <- .pathify(data, hjust = 0.5, angle = 45, width = 1,
-                     polar_x = NA, polar_y = NA, thet = NA)
+  linear <- .pathify(data, hjust = 0.5, angle = 45, width = 1)
   # Polar pathify
   polar  <- .pathify(data, hjust = 0.5, angle = 45, width = 1,
                      polar_x = 0.5, polar_y = 0.5, thet = "y")

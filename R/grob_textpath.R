@@ -108,12 +108,9 @@ textpathGrob <- function(
   x <- as_unit(x, default.units)
   y <- as_unit(y, default.units)
 
-  if (!is.null(polar_params))
-  {
+  if (!is.null(polar_params)) {
     polar_params$x <- unit(polar_params$x, default.units)
     polar_params$y <- unit(polar_params$y, default.units)
-  } else {
-    polar_params <- list(x = NA, y = NA, theta = NA)
   }
 
   path <- data_frame(x = x, y = y, id = rep(seq_along(id_lens), id_lens))
@@ -130,7 +127,7 @@ textpathGrob <- function(
       gp_path       = gp_path,
       gp_box        = gp_box,
       flip_inverted = flip_inverted,
-      polar_params  = polar_params %||% list(x = NA, y = NA, theta = NA),
+      polar_params  = polar_params,
       angle         = angle,
       padding       = padding,
       label.padding = label.padding,
@@ -154,11 +151,6 @@ makeContent.textpath <- function(x) {
     y = as_inch(v$data$y, "y"),
     id = v$data$id
   )
-  if(is.unit(v$polar_params$x) & is.unit(v$polar_params$y))
-  {
-    v$polar_params$x <- as_inch(v$polar_params$x, "x")
-    v$polar_params$y <- as_inch(v$polar_params$y, "y")
-  }
   x$textpath <- NULL
 
   ## ---- Data manipulation -------------------------------------------- #
@@ -304,12 +296,16 @@ dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
 
 # Convert point-like textpaths into proper text paths.
 
-.pathify <- function(data, hjust, angle, width, polar_x, polar_y, thet) {
+.pathify <- function(data, hjust, angle, width,
+                     polar_x = NULL, polar_y = NULL, thet = NULL) {
 
   angle <- pi * angle / 180
   multi_seq <- Vectorize(seq.default)
 
-   if(!is.na(polar_x) & !is.na(polar_y)) {
+   if(!is.null(polar_x) & !is.null(polar_y) & !is.null(thet)) {
+
+     polar_x <- as_inch(polar_x, "x")
+     polar_y <- as_inch(polar_y, "y")
 
      if(thet == "y") angle <- angle - pi/2
      r <- sqrt((data$x - polar_x)^2 + (data$y - polar_y)^2)
