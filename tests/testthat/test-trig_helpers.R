@@ -65,7 +65,7 @@ test_that(".arclength_from_xy gives correct results", {
   y <- sin(t)
 
   basic <- abs(max(.arclength_from_xy(x, y)) - 2 * pi)
-  accurate <-  abs(max(.arclength_from_xy(x, y, accuracy = 5)) - 2 * pi)
+  accurate <-  abs(max(.arclength_spline(x, y, accuracy = 5)) - 2 * pi)
 
   expect_lt(accurate, basic)
 })
