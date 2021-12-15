@@ -20,8 +20,8 @@ textual annotations are short, straight and in line with the axes of the
 plot. However, there are some occasions when it is useful to have text
 follow a curved path. This may be to create or recreate a specific
 visual effect, or it may be to label a circular / polar plot in a more
-“natural” way. Direct labels that can adhere closesly to the associated
-line can also provide a neat alternative to legends.
+“natural” way. Direct labels that can adhere closesly to the
+associated line can also provide a neat alternative to legends.
 
 ## Installation
 
@@ -70,11 +70,11 @@ Just as `geom_path` is the foundation for several other geoms in
 `ggplot2`, so too is `geom_textpath` the foundation of the other geoms
 in this package, which include:
 
--   `geom_textline`
--   `geom_textdensity`
--   `geom_textsmooth`
--   `geom_textcontour`
--   `geom_textdensity2d`
+  - `geom_textline`
+  - `geom_textdensity`
+  - `geom_textsmooth`
+  - `geom_textcontour`
+  - `geom_textdensity2d`
 
 Each of which aims to replicate all the functionality of the equivalent
 `ggplot2` function, but with direct text labels that follow the shape of
@@ -143,6 +143,7 @@ Adding labels to the level of your contour lines is now as simple as
 calling `geom_textcontour` instead of `geom_contour`:
 
 ``` r
+
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -419,6 +420,7 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
+
 p + coord_polar()
 ```
 
