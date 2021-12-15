@@ -148,32 +148,12 @@ makeContent.textpath <- function(x) {
 
   if(is.null(x$textpath)) return(zeroGrob())
   v <- x$textpath
-  params <- v$params
-  path <- dedup_path(
-    x = as_inch(v$data$x, "x"),
-    y = as_inch(v$data$y, "y"),
-    id = v$data$id
-  )
   x$textpath <- NULL
+  params <- v$params
+
 
   ## ---- Data manipulation -------------------------------------------- #
-
-  # Get gradients, angles and path lengths for each group
-  path <- split(path, path$id)
-
-  # Handle point-like textpaths
-  if (any({singletons <- vapply(path, nrow, integer(1)) == 1})) {
-    width <- vapply(v$label, function(x) max(x$xmax, na.rm = TRUE), numeric(1))
-    path[singletons] <- Map(.pathify,
-                            data    = path[singletons],
-                            hjust   = params$hjust[singletons],
-                            angle   = params$angle,
-                            width   = width[singletons],
-                            polar_x = list(params$polar_params$x),
-                            polar_y = list(params$polar_params$y),
-                            thet    = list(params$polar_params$theta))
-    v$gp_path$lty[singletons] <- 0
-  }
+  path <- .prepare_path(v$data, v$label, v$gp_path, params)
 
   # Get the actual text string positions and angles for each group
   text <- Map(
@@ -194,7 +174,7 @@ makeContent.textpath <- function(x) {
 
   text <- rbind_dfs(text)
 
-  x <- .add_path_grob(x, path, text, v$gp_path, params)
+  x <- .add_path_grob(x, path, text, attr(path, "gp"), params)
 
   if (make_box) {
     x <- addGrob(
@@ -207,6 +187,30 @@ makeContent.textpath <- function(x) {
 
   x <- .add_text_grob(x, text, v$gp_text)
   x
+}
+
+.prepare_path <- function(data, label, gp, params) {
+  path <- dedup_path(
+    x = as_inch(data$x, "x"),
+    y = as_inch(data$y, "y"),
+    id = data$id
+  )
+  path <- split(path, path$id)
+
+  if (any({singletons <- vapply(path, nrow, integer(1)) == 1})) {
+    width <- vapply(label, function(x) max(x$xmax, na.rm = TRUE), numeric(1))
+    path[singletons] <- Map(.pathify,
+                            data    = path[singletons],
+                            hjust   = params$hjust[singletons],
+                            angle   = params$angle,
+                            width   = width[singletons],
+                            polar_x = list(params$polar_params$x),
+                            polar_y = list(params$polar_params$y),
+                            thet    = list(params$polar_params$theta))
+    gp$lty[singletons] <- 0
+  }
+  attr(path, "gp") <- gp
+  return(path)
 }
 
 .add_path_grob <- function(grob, data, text, gp, params) {
