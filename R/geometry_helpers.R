@@ -323,6 +323,8 @@
   if (!any(trim)) {
     path$section <- "all"
   } else {
+    path$length <- path$length %||% .arclength_from_xy(path$x, path$y, path$id)
+
     # Get locations where strings start and end
     lefts <- vapply(split(letters$left, letters$id), min,
                      numeric(1), USE.NAMES = FALSE)

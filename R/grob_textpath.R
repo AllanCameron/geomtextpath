@@ -166,17 +166,11 @@ makeContent.textpath <- function(x) {
                             hjust   = v$hjust[singletons],
                             angle   = v$angle,
                             width   = width[singletons],
-                            polar_x = v$polar_params$x,
-                            polar_y = v$polar_params$y,
-                            thet    = v$polar_params$theta)
+                            polar_x = list(v$polar_params$x),
+                            polar_y = list(v$polar_params$y),
+                            thet    = list(v$polar_params$theta))
     v$gp_path$lty[singletons] <- 0
   }
-
-
-  path <- lapply(path, function(p) {
-    p$length <-.arclength_from_xy(p$x, p$y)
-    p
-  })
 
   # Get the actual text string positions and angles for each group
   text <- Map(
