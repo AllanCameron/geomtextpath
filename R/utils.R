@@ -144,7 +144,8 @@ approx_multiple <- function(x, xout, y = matrix()) {
   stopifnot("Cannot interpolate NA in non-numeric vectors" = is.numeric(x),
             "Cannot interpolate NA if no non-NA values" = !all(is.na(x)))
 
-  approx(seq_along(x), x, seq_along(x))$y
+  x[] <- approx(seq_along(x), x, seq_along(x))$y
+  x
 }
 
 
