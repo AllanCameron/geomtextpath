@@ -106,14 +106,9 @@ textpathGrob <- function(
     gp_text$fontsize <- rep(gp_text$fontsize, n_label)
   }
 
-  if(is.language(label) || keep_straight)
-  {
-    label <- measure_exp(label, gp_text, vjust = vjust)
 
-  } else {
-    label <- as.character(label)
-    label <- measure_text(label, gp_text, vjust = vjust, halign = halign)
-  }
+  label <- measure_text(label, gp_text, vjust = vjust, halign = halign,
+                        straight = keep_straight)
 
   x <- as_unit(x, default.units)
   y <- as_unit(y, default.units)

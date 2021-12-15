@@ -17,12 +17,19 @@
 #' measure_text("Hello there,\nGeneral Kenobi")
 measure_text <- function(
   label,
-  gp     = gpar(),
-  ppi    = 72,
-  vjust  = 0.5,
-  hjust  = 0,
-  halign = "center"
+  gp       = gpar(),
+  ppi      = 72,
+  vjust    = 0.5,
+  hjust    = 0,
+  halign   = "center",
+  straight = FALSE
 ) {
+  if (is.language(label) || straight) {
+    ans <- measure_exp(label = label, gp = gp, ppi = ppi, vjust = vjust)
+    return(ans)
+  } else {
+    label <- as.character(label)
+  }
 
   halign <- match(halign, c("center", "left", "right"), nomatch = 2L)
   halign <- c("center", "left", "right")[halign]
