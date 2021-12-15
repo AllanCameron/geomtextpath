@@ -20,8 +20,8 @@ textual annotations are short, straight and in line with the axes of the
 plot. However, there are some occasions when it is useful to have text
 follow a curved path. This may be to create or recreate a specific
 visual effect, or it may be to label a circular / polar plot in a more
-“natural” way. Direct labels that can adhere closesly to the
-associated line can also provide a neat alternative to legends.
+“natural” way. Direct labels that can adhere closesly to the associated
+line can also provide a neat alternative to legends.
 
 ## Installation
 
@@ -70,11 +70,11 @@ Just as `geom_path` is the foundation for several other geoms in
 `ggplot2`, so too is `geom_textpath` the foundation of the other geoms
 in this package, which include:
 
-  - `geom_textline`
-  - `geom_textdensity`
-  - `geom_textsmooth`
-  - `geom_textcontour`
-  - `geom_textdensity2d`
+-   `geom_textline`
+-   `geom_textdensity`
+-   `geom_textsmooth`
+-   `geom_textcontour`
+-   `geom_textdensity2d`
 
 Each of which aims to replicate all the functionality of the equivalent
 `ggplot2` function, but with direct text labels that follow the shape of
@@ -143,7 +143,6 @@ Adding labels to the level of your contour lines is now as simple as
 calling `geom_textcontour` instead of `geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -193,7 +192,7 @@ ggplot() +
                 fun = dgamma, color = "green4",
                 label = "gamma distribution with shape = 3",
                 size = 5, vjust = -0.2, hjust = 0.1, args = list(shape = 3)) +
-  theme_bw()
+  theme_bw() 
 ```
 
 <img src="man/figures/README-stat_function-1.png" width="100%" style="display: block; margin: auto;" />
@@ -201,22 +200,23 @@ ggplot() +
 ### Controlling text position
 
 Just like `geom_text`, the `vjust` parameter controls vertical
-justification of the text, though in `geom_textpath` the text is
-justified relative to the path rather than a single point. If the
-`vjust` parameter moves the text above or below the line, the line is
-automatically “filled in”.
+justification of the text, though in `geom_textpath` and its related
+geoms, the text is justified relative to the path rather than a single
+point. If the `vjust` parameter moves the text above or below the line,
+the line is automatically “filled in”.
 
 For short text labels applied to long paths, we need a parameter to
 control how far along the path the text is placed. For this we use the
-horizontal justification (`hjust`) parameter..
+horizontal justification (`hjust`) parameter.
 
 Here is an example of text justified above the line of the path using a
 small negative value of `vjust`:
 
 ``` r
-ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-  geom_textpath(aes(label = Species), stat = "density",
-                size = 6, fontface = 2, hjust = 0.2, vjust = -0.2)
+p <- ggplot(iris, aes(x = Sepal.Length, colour = Species, label = Species)) +
+       theme(legend.position = "none")
+
+p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = 0.2)
 ```
 
 <img src="man/figures/README-density_vjust-1.png" width="100%" style="display: block; margin: auto;" />
@@ -229,9 +229,7 @@ coincide with distance along a particular axis. Here’s an example of
 “ymax”:
 
 ``` r
-ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-  geom_textpath(aes(label = Species), stat = "density",
-                size = 6, fontface = 2, hjust = "ymax", vjust = -0.2)
+p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = "ymax")
 ```
 
 <img src="man/figures/README-density_ymax-1.png" width="100%" style="display: block; margin: auto;" />
@@ -240,9 +238,7 @@ There is also an “auto” mode, which will attempt to find the least
 curved place on the path to place the text:
 
 ``` r
-ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-  geom_textpath(aes(label = Species), stat = "density",
-                size = 6, fontface = 2, hjust = "auto", vjust = -0.2)
+p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = "auto")
 ```
 
 <img src="man/figures/README-density_auto-1.png" width="100%" style="display: block; margin: auto;" />
@@ -254,9 +250,7 @@ ratio of the plot changes, for example, during faceting. Compare
 faceting horizontally:
 
 ``` r
-p <- ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-       geom_textpath(aes(label = Species), stat = "density",
-                     size = 6, fontface = 2, hjust = 0.2, vjust = -0.2) +
+p <- p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = 0.2) +
        scale_y_continuous(limits = c(0, 1.5))
 
 p + facet_grid(.~Species)
@@ -420,7 +414,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 

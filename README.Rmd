@@ -144,6 +144,7 @@ df  <- data.frame(x = rnorm(100), y = rnorm(100))
 ggplot(df, aes(x, y)) + 
   geom_textdensity2d() +
   theme_classic()
+
 ```
 
 ### Arbitrary `stat` transformations
@@ -165,37 +166,35 @@ ggplot() +
                 fun = dgamma, color = "green4",
                 label = "gamma distribution with shape = 3",
                 size = 5, vjust = -0.2, hjust = 0.1, args = list(shape = 3)) +
-  theme_bw()
+  theme_bw() 
 ```
 
 ### Controlling text position
 
-Just like `geom_text`, the `vjust` parameter controls vertical justification of the text, though in `geom_textpath` the text is justified relative to the path rather than a single point. If the `vjust` parameter moves the text above or below the line, the line is automatically "filled in". 
+Just like `geom_text`, the `vjust` parameter controls vertical justification of the text, though in `geom_textpath` and its related geoms, the text is justified relative to the path rather than a single point. If the `vjust` parameter moves the text above or below the line, the line is automatically "filled in". 
 
-For short text labels applied to long paths, we need a parameter to control how far along the path the text is placed. For this we use the horizontal justification (`hjust`) parameter..
+For short text labels applied to long paths, we need a parameter to control how far along the path the text is placed. For this we use the horizontal justification (`hjust`) parameter.
 
 Here is an example of text justified above the line of the path using a small negative value of `vjust`:
 
 ```{r density_vjust}
-ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-  geom_textpath(aes(label = Species), stat = "density",
-                size = 6, fontface = 2, hjust = 0.2, vjust = -0.2)
+p <- ggplot(iris, aes(x = Sepal.Length, colour = Species, label = Species)) +
+       theme(legend.position = "none")
+
+p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = 0.2)
 ```
 
 As well as specifying a numeric value for `hjust`, a number of text descriptions can be used instead, such as "xmin", "xmid", "xmax", "ymin", "ymid" and "ymax". These can be useful because the numeric `hjust` value describes a position _along the path_, which may not coincide with distance along a particular axis. Here's an example of "ymax":
 
 ```{r density_ymax}
-ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-  geom_textpath(aes(label = Species), stat = "density",
-                size = 6, fontface = 2, hjust = "ymax", vjust = -0.2)
+p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = "ymax")
+
 ```
 
 There is also an "auto" mode, which will attempt to find the least curved place on the path to place the text:
 
 ```{r density_auto}
-ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-  geom_textpath(aes(label = Species), stat = "density",
-                size = 6, fontface = 2, hjust = "auto", vjust = -0.2)
+p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = "auto")
 ```
 
 ### Correction of angles across different aspect ratios
@@ -203,9 +202,7 @@ ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
 The angle of the text continues to follow the path even if the aspect ratio of the plot changes, for example, during faceting. Compare faceting horizontally:
 
 ```{r horizontal_facets}
-p <- ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-       geom_textpath(aes(label = Species), stat = "density",
-                     size = 6, fontface = 2, hjust = 0.2, vjust = -0.2) +
+p <- p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = 0.2) +
        scale_y_continuous(limits = c(0, 1.5))
 
 p + facet_grid(.~Species)
