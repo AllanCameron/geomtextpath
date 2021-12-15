@@ -195,27 +195,34 @@ makeContent.textpath <- function(x) {
   text_lens <- vapply(text, nrow, integer(1))
   text <- rbind_dfs(text)
 
-  if (!all((v$gp_path$lty %||% 1) %in% c("0", "blank", NA))) {
-    path <- rbind_dfs(path)
+  x <- .add_path_grob(x, path, text, v$gp_path, params)
+
+.add_path_grob <- function(grob, data, text, gp, params) {
+  if (!all((gp$lty %||% 1) %in% c("0", "blank", NA))) {
+    data <- rbind_dfs(data)
 
     # Get bookends by trimming paths when it intersects text
-    path <- .get_surrounding_lines(path, text, vjust = params$vjust,
-                                   params$cut_path,
-                                   padding = params$padding)
-
-    if (nrow(path) > 1) {
+    data <- .get_surrounding_lines(
+      data, text,
+      vjust    = params$vjust    %||% 0.5,
+      cut_path = params$cut_path %||% NA,
+      padding  = params$padding  %||% 0.15
+    )
+    if (nrow(data) > 1) {
       # Recycle graphical parameters to match lengths of path
-      gp_path <- recycle_gp(v$gp_path, `[`, i = path$id[path$start])
+      gp <- recycle_gp(gp, `[`, i = data$id[data$start])
 
       # Write path grob
-      x <- addGrob(
-        x, polylineGrob(
-          x = path$x, y = path$y, id = path$new_id, gp = gp_path,
+      grob <- addGrob(
+        grob, polylineGrob(
+          x = data$x, y = data$y, id = data$new_id, gp = gp,
           default.units = "inches"
         )
       )
     }
   }
+  return(grob)
+}
 
   if (make_box) {
     x <- addGrob(
