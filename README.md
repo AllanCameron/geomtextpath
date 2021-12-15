@@ -20,7 +20,8 @@ textual annotations are short, straight and in line with the axes of the
 plot. However, there are some occasions when it is useful to have text
 follow a curved path. This may be to create or recreate a specific
 visual effect, or it may be to label a circular / polar plot in a more
-“natural” way.
+“natural” way. Direct labels that can adhere closesly to the
+associated line can also provide a neat alternative to legends.
 
 ## Installation
 
@@ -41,11 +42,11 @@ library(geomtextpath)
 #> Loading required package: ggplot2
 ```
 
-The main function in this package, `geom_textpath`, functions much as
-any other `geom` in `ggplot2`, taking its x co-ordinates, its y
-co-ordinates and its text label from an aesthetic mapping. At its most
-basic, this allows the `label` to be plotted on an arbitrary path, as
-shown in the following example:
+The core function in this package, `geom_textpath`, works like any other
+`geom` in `ggplot2`. It takes its x co-ordinates, its y co-ordinates and
+its text label from an aesthetic mapping. At its most basic, this allows
+the `label` to be plotted on an arbitrary path, as shown in the
+following example:
 
 ``` r
 t <- seq(5, -1, length.out = 1000) * pi
@@ -65,55 +66,76 @@ ggplot(spiral, aes(x, y, label = text)) +
 
 <img src="man/figures/README-spiral-1.png" width="100%" style="display: block; margin: auto;" />
 
-Of course, we can create the path data from various “stat”
-transformations, and generate the labels from the grouping variables we
-are plotting. This allows very easy labeling of density curves:
+Just as `geom_path` is the foundation for several other geoms in
+`ggplot2`, so too is `geom_textpath` the foundation of the other geoms
+in this package, which include:
+
+  - `geom_textline`
+  - `geom_textdensity`
+  - `geom_textsmooth`
+  - `geom_textcontour`
+  - `geom_textdensity2d`
+
+Each of which aims to replicate all the functionality of the equivalent
+`ggplot2` function, but with direct text labels that follow the shape of
+the lines drawn.
+
+### `geom_textline`
+
+You can use `geom_textline` as a drop in for `geom_text` if you want it
+directly labelled. Just pass the `label` you want as an argument to
+`geom_textline` (or if you have grouped data you can pass the label as
+an aesthetic mapping).
 
 ``` r
-ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-  geom_textpath(aes(label = Species), stat = "density",
-                size = 6, fontface = 2, hjust = 0.2, vjust = 0.3)
+ggplot(pressure, aes(temperature, pressure)) +
+  geom_textline(label = "Mercury vapor pressure", size = 8, vjust = -0.5)
+```
+
+<img src="man/figures/README-textline_demo-1.png" width="100%" style="display: block; margin: auto;" />
+
+### `geom_textdensity`
+
+This is the analogue of `geom_density` that allows for smoothly curved
+labels on density plots
+
+``` r
+ggplot(iris, aes(x = Sepal.Length, colour = Species, label = Species)) +
+  geom_textdensity(size = 6, fontface = 2, hjust = 0.2, vjust = 0.3)
 ```
 
 <img src="man/figures/README-density_demo-1.png" width="100%" style="display: block; margin: auto;" />
 
-We can also use `stat_smooth` to get labelled trend lines through
+### `geom_textsmooth`
+
+We can use `geom_textsmooth` to get labelled trend lines through
 scatterplots:
 
 ``` r
 ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
   geom_point(alpha = 0.1) +
-  geom_textpath(aes(label = Species, colour = Species),
-                stat = "smooth", method = "loess", formula = y ~ x,
+  geom_textsmooth(aes(label = Species, colour = Species),
+                method = "loess", formula = y ~ x,
                 size = 7, linetype = 3, fontface = 2, linewidth = 1) +
   scale_colour_manual(values = c("forestgreen", "deepskyblue4", "tomato4")) +
-  theme_bw()
+  theme_bw() + 
+  theme(legend.position = "none")
 ```
 
 <img src="man/figures/README-smooth-1.png" width="100%" style="display: block; margin: auto;" />
 
-And of course, arbitrary functions can be labelled with paths created in
-`stat_function`:
+Another use might be to label lines that are too “noisy” for direct
+labels to remain legible if they adhere too closely to the line.
 
 ``` r
-ggplot() + 
-  xlim(c(0, 1)) + 
-  stat_function(geom = "textpath",
-                fun = dgamma, color = "red4",
-                label = "gamma distribution with shape = 1",
-                size = 5, vjust = -0.2, hjust = 0.1, args = list(shape = 1)) +
-  stat_function(geom = "textpath",
-                fun = dgamma, color = "blue4",
-                label = "gamma distribution with shape = 2",
-                size = 5, vjust = -0.2, hjust = 0.1, args = list(shape = 2)) +
-  stat_function(geom = "textpath",
-                fun = dgamma, color = "green4",
-                label = "gamma distribution with shape = 3",
-                size = 5, vjust = -0.2, hjust = 0.1, args = list(shape = 3)) +
-  theme_bw()
+ggplot(economics, aes(date, unemploy)) +
+  geom_line(colour = "grey") +
+  geom_textsmooth(aes(label = "Decline"), method = loess, formula = y ~ x,
+                  hjust = 0.48, size = 5, method.args = list(span = 0.2),
+                  include_line = FALSE, vjust = -0.5)
 ```
 
-<img src="man/figures/README-stat_function-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-smooth2-1.png" width="100%" style="display: block; margin: auto;" />
 
 ### Labelled contour lines
 
@@ -150,25 +172,52 @@ ggplot(df, aes(x, y)) +
 
 <img src="man/figures/README-density2d-1.png" width="100%" style="display: block; margin: auto;" />
 
+### Arbitrary `stat` transformations
+
+Other “stat” transformations can be used directly on `geom_textpath`.
+For example, functions can be labelled with paths created in
+`stat_function`:
+
+``` r
+ggplot() + 
+  xlim(c(0, 1)) + 
+  stat_function(geom = "textpath",
+                fun = dgamma, color = "red4",
+                label = "gamma distribution with shape = 1",
+                size = 5, vjust = -0.2, hjust = 0.1, args = list(shape = 1)) +
+  stat_function(geom = "textpath",
+                fun = dgamma, color = "blue4",
+                label = "gamma distribution with shape = 2",
+                size = 5, vjust = -0.2, hjust = 0.1, args = list(shape = 2)) +
+  stat_function(geom = "textpath",
+                fun = dgamma, color = "green4",
+                label = "gamma distribution with shape = 3",
+                size = 5, vjust = -0.2, hjust = 0.1, args = list(shape = 3)) +
+  theme_bw() 
+```
+
+<img src="man/figures/README-stat_function-1.png" width="100%" style="display: block; margin: auto;" />
+
 ### Controlling text position
 
 Just like `geom_text`, the `vjust` parameter controls vertical
-justification of the text, though in `geom_textpath` the text is
-justified relative to the path rather than a single point. If the
-`vjust` parameter moves the text above or below the line, the line is
-automatically “filled in”.
+justification of the text, though in `geom_textpath` and its related
+geoms, the text is justified relative to the path rather than a single
+point. If the `vjust` parameter moves the text above or below the line,
+the line is automatically “filled in”.
 
 For short text labels applied to long paths, we need a parameter to
 control how far along the path the text is placed. For this we use the
-horizontal justification (`hjust`) parameter..
+horizontal justification (`hjust`) parameter.
 
 Here is an example of text justified above the line of the path using a
 small negative value of `vjust`:
 
 ``` r
-ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-  geom_textpath(aes(label = Species), stat = "density",
-                size = 6, fontface = 2, hjust = 0.2, vjust = -0.2)
+p <- ggplot(iris, aes(x = Sepal.Length, colour = Species, label = Species)) +
+       theme(legend.position = "none")
+
+p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = 0.2)
 ```
 
 <img src="man/figures/README-density_vjust-1.png" width="100%" style="display: block; margin: auto;" />
@@ -181,9 +230,7 @@ coincide with distance along a particular axis. Here’s an example of
 “ymax”:
 
 ``` r
-ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-  geom_textpath(aes(label = Species), stat = "density",
-                size = 6, fontface = 2, hjust = "ymax", vjust = -0.2)
+p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = "ymax")
 ```
 
 <img src="man/figures/README-density_ymax-1.png" width="100%" style="display: block; margin: auto;" />
@@ -192,9 +239,7 @@ There is also an “auto” mode, which will attempt to find the least
 curved place on the path to place the text:
 
 ``` r
-ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-  geom_textpath(aes(label = Species), stat = "density",
-                size = 6, fontface = 2, hjust = "auto", vjust = -0.2)
+p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = "auto")
 ```
 
 <img src="man/figures/README-density_auto-1.png" width="100%" style="display: block; margin: auto;" />
@@ -206,9 +251,7 @@ ratio of the plot changes, for example, during faceting. Compare
 faceting horizontally:
 
 ``` r
-p <- ggplot(iris, aes(x = Sepal.Length, colour = Species)) +
-       geom_textpath(aes(label = Species), stat = "density",
-                     size = 6, fontface = 2, hjust = 0.2, vjust = -0.2) +
+p <- p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = 0.2) +
        scale_y_continuous(limits = c(0, 1.5))
 
 p + facet_grid(.~Species)

@@ -113,9 +113,9 @@ paths.}
 
 \item{binwidth}{The width of the contour bins. Overridden by \code{breaks}.}
 
-\item{breaks}{Numeric vector to set the contour breaks.
-Overrides \code{binwidth} and \code{bins}. By default, this is a vector of
-length ten with \code{\link[=pretty]{pretty()}} breaks.}
+\item{breaks}{Numeric vector to set the contour breaks. Overrides \code{binwidth}
+and \code{bins}. By default, this is a vector of length ten with \code{\link[=pretty]{pretty()}}
+breaks.}
 
 \item{padding}{A \code{\link[grid:unit]{unit()}} of length 1 to determine the
 padding between path and text when the \code{cut_path} parameter trims the
