@@ -17,12 +17,19 @@
 #' measure_text("Hello there,\nGeneral Kenobi")
 measure_text <- function(
   label,
-  gp     = gpar(),
-  ppi    = 72,
-  vjust  = 0.5,
-  hjust  = 0,
-  halign = "center"
+  gp       = gpar(),
+  ppi      = 72,
+  vjust    = 0.5,
+  hjust    = 0,
+  halign   = "center",
+  straight = FALSE
 ) {
+  if (is.language(label) || straight) {
+    ans <- measure_exp(label = label, gp = gp, ppi = ppi, vjust = vjust)
+    return(ans)
+  } else {
+    label <- as.character(label)
+  }
 
   halign <- match(halign, c("center", "left", "right"), nomatch = 2L)
   halign <- c("center", "left", "right")[halign]
@@ -120,11 +127,6 @@ measure_text <- function(
 # This is a simpler version of measure_text for expressions only
 measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
 {
-  size <- gp$fontsize %||% 11
-  stopifnot(
-    "The fontsize vector in gpar does not match the number of labels." =
-      length(size) == length(label) || length(size) == 1
-  )
   width  <- measure_text_dim(label, gp, "width")
   height <- measure_text_dim(label, gp, "height")
   ymin   <- -(height * (vjust - 0.5))

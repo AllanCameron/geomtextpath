@@ -180,7 +180,7 @@ GeomLabelpath <- ggproto(
 
     #---- Dispatch data to grob -----------------------------#
 
-    textpathGrob(
+    labelpathGrob(
       label = safe_labels,
       x = data$x,
       y = data$y,
