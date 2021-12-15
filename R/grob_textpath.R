@@ -115,12 +115,8 @@ textpathGrob <- function(
     label <- measure_text(label, gp_text, vjust = vjust, halign = halign)
   }
 
-  if (!is.unit(x)) {
-    x <- unit(x, default.units)
-  }
-  if (!is.unit(y)) {
-    y <- unit(y, default.units)
-  }
+  x <- as_unit(x, default.units)
+  y <- as_unit(y, default.units)
 
   if (!is.null(polar_params))
   {

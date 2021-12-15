@@ -200,6 +200,12 @@ as_inch <- function(value, from = "x") {
   value
 }
 
+as_unit <- function(x, units = NULL, ...) {
+  if (!is.unit(x) && !is.null(units)) {
+    x <- unit(x, units, ...)
+  }
+  x
+}
 
 # Documentation functions modified from ggplot2
 
