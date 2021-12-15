@@ -20,8 +20,8 @@ textual annotations are short, straight and in line with the axes of the
 plot. However, there are some occasions when it is useful to have text
 follow a curved path. This may be to create or recreate a specific
 visual effect, or it may be to label a circular / polar plot in a more
-“natural” way. Direct labels that can adhere closesly to the
-associated line can also provide a neat alternative to legends.
+“natural” way. Direct labels that can adhere closesly to the associated
+line can also provide a neat alternative to legends.
 
 ## Installation
 
@@ -70,11 +70,11 @@ Just as `geom_path` is the foundation for several other geoms in
 `ggplot2`, so too is `geom_textpath` the foundation of the other geoms
 in this package, which include:
 
-  - `geom_textline`
-  - `geom_textdensity`
-  - `geom_textsmooth`
-  - `geom_textcontour`
-  - `geom_textdensity2d`
+-   `geom_textline`
+-   `geom_textdensity`
+-   `geom_textsmooth`
+-   `geom_textcontour`
+-   `geom_textdensity2d`
 
 Each of which aims to replicate all the functionality of the equivalent
 `ggplot2` function, but with direct text labels that follow the shape of
@@ -88,12 +88,8 @@ directly labelled. Just pass the `label` you want as an argument to
 an aesthetic mapping).
 
 ``` r
-df <- data.frame(Year  = c(2016, 2017, 2018, 2019, 2020, 2020.1, 2021, 2022), 
-                 Value = c(23, 27, 30, 33, 34, 19, 20, 22))
-
-ggplot(df, aes(Year, Value)) + 
-  geom_point() +
-  geom_textline(label = "Happiness", size = 6, hjust = "auto", vjust = -0.2)
+ggplot(pressure, aes(temperature, pressure)) +
+  geom_textline(label = "Mercury vapor pressure", size = 8, vjust = -0.5)
 ```
 
 <img src="man/figures/README-textline_demo-1.png" width="100%" style="display: block; margin: auto;" />
@@ -147,7 +143,6 @@ Adding labels to the level of your contour lines is now as simple as
 calling `geom_textcontour` instead of `geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -424,7 +419,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 

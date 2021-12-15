@@ -77,12 +77,8 @@ Each of which aims to replicate all the functionality of the equivalent `ggplot2
 You can use `geom_textline` as a drop in for `geom_text` if you want it directly labelled. Just pass the `label` you want as an argument to `geom_textline` (or if you have grouped data you can pass the label as an aesthetic mapping).
 
 ```{r textline_demo}
-df <- data.frame(Year  = c(2016, 2017, 2018, 2019, 2020, 2020.1, 2021, 2022), 
-                 Value = c(23, 27, 30, 33, 34, 19, 20, 22))
-
-ggplot(df, aes(Year, Value)) + 
-  geom_point() +
-  geom_textline(label = "Happiness", size = 6, hjust = "auto", vjust = -0.2)
+ggplot(pressure, aes(temperature, pressure)) +
+  geom_textline(label = "Mercury vapor pressure", size = 8, vjust = -0.5)
 ```
 
 
