@@ -119,19 +119,21 @@ textpathGrob <- function(
     textpath = list(
       data          = path,
       label         = label,
-      hjust         = hjust,
-      vjust         = vjust,
-      halign        = halign,
-      cut_path      = cut_path,
       gp_text       = gp_text,
       gp_path       = gp_path,
       gp_box        = gp_box,
-      flip_inverted = flip_inverted,
-      polar_params  = polar_params,
-      angle         = angle,
-      padding       = padding,
-      label.padding = label.padding,
-      label.r       = label.r
+      params = list(
+        flip_inverted = flip_inverted,
+        polar_params  = polar_params,
+        angle         = angle,
+        padding       = padding,
+        label.padding = label.padding,
+        label.r       = label.r,
+        hjust         = hjust,
+        vjust         = vjust,
+        halign        = halign,
+        cut_path      = cut_path
+      )
     ),
     name = name,
     vp = vp,
@@ -146,6 +148,7 @@ makeContent.textpath <- function(x) {
 
   if(is.null(x$textpath)) return(zeroGrob())
   v <- x$textpath
+  params <- v$params
   path <- dedup_path(
     x = as_inch(v$data$x, "x"),
     y = as_inch(v$data$y, "y"),
@@ -163,12 +166,12 @@ makeContent.textpath <- function(x) {
     width <- vapply(v$label, function(x) max(x$xmax, na.rm = TRUE), numeric(1))
     path[singletons] <- Map(.pathify,
                             data    = path[singletons],
-                            hjust   = v$hjust[singletons],
-                            angle   = v$angle,
+                            hjust   = params$hjust[singletons],
+                            angle   = params$angle,
                             width   = width[singletons],
-                            polar_x = list(v$polar_params$x),
-                            polar_y = list(v$polar_params$y),
-                            thet    = list(v$polar_params$theta))
+                            polar_x = list(params$polar_params$x),
+                            polar_y = list(params$polar_params$y),
+                            thet    = list(params$polar_params$theta))
     v$gp_path$lty[singletons] <- 0
   }
 
@@ -176,15 +179,15 @@ makeContent.textpath <- function(x) {
   text <- Map(
       .get_path_points,
       path = path, label = v$label,
-      hjust = v$hjust, halign = v$halign,
-      flip_inverted = v$flip_inverted
+      hjust = params$hjust, halign = params$halign,
+      flip_inverted = params$flip_inverted
     )
 
   if ({make_box <- sum(lengths(v$gp_box))}) {
     box <- Map(
       .curved_textbox,
       path = path, label = v$label, text = text,
-      padding = v$label.padding, radius = v$label.r
+      padding = params$label.padding, radius = params$label.r
     )
     box <- rbind_dfs(box)
   }
@@ -196,8 +199,9 @@ makeContent.textpath <- function(x) {
     path <- rbind_dfs(path)
 
     # Get bookends by trimming paths when it intersects text
-    path <- .get_surrounding_lines(path, text, vjust = v$vjust, v$cut_path,
-                                   padding = v$padding)
+    path <- .get_surrounding_lines(path, text, vjust = params$vjust,
+                                   params$cut_path,
+                                   padding = params$padding)
 
     if (nrow(path) > 1) {
       # Recycle graphical parameters to match lengths of path
