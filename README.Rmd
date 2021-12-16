@@ -26,7 +26,9 @@ knitr::opts_chunk$set(
 
 ## Create curved text in ggplot2
 
-The existing text-based geom layers in ggplot2 (`geom_text` and `geom_label`) are ideal for the majority of plots, since typically textual annotations are short, straight and in line with the axes. However, there are some occasions when it is useful to have text follow a curved path. This may be to create or recreate a specific visual effect, or it may be to label a circular / polar plot in a more "natural" way. Direct and automatic text labels that adhere to their associated line can also provide a neat alternative to legends, without the need for specifying exact label positions, and with a lower risk of overplotting.
+The existing text-based geom layers in ggplot2 (`geom_text` and `geom_label`) are ideal for the majority of plots, since typically textual annotations are short, straight and in line with the axes. However, there are some occasions when it is useful to have text follow a curved path. This may be to create or recreate a specific visual effect, or it may be to label a circular / polar plot in a more "natural" way. Direct and automatic text labels that adhere to their associated line can also provide a neat alternative to legends, without the need for specifying exact label positions, and with a lower risk of overplotting. 
+
+The text will always stick together and follow the path, even if you change the size and aspect ratio of your plotting device. It does so without the need to redraw your plot each time, as shown in the [introduction](https://allancameron.github.io/geomtextpath/articles/geomtextpath.html) vignette.
 
 ## Installation
 
@@ -74,7 +76,7 @@ Each of these aims to replicate all the functionality of the equivalent `ggplot2
 
 ### `geom_textline`
 
-You can use `geom_textline` as a drop in for `geom_text` if you want it directly labelled. Just pass the `label` you want as an argument to `geom_textline` (or if you have grouped data you can pass the label as an aesthetic mapping). As in the other geoms here, you can specify the line's appearance and the text's appearance separately.
+You can use `geom_textline` as a drop in for `geom_line` if you want it directly labelled. Just pass the `label` you want as an argument to `geom_textline` (or if you have grouped data you can pass the label as an aesthetic mapping). As in the other geoms here, you can specify the line's appearance and the text's appearance separately.
 
 ```{r textline_demo}
 ggplot(pressure, aes(temperature, pressure)) +
@@ -190,36 +192,7 @@ p <- ggplot(iris, aes(x = Sepal.Length, colour = Species, label = Species)) +
 p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = 0.2)
 ```
 
-As well as specifying a numeric value for `hjust`, a number of text descriptions can be used instead, such as "xmin", "xmid", "xmax", "ymin", "ymid" and "ymax". These can be useful because the numeric `hjust` value describes a position _along the path_, which may not coincide with distance along a particular axis. Here's an example of "ymax":
-
-```{r density_ymax}
-p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = "ymax")
-
-```
-
-There is also an "auto" mode, which will attempt to find the least curved place on the path to place the text:
-
-```{r density_auto}
-p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = "auto")
-```
-
-### Correction of angles across different aspect ratios
-
-The angle of the text continues to follow the path even if the aspect ratio of the plot changes, for example, during faceting. Compare faceting horizontally:
-
-```{r horizontal_facets}
-p <- p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = 0.2) +
-       scale_y_continuous(limits = c(0, 1.5))
-
-p + facet_grid(.~Species)
-```
-
-to faceting vertically:
-```{r vertical_facets}
-p + facet_grid(Species~.)
-```
-
-The text will continue to rotate appropriately as the plotting window is rescaled.
+You can read more about text positioning in the [aesthetics vignette](https://allancameron.github.io/geomtextpath/articles/aesthetics.html).
 
 ### `Plotmath` support
 
@@ -266,27 +239,28 @@ df <- data.frame(x = 1:4, y = c(4, 7, 6, 3),
                  color = c("royalblue", "orangered", "deepskyblue4", "violet"))
 
 p <- ggplot(df, aes(x, y, color = color, label = color)) +
-       geom_point(size = 3) +
+       geom_point(size = 1.5) +
        scale_color_identity() +
        lims(x = c(0, 6), y = c(0, 8)) +
        theme_bw()
 
-p_text     <- p + geom_text(size = 8, hjust = -0.1)
-p_textpath <- p + geom_textpath(size = 8, hjust = -0.1)
+p_text     <- p + geom_text(size = 5, hjust = -0.1)
+p_textpath <- p + geom_textpath(size = 5, hjust = -0.1)
 ```
 
 Note that `p_text` and `p_textpath` are made with the same base plot and data. In normal Cartesian Co-ordinates they are essentially identical:
 
-```{r cartesian_compare}
-p_text
-p_textpath
+```{r cartesian_compare, fig.height = 4, fig.width = 8}
+gridExtra::grid.arrange(p_text, p_textpath, ncol = 2)
 
 ```
 
 But note the difference when we switch to polar co-ordinates:
 ```{r polar_compare}
-p_text + coord_polar()
-p_textpath + coord_polar()
+p_text <- p_text + coord_polar()
+p_textpath <- p_textpath + coord_polar()
+
+gridExtra::grid.arrange(p_text, p_textpath, ncol = 2)
 ```
 
 By default, any labels that would have been upside down (or even mostly upside down) are automatically flipped to be facing in a legible direction. This can be turned off using `flip_inverted = FALSE` in the call to `geom_textpath`.
@@ -341,27 +315,33 @@ p + coord_polar()
 ## `coord_curvedpolar`
 
 Another function exported from this package is `coord_curvedpolar`. This behaves identically to `coord_polar`, except that the circumferential axis labels are curved. For example:
+
 ```{r coord_curvedpolar}
 clock <- function(x) {
   
   hours <- c(rep(x[1] %% 12 + tail(x, 1) / 60, 2), 0, 3)
-  minutes <- c(rep(tail(x, 1)/5, 2), 0, 5)
+  minutes <- c(rep(tail(x, 1)/5, 2), 0, 4)
 
   ggplot(as.data.frame(rbind(hours, minutes)), aes(V1, V3)) + 
       geom_segment(aes(xend = V2, yend = V4), 
-                   size = c(3, 2.5), lineend = "round") +
+                   size = c(2, 1.5), lineend = "round") +
       geom_point(x = 0, y = 0, size = 5) +
+      geom_hline(yintercept = 6) +
       scale_x_continuous(limits = c(0, 12), breaks = 1:12,
                          label = as.roman) +
+      scale_y_continuous(limits = c(0, 6), expand = c(0, 0)) +
       theme_void() + 
-      theme(axis.text.x = element_text(size = 30, face = 2))
+      theme(axis.text.x = element_text(size = 12, face = 2, vjust = -1.3),
+            plot.margin = margin(20, 20, 20, 20))
 }
 
-clock(03:35) + coord_polar()
-clock(19:15) + coord_curvedpolar()
+gridExtra::grid.arrange(clock(03:35) + coord_polar(),
+                        clock(19:15) + coord_curvedpolar(),
+                        ncol = 2)
 ```
 
 This can be useful to achieve a particular aesthetic effect (as above), but can also be of practical utility when axis labels are long, which can produce some problems in standard `coord_polar`:
+
 ```{r coord_curvedpolar2}
 df <- data.frame(x = c("A long axis label", "Another long label",
                        "The longest label of all", "Yet another label"),
@@ -371,14 +351,13 @@ p <- ggplot(df, aes(x, y, fill = x)) +
       geom_col(width = 0.5) +
       scale_fill_brewer(type = "qual") +
       theme_bw() +
-      theme(axis.text.x = element_text(size = 18),
+      theme(axis.text.x = element_text(size = 9),
             legend.position = "none")
 
-p + coord_polar()
-p + coord_curvedpolar()
+gridExtra::grid.arrange(p + coord_polar(), p + coord_curvedpolar(), ncol = 2)
 ```
 
-You can see more examples in the vignettes.
+You can see more examples in the [gallery](https://allancameron.github.io/geomtextpath/articles/gallery.html) vignette.
 
 
 ## Limitations
