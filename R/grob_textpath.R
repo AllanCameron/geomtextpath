@@ -202,6 +202,8 @@ makeContent.textpath <- function(x) {
       cut_path = params$cut_path %||% NA,
       padding  = params$padding  %||% 0.15
     )
+    arrow <- .tailor_arrow(data, arrow)
+
     if (nrow(data) > 1) {
       # Recycle graphical parameters to match lengths of path
       gp <- recycle_gp(gp, `[`, i = data$id[data$start])
@@ -210,7 +212,8 @@ makeContent.textpath <- function(x) {
       grob <- addGrob(
         grob, polylineGrob(
           x = data$x, y = data$y, id = data$new_id, gp = gp,
-          default.units = "inches"
+          default.units = "inches",
+          arrow = arrow
         )
       )
     }
