@@ -33,7 +33,8 @@ Suggests:
     knitr,
     rmarkdown,
     ragg,
-    qpdf
+    qpdf,
+    gridExtra
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Collate: 
