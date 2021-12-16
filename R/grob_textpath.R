@@ -325,5 +325,34 @@ dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
    data
 }
 
+# This adjusts a possible arrow to not have duplicated arrowheads when a path
+# is cut into two due to the path trimming.
+.tailor_arrow <- function(data, arrow) {
+  if (is.null(arrow)) {
+    return(arrow)
+  }
+  keep  <- !duplicated(data$new_id)
+  sides <- data$section[keep]
+  id    <- data$id[keep]
+  path  <- data
+
+  # Have arrow match the length of the groups
+  arrow[] <- lapply(arrow, function(x) {
+    x[pmin(id, length(x))]
+  })
+  angle <- arrow$angle
+  ends  <- arrow$ends
+
+  # Ends are 1 = "first", 2 = "last", 3 = "both".
+  # We 'hide' an arrow by setting an NA angle
+  angle[ends == 2 & sides == "pre"]  <- NA_integer_
+  angle[ends == 1 & sides == "post"] <- NA_integer_
+  ends[ends == 3 & sides == "pre"]   <- 1L
+  ends[ends == 3 & sides == "post"]  <- 2L
+  arrow$angle <- angle
+  arrow$ends  <- ends
+  arrow
+}
+
 
 

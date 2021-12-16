@@ -189,3 +189,34 @@ test_that("run_end behaves as expected", {
   expect_equal(run_end(x, is_lengths = FALSE), cumsum(run_len(x)))
 
 })
+
+# Tailor arrow ------------------------------------------------------------
+
+test_that("arrows are expanded correctly", {
+  data <- data_frame(
+    id = c(1L, 1L, 2L, 2L, 3L, 3L),
+    new_id = c(1L, 2L, 3L, 4L, 5L, 5L),
+    section = c("pre", "post", "pre", "post", "all", "all")
+  )
+
+  test <- .tailor_arrow(data, arrow(ends = "last"))
+  # Angle should be NA when section is 'pre'
+  expect_equal(test$angle, c(NA, 30, NA, 30, 30))
+  expect_equal(test$ends, rep(2L, 5))
+
+  test <- .tailor_arrow(data, arrow(ends = "first"))
+  # Angle should be NA when section is 'post'
+  expect_equal(test$angle, c(30, NA, 30, NA, 30))
+  expect_equal(test$ends, rep(1L, 5))
+
+  # Angles should be preserved, but ends should be set correctly
+  test <- .tailor_arrow(data, arrow(ends = "both"))
+  expect_equal(test$angle, rep(30, 5))
+  expect_equal(test$ends, c(1L, 2L, 1L, 2L, 3L))
+
+  # Test that we can use a mix of ends
+  test <- .tailor_arrow(data, arrow(ends = c("first", "last", "first")))
+  expect_equal(test$angle, c(30, NA, NA, 30, 30))
+  expect_equal(test$ends, c(1L, 1L, 2L, 2L, 1L))
+})
+
