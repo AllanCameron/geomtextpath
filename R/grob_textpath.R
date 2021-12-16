@@ -192,7 +192,9 @@ makeContent.textpath <- function(x) {
 }
 
 .add_path_grob <- function(grob, data, text, gp, params, arrow = NULL) {
-  if (!all((gp$lty %||% 1) %in% c("0", "blank", NA))) {
+  has_line <- !all((gp$lty %||% 1)  %in% c("0", "blank", NA))
+  is_opaque <-!all((gp$col %||% 1) %in% c(NA, "transparent"))
+  if (has_line && is_opaque) {
     data <- rbind_dfs(data)
 
     # Get bookends by trimming paths when it intersects text
@@ -207,6 +209,7 @@ makeContent.textpath <- function(x) {
     if (nrow(data) > 1) {
       # Recycle graphical parameters to match lengths of path
       gp <- recycle_gp(gp, `[`, i = data$id[data$start])
+      gp$fill <- gp$col
 
       # Write path grob
       grob <- addGrob(
