@@ -20,6 +20,7 @@
 #' @param polar_params a list consisting of an x, y, and r component that
 #'   specifies the central point and radius of a circle around which
 #'   single-point labels will be wrapped.
+#' @param arrow Arrow specification, as created by [`arrow()`][grid::arrow].
 #' @inheritParams grid::textGrob
 #' @inheritParams geom_textpath
 #'
@@ -65,6 +66,7 @@ textpathGrob <- function(
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
+  arrow = NULL,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -130,7 +132,8 @@ textpathGrob <- function(
         vjust         = vjust,
         halign        = halign,
         cut_path      = cut_path
-      )
+      ),
+      arrow = arrow
     ),
     name = name,
     vp = vp,
@@ -159,7 +162,7 @@ makeContent.textpath <- function(x) {
     )
   text <- rbind_dfs(text)
 
-  x <- .add_path_grob(x, path, text, attr(path, "gp"), params)
+  x <- .add_path_grob(x, path, text, attr(path, "gp"), params, v$arrow)
   x <- .add_text_grob(x, text, v$gp_text)
   x
 }
@@ -188,7 +191,7 @@ makeContent.textpath <- function(x) {
   return(path)
 }
 
-.add_path_grob <- function(grob, data, text, gp, params) {
+.add_path_grob <- function(grob, data, text, gp, params, arrow = NULL) {
   if (!all((gp$lty %||% 1) %in% c("0", "blank", NA))) {
     data <- rbind_dfs(data)
 
