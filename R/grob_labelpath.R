@@ -23,6 +23,7 @@ labelpathGrob <- function(
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
+  arrow = NULL,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -88,7 +89,8 @@ labelpathGrob <- function(
         vjust         = vjust,
         halign        = halign,
         cut_path      = cut_path
-      )
+      ),
+      arrow = arrow
     ),
     name = name,
     vp = vp,
@@ -127,7 +129,7 @@ makeContent.labelpath <- function(x) {
 
   text <- rbind_dfs(text)
 
-  x <- .add_path_grob(x, path, text, attr(path, "gp"), params)
+  x <- .add_path_grob(x, path, text, attr(path, "gp"), params, v$arrow)
 
   if (make_box) {
     x <- addGrob(
