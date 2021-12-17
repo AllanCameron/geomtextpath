@@ -11,7 +11,10 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  dev = "ragg_png"
+  dev = "ragg_png",
+  out.width = "75%",
+  fig.align = "center",
+  dpi = 176
 )
 ```
 
@@ -59,6 +62,32 @@ p + geom_textpath(size  = 4, hjust = 0) +
   labs(subtitle = "hjust = 0")
 p + geom_textpath(size  = 4, hjust = 1) +
   labs(subtitle = "hjust = 1")
+```
+
+In some situations you may wish to specify particular positions relative to the x and y co-ordinates of the plot. For these circumstances there are some text string aliases that can be used. These are "xmin", "xmid", "xmax", "ymin", "ymid", "ymax" and "auto". The first six are self explanatory. As an example, we can look at the effect of setting `hjust = "ymax"`. Here we use a different plot to demonstrate:
+
+```{r hjust_explain2, fig.width = 5, fig.height = 5}
+ ggplot(iris, aes(x = Sepal.Length, colour = Species, label = Species)) +
+   geom_textpath(stat = "density", size = 5, fontface = 2, vjust = -0.2,
+                 hjust = "ymax") +
+   ylim(c(0, 1.3)) +
+   theme_bw() +
+   theme(legend.position = "none", text = element_text(size = 16)) +
+   labs(subtitle = "hjust = \"ymax\"")
+
+```
+
+The "auto" `hjust` setting tries to find the straightest segments of the curves to apply labels:
+
+```{r hjust_explain3, fig.width = 5, fig.height = 5}
+ ggplot(iris, aes(x = Sepal.Length, colour = Species, label = Species)) +
+   geom_textpath(stat = "density", size = 5, fontface = 2, vjust = -0.2,
+                 hjust = "auto") +
+   ylim(c(0, 1.3)) +
+   theme_bw() +
+   theme(legend.position = "none", text = element_text(size = 16)) +
+   labs(subtitle = "hjust = \"auto\"")
+
 ```
 
 #### Justification of multi-line text

@@ -25,6 +25,12 @@ associated line can also provide a neat alternative to legends, without
 the need for specifying exact label positions, and with a lower risk of
 overplotting.
 
+The text will always stick together and follow the path, even if you
+change the size and aspect ratio of your plotting device. It does so
+without the need to redraw your plot each time, as shown in the
+[introduction](https://allancameron.github.io/geomtextpath/articles/geomtextpath.html)
+vignette.
+
 ## Installation
 
 You can install the development version of geomtextpath from
@@ -72,11 +78,11 @@ Just as `geom_path` is the foundation for several other geoms in
 `ggplot2`, so too is `geom_textpath` the foundation of the other geoms
 in this package, which include:
 
-  - `geom_textline`
-  - `geom_textdensity`
-  - `geom_textsmooth`
-  - `geom_textcontour`
-  - `geom_textdensity2d`
+-   `geom_textline`
+-   `geom_textdensity`
+-   `geom_textsmooth`
+-   `geom_textcontour`
+-   `geom_textdensity2d`
 
 Each of these aims to replicate all the functionality of the equivalent
 `ggplot2` function, but with direct text labels that follow the shape of
@@ -84,7 +90,7 @@ the lines drawn.
 
 ### `geom_textline`
 
-You can use `geom_textline` as a drop in for `geom_text` if you want it
+You can use `geom_textline` as a drop in for `geom_line` if you want it
 directly labelled. Just pass the `label` you want as an argument to
 `geom_textline` (or if you have grouped data you can pass the label as
 an aesthetic mapping). As in the other geoms here, you can specify the
@@ -153,7 +159,6 @@ Adding labels to the level of your contour lines is now as simple as
 calling `geom_textcontour` instead of `geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -232,53 +237,8 @@ p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = 0.2)
 
 <img src="man/figures/README-density_vjust-1.png" width="100%" style="display: block; margin: auto;" />
 
-As well as specifying a numeric value for `hjust`, a number of text
-descriptions can be used instead, such as “xmin”, “xmid”, “xmax”,
-“ymin”, “ymid” and “ymax”. These can be useful because the numeric
-`hjust` value describes a position *along the path*, which may not
-coincide with distance along a particular axis. Here’s an example of
-“ymax”:
-
-``` r
-p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = "ymax")
-```
-
-<img src="man/figures/README-density_ymax-1.png" width="100%" style="display: block; margin: auto;" />
-
-There is also an “auto” mode, which will attempt to find the least
-curved place on the path to place the text:
-
-``` r
-p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = "auto")
-```
-
-<img src="man/figures/README-density_auto-1.png" width="100%" style="display: block; margin: auto;" />
-
-### Correction of angles across different aspect ratios
-
-The angle of the text continues to follow the path even if the aspect
-ratio of the plot changes, for example, during faceting. Compare
-faceting horizontally:
-
-``` r
-p <- p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = 0.2) +
-       scale_y_continuous(limits = c(0, 1.5))
-
-p + facet_grid(.~Species)
-```
-
-<img src="man/figures/README-horizontal_facets-1.png" width="100%" style="display: block; margin: auto;" />
-
-to faceting vertically:
-
-``` r
-p + facet_grid(Species~.)
-```
-
-<img src="man/figures/README-vertical_facets-1.png" width="100%" style="display: block; margin: auto;" />
-
-The text will continue to rotate appropriately as the plotting window is
-rescaled.
+You can read more about text positioning in the [aesthetics
+vignette](https://allancameron.github.io/geomtextpath/articles/aesthetics.html).
 
 ### `Plotmath` support
 
@@ -339,43 +299,34 @@ df <- data.frame(x = 1:4, y = c(4, 7, 6, 3),
                  color = c("royalblue", "orangered", "deepskyblue4", "violet"))
 
 p <- ggplot(df, aes(x, y, color = color, label = color)) +
-       geom_point(size = 3) +
+       geom_point(size = 1.5) +
        scale_color_identity() +
        lims(x = c(0, 6), y = c(0, 8)) +
        theme_bw()
 
-p_text     <- p + geom_text(size = 8, hjust = -0.1)
-p_textpath <- p + geom_textpath(size = 8, hjust = -0.1)
+p_text     <- p + geom_text(size = 5, hjust = -0.1)
+p_textpath <- p + geom_textpath(size = 5, hjust = -0.1)
 ```
 
 Note that `p_text` and `p_textpath` are made with the same base plot and
 data. In normal Cartesian Co-ordinates they are essentially identical:
 
 ``` r
-p_text
+gridExtra::grid.arrange(p_text, p_textpath, ncol = 2)
 ```
 
 <img src="man/figures/README-cartesian_compare-1.png" width="100%" style="display: block; margin: auto;" />
 
-``` r
-p_textpath
-```
-
-<img src="man/figures/README-cartesian_compare-2.png" width="100%" style="display: block; margin: auto;" />
-
 But note the difference when we switch to polar co-ordinates:
 
 ``` r
-p_text + coord_polar()
+p_text <- p_text + coord_polar()
+p_textpath <- p_textpath + coord_polar()
+
+gridExtra::grid.arrange(p_text, p_textpath, ncol = 2)
 ```
 
 <img src="man/figures/README-polar_compare-1.png" width="100%" style="display: block; margin: auto;" />
-
-``` r
-p_textpath + coord_polar()
-```
-
-<img src="man/figures/README-polar_compare-2.png" width="100%" style="display: block; margin: auto;" />
 
 By default, any labels that would have been upside down (or even mostly
 upside down) are automatically flipped to be facing in a legible
@@ -425,7 +376,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 
@@ -441,28 +391,27 @@ axis labels are curved. For example:
 clock <- function(x) {
   
   hours <- c(rep(x[1] %% 12 + tail(x, 1) / 60, 2), 0, 3)
-  minutes <- c(rep(tail(x, 1)/5, 2), 0, 5)
+  minutes <- c(rep(tail(x, 1)/5, 2), 0, 4)
 
   ggplot(as.data.frame(rbind(hours, minutes)), aes(V1, V3)) + 
       geom_segment(aes(xend = V2, yend = V4), 
-                   size = c(3, 2.5), lineend = "round") +
+                   size = c(2, 1.5), lineend = "round") +
       geom_point(x = 0, y = 0, size = 5) +
+      geom_hline(yintercept = 6) +
       scale_x_continuous(limits = c(0, 12), breaks = 1:12,
                          label = as.roman) +
+      scale_y_continuous(limits = c(0, 6), expand = c(0, 0)) +
       theme_void() + 
-      theme(axis.text.x = element_text(size = 30, face = 2))
+      theme(axis.text.x = element_text(size = 12, face = 2, vjust = -1.3),
+            plot.margin = margin(20, 20, 20, 20))
 }
 
-clock(03:35) + coord_polar()
+gridExtra::grid.arrange(clock(03:35) + coord_polar(),
+                        clock(19:15) + coord_curvedpolar(),
+                        ncol = 2)
 ```
 
 <img src="man/figures/README-coord_curvedpolar-1.png" width="100%" style="display: block; margin: auto;" />
-
-``` r
-clock(19:15) + coord_curvedpolar()
-```
-
-<img src="man/figures/README-coord_curvedpolar-2.png" width="100%" style="display: block; margin: auto;" />
 
 This can be useful to achieve a particular aesthetic effect (as above),
 but can also be of practical utility when axis labels are long, which
@@ -477,21 +426,17 @@ p <- ggplot(df, aes(x, y, fill = x)) +
       geom_col(width = 0.5) +
       scale_fill_brewer(type = "qual") +
       theme_bw() +
-      theme(axis.text.x = element_text(size = 18),
+      theme(axis.text.x = element_text(size = 9),
             legend.position = "none")
 
-p + coord_polar()
+gridExtra::grid.arrange(p + coord_polar(), p + coord_curvedpolar(), ncol = 2)
 ```
 
 <img src="man/figures/README-coord_curvedpolar2-1.png" width="100%" style="display: block; margin: auto;" />
 
-``` r
-p + coord_curvedpolar()
-```
-
-<img src="man/figures/README-coord_curvedpolar2-2.png" width="100%" style="display: block; margin: auto;" />
-
-You can see more examples in the vignettes.
+You can see more examples in the
+[gallery](https://allancameron.github.io/geomtextpath/articles/gallery.html)
+vignette.
 
 ## Limitations
 
@@ -510,11 +455,11 @@ problems than it would solve.
 
 Many paths will be too noisy or too angular to directly label in a
 visually appealing fashion if the text adheres too closely to the
-intricacies of the line. Often, a `geom_textsmooth` with `include_line =
-FALSE` is the best option in such cases, as in the examples above. There
-is also a `keep_straight` parameter so that a label is still applied at
-an appropriate point and angle on the line, but the text will not
-attempt to follow every bump on the path.
+intricacies of the line. Often, a `geom_textsmooth` with
+`include_line = FALSE` is the best option in such cases, as in the
+examples above. There is also a `keep_straight` parameter so that a
+label is still applied at an appropriate point and angle on the line,
+but the text will not attempt to follow every bump on the path.
 
 Other paths may have points of tight curvature, and setting an offset /
 vjust for the text that is larger than the distance to the focus point
