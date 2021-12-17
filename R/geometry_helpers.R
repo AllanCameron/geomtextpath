@@ -362,11 +362,21 @@
       x  = c(path$x, trim_xy$x),
       y  = c(path$y, trim_xy$y),
       id = c(path$id, rep(which(trim), 2L)),
+      length = c(path$length, ipol),
       section = c(section, rep(c("pre", "post"), each = sum(trim)))
     )[order(c(path$length, ipol)), , drop = FALSE]
 
     # Filter empty sections (i.e., the part where the string is)
     path <- path[path$section != "", , drop = FALSE]
+
+    # Filter empty paths
+    group <- paste0(path$id, path$section)
+    len <- ave(path$length, group, FUN = function(x) {diff(range(x))})
+    path <- path[len > 1e-3, ]
+
+    # Recategorise
+    sect <- ave(path$section, path$id, FUN = function(x) length(unique(x)))
+    path$section[sect == "1"] <- "all"
   }
 
   # Get first point of individual paths
@@ -376,7 +386,6 @@
 
   path$new_id <- new_id
   path$start  <- start
-
 
   return(path)
 }
