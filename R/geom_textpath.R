@@ -135,7 +135,7 @@ geom_textpath <- function(
   lineend = "butt", linejoin = "round", linemitre = 10,
   include_line = TRUE, cut_path = NA, flip_inverted = TRUE,
   halign = "center", offset = NULL, parse = FALSE, keep_straight = FALSE,
-  padding = unit(0.15, "inch")
+  padding = unit(0.15, "inch"), arrow = NULL
   )
 {
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
@@ -154,6 +154,7 @@ geom_textpath <- function(
           parse         = parse,
           keep_straight = keep_straight,
           padding       = padding,
+          arrow         = arrow,
           ...
         ))
 }
@@ -200,7 +201,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     lineend = "butt", linejoin = "round", linemitre = 10,
     cut_path = NA, flip_inverted = TRUE, halign = "left",
     offset = NULL, parse = FALSE, keep_straight = FALSE,
-    padding = unit(0.15, "inch")
+    padding = unit(0.15, "inch"), arrow = NULL
   ) {
 
 
@@ -283,7 +284,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       polar_params = if (inherits(coord, "CoordPolar")){
                        list(x = 0.5, y = 0.5, theta = coord$theta)
                      } else NULL,
-      padding = padding
+      padding = padding,
+      arrow = arrow
     )
   }
 )
