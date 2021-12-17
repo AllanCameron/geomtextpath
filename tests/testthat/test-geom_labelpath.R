@@ -21,8 +21,12 @@ test_that("Text path grob has correct types", {
 
   grobs <- makeContent(grobs)
 
-  expect_length(grobs$children, 3)
+  expect_length(grobs$children, 7)
   expect_s3_class(grobs$children[[1]], "polyline")
   expect_s3_class(grobs$children[[2]], "polygon")
   expect_s3_class(grobs$children[[3]], "text")
+  expect_s3_class(grobs$children[[4]], "polygon")
+  expect_s3_class(grobs$children[[5]], "text")
+  expect_s3_class(grobs$children[[6]], "polygon")
+  expect_s3_class(grobs$children[[7]], "text")
 })

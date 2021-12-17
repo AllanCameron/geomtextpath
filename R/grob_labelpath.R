@@ -23,6 +23,7 @@ labelpathGrob <- function(
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
+  arrow = NULL,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -88,7 +89,8 @@ labelpathGrob <- function(
         vjust         = vjust,
         halign        = halign,
         cut_path      = cut_path
-      )
+      ),
+      arrow = arrow
     ),
     name = name,
     vp = vp,
@@ -115,7 +117,9 @@ makeContent.labelpath <- function(x) {
     hjust = params$hjust, halign = params$halign,
     flip_inverted = params$flip_inverted
   )
+  ntext <- length(text)
 
+  # Get points on the box
   if ({make_box <- sum(lengths(v$gp_box))}) {
     box <- Map(
       .curved_textbox,
@@ -127,17 +131,39 @@ makeContent.labelpath <- function(x) {
 
   text <- rbind_dfs(text)
 
-  x <- .add_path_grob(x, path, text, attr(path, "gp"), params)
+  x <- .add_path_grob(x, path, text, attr(path, "gp"), params, v$arrow)
 
+  # Construct textbox grobs as list
   if (make_box) {
-    x <- addGrob(
-      x, polygonGrob(
-        x = box$x, y = box$y, id = box$id,
-        default.units = "inches", gp = v$gp_box
+    boxgrob <- lapply(seq_len(ntext), function(i) {
+      gp  <- recycle_gp(v$gp_box, function(x) x[pmin(i, length(x))])
+      dat <- box[box$id == i, , drop = FALSE]
+      polygonGrob(
+        x = dat$x, y = dat$y,
+        default.units = "inches", gp = gp
       )
-    )
+    })
+  } else {
+    boxgrob <- NULL
   }
 
-  x <- .add_text_grob(x, text, v$gp_text)
+  # Construct text grobs as list
+  textgrob <- lapply(seq_len(ntext), function(i) {
+    gp  <- recycle_gp(v$gp_text, function(x) x[pmin(i, length(x))])
+    dat <- text[text$id == i, , drop = FALSE]
+    textGrob(
+      label = make_label(dat$label),
+      x = dat$x, y = dat$y, rot = dat$angle,
+      vjust = 0.5, hjust = 0.5, gp = gp,
+      default.units = "inches"
+    )
+  })
+
+  # Alternate box and textgrobs
+  grobs <- rbind(boxgrob, textgrob)
+  # Add box and textgrobs
+  grobs <- do.call(gList, c(x$children[1], grobs))
+  x <- setChildren(x, grobs)
   x
 }
+

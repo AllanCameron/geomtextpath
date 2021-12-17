@@ -20,6 +20,7 @@
 #' @param polar_params a list consisting of an x, y, and r component that
 #'   specifies the central point and radius of a circle around which
 #'   single-point labels will be wrapped.
+#' @param arrow Arrow specification, as created by [`arrow()`][grid::arrow].
 #' @inheritParams grid::textGrob
 #' @inheritParams geom_textpath
 #'
@@ -65,6 +66,7 @@ textpathGrob <- function(
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
+  arrow = NULL,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -130,7 +132,8 @@ textpathGrob <- function(
         vjust         = vjust,
         halign        = halign,
         cut_path      = cut_path
-      )
+      ),
+      arrow = arrow
     ),
     name = name,
     vp = vp,
@@ -159,7 +162,7 @@ makeContent.textpath <- function(x) {
     )
   text <- rbind_dfs(text)
 
-  x <- .add_path_grob(x, path, text, attr(path, "gp"), params)
+  x <- .add_path_grob(x, path, text, attr(path, "gp"), params, v$arrow)
   x <- .add_text_grob(x, text, v$gp_text)
   x
 }
@@ -188,8 +191,10 @@ makeContent.textpath <- function(x) {
   return(path)
 }
 
-.add_path_grob <- function(grob, data, text, gp, params) {
-  if (!all((gp$lty %||% 1) %in% c("0", "blank", NA))) {
+.add_path_grob <- function(grob, data, text, gp, params, arrow = NULL) {
+  has_line <- !all((gp$lty %||% 1)  %in% c("0", "blank", NA))
+  is_opaque <-!all((gp$col %||% 1) %in% c(NA, "transparent"))
+  if (has_line && is_opaque) {
     data <- rbind_dfs(data)
 
     # Get bookends by trimming paths when it intersects text
@@ -199,15 +204,19 @@ makeContent.textpath <- function(x) {
       cut_path = params$cut_path %||% NA,
       padding  = params$padding  %||% 0.15
     )
+    arrow <- .tailor_arrow(data, arrow)
+
     if (nrow(data) > 1) {
       # Recycle graphical parameters to match lengths of path
       gp <- recycle_gp(gp, `[`, i = data$id[data$start])
+      gp$fill <- gp$col
 
       # Write path grob
       grob <- addGrob(
         grob, polylineGrob(
           x = data$x, y = data$y, id = data$new_id, gp = gp,
-          default.units = "inches"
+          default.units = "inches",
+          arrow = arrow
         )
       )
     }
@@ -323,6 +332,35 @@ dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
    data$x <- x
    data$y <- y
    data
+}
+
+# This adjusts a possible arrow to not have duplicated arrowheads when a path
+# is cut into two due to the path trimming.
+.tailor_arrow <- function(data, arrow) {
+  if (is.null(arrow)) {
+    return(arrow)
+  }
+  keep  <- !duplicated(data$new_id)
+  sides <- data$section[keep]
+  id    <- data$id[keep]
+  path  <- data
+
+  # Have arrow match the length of the groups
+  arrow[] <- lapply(arrow, function(x) {
+    x[pmin(id, length(x))]
+  })
+  angle <- arrow$angle
+  ends  <- arrow$ends
+
+  # Ends are 1 = "first", 2 = "last", 3 = "both".
+  # We 'hide' an arrow by setting an NA angle
+  angle[ends == 2 & sides == "pre"]  <- NA_integer_
+  angle[ends == 1 & sides == "post"] <- NA_integer_
+  ends[ends == 3 & sides == "pre"]   <- 1L
+  ends[ends == 3 & sides == "post"]  <- 2L
+  arrow$angle <- angle
+  arrow$ends  <- ends
+  arrow
 }
 
 

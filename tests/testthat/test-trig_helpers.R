@@ -68,6 +68,9 @@ test_that(".arclength_from_xy gives correct results", {
   accurate <-  abs(max(.arclength_spline(x, y, accuracy = 5)) - 2 * pi)
 
   expect_lt(accurate, basic)
+
+  accurate <- abs(max(.arclength_spline(x, y, accuracy = NA)) - 2 * pi)
+  expect_equal(accurate, basic)
 })
 
 test_that(".get_offset offsets correctly", {

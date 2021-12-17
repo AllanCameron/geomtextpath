@@ -35,7 +35,8 @@ geom_labelpath <- function(
   keep_straight = FALSE,
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
-  label.r = unit(0.15, "lines")
+  label.r = unit(0.15, "lines"),
+  arrow = NULL
 ) {
   layer(
     geom        = GeomLabelpath,
@@ -60,6 +61,7 @@ geom_labelpath <- function(
       padding       = padding,
       label.padding = label.padding,
       label.r       = label.r,
+      arrow         = arrow,
       ...
     )
   )
@@ -99,7 +101,7 @@ GeomLabelpath <- ggproto(
     cut_path = NA, flip_inverted = TRUE, halign = "left",
     offset = NULL, parse = FALSE, keep_straight = FALSE,
     padding = unit(0.15, "inch"), label.padding = unit(0.25, "lines"),
-    label.r = unit(0.15, "lines")
+    label.r = unit(0.15, "lines"), arrow = NULL
   ) {
 
 
@@ -201,7 +203,8 @@ GeomLabelpath <- ggproto(
       } else NULL,
       padding = padding,
       label.padding = label.padding,
-      label.r = label.r
+      label.r = label.r,
+      arrow = arrow
     )
   }
 )

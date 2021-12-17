@@ -151,8 +151,12 @@ test_that("Path trimming is correct", {
   )
   expect_equal(unique(test$y), 1)
 
-
-
+  # Check for overtrimming
+  glyphs$left  <- 0
+  glyphs$right <- 1
+  test <- .get_surrounding_lines(xy, glyphs, cut_path = TRUE, vjust = vjust,
+                                 padding = br, vjust_lim = c(0, 3))
+  expect_equal(nrow(test), 0)
 })
 
 # Short paths -------------------------------------------------------------
@@ -311,6 +315,13 @@ test_that("We can get the correct values for hjust passed as characters.", {
   expect_lt(abs(interpret_hjust("ymin", offset, 0.1) - 0.50), 0.01)
   expect_lt(abs(interpret_hjust("ymax", offset, 0.1) - 0.00), 0.01)
   expect_lt(abs(interpret_hjust("ymid", offset, 0.1) - 0.75), 0.01)
+  expect_lt(interpret_hjust("start", offset, 0.1), 0)
+  expect_gt(interpret_hjust("end",   offset, 0.1), 1)
   expect_warning(interpret_hjust("blah", offset, 0.1))
+
+  # Check tiny paths
+  offset <- .get_offset(x = c(0, 1), y = c(0, 1), 0)
+  test <- interpret_hjust("auto", offset, 0.1)
+  expect_equal(test, 0)
 
 })

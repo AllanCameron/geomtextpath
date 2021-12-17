@@ -362,11 +362,26 @@
       x  = c(path$x, trim_xy$x),
       y  = c(path$y, trim_xy$y),
       id = c(path$id, rep(which(trim), 2L)),
+      length = c(path$length, ipol),
       section = c(section, rep(c("pre", "post"), each = sum(trim)))
     )[order(c(path$length, ipol)), , drop = FALSE]
 
     # Filter empty sections (i.e., the part where the string is)
     path <- path[path$section != "", , drop = FALSE]
+
+    # Filter empty paths
+    group <- paste0(path$id, path$section)
+    len <- ave(path$length, group, FUN = function(x) {diff(range(x))})
+    path <- path[len > 1e-3, ]
+
+    # Recategorise
+    sect <- ave(path$section, path$id, FUN = function(x) length(unique(x)))
+    path$section[sect == "1"] <- "all"
+  }
+  if (!nrow(path)) {
+    path$new_id <- integer()
+    path$start <- logical()
+    return(path)
   }
 
   # Get first point of individual paths
@@ -377,7 +392,6 @@
   path$new_id <- new_id
   path$start  <- start
 
-
   return(path)
 }
 
@@ -386,13 +400,15 @@ interpret_hjust <- function(hjust, offset, width) {
   x <- offset$x[, 1]
   y <- offset$y[, 1]
   path <- offset$arc_length[, 1]
-  room <- 0.5 * width
-  subset <- path > room & path < (max(path) - room)
+  path_max <- max(path)
+  half_width <- 0.5 * width
+
+  subset <- path > half_width & path < (path_max - half_width)
   if (sum(subset) < 2) {
     subset <- rep(TRUE, length(path))
   }
 
-  path <- path / max(path)
+  path <- path / path_max
 
   switch(
     EXPR = hjust,
@@ -403,6 +419,8 @@ interpret_hjust <- function(hjust, offset, width) {
     ymin = path[subset][which.min(y[subset])],
     ymax = path[subset][which.max(y[subset])],
     ymid = path[subset][which.min(abs(mean(y) - y[subset]))],
+    start = 0 - half_width / path_max,
+    end   = 1 + half_width / path_max,
     {
       warn(paste0("hjust value '", hjust, "' not recognised. ",
                   "Defaulting to hjust = 0.5"));
