@@ -25,7 +25,8 @@ geom_textpath(
   offset = NULL,
   parse = FALSE,
   keep_straight = FALSE,
-  padding = unit(0.15, "inch")
+  padding = unit(0.15, "inch"),
+  arrow = NULL
 )
 
 geom_textline(
@@ -61,7 +62,8 @@ geom_labelpath(
   keep_straight = FALSE,
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
-  label.r = unit(0.15, "lines")
+  label.r = unit(0.15, "lines"),
+  arrow = NULL
 )
 }
 \arguments{
@@ -148,6 +150,8 @@ paths.}
 \item{padding}{A \code{\link[grid:unit]{unit()}} of length 1 to determine the
 padding between path and text when the \code{cut_path} parameter trims the
 path.}
+
+\item{arrow}{Arrow specification, as created by \code{\link[grid:arrow]{grid::arrow()}}.}
 
 \item{orientation}{The orientation of the layer. The default (NA)
 automatically determines the orientation from the aesthetic mapping.

@@ -25,6 +25,7 @@ labelpathGrob(
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
+  arrow = NULL,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -50,6 +51,7 @@ textpathGrob(
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
+  arrow = NULL,
   default.units = "npc",
   name = NULL,
   vp = NULL
@@ -120,6 +122,8 @@ path.}
 \item{label.padding}{Amount of padding around label. Defaults to 0.25 lines.}
 
 \item{label.r}{Radius of rounded corners. Defaults to 0.15 lines.}
+
+\item{arrow}{Arrow specification, as created by \code{\link[grid:arrow]{arrow()}}.}
 
 \item{default.units}{A string indicating the default units to use
     if \code{x} or \code{y}
