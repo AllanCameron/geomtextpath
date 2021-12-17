@@ -11,6 +11,16 @@ test_that("label can be missing", {
 
   expect_s3_class(case, "zeroGrob")
   expect_s3_class(ctrl, "gTree")
+
+  # Test that polar parameters are converted
+  test <- labelpathGrob(
+    x = c(0, 1), y = c(0, 1), id = c(1, 1), label = "ABC",
+    polar_params = list(x = 0.5, y = 0.5)
+  )
+  ppar <- test$textpath$params$polar_params
+  expect_equal(convertUnit(ppar$x, "npc", valueOnly = TRUE), 0.5)
+  expect_equal(convertUnit(ppar$y, "npc", valueOnly = TRUE), 0.5)
+
 })
 
 
