@@ -395,13 +395,15 @@ interpret_hjust <- function(hjust, offset, width) {
   x <- offset$x[, 1]
   y <- offset$y[, 1]
   path <- offset$arc_length[, 1]
-  room <- 0.5 * width
-  subset <- path > room & path < (max(path) - room)
+  path_max <- max(path)
+  half_width <- 0.5 * width
+
+  subset <- path > half_width & path < (path_max - half_width)
   if (sum(subset) < 2) {
     subset <- rep(TRUE, length(path))
   }
 
-  path <- path / max(path)
+  path <- path / path_max
 
   switch(
     EXPR = hjust,
@@ -412,6 +414,8 @@ interpret_hjust <- function(hjust, offset, width) {
     ymin = path[subset][which.min(y[subset])],
     ymax = path[subset][which.max(y[subset])],
     ymid = path[subset][which.min(abs(mean(y) - y[subset]))],
+    start = 0 - half_width / path_max,
+    end   = 1 + half_width / path_max,
     {
       warn(paste0("hjust value '", hjust, "' not recognised. ",
                   "Defaulting to hjust = 0.5"));
