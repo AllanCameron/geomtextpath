@@ -378,6 +378,11 @@
     sect <- ave(path$section, path$id, FUN = function(x) length(unique(x)))
     path$section[sect == "1"] <- "all"
   }
+  if (!nrow(path)) {
+    path$new_id <- integer()
+    path$start <- logical()
+    return(path)
+  }
 
   # Get first point of individual paths
   new_id <- paste0(path$id, "&", path$section)

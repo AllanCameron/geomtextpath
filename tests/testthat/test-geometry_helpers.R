@@ -151,8 +151,12 @@ test_that("Path trimming is correct", {
   )
   expect_equal(unique(test$y), 1)
 
-
-
+  # Check for overtrimming
+  glyphs$left  <- 0
+  glyphs$right <- 1
+  test <- .get_surrounding_lines(xy, glyphs, cut_path = TRUE, vjust = vjust,
+                                 padding = br, vjust_lim = c(0, 3))
+  expect_equal(nrow(test), 0)
 })
 
 # Short paths -------------------------------------------------------------
