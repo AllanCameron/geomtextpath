@@ -31,19 +31,28 @@
     <loc>https://allancameron.github.io/geomtextpath/news/index.html</loc>
   </url>
   <url>
+    <loc>https://allancameron.github.io/geomtextpath/reference/GeomTextLine.html</loc>
+  </url>
+  <url>
     <loc>https://allancameron.github.io/geomtextpath/reference/GeomTextPath.html</loc>
   </url>
   <url>
     <loc>https://allancameron.github.io/geomtextpath/reference/coord_curvedpolar.html</loc>
   </url>
   <url>
-    <loc>https://allancameron.github.io/geomtextpath/reference/geom_labelcontour.html</loc>
+    <loc>https://allancameron.github.io/geomtextpath/reference/geom_textcontour.html</loc>
   </url>
   <url>
-    <loc>https://allancameron.github.io/geomtextpath/reference/geom_labeldensity2d.html</loc>
+    <loc>https://allancameron.github.io/geomtextpath/reference/geom_textdensity.html</loc>
+  </url>
+  <url>
+    <loc>https://allancameron.github.io/geomtextpath/reference/geom_textdensity2d.html</loc>
   </url>
   <url>
     <loc>https://allancameron.github.io/geomtextpath/reference/geom_textpath.html</loc>
+  </url>
+  <url>
+    <loc>https://allancameron.github.io/geomtextpath/reference/geom_textsmooth.html</loc>
   </url>
   <url>
     <loc>https://allancameron.github.io/geomtextpath/reference/geomtextpath-package.html</loc>

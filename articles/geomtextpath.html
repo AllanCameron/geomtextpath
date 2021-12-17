@@ -113,15 +113,33 @@
   data  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">0</span>, y <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,
   size  <span class="op">=</span> <span class="fl">4</span>, label <span class="op">=</span> <span class="va">rhyme</span>
 <span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"geom_text()"</span><span class="op">)</span></code></pre></div>
-<p><img src="geomtextpath_files/figure-html/path_and_text_spiral-1.png" width="700"><img src="geomtextpath_files/figure-html/path_and_text_spiral-2.png" width="700"></p>
+<p><img src="geomtextpath_files/figure-html/path_and_text_spiral-1.png" width="45%"><img src="geomtextpath_files/figure-html/path_and_text_spiral-2.png" width="45%"></p>
 <p>The <code>geom_pathtext()</code> extension follows these ggplot2 conventions and displays the path and the text by projecting the text along the curve.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>
   size  <span class="op">=</span> <span class="fl">4</span>, label <span class="op">=</span> <span class="va">rhyme</span>
 <span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"geom_textpath()"</span><span class="op">)</span></code></pre></div>
-<p><img src="geomtextpath_files/figure-html/textpath_spiral-1.png" width="700"></p>
+<p><img src="geomtextpath_files/figure-html/textpath_spiral-1.png" width="75%" style="display: block; margin: auto;"></p>
+<div class="section level3">
+<h3 id="correction-of-angles-across-different-aspect-ratios">Correction of angles across different aspect ratios<a class="anchor" aria-label="anchor" href="#correction-of-angles-across-different-aspect-ratios"></a>
+</h3>
+<p>The mechanism underlying the text positioning will take account of the plotting window however it is rescaled. This means text continues to stick together and follow the path at the correct angle as the plotting window changes in size or in aspect ratio. For example, here is the same plot drawn with different dimensions:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>
+  size  <span class="op">=</span> <span class="fl">4</span>, label <span class="op">=</span> <span class="va">rhyme</span>
+<span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"geom_textpath()"</span><span class="op">)</span>
+<span class="co">#&gt; Coordinate system already present. Adding new coordinate system, which will replace the existing one.</span></code></pre></div>
+<p><img src="geomtextpath_files/figure-html/skinny-1.png" width="50%" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>
+  size  <span class="op">=</span> <span class="fl">4</span>, label <span class="op">=</span> <span class="va">rhyme</span>
+<span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"geom_textpath()"</span><span class="op">)</span>
+<span class="co">#&gt; Coordinate system already present. Adding new coordinate system, which will replace the existing one.</span></code></pre></div>
+<p><img src="geomtextpath_files/figure-html/wide-1.png" width="100%" style="display: block; margin: auto;"></p>
 </div>
-  </main>
+</div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
