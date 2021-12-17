@@ -220,3 +220,38 @@ test_that("arrows are expanded correctly", {
   expect_equal(test$ends, c(1L, 1L, 2L, 2L, 1L))
 })
 
+# Aesthetics --------------------------------------------------------------
+
+# This is a snapshot test to warn us whenever there is a change in how the
+# aesthetics are autoprinted.
+test_that("No changes occurred in autodocumentation of aesthetics", {
+  txt <- rd_aesthetics("geom", "textpath")
+  expect_snapshot(txt)
+})
+
+test_that("find_global() finds global functions", {
+  # Should find because should be visible from here
+  test <- find_global("geom_textpath", env = globalenv())
+  expect_type(test, "closure")
+  # Should find because should search namespace of geomtextpath
+  test <- find_global("geom_textpath", env = emptyenv())
+  expect_type(test, "closure")
+  # Should not find
+  test <- find_global("This is nonsense", env = globalenv())
+  expect_null(test)
+})
+
+test_that("check_subclass works", {
+  test <- check_subclass(GeomTextpath, "Geom")
+  expect_s3_class(test, "GeomTextpath")
+
+  test <- check_subclass("textpath", "Geom")
+  expect_s3_class(test, "GeomTextpath")
+
+  test <- substitute(check_subclass("nonsense", "Geom"))
+  expect_error(eval(test), "Can't find `geom`")
+
+  test <- substitute(check_subclass(12, "Geom"))
+  expect_error(eval(test), "must be either a string")
+})
+
