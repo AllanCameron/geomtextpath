@@ -22,6 +22,7 @@ Depends:
     ggplot2
 Imports:
     grid,
+    gridExtra,
     scales,
     systemfonts,
     rlang,
@@ -33,8 +34,7 @@ Suggests:
     knitr,
     rmarkdown,
     ragg,
-    qpdf,
-    gridExtra
+    qpdf
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Collate: 

@@ -11,6 +11,7 @@
 #' @importFrom rlang abort warn `%||%`
 #' @importFrom scales rescale squish_infinite alpha
 #' @importFrom textshaping shape_text
+#' @importFrom gridExtra grid.arrange
 NULL
 
 # The following block is used by usethis to automatically manage
