@@ -78,11 +78,11 @@ Just as `geom_path` is the foundation for several other geoms in
 `ggplot2`, so too is `geom_textpath` the foundation of the other geoms
 in this package, which include:
 
-  - `geom_textline`
-  - `geom_textdensity`
-  - `geom_textsmooth`
-  - `geom_textcontour`
-  - `geom_textdensity2d`
+-   `geom_textline`
+-   `geom_textdensity`
+-   `geom_textsmooth`
+-   `geom_textcontour`
+-   `geom_textdensity2d`
 
 Each of these aims to replicate all the functionality of the equivalent
 `ggplot2` function, but with direct text labels that follow the shape of
@@ -159,7 +159,6 @@ Adding labels to the level of your contour lines is now as simple as
 calling `geom_textcontour` instead of `geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -305,8 +304,8 @@ p <- ggplot(df, aes(x, y, color = color, label = color)) +
        lims(x = c(0, 6), y = c(0, 8)) +
        theme_bw()
 
-p_text     <- p + geom_text(size = 5, hjust = -0.1)
-p_textpath <- p + geom_textpath(size = 5, hjust = -0.1)
+p_text     <- p + geom_text(size = 8, hjust = -0.1)
+p_textpath <- p + geom_textpath(size = 8, hjust = -0.1)
 ```
 
 Note that `p_text` and `p_textpath` are made with the same base plot and
@@ -389,7 +388,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 
@@ -404,19 +402,18 @@ axis labels are curved. For example:
 ``` r
 clock <- function(x) {
   
-  hours <- c(rep(x[1] %% 12 + tail(x, 1) / 60, 2), 0, 3)
-  minutes <- c(rep(tail(x, 1)/5, 2), 0, 4)
+  hours <- c(rep(x[1] %% 12 + tail(x, 1) / 60, 2), 0, 3.5)
+  minutes <- c(rep(tail(x, 1)/5, 2), 0, 5)
 
   ggplot(as.data.frame(rbind(hours, minutes)), aes(V1, V3)) + 
       geom_segment(aes(xend = V2, yend = V4), 
-                   size = c(2, 1.5), lineend = "round") +
-      geom_point(x = 0, y = 0, size = 5) +
-      geom_hline(yintercept = 6) +
+                   size = c(3, 2), lineend = "round") +
+      geom_point(x = 0, y = 0, size = 6) +
       scale_x_continuous(limits = c(0, 12), breaks = 1:12,
                          label = as.roman) +
       scale_y_continuous(limits = c(0, 6), expand = c(0, 0)) +
       theme_void() + 
-      theme(axis.text.x = element_text(size = 12, face = 2, vjust = -1.3),
+      theme(axis.text.x = element_text(size = 25, face = 2),
             plot.margin = margin(20, 20, 20, 20))
 }
 
@@ -444,7 +441,7 @@ p <- ggplot(df, aes(x, y, fill = x)) +
       geom_col(width = 0.5) +
       scale_fill_brewer(type = "qual") +
       theme_bw() +
-      theme(axis.text.x = element_text(size = 9),
+      theme(axis.text.x = element_text(size = 15),
             legend.position = "none")
 
 p + coord_polar()
@@ -479,11 +476,11 @@ problems than it would solve.
 
 Many paths will be too noisy or too angular to directly label in a
 visually appealing fashion if the text adheres too closely to the
-intricacies of the line. Often, a `geom_textsmooth` with `include_line =
-FALSE` is the best option in such cases, as in the examples above. There
-is also a `keep_straight` parameter so that a label is still applied at
-an appropriate point and angle on the line, but the text will not
-attempt to follow every bump on the path.
+intricacies of the line. Often, a `geom_textsmooth` with
+`include_line = FALSE` is the best option in such cases, as in the
+examples above. There is also a `keep_straight` parameter so that a
+label is still applied at an appropriate point and angle on the line,
+but the text will not attempt to follow every bump on the path.
 
 Other paths may have points of tight curvature, and setting an offset /
 vjust for the text that is larger than the distance to the focus point

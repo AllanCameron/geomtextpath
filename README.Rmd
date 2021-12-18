@@ -234,7 +234,7 @@ p + coord_polar()
 
 We have included the ability to have _point-like_ text paths. While this sounds paradoxical, it means that `geom_textpath` can be used as a drop-in for `geom_text`, and will behave in much the same way, with the exception that the text will automatically curve in polar co-ordinates. The best way to show this is with a head-to-head comparison.
 
-```{r pointlike}
+```{r pointlike, out.width = "50%", fig.width = 4, fig.height = 4}
 df <- data.frame(x = 1:4, y = c(4, 7, 6, 3),
                  color = c("royalblue", "orangered", "deepskyblue4", "violet"))
 
@@ -244,13 +244,13 @@ p <- ggplot(df, aes(x, y, color = color, label = color)) +
        lims(x = c(0, 6), y = c(0, 8)) +
        theme_bw()
 
-p_text     <- p + geom_text(size = 5, hjust = -0.1)
-p_textpath <- p + geom_textpath(size = 5, hjust = -0.1)
+p_text     <- p + geom_text(size = 8, hjust = -0.1)
+p_textpath <- p + geom_textpath(size = 8, hjust = -0.1)
 ```
 
 Note that `p_text` and `p_textpath` are made with the same base plot and data. In normal Cartesian Co-ordinates they are essentially identical:
 
-```{r cartesian_compare, fig.height = 4, fig.width = 8}
+```{r cartesian_compare}
 p_text
 p_textpath
 
@@ -321,19 +321,18 @@ Another function exported from this package is `coord_curvedpolar`. This behaves
 ```{r coord_curvedpolar}
 clock <- function(x) {
   
-  hours <- c(rep(x[1] %% 12 + tail(x, 1) / 60, 2), 0, 3)
-  minutes <- c(rep(tail(x, 1)/5, 2), 0, 4)
+  hours <- c(rep(x[1] %% 12 + tail(x, 1) / 60, 2), 0, 3.5)
+  minutes <- c(rep(tail(x, 1)/5, 2), 0, 5)
 
   ggplot(as.data.frame(rbind(hours, minutes)), aes(V1, V3)) + 
       geom_segment(aes(xend = V2, yend = V4), 
-                   size = c(2, 1.5), lineend = "round") +
-      geom_point(x = 0, y = 0, size = 5) +
-      geom_hline(yintercept = 6) +
+                   size = c(3, 2), lineend = "round") +
+      geom_point(x = 0, y = 0, size = 6) +
       scale_x_continuous(limits = c(0, 12), breaks = 1:12,
                          label = as.roman) +
       scale_y_continuous(limits = c(0, 6), expand = c(0, 0)) +
       theme_void() + 
-      theme(axis.text.x = element_text(size = 12, face = 2, vjust = -1.3),
+      theme(axis.text.x = element_text(size = 25, face = 2),
             plot.margin = margin(20, 20, 20, 20))
 }
 
@@ -352,7 +351,7 @@ p <- ggplot(df, aes(x, y, fill = x)) +
       geom_col(width = 0.5) +
       scale_fill_brewer(type = "qual") +
       theme_bw() +
-      theme(axis.text.x = element_text(size = 9),
+      theme(axis.text.x = element_text(size = 15),
             legend.position = "none")
 
 p + coord_polar()
