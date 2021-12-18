@@ -313,10 +313,16 @@ Note that `p_text` and `p_textpath` are made with the same base plot and
 data. In normal Cartesian Co-ordinates they are essentially identical:
 
 ``` r
-gridExtra::grid.arrange(p_text, p_textpath, ncol = 2)
+p_text
 ```
 
 <img src="man/figures/README-cartesian_compare-1.png" width="100%" style="display: block; margin: auto;" />
+
+``` r
+p_textpath
+```
+
+<img src="man/figures/README-cartesian_compare-2.png" width="100%" style="display: block; margin: auto;" />
 
 But note the difference when we switch to polar co-ordinates:
 
@@ -324,10 +330,16 @@ But note the difference when we switch to polar co-ordinates:
 p_text <- p_text + coord_polar()
 p_textpath <- p_textpath + coord_polar()
 
-gridExtra::grid.arrange(p_text, p_textpath, ncol = 2)
+p_text
 ```
 
 <img src="man/figures/README-polar_compare-1.png" width="100%" style="display: block; margin: auto;" />
+
+``` r
+p_textpath
+```
+
+<img src="man/figures/README-polar_compare-2.png" width="100%" style="display: block; margin: auto;" />
 
 By default, any labels that would have been upside down (or even mostly
 upside down) are automatically flipped to be facing in a legible
@@ -408,12 +420,16 @@ clock <- function(x) {
             plot.margin = margin(20, 20, 20, 20))
 }
 
-gridExtra::grid.arrange(clock(03:35) + coord_polar(),
-                        clock(19:15) + coord_curvedpolar(),
-                        ncol = 2)
+clock(03:35) + coord_polar()
 ```
 
 <img src="man/figures/README-coord_curvedpolar-1.png" width="100%" style="display: block; margin: auto;" />
+
+``` r
+clock(19:15) + coord_curvedpolar()
+```
+
+<img src="man/figures/README-coord_curvedpolar-2.png" width="100%" style="display: block; margin: auto;" />
 
 This can be useful to achieve a particular aesthetic effect (as above),
 but can also be of practical utility when axis labels are long, which
@@ -431,10 +447,16 @@ p <- ggplot(df, aes(x, y, fill = x)) +
       theme(axis.text.x = element_text(size = 9),
             legend.position = "none")
 
-gridExtra::grid.arrange(p + coord_polar(), p + coord_curvedpolar(), ncol = 2)
+p + coord_polar()
 ```
 
 <img src="man/figures/README-coord_curvedpolar2-1.png" width="100%" style="display: block; margin: auto;" />
+
+``` r
+p + coord_curvedpolar()
+```
+
+<img src="man/figures/README-coord_curvedpolar2-2.png" width="100%" style="display: block; margin: auto;" />
 
 You can see more examples in the
 [gallery](https://allancameron.github.io/geomtextpath/articles/gallery.html)
