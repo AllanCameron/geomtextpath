@@ -78,11 +78,11 @@ Just as `geom_path` is the foundation for several other geoms in
 `ggplot2`, so too is `geom_textpath` the foundation of the other geoms
 in this package, which include:
 
--   `geom_textline`
--   `geom_textdensity`
--   `geom_textsmooth`
--   `geom_textcontour`
--   `geom_textdensity2d`
+  - `geom_textline`
+  - `geom_textdensity`
+  - `geom_textsmooth`
+  - `geom_textcontour`
+  - `geom_textdensity2d`
 
 Each of these aims to replicate all the functionality of the equivalent
 `ggplot2` function, but with direct text labels that follow the shape of
@@ -159,6 +159,7 @@ Adding labels to the level of your contour lines is now as simple as
 calling `geom_textcontour` instead of `geom_contour`:
 
 ``` r
+
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -388,6 +389,7 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
+
 p + coord_polar()
 ```
 
@@ -476,11 +478,11 @@ problems than it would solve.
 
 Many paths will be too noisy or too angular to directly label in a
 visually appealing fashion if the text adheres too closely to the
-intricacies of the line. Often, a `geom_textsmooth` with
-`include_line = FALSE` is the best option in such cases, as in the
-examples above. There is also a `keep_straight` parameter so that a
-label is still applied at an appropriate point and angle on the line,
-but the text will not attempt to follow every bump on the path.
+intricacies of the line. Often, a `geom_textsmooth` with `include_line =
+FALSE` is the best option in such cases, as in the examples above. There
+is also a `keep_straight` parameter so that a label is still applied at
+an appropriate point and angle on the line, but the text will not
+attempt to follow every bump on the path.
 
 Other paths may have points of tight curvature, and setting an offset /
 vjust for the text that is larger than the distance to the focus point
