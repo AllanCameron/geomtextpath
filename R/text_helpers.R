@@ -1,3 +1,5 @@
+# Measuring ---------------------------------------------------------------
+
 #' Wrapper for text measurement
 #'
 #' This wrap the `textshaping::shape_text()` function to return positions for
@@ -136,6 +138,24 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
   )
 }
 
+measure_text_dim <- function(labels, gp, dim = "height") {
+  dimfun <- switch(
+    dim,
+    height = grobHeight,
+    width  = grobWidth
+  )
+  gp <- lapply(seq_along(labels), function(i) {
+    recycle_gp(gp, `[`, i)
+  })
+  grobs <- Map(
+    textGrob, gp = gp, label = labels
+  )
+  ans <- do.call(unit.c, lapply(grobs, dimfun))
+  as_inch(ans, dim)
+}
+
+# Glyph translation -------------------------------------------------------
+
 # Here a cache that stores index lookup tables of fonts
 index_cache <- new.env(parent = emptyenv())
 
@@ -181,13 +201,16 @@ translate_glyph <- function(index, id, gp = gpar()) {
   intToUtf8(index, multiple = TRUE)
 }
 
+# Helpers -----------------------------------------------------------------
+
+
 cluster_glyphs <- function(
   shape,
   vars = c("glyph", "metric_id", "string_id")
 ) {
   shape$clusters <- group_id(shape, vars)
-  shape$letters  <- ave(
-    shape$letters, shape$clusters,
+  shape$letter  <- ave(
+    shape$letter, shape$clusters,
     FUN = function(x) paste0(x, collapse = "")
   )
   shape$x_midpoint <- ave(
@@ -216,18 +239,4 @@ filter_glyphs <- function(
 }
 
 
-measure_text_dim <- function(labels, gp, dim = "height") {
-  dimfun <- switch(
-    dim,
-    height = grobHeight,
-    width  = grobWidth
-  )
-  gp <- lapply(seq_along(labels), function(i) {
-    recycle_gp(gp, `[`, i)
-  })
-  grobs <- Map(
-    textGrob, gp = gp, label = labels
-  )
-  ans <- do.call(unit.c, lapply(grobs, dimfun))
-  as_inch(ans, dim)
-}
+
