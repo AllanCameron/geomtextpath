@@ -70,18 +70,8 @@ measure_text <- function(
 
   # Translate and cluster glyphs
   txt$letter <- translate_glyph(txt$index, txt$metric_id, gp)
-  # Filter non-letters
-  keep <- txt$letter %in% c("\r", "\n", "\t", "")
-  keep <- !(keep | duplicated(txt[, c("glyph", "metric_id")]))
-  txt  <- txt[keep, , drop = FALSE]
-  if (length(unique(txt$metric_id)) != nlabel) {
-    if (nrow(txt)) {
-      warn("Not all glyphs for the labels could be retrieved.")
-    } else {
-      abort("No glyphs could be retrieved for these labels.")
-    }
-  }
   txt        <- cluster_glyphs(txt)
+  txt        <- filter_glyphs(txt, nlabel)
 
   # Adjust shape for resolution
   metrics$width  <- metrics$width  / ppi
@@ -206,6 +196,25 @@ cluster_glyphs <- function(
   )
   shape
 }
+
+filter_glyphs <- function(
+  shape, n,
+  forbidden = c("\r", "\n", "\t", "")
+) {
+  keep  <- shape$letter %in% forbidden
+  keep  <- !(keep | duplicated(shape$clusters))
+  shape <- shape[keep, , drop = FALSE]
+
+  if (length(unique(shape$metric_id)) != n) {
+    if (nrow(shape)) {
+      warn("Not all glyphs for the labels could be retrieved.")
+    } else {
+      abort("No glyphs could be retrieved for these labels.")
+    }
+  }
+  shape
+}
+
 
 measure_text_dim <- function(labels, gp, dim = "height") {
   dimfun <- switch(
