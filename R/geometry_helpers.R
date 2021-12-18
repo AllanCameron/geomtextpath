@@ -385,12 +385,8 @@
   }
 
   # Get first point of individual paths
-  new_id <- paste0(path$id, "&", path$section)
-  new_id <- discretise(new_id)
-  start  <- c(TRUE, new_id[-1] != new_id[-length(new_id)])
-
-  path$new_id <- new_id
-  path$start  <- start
+  path$new_id <- group_id(path, c("id", "section"))
+  path$start  <- c(TRUE, path$new_id[-1] != path$new_id[-length(path$new_id)])
 
   return(path)
 }

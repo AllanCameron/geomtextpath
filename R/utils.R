@@ -208,7 +208,13 @@ as_unit <- function(x, units = NULL, ...) {
   x
 }
 
-# Documentation functions modified from ggplot2
+group_id <- function(data, vars) {
+  id <- lapply(data[vars], discretise)
+  id <- do.call(paste, c(list(sep = "&"), id))
+  discretise(id)
+}
+
+# Documentation helpers ---------------------------------------------------
 
 as_lower <- function(x) {
   chartr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", x)
