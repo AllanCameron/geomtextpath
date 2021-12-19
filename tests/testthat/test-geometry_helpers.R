@@ -210,11 +210,11 @@ test_that("Flipping logic is correct", {
   angle <- rep(angle, nrow(label))
 
   # Should return NULL if we're not interested in flipping
-  test <- .attempt_flip(xy, label, angle = angle, flip_inverted = FALSE)
+  test <- .attempt_flip(xy, label, angle = angle, upright = FALSE)
   expect_null(test)
 
   # Should return data.frame on approved flip
-  test <- .attempt_flip(xy, label, angle = angle, flip_inverted = TRUE)
+  test <- .attempt_flip(xy, label, angle = angle, upright = TRUE)
   expect_equal(class(test), "data.frame")
 
   # Angles should not be amenable to flip
@@ -222,16 +222,16 @@ test_that("Flipping logic is correct", {
   angle <- .angle_from_xy(xy$x, xy$y, norm = TRUE, degrees = TRUE)
   angle <- rep(angle, nrow(label))
 
-  test <- .attempt_flip(xy, label, angle = angle, flip_inverted = TRUE)
+  test <- .attempt_flip(xy, label, angle = angle, upright = TRUE)
   expect_null(test)
 
   # Test if .get_path_points() also respects this
   xy <- data_frame(x = 2:1, y = 1:2)
 
-  case <- .get_path_points(xy, label, flip_inverted = TRUE)
+  case <- .get_path_points(xy, label, upright = TRUE)
   expect_equal(case$angle, c(-45, -45, -45))
 
-  ctrl <- .get_path_points(xy, label, flip_inverted = FALSE)
+  ctrl <- .get_path_points(xy, label, upright = FALSE)
   expect_equal(case$angle, ctrl$angle - 180)
 })
 
@@ -242,8 +242,8 @@ test_that("Flipping appropriately adjusts offset", {
 
   xy <- data_frame(x = c(1, 0), y = 2)
 
-  ctrl <- .get_path_points(xy, label, flip_inverted = FALSE)
-  case <- .get_path_points(xy, label, flip_inverted = TRUE)
+  ctrl <- .get_path_points(xy, label, upright = FALSE)
+  case <- .get_path_points(xy, label, upright = TRUE)
 
   expect_equal(ctrl$y, c(1, 1, 1))
   expect_equal(case$y, c(1, 1, 1))
@@ -258,8 +258,8 @@ test_that("Flipping leads to correctly clipped path", {
   xy$length <- .arclength_from_xy(xy$x, xy$y)
   xy$id <- 1
 
-  ctrl <- .get_path_points(xy, label, hjust = 0, flip_inverted = FALSE)
-  case <- .get_path_points(xy, label, hjust = 0, flip_inverted = TRUE)
+  ctrl <- .get_path_points(xy, label, hjust = 0, upright = FALSE)
+  case <- .get_path_points(xy, label, hjust = 0, upright = TRUE)
 
   # Should have reverse order
   expect_equal(ctrl$length, sort(ctrl$length, decreasing = FALSE))

@@ -55,7 +55,7 @@
   label = "placeholder",
   hjust = 0.5,
   halign = "center",
-  flip_inverted = FALSE
+  upright = FALSE
 ) {
   # We need a copy for a potential flip
   letters <- label
@@ -81,7 +81,7 @@
   letters <-  .project_text(letters, offset)
 
   # Consider flipping the text
-  df <- .attempt_flip(path, label, letters$angle, hjust, halign, flip_inverted)
+  df <- .attempt_flip(path, label, letters$angle, hjust, halign, upright)
   if (!is.null(df)) {
     return(df)
   }
@@ -123,9 +123,9 @@
 #' NULL
 .attempt_flip <- function(
   path, label = "placeholder", angle = 0,
-  hjust = 0, halign = "left", flip_inverted = FALSE
+  hjust = 0, halign = "left", upright = FALSE
 ) {
-  if (!flip_inverted) {
+  if (!upright) {
     return(NULL)
   }
   angle <- angle %% 360
@@ -141,7 +141,7 @@
 
   out <- .get_path_points(
     path, label, hjust, halign,
-    flip_inverted = FALSE
+    upright = FALSE
   )
   # Invert length so path is trimmed correctly
   length <- path$length %||% .arclength_from_xy(path$x, path$y)

@@ -38,7 +38,7 @@
 #'   into two sections, one on either side of the string. If `FALSE`, the
 #'   path is plotted as a whole. The default, `NA`, will break the line if the
 #'   string has a `vjust` of between 0 and 1.
-#' @param flip_inverted A `logical(1)` which if `TRUE` (default), inverts any
+#' @param upright A `logical(1)` which if `TRUE` (default), inverts any
 #'   string where the majority of letters would be upside down along the path
 #'   are inverted to improve legibility. If `FALSE` letters are left as-is.
 #' @param halign A `character(1)` describing how multi-line labels should
@@ -133,7 +133,7 @@ geom_textpath <- function(
   position = "identity", na.rm = FALSE, show.legend = NA,
   inherit.aes = TRUE,  ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
-  text_only = FALSE, gap = NA, flip_inverted = TRUE,
+  text_only = FALSE, gap = NA, upright = TRUE,
   halign = "center", offset = NULL, parse = FALSE, keep_straight = FALSE,
   padding = unit(0.15, "inch"), arrow = NULL
   )
@@ -148,7 +148,7 @@ geom_textpath <- function(
           linemitre     = linemitre,
           text_only     = text_only,
           gap           = gap,
-          flip_inverted = flip_inverted,
+          upright       = upright,
           halign        = halign,
           offset        = offset,
           parse         = parse,
@@ -199,7 +199,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   draw_panel = function(
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
-    gap = NA, flip_inverted = TRUE, halign = "left",
+    gap = NA, upright = TRUE, halign = "left",
     offset = NULL, parse = FALSE, keep_straight = FALSE,
     padding = unit(0.15, "inch"), arrow = NULL
   ) {
@@ -278,7 +278,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       gp_text = text_gp,
       gp_path = path_gp,
       keep_straight = keep_straight,
-      flip_inverted = flip_inverted,
+      upright       = upright,
       default.units = "npc",
       angle = data$angle,
       polar_params = if (inherits(coord, "CoordPolar")){

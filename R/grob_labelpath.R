@@ -18,7 +18,7 @@ labelpathGrob <- function(
   gp_path = gpar(),
   gp_box  = gpar(),
   gap = NA,
-  flip_inverted = TRUE,
+  upright = TRUE,
   polar_params = NULL,
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
@@ -79,7 +79,7 @@ labelpathGrob <- function(
       gp_path       = gp_path,
       gp_box        = gp_box,
       params = list(
-        flip_inverted = flip_inverted,
+        upright       = upright,
         polar_params  = polar_params,
         angle         = angle,
         padding       = padding,
@@ -115,7 +115,7 @@ makeContent.labelpath <- function(x) {
     .get_path_points,
     path = path, label = v$label,
     hjust = params$hjust, halign = params$halign,
-    flip_inverted = params$flip_inverted
+    upright = params$upright
   )
   ntext <- length(text)
 

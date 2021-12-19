@@ -137,7 +137,7 @@ coord_curvedpolar <- function(theta = "x", start = 0,
                     halign = halign,
                     gp_text = element_gp,
                     gp_path = gpar(linetype = 0, lty = 0),
-                    flip_inverted = TRUE,
+                    upright = TRUE,
                     default.units = "native"
                   ),
       element_render(theme, "panel.border")
