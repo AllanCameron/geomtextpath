@@ -1,3 +1,5 @@
+# Measuring ---------------------------------------------------------------
+
 #' Wrapper for text measurement
 #'
 #' This wrap the `textshaping::shape_text()` function to return positions for
@@ -70,23 +72,8 @@ measure_text <- function(
 
   # Translate and cluster glyphs
   txt$letter <- translate_glyph(txt$index, txt$metric_id, gp)
-  clusters   <- interaction(txt$glyph, txt$metric_id, drop = TRUE)
-  txt$letter <- ave(txt$letter, clusters, FUN = function(x) {
-    paste0(x, collapse = "")
-  })
-  txt$x_midpoint <- ave(txt$x_midpoint, clusters, FUN = max)
-
-  # Filter non-letters
-  keep <- txt$letter %in% c("\r", "\n", "\t", "")
-  keep <- !(keep | duplicated(txt[, c("glyph", "metric_id")]))
-  txt  <- txt[keep, , drop = FALSE]
-  if (length(unique(txt$metric_id)) != nlabel) {
-    if (nrow(txt)) {
-      warn("Not all glyphs for the labels could be retrieved.")
-    } else {
-      abort("No glyphs could be retrieved for these labels.")
-    }
-  }
+  txt        <- cluster_glyphs(txt)
+  txt        <- filter_glyphs(txt, nlabel)
 
   # Adjust shape for resolution
   metrics$width  <- metrics$width  / ppi
@@ -151,6 +138,24 @@ measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
   )
 }
 
+measure_text_dim <- function(labels, gp, dim = "height") {
+  dimfun <- switch(
+    dim,
+    height = grobHeight,
+    width  = grobWidth
+  )
+  gp <- lapply(seq_along(labels), function(i) {
+    recycle_gp(gp, `[`, i)
+  })
+  grobs <- Map(
+    textGrob, gp = gp, label = labels
+  )
+  ans <- do.call(unit.c, lapply(grobs, dimfun))
+  as_inch(ans, dim)
+}
+
+# Glyph translation -------------------------------------------------------
+
 # Here a cache that stores index lookup tables of fonts
 index_cache <- new.env(parent = emptyenv())
 
@@ -196,18 +201,42 @@ translate_glyph <- function(index, id, gp = gpar()) {
   intToUtf8(index, multiple = TRUE)
 }
 
-measure_text_dim <- function(labels, gp, dim = "height") {
-  dimfun <- switch(
-    dim,
-    height = grobHeight,
-    width  = grobWidth
+# Helpers -----------------------------------------------------------------
+
+
+cluster_glyphs <- function(
+  shape,
+  vars = c("glyph", "metric_id", "string_id")
+) {
+  shape$clusters <- group_id(shape, vars)
+  shape$letter  <- ave(
+    shape$letter, shape$clusters,
+    FUN = function(x) paste0(x, collapse = "")
   )
-  gp <- lapply(seq_along(labels), function(i) {
-    recycle_gp(gp, `[`, i)
-  })
-  grobs <- Map(
-    textGrob, gp = gp, label = labels
+  shape$x_midpoint <- ave(
+    shape$x_midpoint, shape$clusters,
+    FUN = max
   )
-  ans <- do.call(unit.c, lapply(grobs, dimfun))
-  as_inch(ans, dim)
+  shape
 }
+
+filter_glyphs <- function(
+  shape, n,
+  forbidden = c("\r", "\n", "\t", "")
+) {
+  keep  <- shape$letter %in% forbidden
+  keep  <- !(keep | duplicated(shape$clusters))
+  shape <- shape[keep, , drop = FALSE]
+
+  if (length(unique(shape$metric_id)) != n) {
+    if (nrow(shape)) {
+      warn("Not all glyphs for the labels could be retrieved.")
+    } else {
+      abort("No glyphs could be retrieved for these labels.")
+    }
+  }
+  shape
+}
+
+
+

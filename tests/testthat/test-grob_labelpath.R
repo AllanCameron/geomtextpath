@@ -43,7 +43,7 @@ test_that("straight and curved setting produce similar boxes", {
     y = c(0, 1),
     id = c(1, 1),
     gp_box = gpar(fill = "white"),
-    keep_straight = TRUE
+    straight = TRUE
   )
   pth <- makeContent(pth)
 

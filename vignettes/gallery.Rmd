@@ -45,7 +45,7 @@ ggplot(df, aes(x, y, color = Planet)) +
              mapping = aes(x, y, alpha = intens), color = "white", size = 0.2) +
   geom_textpath(aes(label = Planet), linewidth = 0.3,
                 hjust = rep(c(0, 0.25, 0.75, 1), each = 500),
-                vjust = 1.1, size = 5, flip_inverted = TRUE, fontface = 2) +
+                vjust = 1.1, size = 5, upright = TRUE, fontface = 2) +
   geom_point(data = df[c(170, 600, 1385, 1965),], size = c(4, 3.5, 1.5, 1.5)) +
   geom_point(x = 0, y = 0, size = 5, color = "#FFFFA0", inherit.aes = FALSE) +
   scale_alpha_identity() +

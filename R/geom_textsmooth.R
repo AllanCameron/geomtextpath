@@ -35,7 +35,7 @@ geom_textsmooth <- function(mapping = NULL, data = NULL,
                            show.legend = NA,
                            inherit.aes = TRUE) {
 
-  params <- list(
+  params <- set_params(
     na.rm = na.rm,
     orientation = orientation,
     method.args = method.args,

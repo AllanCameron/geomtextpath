@@ -22,7 +22,8 @@
 #'   single-point labels will be wrapped.
 #' @param arrow Arrow specification, as created by [`arrow()`][grid::arrow].
 #' @inheritParams grid::textGrob
-#' @inheritParams geom_textpath
+#' @inheritParams grid::polylineGrob
+#' @inheritParams static_text_params
 #'
 #' @return An object of class `gTree`, containing grobs.
 #' @export
@@ -56,12 +57,12 @@ textpathGrob <- function(
   vjust = NULL,
   halign = "left",
   angle = 0,
-  keep_straight = FALSE,
+  straight = FALSE,
   gp_text = gpar(),
   gp_path = gpar(),
   gp_box  = gpar(),
-  cut_path = NA,
-  flip_inverted = TRUE,
+  gap = NA,
+  upright = TRUE,
   polar_params = NULL,
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
@@ -102,7 +103,7 @@ textpathGrob <- function(
   gp_text <- gp_fill_defaults(gp_text)
 
   label <- measure_text(label, gp_text, vjust = vjust, halign = halign,
-                        straight = keep_straight)
+                        straight = straight)
 
   x <- as_unit(x, default.units)
   y <- as_unit(y, default.units)
@@ -122,7 +123,7 @@ textpathGrob <- function(
       gp_path       = gp_path,
       gp_box        = gp_box,
       params = list(
-        flip_inverted = flip_inverted,
+        upright       = upright,
         polar_params  = polar_params,
         angle         = angle,
         padding       = padding,
@@ -131,7 +132,7 @@ textpathGrob <- function(
         hjust         = hjust,
         vjust         = vjust,
         halign        = halign,
-        cut_path      = cut_path
+        gap           = gap
       ),
       arrow = arrow
     ),
@@ -151,14 +152,14 @@ makeContent.textpath <- function(x) {
   x$textpath <- NULL
   params <- v$params
 
-  path <- .prepare_path(v$data, v$label, v$gp_path, params)
+  path <- prepare_path(v$data, v$label, v$gp_path, params)
 
   # Get the actual text string positions and angles for each group
   text <- Map(
-      .get_path_points,
+      place_text,
       path = path, label = v$label,
       hjust = params$hjust, halign = params$halign,
-      flip_inverted = params$flip_inverted
+      upright = params$upright
     )
   text <- rbind_dfs(text)
 
@@ -167,81 +168,7 @@ makeContent.textpath <- function(x) {
   x
 }
 
-.prepare_path <- function(data, label, gp, params) {
-  path <- dedup_path(
-    x = as_inch(data$x, "x"),
-    y = as_inch(data$y, "y"),
-    id = data$id
-  )
-  path <- split(path, path$id)
-
-  if (any({singletons <- vapply(path, nrow, integer(1)) == 1})) {
-    width <- vapply(label, function(x) max(x$xmax, na.rm = TRUE), numeric(1))
-    path[singletons] <- Map(.pathify,
-                            data    = path[singletons],
-                            hjust   = params$hjust[singletons],
-                            angle   = params$angle,
-                            width   = width[singletons],
-                            polar_x = list(params$polar_params$x),
-                            polar_y = list(params$polar_params$y),
-                            thet    = list(params$polar_params$theta))
-    gp$lty[singletons] <- 0
-  }
-  attr(path, "gp") <- gp
-  return(path)
-}
-
-.add_path_grob <- function(grob, data, text, gp, params, arrow = NULL) {
-  has_line <- !all((gp$lty %||% 1)  %in% c("0", "blank", NA))
-  is_opaque <-!all((gp$col %||% 1) %in% c(NA, "transparent"))
-  if (has_line && is_opaque) {
-    data <- rbind_dfs(data)
-
-    # Get bookends by trimming paths when it intersects text
-    data <- .get_surrounding_lines(
-      data, text,
-      vjust    = params$vjust    %||% 0.5,
-      cut_path = params$cut_path %||% NA,
-      padding  = params$padding  %||% 0.15
-    )
-    arrow <- .tailor_arrow(data, arrow)
-
-    if (nrow(data) > 1) {
-      # Recycle graphical parameters to match lengths of path
-      gp <- recycle_gp(gp, `[`, i = data$id[data$start])
-      gp$fill <- gp$col
-
-      # Write path grob
-      grob <- addGrob(
-        grob, polylineGrob(
-          x = data$x, y = data$y, id = data$new_id, gp = gp,
-          default.units = "inches",
-          arrow = arrow
-        )
-      )
-    }
-  }
-  return(grob)
-}
-
-.add_text_grob <- function(grob, text, gp) {
-  text_lens <- run_len(text$id)
-
-  # Recycle graphical parameters to match lengths of letters
-  gp <- recycle_gp(gp, rep, times = text_lens)
-
-  # Write text grob
-  grob <- addGrob(
-    grob, textGrob(
-      label = make_label(text$label),
-      x = text$x, y = text$y, rot = text$angle,
-      vjust = 0.5, hjust = 0.5, gp = gp,
-      default.units = "inches"
-    )
-  )
-}
-
-# recycle_gp ---------------------------------------------------------------
+# Graphical parameters helper ---------------------------------------------
 
 # Helper function to do safe(r) recycling on "gpar" class objects.
 recycle_gp <- function(gp, fun, ...) {
@@ -253,8 +180,6 @@ recycle_gp <- function(gp, fun, ...) {
   return(gp)
 }
 
-# gp_fill_defaults -------------------------------------------------------
-
 # Helper function to fill in missing parameters by defaults
 # Based on ggplot2:::modify_list
 gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {
@@ -264,104 +189,8 @@ gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {
   defaults
 }
 
-# dedup_path -------------------------------------------------------------
-
-# Path constructor that filters out subsequent duplicated points that can cause
-# problems for gradient/offset calculations. Also interpolates any NA values in
-# the x, y values to avoid broken paths, and removes any points that have an
-# NA id.
-
-dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
-
-  vecs <- data_frame(x = .interp_na(x), y = .interp_na(y), id = id)
-  lens <- lengths(vecs)
-  n    <- max(lengths(vecs))
-  vecs[lens != n] <- lapply(vecs[lens != n], rep_len, length.out = n)
-
-  dups <- vapply(vecs, function(x){abs(x[-1] - x[-length(x)]) < tolerance},
-                 logical(n - 1))
-  if (n > 2) {
-    keep <- c(TRUE, rowSums(dups) < 3L)
-  } else {
-    keep <- c(TRUE, sum(dups) < 3L)
-  }
-  vecs <- vecs[keep, , drop = FALSE]
-
-  vecs[complete.cases(vecs),]
-}
 
 
-# Convert point-like textpaths into proper text paths.
-
-.pathify <- function(data, hjust, angle, width,
-                     polar_x = NULL, polar_y = NULL, thet = NULL) {
-
-  angle <- pi * angle / 180
-  multi_seq <- Vectorize(seq.default)
-
-   if(!is.null(polar_x) & !is.null(polar_y) & !is.null(thet)) {
-
-     polar_x <- as_inch(polar_x, "x")
-     polar_y <- as_inch(polar_y, "y")
-
-     if(thet == "y") angle <- angle - pi/2
-     r <- sqrt((data$x - polar_x)^2 + (data$y - polar_y)^2)
-     width <- width / r
-     theta <- atan2(data$y - polar_y, data$x - polar_x)
-     theta_min  <- theta + cos(angle + pi) * width * hjust
-     theta_max  <- theta + cos(angle) * width * (1 - hjust)
-     r_min   <- r + sin(angle + pi) * width * hjust
-     r_max   <- r + sin(angle) * width * (1 - hjust)
-
-     theta <- c(multi_seq(theta_min, theta_max, length.out = 100))
-     r <- c(multi_seq(r_min, r_max, length.out = 100))
-     x <- polar_x + r * cos(theta)
-     y <- polar_y + r * sin(theta)
-   }
-   else
-   {
-     xmin  <- data$x + cos(angle + pi) * width * hjust
-     xmax  <- data$x + cos(angle) * width * (1 - hjust)
-     ymin  <- data$y + sin(angle + pi) * width * hjust
-     ymax  <- data$y + sin(angle) * width * (1 - hjust)
-     x <- c(multi_seq(xmin, xmax, length.out = 100))
-     y <- c(multi_seq(ymin, ymax, length.out = 100))
-   }
-
-   data <- data[rep(seq(nrow(data)), each = 100),]
-   data$x <- x
-   data$y <- y
-   data
-}
-
-# This adjusts a possible arrow to not have duplicated arrowheads when a path
-# is cut into two due to the path trimming.
-.tailor_arrow <- function(data, arrow) {
-  if (is.null(arrow)) {
-    return(arrow)
-  }
-  keep  <- !duplicated(data$new_id)
-  sides <- data$section[keep]
-  id    <- data$id[keep]
-  path  <- data
-
-  # Have arrow match the length of the groups
-  arrow[] <- lapply(arrow, function(x) {
-    x[pmin(id, length(x))]
-  })
-  angle <- arrow$angle
-  ends  <- arrow$ends
-
-  # Ends are 1 = "first", 2 = "last", 3 = "both".
-  # We 'hide' an arrow by setting an NA angle
-  angle[ends == 2 & sides == "pre"]  <- NA_integer_
-  angle[ends == 1 & sides == "post"] <- NA_integer_
-  ends[ends == 3 & sides == "pre"]   <- 1L
-  ends[ends == 3 & sides == "post"]  <- 2L
-  arrow$angle <- angle
-  arrow$ends  <- ends
-  arrow
-}
 
 
 

@@ -109,22 +109,22 @@ p + geom_textpath(size  = 4, vjust = 1) +
 
 #### Path cutting
 
-It should be noted that when `vjust` is outside the [0,1] interval, text generally shouldn't intersect the path. As such, the default behaviour no longer cuts the path at the text positions, but this can be turned back on by setting `cut_path = TRUE`.
+It should be noted that when `vjust` is outside the [0,1] interval, text generally shouldn't intersect the path. As such, the default behaviour no longer cuts the path at the text positions, but this can be turned back on by setting `gap = TRUE`.
 
 ```{r path_cutting_1, fig.show = 'hold'}
 p + geom_textpath(size  = 4, vjust = 1.5) +
-  labs(subtitle = "vjust = 1.5, default cut_path")
-p + geom_textpath(size  = 4, vjust = 1.5, cut_path = TRUE) +
-  labs(subtitle = "vjust = 1.5, cut_path = TRUE")
+  labs(subtitle = "vjust = 1.5, default gap")
+p + geom_textpath(size  = 4, vjust = 1.5, gap = TRUE) +
+  labs(subtitle = "vjust = 1.5, gap = TRUE")
 ```
 
 Inversely, you can also turn off path cutting when it is expected to intersect with the text.
 
 ```{r path_cutting_2, fig.show = 'hold'}
 p + geom_textpath(size  = 4, vjust = 0.5) +
-  labs(subtitle = "default cut_path")
-p + geom_textpath(size  = 4, vjust = 0.5, cut_path = FALSE) +
-  labs(subtitle = "cut_path = FALSE")
+  labs(subtitle = "default gap")
+p + geom_textpath(size  = 4, vjust = 0.5, gap = FALSE) +
+  labs(subtitle = "gap = FALSE")
 ```
 
 ### Spacing

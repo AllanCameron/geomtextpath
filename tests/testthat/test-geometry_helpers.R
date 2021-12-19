@@ -19,15 +19,15 @@ test_that("Text angles are correct", {
   # measure_text can handle unit vjust
   expect_silent(measure_text("O", vjust = unit(0, "mm")))
 
-  # Test angles of `.get_path_points`
-  test <- .get_path_points(xy, labels, hjust = 0.25)
+  # Test angles of `place_text`
+  test <- place_text(xy, labels, hjust = 0.25)
   expect_equal(test$angle, 45)
 
-  test <- .get_path_points(xy, labels, hjust = 0.75)
+  test <- place_text(xy, labels, hjust = 0.75)
   expect_equal(test$angle, -45)
 
   # This should be at the exact top of the triangle, where angle should be 0
-  test <- .get_path_points(xy, labels, hjust = 0.5)
+  test <- place_text(xy, labels, hjust = 0.5)
   expect_equal(test$angle, 0, tolerance = 360 * 1e-3)
 
   # Test location of letters
@@ -46,8 +46,8 @@ test_that("Appropriate warning with excess curvature", {
 
   labels <- measure_text("O", vjust = -4)[[1]]
 
-  # Test angles of `.get_path_points`
-  expect_warning(.get_path_points(xy, labels, hjust = 0.25),
+  # Test angles of `place_text`
+  expect_warning(place_text(xy, labels, hjust = 0.25),
                  "curvature")
 })
 
@@ -86,7 +86,7 @@ test_that("Path trimming is correct", {
   xy <- lapply(xy, function(x) {
     x$length <- .arclength_from_xy(x$x, x$y); x;})
   label  <- measure_text(c("A", "B", "C"))
-  glyphs <- Map(.get_path_points, path = xy, label = label)
+  glyphs <- Map(place_text, path = xy, label = label)
   glyphs <- rbind_dfs(glyphs)
   xy     <- rbind_dfs(xy)
 
@@ -95,9 +95,9 @@ test_that("Path trimming is correct", {
   lefts  <- sapply(label, function(x) x$xmid - x$xmin) + br
   rights <- sapply(label, function(x) x$xmax - x$xmid) + br
 
-  # TRUE cut_path
-  test <- .get_surrounding_lines(xy, glyphs, cut_path = TRUE,
-                                 padding = br, vjust = vjust)
+  # TRUE gap
+  test <- make_gap(xy, glyphs, gap = TRUE,
+                   padding = br, vjust = vjust)
   expect_length(test$x, nrow(xy) * 2)
   expect_equal(
     test$x,
@@ -109,13 +109,13 @@ test_that("Path trimming is correct", {
   expect_equal(unique(test$y), 1)
 
   # vjust can be passed as unit object
-  expect_silent(.get_surrounding_lines(xy, glyphs, cut_path = TRUE,
-                                       padding = br, vjust = unit(0, "mm")))
+  expect_silent(make_gap(xy, glyphs, gap = TRUE,
+                         padding = br, vjust = unit(0, "mm")))
 
 
-  # FALSE cut_path
-  test <- .get_surrounding_lines(xy, glyphs, cut_path = FALSE,
-                                 padding = br[2], vjust = vjust)
+  # FALSE gap
+  test <- make_gap(xy, glyphs, gap = FALSE,
+                   padding = br[2], vjust = vjust)
   expect_length(test$x, nrow(xy))
   expect_equal(
     test$x,
@@ -125,9 +125,9 @@ test_that("Path trimming is correct", {
   )
   expect_equal(unique(test$y), 1)
 
-  # Variable cut_path
-  test <- .get_surrounding_lines(xy, glyphs, cut_path = NA,
-                                 padding = br, vjust = vjust)
+  # Variable gap
+  test <- make_gap(xy, glyphs, gap = NA,
+                   padding = br, vjust = vjust)
   expect_length(test$x, nrow(xy) + 2)
   expect_equal(
     test$x,
@@ -139,8 +139,8 @@ test_that("Path trimming is correct", {
   expect_equal(unique(test$y), 1)
 
   # Test variable vjust is respected
-  test <- .get_surrounding_lines(xy, glyphs, cut_path = NA, vjust = vjust,
-                                 padding = br, vjust_lim = c(0, 3))
+  test <- make_gap(xy, glyphs, gap = NA, vjust = vjust,
+                   padding = br, vjust_lim = c(0, 3))
   expect_length(test$x, nrow(xy) + 4)
   expect_equal(
     test$x,
@@ -154,8 +154,8 @@ test_that("Path trimming is correct", {
   # Check for overtrimming
   glyphs$left  <- 0
   glyphs$right <- 1
-  test <- .get_surrounding_lines(xy, glyphs, cut_path = TRUE, vjust = vjust,
-                                 padding = br, vjust_lim = c(0, 3))
+  test <- make_gap(xy, glyphs, gap = TRUE, vjust = vjust,
+                   padding = br, vjust_lim = c(0, 3))
   expect_equal(nrow(test), 0)
 })
 
@@ -169,7 +169,7 @@ test_that("text can be placed on 2-point paths", {
   xy <- split(xy, xy$id)
   label <- measure_text(c("A", "B"))
 
-  test <- Map(.get_path_points, label = label, path = xy)
+  test <- Map(place_text, label = label, path = xy)
   test <- rbind_dfs(test)
 
   # What actually to test is arbitrary, we just want the above to run without
@@ -192,12 +192,12 @@ test_that("Anchor point calculations are correct", {
                       stringsAsFactors = FALSE)
 
   test <- vapply(seq_len(nrow(grid)), function(i) {
-    .anchor_points(offset, width, hjust = grid$hjust[i], halign =grid$halign[i])
+    anchor_points(offset, width, hjust = grid$hjust[i], halign =grid$halign[i])
   }, numeric(2))
 
   expect_equal(test[1, ], rep(c(0, 1.5, 3), each = 3))
   expect_equal(test[2, ], 0:8)
-  expect_silent(.anchor_points(offset, width, hjust = "auto", halign = "left"))
+  expect_silent(anchor_points(offset, width, hjust = "auto", halign = "left"))
 })
 
 # Flipping ----------------------------------------------------------------
@@ -210,11 +210,11 @@ test_that("Flipping logic is correct", {
   angle <- rep(angle, nrow(label))
 
   # Should return NULL if we're not interested in flipping
-  test <- .attempt_flip(xy, label, angle = angle, flip_inverted = FALSE)
+  test <- attempt_flip(xy, label, angle = angle, upright = FALSE)
   expect_null(test)
 
   # Should return data.frame on approved flip
-  test <- .attempt_flip(xy, label, angle = angle, flip_inverted = TRUE)
+  test <- attempt_flip(xy, label, angle = angle, upright = TRUE)
   expect_equal(class(test), "data.frame")
 
   # Angles should not be amenable to flip
@@ -222,16 +222,16 @@ test_that("Flipping logic is correct", {
   angle <- .angle_from_xy(xy$x, xy$y, norm = TRUE, degrees = TRUE)
   angle <- rep(angle, nrow(label))
 
-  test <- .attempt_flip(xy, label, angle = angle, flip_inverted = TRUE)
+  test <- attempt_flip(xy, label, angle = angle, upright = TRUE)
   expect_null(test)
 
-  # Test if .get_path_points() also respects this
+  # Test if place_text() also respects this
   xy <- data_frame(x = 2:1, y = 1:2)
 
-  case <- .get_path_points(xy, label, flip_inverted = TRUE)
+  case <- place_text(xy, label, upright = TRUE)
   expect_equal(case$angle, c(-45, -45, -45))
 
-  ctrl <- .get_path_points(xy, label, flip_inverted = FALSE)
+  ctrl <- place_text(xy, label, upright = FALSE)
   expect_equal(case$angle, ctrl$angle - 180)
 })
 
@@ -242,8 +242,8 @@ test_that("Flipping appropriately adjusts offset", {
 
   xy <- data_frame(x = c(1, 0), y = 2)
 
-  ctrl <- .get_path_points(xy, label, flip_inverted = FALSE)
-  case <- .get_path_points(xy, label, flip_inverted = TRUE)
+  ctrl <- place_text(xy, label, upright = FALSE)
+  case <- place_text(xy, label, upright = TRUE)
 
   expect_equal(ctrl$y, c(1, 1, 1))
   expect_equal(case$y, c(1, 1, 1))
@@ -258,8 +258,8 @@ test_that("Flipping leads to correctly clipped path", {
   xy$length <- .arclength_from_xy(xy$x, xy$y)
   xy$id <- 1
 
-  ctrl <- .get_path_points(xy, label, hjust = 0, flip_inverted = FALSE)
-  case <- .get_path_points(xy, label, hjust = 0, flip_inverted = TRUE)
+  ctrl <- place_text(xy, label, hjust = 0, upright = FALSE)
+  case <- place_text(xy, label, hjust = 0, upright = TRUE)
 
   # Should have reverse order
   expect_equal(ctrl$length, sort(ctrl$length, decreasing = FALSE))
@@ -267,8 +267,8 @@ test_that("Flipping leads to correctly clipped path", {
 
   case$id <- ctrl$id <- 1L
 
-  ctrl <- .get_surrounding_lines(xy, ctrl)
-  case <- .get_surrounding_lines(xy, case)
+  ctrl <- make_gap(xy, ctrl)
+  case <- make_gap(xy, case)
 
 
   # They aren't exactly equal due to letter spacing, but they should be similar

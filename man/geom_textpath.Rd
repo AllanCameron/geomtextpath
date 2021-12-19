@@ -18,13 +18,13 @@ geom_textpath(
   lineend = "butt",
   linejoin = "round",
   linemitre = 10,
-  include_line = TRUE,
-  cut_path = NA,
-  flip_inverted = TRUE,
+  text_only = FALSE,
+  gap = NA,
+  upright = TRUE,
   halign = "center",
   offset = NULL,
   parse = FALSE,
-  keep_straight = FALSE,
+  straight = FALSE,
   padding = unit(0.15, "inch"),
   arrow = NULL
 )
@@ -53,13 +53,13 @@ geom_labelpath(
   lineend = "butt",
   linejoin = "round",
   linemitre = 10,
-  include_line = TRUE,
-  cut_path = FALSE,
-  flip_inverted = TRUE,
+  text_only = FALSE,
+  gap = FALSE,
+  upright = TRUE,
   halign = "center",
   offset = NULL,
   parse = FALSE,
-  keep_straight = FALSE,
+  straight = FALSE,
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
@@ -93,8 +93,8 @@ layer, as a string.}
 \item{position}{Position adjustment, either as a string, or the result of
 a call to a position adjustment function.}
 
-\item{na.rm}{If \code{FALSE} (default), missing points or labels are removed from
-the text path with a warning.}
+\item{na.rm}{If \code{FALSE}, the default, missing values are removed with
+a warning. If \code{TRUE}, missing values are silently removed.}
 
 \item{show.legend}{logical. Should this layer be included in the legends?
 \code{NA}, the default, includes if any aesthetics are mapped.
@@ -107,10 +107,10 @@ rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 
-\item{...}{other arguments passed on to \code{\link[ggplot2:layer]{layer()}}.
-These are often aesthetics, used to set an aesthetic to a fixed value,
-like \code{colour = "red"} or \code{size = 3}. They may also be parameters to the
-paired geom/stat.}
+\item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{layer()}}. These are
+often aesthetics, used to set an aesthetic to a fixed value, like
+\code{colour = "red"} or \code{size = 3}. They may also be parameters
+to the paired geom/stat.}
 
 \item{lineend}{Line end style (round, butt, square).}
 
@@ -118,37 +118,38 @@ paired geom/stat.}
 
 \item{linemitre}{Line mitre limit (number greater than 1).}
 
-\item{include_line}{A \code{logical(1)}, indicating whether a
-line should be plotted along with the text (\code{TRUE}, the default). If
-\code{FALSE}, any parameters or aesthetics relating to the drawing of the path
-in the layer will be ignored.}
+\item{text_only}{A \code{logical(1)} indicating whether the path part should be
+plotted along with the text (\code{FALSE}, the default). If \code{TRUE}, any
+parameters or aesthetics relating to the drawing of the path will be
+ignored.}
 
-\item{cut_path}{A \code{logical(1)} which if \code{TRUE} breaks the path
-into two sections, one on either side of the string. If \code{FALSE}, the
-path is plotted as a whole. The default, \code{NA}, will break the line if the
-string has a \code{vjust} of between 0 and 1.}
+\item{gap}{A \code{logical(1)} which if \code{TRUE}, breaks the path into two sections
+with a gap on either side of the label. If \code{FALSE}, the path is plotted
+as a whole. Alternatively, if \code{NA}, the path will be broken if the string
+has a \code{vjust} between 0 and 1, and not otherwise. The default for the label
+variant is \code{FALSE} and for the text variant is \code{NA}.}
 
-\item{flip_inverted}{A \code{logical(1)} which if \code{TRUE} (default), inverts any
-string where the majority of letters would be upside down along the path
-are inverted to improve legibility. If \code{FALSE} letters are left as-is.}
+\item{upright}{A \code{logical(1)} which if \code{TRUE} (default), inverts any text
+where the majority of letters would upside down along the path, to improve
+legibility. If \code{FALSE}, the path decides the orientation of text.}
 
-\item{halign}{A \code{character(1)} describing how multi-line labels should
-be justified. Can either be \code{"left"}, \code{"center"} (default) or \code{"right"}.}
+\item{halign}{A \code{character(1)} describing how multi-line text should be
+justified. Can either be \code{"center"} (default), \code{"left"} or \code{"right"}.}
 
-\item{offset}{A \code{\link[grid:unit]{unit()}} of length 1 to determine the offset
-of the text from the path. If not \code{NULL}, this overrules the \code{vjust}
-setting.}
+\item{offset}{A \code{\link[grid:unit]{unit}} object of length 1 to determine the
+offset of the text from the path. If this is \code{NULL} (default), the \code{vjust}
+parameter decides the offset. If not \code{NULL}, the \code{offset} argument
+overrules the \code{vjust} setting.}
 
-\item{parse}{If set to \code{TRUE} this will coerce the labels into expressions,
-allowing plotmath syntax to be used.}
+\item{parse}{A \code{logical(1)} which if \code{TRUE}, will coerce the labels into
+expressions, allowing for plotmath syntax to be used.}
 
-\item{keep_straight}{a \code{logical(1)}, which if \code{TRUE}, keeps the letters of
-a label on the same, straight baseline and if \code{FALSE} (default),
-lets individual letters follow the curve. This might be helpful for noisy
-paths.}
+\item{straight}{A \code{logical(1)} which if \code{TRUE}, keeps the letters of a label
+on a straight baseline and if \code{FALSE} (default), lets individual letters
+follow the curve. This might be helpful for noisy paths.}
 
-\item{padding}{A \code{\link[grid:unit]{unit()}} of length 1 to determine the
-padding between path and text when the \code{cut_path} parameter trims the
+\item{padding}{A \code{\link[grid:unit]{unit}} object of length 1 to determine the
+padding between the text and the path when the \code{gap} parameter trims the
 path.}
 
 \item{arrow}{Arrow specification, as created by \code{\link[grid:arrow]{grid::arrow()}}.}
