@@ -19,7 +19,8 @@ URL: https://allancameron.github.io/geomtextpath
 BugReports: https://github.com/AllanCameron/geomtextpath/issues
 Encoding: UTF-8
 Depends:
-    ggplot2
+    ggplot2,
+    R (>= 2.10)
 Imports:
     grid,
     scales,
@@ -33,12 +34,12 @@ Suggests:
     knitr,
     rmarkdown,
     ragg,
-    qpdf,
-    gridExtra
+    qpdf
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Collate: 
     'coord_curvedpolar.R'
+    'data.R'
     'geom_textpath.R'
     'geom_labelpath.R'
     'geom_textcontour.R'
@@ -53,3 +54,4 @@ Collate:
     'text_helpers.R'
     'text_placement.R'
     'trig_helpers.R'
+LazyData: true
