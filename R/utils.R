@@ -216,13 +216,24 @@ group_id <- function(data, vars) {
 
 # Parameters --------------------------------------------------------------
 
+# Automatically capture static text parameters
+set_params <- function(...) {
+  params <- list(...)
+  text_names  <- names(formals(static_text_params))
+  text_names  <- intersect(text_names, names(params))
+  text_params <- do.call(static_text_params, params[text_names])
+  params      <- params[setdiff(names(params), text_names)]
+  params$text_params <- text_params
+  params
+}
+
 
 #' Set static parameters
 #'
 #' This sets parameters for text on a path that aren't expected to change
 #' during the construction of a grob.
 #'
-#' @param type A `character(1)` with either `"text"` or `"label"`, which decides
+#' @param .type A `character(1)` with either `"text"` or `"label"`, which decides
 #'   what the default is going to be for the `gap` argument. If `"text"` the
 #'   default is `NA`, which means to dynamically decide. If `"label"`, the
 #'   `"gap"` argument should default to `FALSE`.
@@ -257,7 +268,7 @@ group_id <- function(data, vars) {
 #' @md
 #' @keywords internal
 static_text_params <- function(
-  type = "text",
+  .type = "text",
   text_only = FALSE,
   gap       = NULL,
   upright   = TRUE,
@@ -268,7 +279,7 @@ static_text_params <- function(
   padding   = unit(0.15, "inch")
 ) {
   if (is.null(gap)) {
-    gap <- switch(type, text = NA, FALSE)
+    gap <- switch(.type, text = NA, FALSE)
   }
   halign <- rlang::arg_match0(halign, c("center", "left", "right"))
 
@@ -279,7 +290,8 @@ static_text_params <- function(
     parse     = assert(parse,     "logical"),
     straight  = assert(straight,  "logical"),
     padding   = assert(padding,   "unit"),
-    offset    = assert(offset,    "unit", allow_NULL = TRUE)
+    offset    = assert(offset,    "unit", allow_NULL = TRUE),
+    halign    = halign
   )
 }
 

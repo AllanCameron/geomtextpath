@@ -52,7 +52,7 @@ geom_textcontour <- function(
         stat = stat,
         position = position, show.legend = show.legend,
         inherit.aes = inherit.aes,
-        params = list(
+        params = set_params(
           na.rm     = na.rm,
           lineend   = lineend,
           linejoin  = linejoin,
@@ -102,7 +102,7 @@ stat_textcontour <- function(mapping = NULL, data = NULL,
     position = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = list(
+    params = set_params(
       bins = bins,
       binwidth = binwidth,
       breaks = breaks,

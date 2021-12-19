@@ -3,6 +3,8 @@
 #' @param gp_box (Optional) an object of class `"gpar"`, typically the output
 #'   from a call to the [`gpar()`][grid::gpar] function. If this is an empty
 #'   list, no text box will be drawn.
+#' @param label.padding Amount of padding around label. Defaults to 0.25 lines.
+#' @param label.r Radius of rounded corners. Defaults to 0.15 lines.
 labelpathGrob <- function(
   label,
   x = 0.5,

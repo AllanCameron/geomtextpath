@@ -13,8 +13,7 @@
 
 #' @export
 #' @rdname geom_textpath
-#' @param label.padding Amount of padding around label. Defaults to 0.25 lines.
-#' @param label.r Radius of rounded corners. Defaults to 0.15 lines.
+#' @inheritParams labelpathGrob
 #' @section Aesthetics:
 #' In addition to aforementioned aesthetics, \code{geom_labelpath()} also
 #' understands the following aesthetics related to the textbox:
@@ -46,7 +45,7 @@ geom_labelpath <- function(
     position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = list(
+    params = set_params(
       na.rm         = na.rm,
       lineend       = lineend,
       linejoin      = linejoin,
@@ -98,10 +97,9 @@ GeomLabelpath <- ggproto(
   draw_panel = function(
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
-    gap = NA, upright = TRUE, halign = "left",
-    offset = NULL, parse = FALSE, straight = FALSE,
-    padding = unit(0.15, "inch"), label.padding = unit(0.25, "lines"),
-    label.r = unit(0.15, "lines"), arrow = NULL
+    label.padding = unit(0.25, "lines"),
+    label.r = unit(0.15, "lines"), arrow = NULL,
+    text_params = static_text_params("label")
   ) {
 
 
@@ -174,7 +172,7 @@ GeomLabelpath <- ggproto(
       )
     }
 
-    safe_labels <- if(parse) {
+    safe_labels <- if (text_params$parse) {
       safe_parse(as.character(data$label[first]))
     } else {
       data$label[first]
@@ -188,20 +186,20 @@ GeomLabelpath <- ggproto(
       y = data$y,
       id = data$group,
       hjust  = data$hjust[first],
-      vjust  = offset %||% data$vjust[first],
-      halign = halign,
-      gap    = gap,
+      vjust  = text_params$offset %||% data$vjust[first],
+      halign = text_params$halign,
+      gap    = text_params$gap,
       gp_text  = text_gp,
       gp_path  = path_gp,
       gp_box   = box_gp,
-      straight = straight,
-      upright  = upright,
+      straight = text_params$straight,
+      upright  = text_params$upright,
       default.units = "npc",
       angle = data$angle,
       polar_params = if (inherits(coord, "CoordPolar")){
         list(x = 0.5, y = 0.5, theta = coord$theta)
       } else NULL,
-      padding = padding,
+      padding = text_params$padding,
       label.padding = label.padding,
       label.r = label.r,
       arrow = arrow

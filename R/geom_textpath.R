@@ -110,7 +110,7 @@ geom_textpath <- function(
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
         position = position, show.legend = show.legend,
         inherit.aes = inherit.aes,
-        params = list(
+        params = set_params(
           na.rm         = na.rm,
           lineend       = lineend,
           linejoin      = linejoin,
@@ -148,10 +148,10 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
                     linewidth = 0.5, linetype = 1, spacing = 0,
                     linecolour = "_copy_text_colour_", angle = 0),
 
-  extra_params = c("na.rm", "text_only"),
+  extra_params = c("na.rm"),
 
   setup_data = function(data, params) {
-    if (isTRUE(params$text_only)) {
+    if (isTRUE(params$text_params$text_only)) {
       data$linetype <- 0
     }
     if (all(data$group == -1) && !is.null(data$label)) {
@@ -168,9 +168,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   draw_panel = function(
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
-    gap = NA, upright = TRUE, halign = "left",
-    offset = NULL, parse = FALSE, straight = FALSE,
-    padding = unit(0.15, "inch"), arrow = NULL
+    text_params = static_text_params("text"), arrow = NULL
   ) {
 
 
@@ -227,7 +225,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       )
     }
 
-    safe_labels <- if(parse) {
+    safe_labels <- if(text_params$parse) {
         safe_parse(as.character(data$label[first]))
       } else {
         data$label[first]
@@ -241,19 +239,19 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       y = data$y,
       id = data$group,
       hjust  = data$hjust[first],
-      vjust  = offset %||% data$vjust[first],
-      halign = halign,
-      gap    = gap,
+      vjust  = text_params$offset %||% data$vjust[first],
+      halign = text_params$halign,
+      gap    = text_params$gap,
       gp_text  = text_gp,
       gp_path  = path_gp,
-      straight = straight,
-      upright  = upright,
+      straight = text_params$straight,
+      upright  = text_params$upright,
       default.units = "npc",
       angle = data$angle,
       polar_params = if (inherits(coord, "CoordPolar")){
                        list(x = 0.5, y = 0.5, theta = coord$theta)
                      } else NULL,
-      padding = padding,
+      padding = text_params$padding,
       arrow = arrow
     )
   }
@@ -272,7 +270,7 @@ geom_textline <- function(mapping = NULL, data = NULL, stat = "identity",
     position = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = list(
+    params = set_params(
       na.rm = na.rm,
       orientation = orientation,
       ...
