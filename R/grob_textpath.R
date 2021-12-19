@@ -60,7 +60,7 @@ textpathGrob <- function(
   gp_text = gpar(),
   gp_path = gpar(),
   gp_box  = gpar(),
-  cut_path = NA,
+  gap = NA,
   flip_inverted = TRUE,
   polar_params = NULL,
   padding = unit(0.15, "inch"),
@@ -131,7 +131,7 @@ textpathGrob <- function(
         hjust         = hjust,
         vjust         = vjust,
         halign        = halign,
-        cut_path      = cut_path
+        gap           = gap
       ),
       arrow = arrow
     ),
@@ -200,9 +200,9 @@ makeContent.textpath <- function(x) {
     # Get bookends by trimming paths when it intersects text
     data <- .get_surrounding_lines(
       data, text,
-      vjust    = params$vjust    %||% 0.5,
-      cut_path = params$cut_path %||% NA,
-      padding  = params$padding  %||% 0.15
+      vjust   = params$vjust    %||% 0.5,
+      gap     = params$gap      %||% NA,
+      padding = params$padding  %||% 0.15
     )
     arrow <- .tailor_arrow(data, arrow)
 

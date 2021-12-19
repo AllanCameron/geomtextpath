@@ -279,13 +279,13 @@
 #' @param letters A `data.frame` with at least a numeric `length` column and
 #'   integer `id` column. The `id` column must match that in the `path`
 #'   argument.
-#' @param cut_path A single logical TRUE or FALSE which if TRUE breaks the path
+#' @param gap A single logical TRUE or FALSE which if TRUE breaks the path
 #'   into two sections, one on either side of the string and if FALSE leaves the
 #'   path unbroken. The default value is NA, which will break the line if the
 #'   string has a vjust of between 0 and 1
 #' @param vjust_lim A `numeric` of length two setting the lower and upper limits
 #'   of the `vjust` column in the `path` argument, which is used to decide
-#'   whether a path should be trimmed or not when `cut_path = NA`.
+#'   whether a path should be trimmed or not when `gap = NA`.
 #'
 #' @details We probably want the option to draw the path itself, since this will
 #'   be less work for the end-user. If the `vjust` is between 0 and 1 then the
@@ -308,7 +308,7 @@
 #' xy <- .add_path_data(xy)
 #' glyphs <- .get_path_points(xy)
 #' .get_surrounding_lines(xy, glyphs)
-.get_surrounding_lines <- function(path, letters, cut_path = NA,
+.get_surrounding_lines <- function(path, letters, gap = NA,
                                    padding = 0.15, vjust = 0.5,
                                    vjust_lim = c(0, 1)) {
   padding <- as_inch(padding)
@@ -317,7 +317,7 @@
   }
 
   trim <- vjust >= vjust_lim[1] & vjust <= vjust_lim[2]
-  trim <- if (!is.na(cut_path)) rep(cut_path, length(trim)) else trim
+  trim <- if (!is.na(gap)) rep(gap, length(trim)) else trim
 
   # Simplify if text isn't exactly on path
   if (!any(trim)) {

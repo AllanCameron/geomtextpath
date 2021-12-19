@@ -17,7 +17,7 @@ labelpathGrob <- function(
   gp_text = gpar(),
   gp_path = gpar(),
   gp_box  = gpar(),
-  cut_path = NA,
+  gap = NA,
   flip_inverted = TRUE,
   polar_params = NULL,
   padding = unit(0.15, "inch"),
@@ -88,7 +88,7 @@ labelpathGrob <- function(
         hjust         = hjust,
         vjust         = vjust,
         halign        = halign,
-        cut_path      = cut_path
+        gap           = gap
       ),
       arrow = arrow
     ),

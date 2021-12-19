@@ -42,7 +42,7 @@ geom_textcontour <- function(
   position = "identity", na.rm = FALSE, show.legend = NA,
   inherit.aes = TRUE,
   lineend = "butt", linejoin = "round", linemitre = 10,
-  cut_path = NA, flip_inverted = TRUE,
+  gap = NA, flip_inverted = TRUE,
   offset = NULL, keep_straight = FALSE, bins = NULL,
   binwidth = NULL, breaks = NULL, padding = unit(0.15, "inch"),
   ...
@@ -57,7 +57,7 @@ geom_textcontour <- function(
           lineend       = lineend,
           linejoin      = linejoin,
           linemitre     = linemitre,
-          cut_path      = cut_path,
+          gap           = gap,
           flip_inverted = flip_inverted,
           offset        = offset,
           keep_straight = keep_straight,

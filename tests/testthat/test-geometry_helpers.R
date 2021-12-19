@@ -95,8 +95,8 @@ test_that("Path trimming is correct", {
   lefts  <- sapply(label, function(x) x$xmid - x$xmin) + br
   rights <- sapply(label, function(x) x$xmax - x$xmid) + br
 
-  # TRUE cut_path
-  test <- .get_surrounding_lines(xy, glyphs, cut_path = TRUE,
+  # TRUE gap
+  test <- .get_surrounding_lines(xy, glyphs, gap = TRUE,
                                  padding = br, vjust = vjust)
   expect_length(test$x, nrow(xy) * 2)
   expect_equal(
@@ -109,12 +109,12 @@ test_that("Path trimming is correct", {
   expect_equal(unique(test$y), 1)
 
   # vjust can be passed as unit object
-  expect_silent(.get_surrounding_lines(xy, glyphs, cut_path = TRUE,
+  expect_silent(.get_surrounding_lines(xy, glyphs, gap = TRUE,
                                        padding = br, vjust = unit(0, "mm")))
 
 
-  # FALSE cut_path
-  test <- .get_surrounding_lines(xy, glyphs, cut_path = FALSE,
+  # FALSE gap
+  test <- .get_surrounding_lines(xy, glyphs, gap = FALSE,
                                  padding = br[2], vjust = vjust)
   expect_length(test$x, nrow(xy))
   expect_equal(
@@ -125,8 +125,8 @@ test_that("Path trimming is correct", {
   )
   expect_equal(unique(test$y), 1)
 
-  # Variable cut_path
-  test <- .get_surrounding_lines(xy, glyphs, cut_path = NA,
+  # Variable gap
+  test <- .get_surrounding_lines(xy, glyphs, gap = NA,
                                  padding = br, vjust = vjust)
   expect_length(test$x, nrow(xy) + 2)
   expect_equal(
@@ -139,7 +139,7 @@ test_that("Path trimming is correct", {
   expect_equal(unique(test$y), 1)
 
   # Test variable vjust is respected
-  test <- .get_surrounding_lines(xy, glyphs, cut_path = NA, vjust = vjust,
+  test <- .get_surrounding_lines(xy, glyphs, gap = NA, vjust = vjust,
                                  padding = br, vjust_lim = c(0, 3))
   expect_length(test$x, nrow(xy) + 4)
   expect_equal(
@@ -154,7 +154,7 @@ test_that("Path trimming is correct", {
   # Check for overtrimming
   glyphs$left  <- 0
   glyphs$right <- 1
-  test <- .get_surrounding_lines(xy, glyphs, cut_path = TRUE, vjust = vjust,
+  test <- .get_surrounding_lines(xy, glyphs, gap = TRUE, vjust = vjust,
                                  padding = br, vjust_lim = c(0, 3))
   expect_equal(nrow(test), 0)
 })
