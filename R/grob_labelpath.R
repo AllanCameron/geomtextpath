@@ -114,7 +114,7 @@ makeContent.labelpath <- function(x) {
 
   # Get the actual text string positions and angles for each group
   text <- Map(
-    .get_path_points,
+    place_text,
     path = path, label = v$label,
     hjust = params$hjust, halign = params$halign,
     upright = params$upright

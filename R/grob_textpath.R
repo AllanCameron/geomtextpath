@@ -156,7 +156,7 @@ makeContent.textpath <- function(x) {
 
   # Get the actual text string positions and angles for each group
   text <- Map(
-      .get_path_points,
+      place_text,
       path = path, label = v$label,
       hjust = params$hjust, halign = params$halign,
       upright = params$upright
@@ -225,22 +225,7 @@ makeContent.textpath <- function(x) {
   return(grob)
 }
 
-.add_text_grob <- function(grob, text, gp) {
-  text_lens <- run_len(text$id)
 
-  # Recycle graphical parameters to match lengths of letters
-  gp <- recycle_gp(gp, rep, times = text_lens)
-
-  # Write text grob
-  grob <- addGrob(
-    grob, textGrob(
-      label = make_label(text$label),
-      x = text$x, y = text$y, rot = text$angle,
-      vjust = 0.5, hjust = 0.5, gp = gp,
-      default.units = "inches"
-    )
-  )
-}
 
 
 # Graphical parameters helper ---------------------------------------------
