@@ -20,17 +20,7 @@
 #'   [`geom_density`][ggplot2::geom_density]
 #' @inheritParams ggplot2::layer
 #' @inheritParams geom_textpath
-#' @param bw The smoothing bandwidth to be used.
-#'   If numeric, the standard deviation of the smoothing kernel.
-#'   If character, a rule to choose the bandwidth, as listed in
-#'   [stats::bw.nrd()].
-#' @param adjust A multiplicate bandwidth adjustment. This makes it possible
-#'    to adjust the bandwidth while still using the a bandwidth estimator.
-#'    For example, `adjust = 1/2` means use half of the default bandwidth.
-#' @param kernel Kernel. See list of available kernels in [density()].
-#' @param n number of equally spaced points at which the density is to be
-#'   estimated, should be a power of two, see [density()] for
-#'   details
+#' @inheritParams ggplot2::stat_density
 #'
 #' @eval rd_aesthetics("geom", "text_density")
 #'

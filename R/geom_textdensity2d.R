@@ -19,13 +19,6 @@
 #' @inheritParams ggplot2::layer
 #' @inheritParams geom_textpath
 #' @inheritParams ggplot2::stat_density_2d
-#' @param n Number of grid points in each direction.
-#' @param h Bandwidth (vector of length two). If `NULL`, estimated
-#'   using [MASS::bandwidth.nrd()].
-#' @param adjust A multiplicative bandwidth adjustment to be used if 'h' is
-#'    'NULL'. This makes it possible to adjust the bandwidth while still
-#'    using the a bandwidth estimator. For example, `adjust = 1/2` means
-#'    use half of the default bandwidth.
 #'
 #' @eval rd_aesthetics("geom", "text_density2d")
 #'

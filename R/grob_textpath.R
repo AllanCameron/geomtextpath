@@ -22,7 +22,8 @@
 #'   single-point labels will be wrapped.
 #' @param arrow Arrow specification, as created by [`arrow()`][grid::arrow].
 #' @inheritParams grid::textGrob
-#' @inheritParams geom_textpath
+#' @inheritParams grid::polylineGrob
+#' @inheritParams static_text_params
 #'
 #' @return An object of class `gTree`, containing grobs.
 #' @export

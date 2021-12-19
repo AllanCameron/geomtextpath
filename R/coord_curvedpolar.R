@@ -28,7 +28,7 @@
 #' @param clip Should drawing be clipped to the extent of the plot panel? A
 #'   setting of `"on"` (the default) means yes, and a setting of `"off"`
 #'   means no. For details, please see [`coord_cartesian()`].
-#' @param halign Determines the alignment for multi-line text labels
+#' @inheritParams static_text_params
 #' @export
 #' @examples
 #'

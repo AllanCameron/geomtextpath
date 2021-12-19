@@ -22,39 +22,8 @@
 #' visual effect, or it may be to label a circular / polar plot in a more
 #' "natural" way.
 #'
-#' @inheritParams ggplot2::layer
 #' @inheritParams ggplot2::geom_path
-#' @param ... other arguments passed on to [`layer()`][ggplot2::layer].
-#'   These are often aesthetics, used to set an aesthetic to a fixed value,
-#'   like `colour = "red"` or `size = 3`. They may also be parameters to the
-#'   paired geom/stat.
-#' @param na.rm If `FALSE` (default), missing points or labels are removed from
-#'   the text path with a warning.
-#' @param text_only A `logical(1)`, indicating whether a
-#'   line should be plotted along with the text (`FALSE`, the default). If
-#'   `TRUE`, any parameters or aesthetics relating to the drawing of the path
-#'   in the layer will be ignored.
-#' @param gap A `logical(1)` which if `TRUE` breaks the path
-#'   into two sections, one on either side of the string. If `FALSE`, the
-#'   path is plotted as a whole. The default, `NA`, will break the line if the
-#'   string has a `vjust` of between 0 and 1.
-#' @param upright A `logical(1)` which if `TRUE` (default), inverts any
-#'   string where the majority of letters would be upside down along the path
-#'   are inverted to improve legibility. If `FALSE` letters are left as-is.
-#' @param halign A `character(1)` describing how multi-line labels should
-#'   be justified. Can either be `"left"`, `"center"` (default) or `"right"`.
-#' @param offset A [`unit()`][grid::unit()] of length 1 to determine the offset
-#'   of the text from the path. If not `NULL`, this overrules the `vjust`
-#'   setting.
-#' @param parse If set to `TRUE` this will coerce the labels into expressions,
-#'   allowing plotmath syntax to be used.
-#' @param straight a `logical(1)`, which if `TRUE`, keeps the letters of
-#'   a label on the same, straight baseline and if `FALSE` (default),
-#'   lets individual letters follow the curve. This might be helpful for noisy
-#'   paths.
-#' @param padding A [`unit()`][grid::unit()] of length 1 to determine the
-#'   padding between path and text when the `gap` parameter trims the
-#'   path.
+#' @inheritParams static_text_params
 #' @param orientation The orientation of the layer. The default (NA)
 #'    automatically determines the orientation from the aesthetic mapping.
 #'    In the rare event that this fails it can be given explicitly by
