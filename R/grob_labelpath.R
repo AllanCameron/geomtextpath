@@ -13,7 +13,7 @@ labelpathGrob <- function(
   vjust = NULL,
   halign = "left",
   angle = 0,
-  keep_straight = FALSE,
+  straight = FALSE,
   gp_text = gpar(),
   gp_path = gpar(),
   gp_box  = gpar(),
@@ -59,7 +59,7 @@ labelpathGrob <- function(
   gp_text <- gp_fill_defaults(gp_text)
 
   label <- measure_text(label, gp_text, vjust = vjust, halign = halign,
-                        straight = keep_straight)
+                        straight = straight)
 
   x <- as_unit(x, default.units)
   y <- as_unit(y, default.units)

@@ -43,7 +43,7 @@ geom_textcontour <- function(
   inherit.aes = TRUE,
   lineend = "butt", linejoin = "round", linemitre = 10,
   gap = NA, upright = TRUE,
-  offset = NULL, keep_straight = FALSE, bins = NULL,
+  offset = NULL, straight = FALSE, bins = NULL,
   binwidth = NULL, breaks = NULL, padding = unit(0.15, "inch"),
   ...
   )
@@ -53,18 +53,18 @@ geom_textcontour <- function(
         position = position, show.legend = show.legend,
         inherit.aes = inherit.aes,
         params = list(
-          na.rm         = na.rm,
-          lineend       = lineend,
-          linejoin      = linejoin,
-          linemitre     = linemitre,
-          gap           = gap,
-          upright       = upright,
-          offset        = offset,
-          keep_straight = keep_straight,
-          bins          = bins,
-          binwidth      = binwidth,
-          breaks        = breaks,
-          padding       = padding,
+          na.rm     = na.rm,
+          lineend   = lineend,
+          linejoin  = linejoin,
+          linemitre = linemitre,
+          gap       = gap,
+          upright   = upright,
+          offset    = offset,
+          straight  = straight,
+          bins      = bins,
+          binwidth  = binwidth,
+          breaks    = breaks,
+          padding   = padding,
           ...
         ))
 }

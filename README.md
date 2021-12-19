@@ -458,9 +458,9 @@ Many paths will be too noisy or too angular to directly label in a
 visually appealing fashion if the text adheres too closely to the
 intricacies of the line. Often, a `geom_textsmooth` with
 `text_only = TRUE` is the best option in such cases, as in the examples
-above. There is also a `keep_straight` parameter so that a label is
-still applied at an appropriate point and angle on the line, but the
-text will not attempt to follow every bump on the path.
+above. There is also a `straight` parameter so that a label is still
+applied at an appropriate point and angle on the line, but the text will
+not attempt to follow every bump on the path.
 
 Other paths may have points of tight curvature, and setting an offset /
 vjust for the text that is larger than the distance to the focus point

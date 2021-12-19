@@ -32,7 +32,7 @@ geom_labelpath <- function(
   lineend = "butt", linejoin = "round", linemitre = 10,
   text_only = FALSE, gap = FALSE, upright = TRUE,
   halign = "center", offset = NULL, parse = FALSE,
-  keep_straight = FALSE,
+  straight = FALSE,
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
@@ -57,7 +57,7 @@ geom_labelpath <- function(
       halign        = halign,
       offset        = offset,
       parse         = parse,
-      keep_straight = keep_straight,
+      straight      = straight,
       padding       = padding,
       label.padding = label.padding,
       label.r       = label.r,
@@ -99,7 +99,7 @@ GeomLabelpath <- ggproto(
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
     gap = NA, upright = TRUE, halign = "left",
-    offset = NULL, parse = FALSE, keep_straight = FALSE,
+    offset = NULL, parse = FALSE, straight = FALSE,
     padding = unit(0.15, "inch"), label.padding = unit(0.25, "lines"),
     label.r = unit(0.15, "lines"), arrow = NULL
   ) {
@@ -194,8 +194,8 @@ GeomLabelpath <- ggproto(
       gp_text  = text_gp,
       gp_path  = path_gp,
       gp_box   = box_gp,
-      keep_straight = keep_straight,
-      upright = upright,
+      straight = straight,
+      upright  = upright,
       default.units = "npc",
       angle = data$angle,
       polar_params = if (inherits(coord, "CoordPolar")){

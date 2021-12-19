@@ -366,7 +366,7 @@ There are limitations inherent in the plotting of text elements in ggplot due to
 
 It is important to realise that the letters are only rotated, and do not undergo any change in shape. Thus, for example, large text appearing on convex curves will not be deformed so that individual letters are narrower at the bottom and wider at the top. Doing so would require reinterpreting the letters as polygons, which would likely cause more problems than it would solve.
 
-Many paths will be too noisy or too angular to directly label in a visually appealing fashion if the text adheres too closely to the intricacies of the line. Often, a `geom_textsmooth` with `text_only = TRUE` is the best option in such cases, as in the examples above. There is also a `keep_straight` parameter so that a label is still applied at an appropriate point and angle on the line, but the text will not attempt to follow every bump on the path.
+Many paths will be too noisy or too angular to directly label in a visually appealing fashion if the text adheres too closely to the intricacies of the line. Often, a `geom_textsmooth` with `text_only = TRUE` is the best option in such cases, as in the examples above. There is also a `straight` parameter so that a label is still applied at an appropriate point and angle on the line, but the text will not attempt to follow every bump on the path.
 
 Other paths may have points of tight curvature, and setting an offset / vjust for the text that is larger than the distance to the focus point of that curve will produce odd effects. The package tries to detect and warn the user when this happens, and will suggest remedies.
 

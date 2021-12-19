@@ -48,7 +48,7 @@
 #'   setting.
 #' @param parse If set to `TRUE` this will coerce the labels into expressions,
 #'   allowing plotmath syntax to be used.
-#' @param keep_straight a `logical(1)`, which if `TRUE`, keeps the letters of
+#' @param straight a `logical(1)`, which if `TRUE`, keeps the letters of
 #'   a label on the same, straight baseline and if `FALSE` (default),
 #'   lets individual letters follow the curve. This might be helpful for noisy
 #'   paths.
@@ -134,7 +134,7 @@ geom_textpath <- function(
   inherit.aes = TRUE,  ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
   text_only = FALSE, gap = NA, upright = TRUE,
-  halign = "center", offset = NULL, parse = FALSE, keep_straight = FALSE,
+  halign = "center", offset = NULL, parse = FALSE, straight = FALSE,
   padding = unit(0.15, "inch"), arrow = NULL
   )
 {
@@ -152,7 +152,7 @@ geom_textpath <- function(
           halign        = halign,
           offset        = offset,
           parse         = parse,
-          keep_straight = keep_straight,
+          straight      = straight,
           padding       = padding,
           arrow         = arrow,
           ...
@@ -200,7 +200,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
     gap = NA, upright = TRUE, halign = "left",
-    offset = NULL, parse = FALSE, keep_straight = FALSE,
+    offset = NULL, parse = FALSE, straight = FALSE,
     padding = unit(0.15, "inch"), arrow = NULL
   ) {
 
@@ -275,10 +275,10 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       vjust  = offset %||% data$vjust[first],
       halign = halign,
       gap    = gap,
-      gp_text = text_gp,
-      gp_path = path_gp,
-      keep_straight = keep_straight,
-      upright       = upright,
+      gp_text  = text_gp,
+      gp_path  = path_gp,
+      straight = straight,
+      upright  = upright,
       default.units = "npc",
       angle = data$angle,
       polar_params = if (inherits(coord, "CoordPolar")){
