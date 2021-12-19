@@ -18,7 +18,7 @@ geom_textpath(
   lineend = "butt",
   linejoin = "round",
   linemitre = 10,
-  include_line = TRUE,
+  text_only = FALSE,
   cut_path = NA,
   flip_inverted = TRUE,
   halign = "center",
@@ -53,7 +53,7 @@ geom_labelpath(
   lineend = "butt",
   linejoin = "round",
   linemitre = 10,
-  include_line = TRUE,
+  text_only = FALSE,
   cut_path = FALSE,
   flip_inverted = TRUE,
   halign = "center",
@@ -118,9 +118,9 @@ paired geom/stat.}
 
 \item{linemitre}{Line mitre limit (number greater than 1).}
 
-\item{include_line}{A \code{logical(1)}, indicating whether a
-line should be plotted along with the text (\code{TRUE}, the default). If
-\code{FALSE}, any parameters or aesthetics relating to the drawing of the path
+\item{text_only}{A \code{logical(1)}, indicating whether a
+line should be plotted along with the text (\code{FALSE}, the default). If
+\code{TRUE}, any parameters or aesthetics relating to the drawing of the path
 in the layer will be ignored.}
 
 \item{cut_path}{A \code{logical(1)} which if \code{TRUE} breaks the path

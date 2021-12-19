@@ -241,7 +241,8 @@ makeContent.textpath <- function(x) {
   )
 }
 
-# recycle_gp ---------------------------------------------------------------
+
+# Graphical parameters helper ---------------------------------------------
 
 # Helper function to do safe(r) recycling on "gpar" class objects.
 recycle_gp <- function(gp, fun, ...) {
@@ -252,8 +253,6 @@ recycle_gp <- function(gp, fun, ...) {
   gp[lengths(gp) == 0] <- list(NULL)
   return(gp)
 }
-
-# gp_fill_defaults -------------------------------------------------------
 
 # Helper function to fill in missing parameters by defaults
 # Based on ggplot2:::modify_list

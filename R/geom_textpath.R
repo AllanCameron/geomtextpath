@@ -30,9 +30,9 @@
 #'   paired geom/stat.
 #' @param na.rm If `FALSE` (default), missing points or labels are removed from
 #'   the text path with a warning.
-#' @param include_line A `logical(1)`, indicating whether a
-#'   line should be plotted along with the text (`TRUE`, the default). If
-#'   `FALSE`, any parameters or aesthetics relating to the drawing of the path
+#' @param text_only A `logical(1)`, indicating whether a
+#'   line should be plotted along with the text (`FALSE`, the default). If
+#'   `TRUE`, any parameters or aesthetics relating to the drawing of the path
 #'   in the layer will be ignored.
 #' @param cut_path A `logical(1)` which if `TRUE` breaks the path
 #'   into two sections, one on either side of the string. If `FALSE`, the
@@ -133,7 +133,7 @@ geom_textpath <- function(
   position = "identity", na.rm = FALSE, show.legend = NA,
   inherit.aes = TRUE,  ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
-  include_line = TRUE, cut_path = NA, flip_inverted = TRUE,
+  text_only = FALSE, cut_path = NA, flip_inverted = TRUE,
   halign = "center", offset = NULL, parse = FALSE, keep_straight = FALSE,
   padding = unit(0.15, "inch"), arrow = NULL
   )
@@ -146,7 +146,7 @@ geom_textpath <- function(
           lineend       = lineend,
           linejoin      = linejoin,
           linemitre     = linemitre,
-          include_line  = include_line,
+          text_only     = text_only,
           cut_path      = cut_path,
           flip_inverted = flip_inverted,
           halign        = halign,
@@ -179,10 +179,10 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
                     linewidth = 0.5, linetype = 1, spacing = 0,
                     linecolour = "_copy_text_colour_", angle = 0),
 
-  extra_params = c("na.rm", "include_line"),
+  extra_params = c("na.rm", "text_only"),
 
   setup_data = function(data, params) {
-    if (isFALSE(params$include_line)) {
+    if (isTRUE(params$text_only)) {
       data$linetype <- 0
     }
     if (all(data$group == -1) && !is.null(data$label)) {

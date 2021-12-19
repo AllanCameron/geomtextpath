@@ -68,7 +68,7 @@ spiral <- data.frame(x    = sin(t) * 1:1000,
                      )
 
 ggplot(spiral, aes(x, y, label = text)) +
-  geom_textpath(size = 7, vjust = 2, include_line = FALSE) +
+  geom_textpath(size = 7, vjust = 2, text_only = TRUE) +
   coord_equal(xlim = c(-1500, 1500), ylim = c(-1500, 1500))
 ```
 
@@ -148,7 +148,7 @@ ggplot(economics, aes(date, unemploy)) +
   geom_line(colour = "grey") +
   geom_textsmooth(aes(label = "Decline"), method = loess, formula = y ~ x,
                   hjust = 0.48, size = 5, method.args = list(span = 0.2),
-                  include_line = FALSE, vjust = -0.5)
+                  text_only = TRUE, vjust = -0.5)
 ```
 
 <img src="man/figures/README-smooth2-1.png" width="100%" style="display: block; margin: auto;" />
@@ -274,7 +274,7 @@ coordinates.
 df <- data.frame(x = c(1, 1000), y = 1, text = "This is a perfectly flat label")
 
 p <- ggplot(df, aes(x, y, label = text)) +
-  geom_textpath(size = 6, include_line = FALSE) +
+  geom_textpath(size = 6, text_only = TRUE) +
   ylim(c(0.9, 1.1))
 
 p
@@ -456,10 +456,10 @@ problems than it would solve.
 Many paths will be too noisy or too angular to directly label in a
 visually appealing fashion if the text adheres too closely to the
 intricacies of the line. Often, a `geom_textsmooth` with
-`include_line = FALSE` is the best option in such cases, as in the
-examples above. There is also a `keep_straight` parameter so that a
-label is still applied at an appropriate point and angle on the line,
-but the text will not attempt to follow every bump on the path.
+`text_only = TRUE` is the best option in such cases, as in the examples
+above. There is also a `keep_straight` parameter so that a label is
+still applied at an appropriate point and angle on the line, but the
+text will not attempt to follow every bump on the path.
 
 Other paths may have points of tight curvature, and setting an offset /
 vjust for the text that is larger than the distance to the focus point
