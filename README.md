@@ -68,7 +68,7 @@ spiral <- data.frame(x    = sin(t) * 1:1000,
                      )
 
 ggplot(spiral, aes(x, y, label = text)) +
-  geom_textpath(size = 7, vjust = 2, include_line = FALSE) +
+  geom_textpath(size = 7, vjust = 2, text_only = TRUE) +
   coord_equal(xlim = c(-1500, 1500), ylim = c(-1500, 1500))
 ```
 
@@ -148,7 +148,7 @@ ggplot(economics, aes(date, unemploy)) +
   geom_line(colour = "grey") +
   geom_textsmooth(aes(label = "Decline"), method = loess, formula = y ~ x,
                   hjust = 0.48, size = 5, method.args = list(span = 0.2),
-                  include_line = FALSE, vjust = -0.5)
+                  text_only = TRUE, vjust = -0.5)
 ```
 
 <img src="man/figures/README-smooth2-1.png" width="100%" style="display: block; margin: auto;" />
@@ -275,7 +275,7 @@ coordinates.
 df <- data.frame(x = c(1, 1000), y = 1, text = "This is a perfectly flat label")
 
 p <- ggplot(df, aes(x, y, label = text)) +
-  geom_textpath(size = 6, include_line = FALSE) +
+  geom_textpath(size = 6, text_only = TRUE) +
   ylim(c(0.9, 1.1))
 
 p
@@ -343,8 +343,8 @@ p_textpath
 
 By default, any labels that would have been upside down (or even mostly
 upside down) are automatically flipped to be facing in a legible
-direction. This can be turned off using `flip_inverted = FALSE` in the
-call to `geom_textpath`.
+direction. This can be turned off using `upright = FALSE` in the call to
+`geom_textpath`.
 
 We can even construct complex diagrammatic plots:
 
@@ -365,14 +365,14 @@ p <- data.frame(x1 = c(seq(0, 10/6 * pi, pi/3),
            y1 = rep(0.5, 300),
            label = rep(c("stats", "effects", "polar"), each = 100)),
            aes(label = label), linetype = 0, size = 8,
-           flip_inverted = TRUE) +
+           upright = TRUE) +
   geom_textpath(data = data.frame(x1 = seq(0, 2 * pi, length = 300),
            y1 = rep(3, 300),
            label = rep(c("density", "smooth", "unique", "organic",
                          "easy to use", "automatic"), 
                        each = 50)),
            aes(label = label), linetype = 0, size = 4.6, color = "white",
-           flip_inverted = TRUE) +
+           upright = TRUE) +
   scale_y_continuous(limits = c(-5, 4)) +
   scale_x_continuous(limits = c(0, 2*pi)) +
   scale_fill_manual(values = c("deepskyblue3", "deepskyblue4",
@@ -478,11 +478,11 @@ problems than it would solve.
 
 Many paths will be too noisy or too angular to directly label in a
 visually appealing fashion if the text adheres too closely to the
-intricacies of the line. Often, a `geom_textsmooth` with `include_line =
-FALSE` is the best option in such cases, as in the examples above. There
-is also a `keep_straight` parameter so that a label is still applied at
-an appropriate point and angle on the line, but the text will not
-attempt to follow every bump on the path.
+intricacies of the line. Often, a `geom_textsmooth` with `text_only =
+TRUE` is the best option in such cases, as in the examples above. There
+is also a `straight` parameter so that a label is still applied at an
+appropriate point and angle on the line, but the text will not attempt
+to follow every bump on the path.
 
 Other paths may have points of tight curvature, and setting an offset /
 vjust for the text that is larger than the distance to the focus point

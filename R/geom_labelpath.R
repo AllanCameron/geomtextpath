@@ -13,8 +13,7 @@
 
 #' @export
 #' @rdname geom_textpath
-#' @param label.padding Amount of padding around label. Defaults to 0.25 lines.
-#' @param label.r Radius of rounded corners. Defaults to 0.15 lines.
+#' @inheritParams labelpathGrob
 #' @section Aesthetics:
 #' In addition to aforementioned aesthetics, \code{geom_labelpath()} also
 #' understands the following aesthetics related to the textbox:
@@ -30,9 +29,9 @@ geom_labelpath <- function(
   inherit.aes = TRUE,
   ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
-  include_line = TRUE, cut_path = FALSE, flip_inverted = TRUE,
+  text_only = FALSE, gap = FALSE, upright = TRUE,
   halign = "center", offset = NULL, parse = FALSE,
-  keep_straight = FALSE,
+  straight = FALSE,
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
@@ -46,18 +45,18 @@ geom_labelpath <- function(
     position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = list(
+    params = set_params(
       na.rm         = na.rm,
       lineend       = lineend,
       linejoin      = linejoin,
       linemitre     = linemitre,
-      include_line  = include_line,
-      cut_path      = cut_path,
-      flip_inverted = flip_inverted,
+      text_only     = text_only,
+      gap           = gap,
+      upright       = upright,
       halign        = halign,
       offset        = offset,
       parse         = parse,
-      keep_straight = keep_straight,
+      straight      = straight,
       padding       = padding,
       label.padding = label.padding,
       label.r       = label.r,
@@ -66,6 +65,8 @@ geom_labelpath <- function(
     )
   )
 }
+
+# ggproto class -----------------------------------------------------------
 
 #' @export
 #' @rdname GeomTextpath
@@ -98,10 +99,9 @@ GeomLabelpath <- ggproto(
   draw_panel = function(
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
-    cut_path = NA, flip_inverted = TRUE, halign = "left",
-    offset = NULL, parse = FALSE, keep_straight = FALSE,
-    padding = unit(0.15, "inch"), label.padding = unit(0.25, "lines"),
-    label.r = unit(0.15, "lines"), arrow = NULL
+    label.padding = unit(0.25, "lines"),
+    label.r = unit(0.15, "lines"), arrow = NULL,
+    text_params = static_text_params("label")
   ) {
 
 
@@ -174,7 +174,7 @@ GeomLabelpath <- ggproto(
       )
     }
 
-    safe_labels <- if(parse) {
+    safe_labels <- if (text_params$parse) {
       safe_parse(as.character(data$label[first]))
     } else {
       data$label[first]
@@ -188,20 +188,20 @@ GeomLabelpath <- ggproto(
       y = data$y,
       id = data$group,
       hjust  = data$hjust[first],
-      vjust  = offset %||% data$vjust[first],
-      halign = halign,
-      cut_path = cut_path,
+      vjust  = text_params$offset %||% data$vjust[first],
+      halign = text_params$halign,
+      gap    = text_params$gap,
       gp_text  = text_gp,
       gp_path  = path_gp,
       gp_box   = box_gp,
-      keep_straight = keep_straight,
-      flip_inverted = flip_inverted,
+      straight = text_params$straight,
+      upright  = text_params$upright,
       default.units = "npc",
       angle = data$angle,
       polar_params = if (inherits(coord, "CoordPolar")){
         list(x = 0.5, y = 0.5, theta = coord$theta)
       } else NULL,
-      padding = padding,
+      padding = text_params$padding,
       label.padding = label.padding,
       label.r = label.r,
       arrow = arrow

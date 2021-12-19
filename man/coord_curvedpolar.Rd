@@ -24,7 +24,8 @@ is applied clockwise or anticlockwise depending on value of `direction`.}
 setting of `"on"` (the default) means yes, and a setting of `"off"`
 means no. For details, please see [`coord_cartesian()`].}
 
-\item{halign}{Determines the alignment for multi-line text labels}
+\item{halign}{A \code{character(1)} describing how multi-line text should be
+justified. Can either be \code{"center"} (default), \code{"left"} or \code{"right"}.}
 }
 \description{
 Polar co-ordinates in `ggplot2` help to create a range of circular plots,

@@ -20,17 +20,7 @@
 #'   [`geom_density`][ggplot2::geom_density]
 #' @inheritParams ggplot2::layer
 #' @inheritParams geom_textpath
-#' @param bw The smoothing bandwidth to be used.
-#'   If numeric, the standard deviation of the smoothing kernel.
-#'   If character, a rule to choose the bandwidth, as listed in
-#'   [stats::bw.nrd()].
-#' @param adjust A multiplicate bandwidth adjustment. This makes it possible
-#'    to adjust the bandwidth while still using the a bandwidth estimator.
-#'    For example, `adjust = 1/2` means use half of the default bandwidth.
-#' @param kernel Kernel. See list of available kernels in [density()].
-#' @param n number of equally spaced points at which the density is to be
-#'   estimated, should be a power of two, see [density()] for
-#'   details
+#' @inheritParams ggplot2::stat_density
 #'
 #' @eval rd_aesthetics("geom", "text_density")
 #'
@@ -51,10 +41,10 @@ geom_textdensity    <- function(mapping = NULL,
                                 adjust = 1,
                                 kernel = "gaussian",
                                 n = 512,
-                                cut_path = NA,
-                                flip_inverted = TRUE,
+                                gap = NA,
+                                upright = TRUE,
                                 offset = NULL,
-                                keep_straight = FALSE,
+                                straight = FALSE,
                                 padding = unit(0.15, "inch"),
                                 lineend = "butt",
                                 linejoin = "round",
@@ -71,16 +61,16 @@ geom_textdensity    <- function(mapping = NULL,
     position = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = list(
+    params = set_params(
       halign        = halign,
       bw            = bw,
       adjust        = adjust,
       kernel        = kernel,
       n             = n,
-      cut_path      = cut_path,
-      flip_inverted = flip_inverted,
+      gap           = gap,
+      upright       = upright,
       offset        = offset,
-      keep_straight = keep_straight,
+      straight      = straight,
       lineend       = lineend,
       linejoin      = linejoin,
       linemitre     = linemitre,

@@ -22,39 +22,8 @@
 #' visual effect, or it may be to label a circular / polar plot in a more
 #' "natural" way.
 #'
-#' @inheritParams ggplot2::layer
 #' @inheritParams ggplot2::geom_path
-#' @param ... other arguments passed on to [`layer()`][ggplot2::layer].
-#'   These are often aesthetics, used to set an aesthetic to a fixed value,
-#'   like `colour = "red"` or `size = 3`. They may also be parameters to the
-#'   paired geom/stat.
-#' @param na.rm If `FALSE` (default), missing points or labels are removed from
-#'   the text path with a warning.
-#' @param include_line A `logical(1)`, indicating whether a
-#'   line should be plotted along with the text (`TRUE`, the default). If
-#'   `FALSE`, any parameters or aesthetics relating to the drawing of the path
-#'   in the layer will be ignored.
-#' @param cut_path A `logical(1)` which if `TRUE` breaks the path
-#'   into two sections, one on either side of the string. If `FALSE`, the
-#'   path is plotted as a whole. The default, `NA`, will break the line if the
-#'   string has a `vjust` of between 0 and 1.
-#' @param flip_inverted A `logical(1)` which if `TRUE` (default), inverts any
-#'   string where the majority of letters would be upside down along the path
-#'   are inverted to improve legibility. If `FALSE` letters are left as-is.
-#' @param halign A `character(1)` describing how multi-line labels should
-#'   be justified. Can either be `"left"`, `"center"` (default) or `"right"`.
-#' @param offset A [`unit()`][grid::unit()] of length 1 to determine the offset
-#'   of the text from the path. If not `NULL`, this overrules the `vjust`
-#'   setting.
-#' @param parse If set to `TRUE` this will coerce the labels into expressions,
-#'   allowing plotmath syntax to be used.
-#' @param keep_straight a `logical(1)`, which if `TRUE`, keeps the letters of
-#'   a label on the same, straight baseline and if `FALSE` (default),
-#'   lets individual letters follow the curve. This might be helpful for noisy
-#'   paths.
-#' @param padding A [`unit()`][grid::unit()] of length 1 to determine the
-#'   padding between path and text when the `cut_path` parameter trims the
-#'   path.
+#' @inheritParams static_text_params
 #' @param orientation The orientation of the layer. The default (NA)
 #'    automatically determines the orientation from the aesthetic mapping.
 #'    In the rare event that this fails it can be given explicitly by
@@ -133,26 +102,26 @@ geom_textpath <- function(
   position = "identity", na.rm = FALSE, show.legend = NA,
   inherit.aes = TRUE,  ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
-  include_line = TRUE, cut_path = NA, flip_inverted = TRUE,
-  halign = "center", offset = NULL, parse = FALSE, keep_straight = FALSE,
+  text_only = FALSE, gap = NA, upright = TRUE,
+  halign = "center", offset = NULL, parse = FALSE, straight = FALSE,
   padding = unit(0.15, "inch"), arrow = NULL
   )
 {
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
         position = position, show.legend = show.legend,
         inherit.aes = inherit.aes,
-        params = list(
+        params = set_params(
           na.rm         = na.rm,
           lineend       = lineend,
           linejoin      = linejoin,
           linemitre     = linemitre,
-          include_line  = include_line,
-          cut_path      = cut_path,
-          flip_inverted = flip_inverted,
+          text_only     = text_only,
+          gap           = gap,
+          upright       = upright,
           halign        = halign,
           offset        = offset,
           parse         = parse,
-          keep_straight = keep_straight,
+          straight      = straight,
           padding       = padding,
           arrow         = arrow,
           ...
@@ -179,10 +148,10 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
                     linewidth = 0.5, linetype = 1, spacing = 0,
                     linecolour = "_copy_text_colour_", angle = 0),
 
-  extra_params = c("na.rm", "include_line"),
+  extra_params = c("na.rm"),
 
   setup_data = function(data, params) {
-    if (isFALSE(params$include_line)) {
+    if (isTRUE(params$text_params$text_only)) {
       data$linetype <- 0
     }
     if (all(data$group == -1) && !is.null(data$label)) {
@@ -199,9 +168,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   draw_panel = function(
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
-    cut_path = NA, flip_inverted = TRUE, halign = "left",
-    offset = NULL, parse = FALSE, keep_straight = FALSE,
-    padding = unit(0.15, "inch"), arrow = NULL
+    text_params = static_text_params("text"), arrow = NULL
   ) {
 
 
@@ -258,7 +225,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       )
     }
 
-    safe_labels <- if(parse) {
+    safe_labels <- if(text_params$parse) {
         safe_parse(as.character(data$label[first]))
       } else {
         data$label[first]
@@ -272,19 +239,19 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       y = data$y,
       id = data$group,
       hjust  = data$hjust[first],
-      vjust  = offset %||% data$vjust[first],
-      halign = halign,
-      cut_path = cut_path,
-      gp_text = text_gp,
-      gp_path = path_gp,
-      keep_straight = keep_straight,
-      flip_inverted = flip_inverted,
+      vjust  = text_params$offset %||% data$vjust[first],
+      halign = text_params$halign,
+      gap    = text_params$gap,
+      gp_text  = text_gp,
+      gp_path  = path_gp,
+      straight = text_params$straight,
+      upright  = text_params$upright,
       default.units = "npc",
       angle = data$angle,
       polar_params = if (inherits(coord, "CoordPolar")){
                        list(x = 0.5, y = 0.5, theta = coord$theta)
                      } else NULL,
-      padding = padding,
+      padding = text_params$padding,
       arrow = arrow
     )
   }
@@ -303,7 +270,7 @@ geom_textline <- function(mapping = NULL, data = NULL, stat = "identity",
     position = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = list(
+    params = set_params(
       na.rm = na.rm,
       orientation = orientation,
       ...

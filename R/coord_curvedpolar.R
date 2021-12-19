@@ -28,7 +28,7 @@
 #' @param clip Should drawing be clipped to the extent of the plot panel? A
 #'   setting of `"on"` (the default) means yes, and a setting of `"off"`
 #'   means no. For details, please see [`coord_cartesian()`].
-#' @param halign Determines the alignment for multi-line text labels
+#' @inheritParams static_text_params
 #' @export
 #' @examples
 #'
@@ -137,7 +137,7 @@ coord_curvedpolar <- function(theta = "x", start = 0,
                     halign = halign,
                     gp_text = element_gp,
                     gp_path = gpar(linetype = 0, lty = 0),
-                    flip_inverted = TRUE,
+                    upright = TRUE,
                     default.units = "native"
                   ),
       element_render(theme, "panel.border")

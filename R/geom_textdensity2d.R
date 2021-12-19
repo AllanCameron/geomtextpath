@@ -19,13 +19,6 @@
 #' @inheritParams ggplot2::layer
 #' @inheritParams geom_textpath
 #' @inheritParams ggplot2::stat_density_2d
-#' @param n Number of grid points in each direction.
-#' @param h Bandwidth (vector of length two). If `NULL`, estimated
-#'   using [MASS::bandwidth.nrd()].
-#' @param adjust A multiplicative bandwidth adjustment to be used if 'h' is
-#'    'NULL'. This makes it possible to adjust the bandwidth while still
-#'    using the a bandwidth estimator. For example, `adjust = 1/2` means
-#'    use half of the default bandwidth.
 #'
 #' @eval rd_aesthetics("geom", "text_density2d")
 #'
@@ -49,10 +42,10 @@ geom_textdensity2d <- function(mapping = NULL,
                                 stat = "density_2d",
                                 position = "identity",
                                 ...,
-                                cut_path = NA,
-                                flip_inverted = TRUE,
+                                gap = NA,
+                                upright = TRUE,
                                 offset = NULL,
-                                keep_straight = FALSE,
+                                straight = FALSE,
                                 padding = unit(0.15, "inch"),
                                 contour_var = "density",
                                 n = 100,
@@ -72,21 +65,22 @@ geom_textdensity2d <- function(mapping = NULL,
     position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params      = list(cut_path      = cut_path,
-                       flip_inverted = flip_inverted,
-                       offset        = offset,
-                       keep_straight = keep_straight,
-                       lineend       = lineend,
-                       linejoin      = linejoin,
-                       linemitre     = linemitre,
-                       contour       = TRUE,
-                       contour_var   = contour_var,
-                       na.rm         = na.rm,
-                       padding       = padding,
-                       n             = n,
-                       h             = h,
-                       adjust        = adjust,
-                       ...
+    params      = set_params(
+      gap         = gap,
+      upright     = upright,
+      offset      = offset,
+      straight    = straight,
+      lineend     = lineend,
+      linejoin    = linejoin,
+      linemitre   = linemitre,
+      contour     = TRUE,
+      contour_var = contour_var,
+      na.rm       = na.rm,
+      padding     = padding,
+      n           = n,
+      h           = h,
+      adjust      = adjust,
+      ...
     )
   )
 }
