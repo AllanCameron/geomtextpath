@@ -72,6 +72,7 @@ place_text <- function(
 
   # Convert text from linear space to arclength space by offsetting the text
   # by the anchor points
+  xpos <- c("xmin", "xmid", "xmax")
   letters[, xpos] <- letters[, xpos] + anchor[letters$y_id]
 
   # Convert text from arclength space to Cartesian space by projecting the

@@ -1,5 +1,33 @@
 
-## Getting surrounding lines -----------------------------------------------
+# Preprocessing -----------------------------------------------------------
+
+prepare_path <- function(data, label, gp, params) {
+
+  # Deduplicate path for the safety of angle / curvature calculations
+  path <- dedup_path(
+    x = as_inch(data$x, "x"),
+    y = as_inch(data$y, "y"),
+    id = data$id
+  )
+  path <- split(path, path$id)
+
+  # Convert point-like paths to proper paths
+  if (any({singletons <- vapply(path, nrow, integer(1)) == 1})) {
+    width <- vapply(label, function(x) max(x$xmax, na.rm = TRUE), numeric(1))
+    path[singletons] <- Map(pathify,
+                            data    = path[singletons],
+                            hjust   = params$hjust[singletons],
+                            angle   = params$angle,
+                            width   = width[singletons],
+                            polar_x = list(params$polar_params$x),
+                            polar_y = list(params$polar_params$y),
+                            thet    = list(params$polar_params$theta))
+    gp$lty[singletons] <- 0
+  }
+  attr(path, "gp") <- gp
+  return(path)
+}
+
 
 #' Trim text area from path
 #'
@@ -40,10 +68,10 @@
 #'
 #' xy <- .add_path_data(xy)
 #' glyphs <- .get_path_points(xy)
-#' .get_surrounding_lines(xy, glyphs)
-.get_surrounding_lines <- function(path, letters, gap = NA,
-                                   padding = 0.15, vjust = 0.5,
-                                   vjust_lim = c(0, 1)) {
+#' make_gap(xy, glyphs)
+make_gap <- function(path, letters, gap = NA,
+                     padding = 0.15, vjust = 0.5,
+                     vjust_lim = c(0, 1)) {
   padding <- as_inch(padding)
   if (is.unit(vjust)) {
     vjust <- rep_len(0.5, length(vjust))
@@ -124,92 +152,134 @@
   return(path)
 }
 
-#' Making a curved textbox
-#'
-#' @param path A `data.frame` containing `x` and `y` columns with numeric values.
-#' @param text A `data.frame` containing `left` and `right` vectors with values
-#'   along the arc-length of a path where text appears, and an `id` column.
-#' @param label A `data.frame` as produced by `measure_text()`.
-#' @param padding A `grid::unit()`.
-#' @param radius A `grid::unit()`.
-#'
-#' @return A `data.frame` containing `x`, `y` and `id` columns for a closed
-#'   polygon.
-#' @noRd
-#'
-#' @examples
-#' NULL
-.curved_textbox <- function(
-  path,
-  text,
-  label,
-  padding = unit(0.25, "lines"),
-  radius  = unit(0.15, "lines")
-) {
-  padding <- as_inch(padding)
-  metrics <- attr(label, "metrics")
-  height <- c(0, 1) * metrics$height + c(-1, 1) * padding
+# Path constructor that filters out subsequent duplicated points that can cause
+# problems for gradient/offset calculations. Also interpolates any NA values in
+# the x, y values to avoid broken paths, and removes any points that have an
+# NA id.
 
-  if (nrow(text) > 1) {
-    # Get min / mid / max height
-    height <- c(0, 1) * metrics$height + c(-1, 1) * padding
-    height <- c(height[1], sum(height) / 2, height[2])
+dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
 
-    # Apply height to minimal offset
-    offset <- as_inch(attr(label, "offset"))[unique(label$y_id)]
-    offset <- min(offset) + metrics$x_adj
-    offset <- c(0, offset + height)
+  vecs <- data_frame(x = .interp_na(x), y = .interp_na(y), id = id)
+  lens <- lengths(vecs)
+  n    <- max(lengths(vecs))
+  vecs[lens != n] <- lapply(vecs[lens != n], rep_len, length.out = n)
 
-    # Calculate offsets
-    offset <- .get_offset(path$x, path$y, offset)
-
-    # Set start / end at 0-offset, then translate to mid-height offset
-    lims <- range(text$left, text$right)
-    lims <- approx_multiple(offset$arc_length[, 1], lims, offset$arc_length[, 3])
-    lims <- lims + c(-1, 1) * padding
-
-    # Translate mid-height offset to min / max height offsets to get corners
-    corners <- approx_multiple(
-      offset$arc_length[, 3], lims,
-      y = cbind(offset$x[, c(2, 4)], offset$y[, c(2, 4)])
-    )
-
-    # Check which points fall between corners
-    keep  <- offset$arc_length[, 3] > lims[1] & offset$arc_length[, 3] < lims[2]
-    nkeep <- sum(keep)
-
-    # Add points in-between corners
-    x <- c(corners[1, 1], offset$x[keep, 2],      corners[2, 1],
-           corners[2, 2], rev(offset$x[keep, 4]), corners[1, 2])
-    y <- c(corners[1, 3], offset$y[keep, 2],      corners[2, 3],
-           corners[2, 4], rev(offset$y[keep, 4]), corners[1, 4])
+  dups <- vapply(vecs, function(x){abs(x[-1] - x[-length(x)]) < tolerance},
+                 logical(n - 1))
+  if (n > 2) {
+    keep <- c(TRUE, rowSums(dups) < 3L)
   } else {
-    # Simple rotation of a rectangle
-    xx <- (metrics$width  * c(-0.5, 0.5) + c(-padding, padding))[c(1, 2, 2, 1)]
-    yy <- (diff(height)   * c(-0.5, 0.5))[c(1, 1, 2, 2)]
-    rot <- text$angle * .deg2rad
-    x <- xx * cos(rot) - yy * sin(rot) + text$x
-    y <- xx * sin(rot) + yy * cos(rot) + text$y
-    nkeep <- 0
+    keep <- c(TRUE, sum(dups) < 3L)
+  }
+  vecs <- vecs[keep, , drop = FALSE]
+
+  vecs[complete.cases(vecs),]
+}
+
+
+# Convert point-like textpaths into proper text paths.
+
+pathify <- function(data, hjust, angle, width,
+                     polar_x = NULL, polar_y = NULL, thet = NULL) {
+
+  angle <- pi * angle / 180
+  multi_seq <- Vectorize(seq.default)
+
+  if(!is.null(polar_x) & !is.null(polar_y) & !is.null(thet)) {
+
+    polar_x <- as_inch(polar_x, "x")
+    polar_y <- as_inch(polar_y, "y")
+
+    if(thet == "y") angle <- angle - pi/2
+    r <- sqrt((data$x - polar_x)^2 + (data$y - polar_y)^2)
+    width <- width / r
+    theta <- atan2(data$y - polar_y, data$x - polar_x)
+    theta_min  <- theta + cos(angle + pi) * width * hjust
+    theta_max  <- theta + cos(angle) * width * (1 - hjust)
+    r_min   <- r + sin(angle + pi) * width * hjust
+    r_max   <- r + sin(angle) * width * (1 - hjust)
+
+    theta <- c(multi_seq(theta_min, theta_max, length.out = 100))
+    r <- c(multi_seq(r_min, r_max, length.out = 100))
+    x <- polar_x + r * cos(theta)
+    y <- polar_y + r * sin(theta)
+  }
+  else
+  {
+    xmin  <- data$x + cos(angle + pi) * width * hjust
+    xmax  <- data$x + cos(angle) * width * (1 - hjust)
+    ymin  <- data$y + sin(angle + pi) * width * hjust
+    ymax  <- data$y + sin(angle) * width * (1 - hjust)
+    x <- c(multi_seq(xmin, xmax, length.out = 100))
+    y <- c(multi_seq(ymin, ymax, length.out = 100))
   }
 
-  radius <- as_inch(radius)
-  if (radius > 0.01) {
-    if (radius > 0.5 * diff(range(height))) {
-      radius  <- 0.5 * diff(range(height))
+  data <- data[rep(seq(nrow(data)), each = 100),]
+  data$x <- x
+  data$y <- y
+  data
+}
+
+# This adjusts a possible arrow to not have duplicated arrowheads when a path
+# is cut into two due to the path trimming.
+tailor_arrow <- function(data, arrow) {
+  if (is.null(arrow)) {
+    return(arrow)
+  }
+  keep  <- !duplicated(data$new_id)
+  sides <- data$section[keep]
+  id    <- data$id[keep]
+  path  <- data
+
+  # Have arrow match the length of the groups
+  arrow[] <- lapply(arrow, function(x) {
+    x[pmin(id, length(x))]
+  })
+  angle <- arrow$angle
+  ends  <- arrow$ends
+
+  # Ends are 1 = "first", 2 = "last", 3 = "both".
+  # We 'hide' an arrow by setting an NA angle
+  angle[ends == 2 & sides == "pre"]  <- NA_integer_
+  angle[ends == 1 & sides == "post"] <- NA_integer_
+  ends[ends == 3 & sides == "pre"]   <- 1L
+  ends[ends == 3 & sides == "post"]  <- 2L
+  arrow$angle <- angle
+  arrow$ends  <- ends
+  arrow
+}
+
+# Grob constructor --------------------------------------------------------
+
+.add_path_grob <- function(grob, data, text, gp, params, arrow = NULL) {
+  has_line <- !all((gp$lty %||% 1)  %in% c("0", "blank", NA))
+  is_opaque <-!all((gp$col %||% 1) %in% c(NA, "transparent"))
+  if (has_line && is_opaque) {
+    data <- rbind_dfs(data)
+
+    # Get bookends by trimming paths when it intersects text
+    data <- make_gap(
+      data, text,
+      vjust   = params$vjust    %||% 0.5,
+      gap     = params$gap      %||% NA,
+      padding = params$padding  %||% 0.15
+    )
+    arrow <- tailor_arrow(data, arrow)
+
+    if (nrow(data) > 1) {
+      # Recycle graphical parameters to match lengths of path
+      gp <- recycle_gp(gp, `[`, i = data$id[data$start])
+      gp$fill <- gp$col
+
+      # Write path grob
+      grob <- addGrob(
+        grob, polylineGrob(
+          x = data$x, y = data$y, id = data$new_id, gp = gp,
+          default.units = "inches",
+          arrow = arrow
+        )
+      )
     }
-    # Make closed polygon by inserting midpoint between start and end
-    n <- length(x)
-    x_start <- (x[1] + x[n]) / 2
-    y_start <- (y[1] + y[n]) / 2
-    x <- c(x_start, x, x_start)
-    y <- c(y_start, y, y_start)
-
-    # Round corners
-    corners <- c(2, 3 + nkeep, 4 + nkeep, 5 + 2 * nkeep)
-    xy <- .round_corners(x, y, radius, at = corners)
-    x <- xy$x
-    y <- xy$y
   }
-  return(data_frame(x = x, y = y, id = text$id[1]))
+  return(grob)
 }

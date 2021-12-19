@@ -66,6 +66,8 @@ geom_labelpath <- function(
   )
 }
 
+# ggproto class -----------------------------------------------------------
+
 #' @export
 #' @rdname GeomTextpath
 #' @format NULL

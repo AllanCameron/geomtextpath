@@ -96,8 +96,8 @@ test_that("Path trimming is correct", {
   rights <- sapply(label, function(x) x$xmax - x$xmid) + br
 
   # TRUE gap
-  test <- .get_surrounding_lines(xy, glyphs, gap = TRUE,
-                                 padding = br, vjust = vjust)
+  test <- make_gap(xy, glyphs, gap = TRUE,
+                   padding = br, vjust = vjust)
   expect_length(test$x, nrow(xy) * 2)
   expect_equal(
     test$x,
@@ -109,13 +109,13 @@ test_that("Path trimming is correct", {
   expect_equal(unique(test$y), 1)
 
   # vjust can be passed as unit object
-  expect_silent(.get_surrounding_lines(xy, glyphs, gap = TRUE,
-                                       padding = br, vjust = unit(0, "mm")))
+  expect_silent(make_gap(xy, glyphs, gap = TRUE,
+                         padding = br, vjust = unit(0, "mm")))
 
 
   # FALSE gap
-  test <- .get_surrounding_lines(xy, glyphs, gap = FALSE,
-                                 padding = br[2], vjust = vjust)
+  test <- make_gap(xy, glyphs, gap = FALSE,
+                   padding = br[2], vjust = vjust)
   expect_length(test$x, nrow(xy))
   expect_equal(
     test$x,
@@ -126,8 +126,8 @@ test_that("Path trimming is correct", {
   expect_equal(unique(test$y), 1)
 
   # Variable gap
-  test <- .get_surrounding_lines(xy, glyphs, gap = NA,
-                                 padding = br, vjust = vjust)
+  test <- make_gap(xy, glyphs, gap = NA,
+                   padding = br, vjust = vjust)
   expect_length(test$x, nrow(xy) + 2)
   expect_equal(
     test$x,
@@ -139,8 +139,8 @@ test_that("Path trimming is correct", {
   expect_equal(unique(test$y), 1)
 
   # Test variable vjust is respected
-  test <- .get_surrounding_lines(xy, glyphs, gap = NA, vjust = vjust,
-                                 padding = br, vjust_lim = c(0, 3))
+  test <- make_gap(xy, glyphs, gap = NA, vjust = vjust,
+                   padding = br, vjust_lim = c(0, 3))
   expect_length(test$x, nrow(xy) + 4)
   expect_equal(
     test$x,
@@ -154,8 +154,8 @@ test_that("Path trimming is correct", {
   # Check for overtrimming
   glyphs$left  <- 0
   glyphs$right <- 1
-  test <- .get_surrounding_lines(xy, glyphs, gap = TRUE, vjust = vjust,
-                                 padding = br, vjust_lim = c(0, 3))
+  test <- make_gap(xy, glyphs, gap = TRUE, vjust = vjust,
+                   padding = br, vjust_lim = c(0, 3))
   expect_equal(nrow(test), 0)
 })
 
@@ -267,8 +267,8 @@ test_that("Flipping leads to correctly clipped path", {
 
   case$id <- ctrl$id <- 1L
 
-  ctrl <- .get_surrounding_lines(xy, ctrl)
-  case <- .get_surrounding_lines(xy, case)
+  ctrl <- make_gap(xy, ctrl)
+  case <- make_gap(xy, case)
 
 
   # They aren't exactly equal due to letter spacing, but they should be similar
