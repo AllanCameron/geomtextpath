@@ -15,12 +15,12 @@ labelpathGrob(
   vjust = NULL,
   halign = "left",
   angle = 0,
-  keep_straight = FALSE,
+  straight = FALSE,
   gp_text = gpar(),
   gp_path = gpar(),
   gp_box = gpar(),
-  cut_path = NA,
-  flip_inverted = TRUE,
+  gap = NA,
+  upright = TRUE,
   polar_params = NULL,
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
@@ -41,12 +41,12 @@ textpathGrob(
   vjust = NULL,
   halign = "left",
   angle = 0,
-  keep_straight = FALSE,
+  straight = FALSE,
   gp_text = gpar(),
   gp_path = gpar(),
   gp_box = gpar(),
-  cut_path = NA,
-  flip_inverted = TRUE,
+  gap = NA,
+  upright = TRUE,
   polar_params = NULL,
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
@@ -83,16 +83,15 @@ multiple lines. All locations with the same \code{id} belong to the same line.}
 direction of the text. Alternatively a \code{\link[grid:unit]{unit()}} object to
 directly set the offset from the path.}
 
-\item{halign}{A \code{character(1)} describing how multi-line labels should
-be justified. Can either be \code{"left"}, \code{"center"} (default) or \code{"right"}.}
+\item{halign}{A \code{character(1)} describing how multi-line text should be
+justified. Can either be \code{"center"} (default), \code{"left"} or \code{"right"}.}
 
 \item{angle}{a \code{numeric} vector either length 1 or the same length as \code{id}
 describing the angle in degrees at which text should be rotated.}
 
-\item{keep_straight}{a \code{logical(1)}, which if \code{TRUE}, keeps the letters of
-a label on the same, straight baseline and if \code{FALSE} (default),
-lets individual letters follow the curve. This might be helpful for noisy
-paths.}
+\item{straight}{A \code{logical(1)} which if \code{TRUE}, keeps the letters of a label
+on a straight baseline and if \code{FALSE} (default), lets individual letters
+follow the curve. This might be helpful for noisy paths.}
 
 \item{gp_text, gp_path}{An object of class \code{"gpar"}, typically the output from
 a call from the \code{\link[grid:gpar]{gpar()}} function. These are basically lists
@@ -102,21 +101,22 @@ of graphical parameters for the text and path respectively.}
 from a call to the [`gpar()`][grid::gpar] function. If this is an empty
 list, no text box will be drawn.}
 
-\item{cut_path}{A \code{logical(1)} which if \code{TRUE} breaks the path
-into two sections, one on either side of the string. If \code{FALSE}, the
-path is plotted as a whole. The default, \code{NA}, will break the line if the
-string has a \code{vjust} of between 0 and 1.}
+\item{gap}{A \code{logical(1)} which if \code{TRUE}, breaks the path into two sections
+with a gap on either side of the label. If \code{FALSE}, the path is plotted
+as a whole. Alternatively, if \code{NA}, the path will be broken if the string
+has a \code{vjust} between 0 and 1, and not otherwise. The default for the label
+variant is \code{FALSE} and for the text variant is \code{NA}.}
 
-\item{flip_inverted}{A \code{logical(1)} which if \code{TRUE} (default), inverts any
-string where the majority of letters would be upside down along the path
-are inverted to improve legibility. If \code{FALSE} letters are left as-is.}
+\item{upright}{A \code{logical(1)} which if \code{TRUE} (default), inverts any text
+where the majority of letters would upside down along the path, to improve
+legibility. If \code{FALSE}, the path decides the orientation of text.}
 
 \item{polar_params}{a list consisting of an x, y, and r component that
 specifies the central point and radius of a circle around which
 single-point labels will be wrapped.}
 
-\item{padding}{A \code{\link[grid:unit]{unit()}} of length 1 to determine the
-padding between path and text when the \code{cut_path} parameter trims the
+\item{padding}{A \code{\link[grid:unit]{unit}} object of length 1 to determine the
+padding between the text and the path when the \code{gap} parameter trims the
 path.}
 
 \item{label.padding}{Amount of padding around label. Defaults to 0.25 lines.}
