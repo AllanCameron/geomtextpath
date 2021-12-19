@@ -255,3 +255,34 @@ test_that("check_subclass works", {
   expect_error(eval(test), "must be either a string")
 })
 
+# Parameters --------------------------------------------------------------
+
+test_that("static_text_params asserts correctly", {
+
+  test <- static_text_params(offset = NULL)
+  expect_null(test$offset)
+
+  test <- static_text_params(offset = unit(1, "npc"))
+  expect_s3_class(test$offset, "unit")
+
+  # Check error messages
+  test <- substitute(static_text_params(halign = "top"))
+  expect_error(eval(test), c('"center", "left", or "right"'))
+
+  test <- substitute(static_text_params(text_only = 3))
+  expect_error(eval(test), "must be a `logical` vector")
+
+  test <- substitute(static_text_params(text_only = NA))
+  expect_error(eval(test), "contains NAs whereas it cannot")
+
+  test <- substitute(static_text_params(text_only = c(TRUE, FALSE)))
+  expect_error(eval(test), "must be of length 1.")
+
+  # Check defaults are correctly resolved
+  test <- static_text_params("text")
+  expect_equal(test$gap, NA)
+
+  test <- static_text_params("label")
+  expect_equal(test$gap, FALSE)
+})
+
