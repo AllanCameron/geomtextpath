@@ -275,7 +275,7 @@ static_text_params <- function(
   halign    = "center",
   offset    = NULL,
   parse     = FALSE,
-  straight  = TRUE,
+  straight  = FALSE,
   padding   = unit(0.15, "inch")
 ) {
   if (is.null(gap)) {
