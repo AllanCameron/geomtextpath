@@ -13,7 +13,7 @@ label_sf.sfc_LINESTRING <- function(x, label) {
 
 st_as_grob.sfc_LINESTRING_labelled <- function (
   x, arrow = NULL, default.units = "npc", name = NULL,
-  gp = grid::gpar(), vp = NULL, ...)
+  gp = grid::gpar(), vp = NULL, textpath_vars = list(), ...)
 {
 
   label <- attr(x, "label")
@@ -29,6 +29,8 @@ st_as_grob.sfc_LINESTRING_labelled <- function (
       gp = gp[!is_e]
       x = x[!is_e]
   }
+  hjust <- textpath_vars$hjust %||% 0.5
+  vjust <- textpath_vars$vjust %||% 0.5
 
     if (length(x)) {
         x <- unclass(x)
@@ -36,7 +38,7 @@ st_as_grob.sfc_LINESTRING_labelled <- function (
         id <- rep(seq_along(n_points), n_points)
         x <- do.call(rbind, x)
         textpathGrob(label = label[1], x = x[, 1], y = x[, 2],
-                     id = id, arrow = arrow,
+                     id = id, arrow = arrow, hjust = hjust, vjust = vjust,
             default.units = default.units, name = name, gp_path = gp,
             vp = vp)
     }
@@ -53,10 +55,10 @@ sf_types <- c(GEOMETRY = "other", POINT = "point", LINESTRING = "line",
               TRIANGLE = "other")
 
 
-sf_grob_labels <- function(x, labels, lineend = "butt", linejoin = "round",
-                           linemitre = 10, arrow = NULL, na.rm = TRUE) {
+sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
+                        linemitre = 10, arrow = NULL, na.rm = TRUE) {
   # Match labels to data
-  if (missing(labels)) labels <- ""
+  labels <- x$label %||% ""
   labels <- match_labels(x, labels)
 
   # Get sf types
@@ -79,7 +81,7 @@ sf_grob_labels <- function(x, labels, lineend = "butt", linejoin = "round",
       ))
     }
     x <- x[!remove, , drop = FALSE]
-    label <- label[!remove]
+    labels <- labels[!remove]
     type_ind <- type_ind[!remove]
     is_collection <- is_collection[!remove]
   }
@@ -116,7 +118,7 @@ sf_grob_labels <- function(x, labels, lineend = "butt", linejoin = "round",
                        size)
   stroke <- (x$stroke %||% defaults$stroke[1]) * .stroke / 2
   fontsize <- point_size * .pt + stroke
-  lwd <- ifelse(is_point, stroke, size * .pt)
+  lwd <- ifelse(is_point, stroke, stroke * .pt)
   pch <- x$shape %||% defaults$shape[type_ind]
   lty <- x$linetype %||% defaults$linetype[type_ind]
   gp <- gpar(
@@ -124,13 +126,16 @@ sf_grob_labels <- function(x, labels, lineend = "butt", linejoin = "round",
     lineend = lineend, linejoin = linejoin, linemitre = linemitre
   )
 
+  tp_vars <- list(hjust = x$hjust %||% 0.5,
+                  vjust = x$vjust %||% 0.5)
   # Build grobs
   out <- grid::gTree()
 
   for(i in seq_along(x$geometry))
   {
     g <- label_sf(x$geometry[i], labels[i])
-    out <- addGrob(sf::st_as_grob(g, pch = pch, gp = gp, arrow = arrow))
+    out <- addGrob(out, sf::st_as_grob(g, pch = pch, gp = gp, arrow = arrow,
+                                       textpath_vars = tp_vars))
   }
   out
 }
