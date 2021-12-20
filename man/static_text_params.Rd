@@ -12,7 +12,7 @@ static_text_params(
   halign = "center",
   offset = NULL,
   parse = FALSE,
-  straight = TRUE,
+  straight = FALSE,
   padding = unit(0.15, "inch")
 )
 }
