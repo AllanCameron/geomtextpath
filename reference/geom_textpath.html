@@ -95,14 +95,15 @@ visual effect, or it may be to label a circular / polar plot in a more
   lineend <span class="op">=</span> <span class="st">"butt"</span>,
   linejoin <span class="op">=</span> <span class="st">"round"</span>,
   linemitre <span class="op">=</span> <span class="fl">10</span>,
-  include_line <span class="op">=</span> <span class="cn">TRUE</span>,
-  cut_path <span class="op">=</span> <span class="cn">NA</span>,
-  flip_inverted <span class="op">=</span> <span class="cn">TRUE</span>,
+  text_only <span class="op">=</span> <span class="cn">FALSE</span>,
+  gap <span class="op">=</span> <span class="cn">NA</span>,
+  upright <span class="op">=</span> <span class="cn">TRUE</span>,
   halign <span class="op">=</span> <span class="st">"center"</span>,
   offset <span class="op">=</span> <span class="cn">NULL</span>,
   parse <span class="op">=</span> <span class="cn">FALSE</span>,
-  keep_straight <span class="op">=</span> <span class="cn">FALSE</span>,
-  padding <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.15</span>, <span class="st">"inch"</span><span class="op">)</span>
+  straight <span class="op">=</span> <span class="cn">FALSE</span>,
+  padding <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.15</span>, <span class="st">"inch"</span><span class="op">)</span>,
+  arrow <span class="op">=</span> <span class="cn">NULL</span>
 <span class="op">)</span>
 
 <span class="fu">geom_textline</span><span class="op">(</span>
@@ -129,16 +130,17 @@ visual effect, or it may be to label a circular / polar plot in a more
   lineend <span class="op">=</span> <span class="st">"butt"</span>,
   linejoin <span class="op">=</span> <span class="st">"round"</span>,
   linemitre <span class="op">=</span> <span class="fl">10</span>,
-  include_line <span class="op">=</span> <span class="cn">TRUE</span>,
-  cut_path <span class="op">=</span> <span class="cn">FALSE</span>,
-  flip_inverted <span class="op">=</span> <span class="cn">TRUE</span>,
+  text_only <span class="op">=</span> <span class="cn">FALSE</span>,
+  gap <span class="op">=</span> <span class="cn">FALSE</span>,
+  upright <span class="op">=</span> <span class="cn">TRUE</span>,
   halign <span class="op">=</span> <span class="st">"center"</span>,
   offset <span class="op">=</span> <span class="cn">NULL</span>,
   parse <span class="op">=</span> <span class="cn">FALSE</span>,
-  keep_straight <span class="op">=</span> <span class="cn">FALSE</span>,
+  straight <span class="op">=</span> <span class="cn">FALSE</span>,
   padding <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.15</span>, <span class="st">"inch"</span><span class="op">)</span>,
   label.padding <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.25</span>, <span class="st">"lines"</span><span class="op">)</span>,
-  label.r <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.15</span>, <span class="st">"lines"</span><span class="op">)</span>
+  label.r <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.15</span>, <span class="st">"lines"</span><span class="op">)</span>,
+  arrow <span class="op">=</span> <span class="cn">NULL</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -168,8 +170,8 @@ layer, as a string.</p></dd>
 <dd><p>Position adjustment, either as a string, or the result of
 a call to a position adjustment function.</p></dd>
 <dt>na.rm</dt>
-<dd><p>If <code>FALSE</code> (default), missing points or labels are removed from
-the text path with a warning.</p></dd>
+<dd><p>If <code>FALSE</code>, the default, missing values are removed with
+a warning. If <code>TRUE</code>, missing values are silently removed.</p></dd>
 <dt>show.legend</dt>
 <dd><p>logical. Should this layer be included in the legends?
 <code>NA</code>, the default, includes if any aesthetics are mapped.
@@ -182,49 +184,52 @@ rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. <code><a href="https://ggplot2.tidyverse.org/reference/borders.html" class="external-link">borders()</a></code>.</p></dd>
 <dt>...</dt>
-<dd><p>other arguments passed on to <code><a href="https://ggplot2.tidyverse.org/reference/layer.html" class="external-link">layer()</a></code>.
-These are often aesthetics, used to set an aesthetic to a fixed value,
-like <code>colour = "red"</code> or <code>size = 3</code>. They may also be parameters to the
-paired geom/stat.</p></dd>
+<dd><p>Other arguments passed on to <code><a href="https://ggplot2.tidyverse.org/reference/layer.html" class="external-link">layer()</a></code>. These are
+often aesthetics, used to set an aesthetic to a fixed value, like
+<code>colour = "red"</code> or <code>size = 3</code>. They may also be parameters
+to the paired geom/stat.</p></dd>
 <dt>lineend</dt>
 <dd><p>Line end style (round, butt, square).</p></dd>
 <dt>linejoin</dt>
 <dd><p>Line join style (round, mitre, bevel).</p></dd>
 <dt>linemitre</dt>
 <dd><p>Line mitre limit (number greater than 1).</p></dd>
-<dt>include_line</dt>
-<dd><p>A <code>logical(1)</code>, indicating whether a
-line should be plotted along with the text (<code>TRUE</code>, the default). If
-<code>FALSE</code>, any parameters or aesthetics relating to the drawing of the path
-in the layer will be ignored.</p></dd>
-<dt>cut_path</dt>
-<dd><p>A <code>logical(1)</code> which if <code>TRUE</code> breaks the path
-into two sections, one on either side of the string. If <code>FALSE</code>, the
-path is plotted as a whole. The default, <code>NA</code>, will break the line if the
-string has a <code>vjust</code> of between 0 and 1.</p></dd>
-<dt>flip_inverted</dt>
-<dd><p>A <code>logical(1)</code> which if <code>TRUE</code> (default), inverts any
-string where the majority of letters would be upside down along the path
-are inverted to improve legibility. If <code>FALSE</code> letters are left as-is.</p></dd>
+<dt>text_only</dt>
+<dd><p>A <code>logical(1)</code> indicating whether the path part should be
+plotted along with the text (<code>FALSE</code>, the default). If <code>TRUE</code>, any
+parameters or aesthetics relating to the drawing of the path will be
+ignored.</p></dd>
+<dt>gap</dt>
+<dd><p>A <code>logical(1)</code> which if <code>TRUE</code>, breaks the path into two sections
+with a gap on either side of the label. If <code>FALSE</code>, the path is plotted
+as a whole. Alternatively, if <code>NA</code>, the path will be broken if the string
+has a <code>vjust</code> between 0 and 1, and not otherwise. The default for the label
+variant is <code>FALSE</code> and for the text variant is <code>NA</code>.</p></dd>
+<dt>upright</dt>
+<dd><p>A <code>logical(1)</code> which if <code>TRUE</code> (default), inverts any text
+where the majority of letters would upside down along the path, to improve
+legibility. If <code>FALSE</code>, the path decides the orientation of text.</p></dd>
 <dt>halign</dt>
-<dd><p>A <code>character(1)</code> describing how multi-line labels should
-be justified. Can either be <code>"left"</code>, <code>"center"</code> (default) or <code>"right"</code>.</p></dd>
+<dd><p>A <code>character(1)</code> describing how multi-line text should be
+justified. Can either be <code>"center"</code> (default), <code>"left"</code> or <code>"right"</code>.</p></dd>
 <dt>offset</dt>
-<dd><p>A <code><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit()</a></code> of length 1 to determine the offset
-of the text from the path. If not <code>NULL</code>, this overrules the <code>vjust</code>
-setting.</p></dd>
+<dd><p>A <code><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></code> object of length 1 to determine the
+offset of the text from the path. If this is <code>NULL</code> (default), the <code>vjust</code>
+parameter decides the offset. If not <code>NULL</code>, the <code>offset</code> argument
+overrules the <code>vjust</code> setting.</p></dd>
 <dt>parse</dt>
-<dd><p>If set to <code>TRUE</code> this will coerce the labels into expressions,
-allowing plotmath syntax to be used.</p></dd>
-<dt>keep_straight</dt>
-<dd><p>a <code>logical(1)</code>, which if <code>TRUE</code>, keeps the letters of
-a label on the same, straight baseline and if <code>FALSE</code> (default),
-lets individual letters follow the curve. This might be helpful for noisy
-paths.</p></dd>
+<dd><p>A <code>logical(1)</code> which if <code>TRUE</code>, will coerce the labels into
+expressions, allowing for plotmath syntax to be used.</p></dd>
+<dt>straight</dt>
+<dd><p>A <code>logical(1)</code> which if <code>TRUE</code>, keeps the letters of a label
+on a straight baseline and if <code>FALSE</code> (default), lets individual letters
+follow the curve. This might be helpful for noisy paths.</p></dd>
 <dt>padding</dt>
-<dd><p>A <code><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit()</a></code> of length 1 to determine the
-padding between path and text when the <code>cut_path</code> parameter trims the
+<dd><p>A <code><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></code> object of length 1 to determine the
+padding between the text and the path when the <code>gap</code> parameter trims the
 path.</p></dd>
+<dt>arrow</dt>
+<dd><p>Arrow specification, as created by <code><a href="https://rdrr.io/r/grid/arrow.html" class="external-link">grid::arrow()</a></code>.</p></dd>
 <dt>orientation</dt>
 <dd><p>The orientation of the layer. The default (NA)
 automatically determines the orientation from the aesthetic mapping.

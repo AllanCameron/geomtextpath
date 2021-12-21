@@ -52,6 +52,12 @@
     <loc>https://allancameron.github.io/geomtextpath/reference/geom_textpath.html</loc>
   </url>
   <url>
+    <loc>https://allancameron.github.io/geomtextpath/reference/geom_textsegment.html</loc>
+  </url>
+  <url>
+    <loc>https://allancameron.github.io/geomtextpath/reference/geom_textsf.html</loc>
+  </url>
+  <url>
     <loc>https://allancameron.github.io/geomtextpath/reference/geom_textsmooth.html</loc>
   </url>
   <url>
@@ -61,6 +67,12 @@
     <loc>https://allancameron.github.io/geomtextpath/reference/index.html</loc>
   </url>
   <url>
+    <loc>https://allancameron.github.io/geomtextpath/reference/static_text_params.html</loc>
+  </url>
+  <url>
     <loc>https://allancameron.github.io/geomtextpath/reference/textpathGrob.html</loc>
+  </url>
+  <url>
+    <loc>https://allancameron.github.io/geomtextpath/reference/waterways.html</loc>
   </url>
 </urlset>

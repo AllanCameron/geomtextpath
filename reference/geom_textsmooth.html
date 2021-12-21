@@ -110,16 +110,28 @@ the plot data. The return value must be a <code>data.frame</code>, and
 will be used as the layer data. A <code>function</code> can be created
 from a <code>formula</code> (e.g. <code>~ head(.x, 10)</code>).</p></dd>
 <dt>stat</dt>
-<dd><p>The statistical transformation to use on the data for this
-layer, as a string.</p></dd>
+<dd><p>Use to override the default connection between
+<code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth()</a></code> and <code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">stat_smooth()</a></code>.</p></dd>
 <dt>position</dt>
 <dd><p>Position adjustment, either as a string, or the result of
 a call to a position adjustment function.</p></dd>
 <dt>...</dt>
-<dd><p>Other arguments passed on to <code><a href="https://ggplot2.tidyverse.org/reference/layer.html" class="external-link">layer()</a></code>. These are
-often aesthetics, used to set an aesthetic to a fixed value, like
-<code>colour = "red"</code> or <code>size = 3</code>. They may also be parameters
-to the paired geom/stat.</p></dd>
+<dd><p>Other arguments passed on to <code><a href="https://ggplot2.tidyverse.org/reference/layer.html" class="external-link">layer</a></code>. These are often aesthetics, used to set an aesthetic to a fixed value, like <code>colour = "red"</code> or <code>size = 3</code>. These can also be the following text-path parameters:</p><dl><dt><code>gap</code></dt>
+<dd><p>A <code>logical(1)</code> which if <code>TRUE</code>, breaks the path into two sections with a gap on either side of the label. If <code>FALSE</code>, the path is plotted as a whole. Alternatively, if <code>NA</code>, the path will be broken if the string has a <code>vjust</code> between 0 and 1, and not otherwise. The default for the label variant is <code>FALSE</code> and for the text variant is <code>NA</code>.</p></dd>
+<dt><code>upright</code></dt>
+<dd><p>A <code>logical(1)</code> which if <code>TRUE</code> (default), inverts any text where the majority of letters would upside down along the path, to improve legibility. If <code>FALSE</code>, the path decides the orientation of text.</p></dd>
+<dt><code>halign</code></dt>
+<dd><p>A <code>character(1)</code> describing how multi-line text should be justified. Can either be <code>"center"</code> (default), <code>"left"</code> or <code>"right"</code>.</p></dd>
+<dt><code>offset</code></dt>
+<dd><p>A <code><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></code> object of length 1 to determine the offset of the text from the path. If this is <code>NULL</code> (default), the <code>vjust</code> parameter decides the offset. If not <code>NULL</code>, the <code>offset</code> argument overrules the <code>vjust</code> setting.</p></dd>
+<dt><code>parse</code></dt>
+<dd><p>A <code>logical(1)</code> which if <code>TRUE</code>, will coerce the labels into expressions, allowing for plotmath syntax to be used.</p></dd>
+<dt><code>straight</code></dt>
+<dd><p>A <code>logical(1)</code> which if <code>TRUE</code>, keeps the letters of a label on a straight baseline and if <code>FALSE</code> (default), lets individual letters follow the curve. This might be helpful for noisy paths.</p></dd>
+<dt><code>padding</code></dt>
+<dd><p>A <code><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></code> object of length 1 to determine the padding between the text and the path when the <code>gap</code> parameter trims the path.</p></dd>
+
+</dl></dd>
 <dt>method</dt>
 <dd><p>Smoothing method (function) to use, accepts either
 <code>NULL</code> or a character vector, e.g. <code>"lm"</code>, <code>"glm"</code>, <code>"gam"</code>, <code>"loess"</code>
