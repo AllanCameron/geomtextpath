@@ -16,7 +16,7 @@
 #'   does not allow the lines to be labelled with the level of each contour.
 #'   `geom_textdensity2d` adds this ability.
 #'
-#' @inheritParams ggplot2::layer
+#' @eval rd_dots(geom_textdensity2d)
 #' @inheritParams geom_textpath
 #' @inheritParams ggplot2::stat_density_2d
 #'
@@ -42,11 +42,6 @@ geom_textdensity2d <- function(mapping = NULL,
                                 stat = "density_2d",
                                 position = "identity",
                                 ...,
-                                gap = NA,
-                                upright = TRUE,
-                                offset = NULL,
-                                straight = FALSE,
-                                padding = unit(0.15, "inch"),
                                 contour_var = "density",
                                 n = 100,
                                 h = NULL,
@@ -66,17 +61,12 @@ geom_textdensity2d <- function(mapping = NULL,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
     params      = set_params(
-      gap         = gap,
-      upright     = upright,
-      offset      = offset,
-      straight    = straight,
       lineend     = lineend,
       linejoin    = linejoin,
       linemitre   = linemitre,
       contour     = TRUE,
       contour_var = contour_var,
       na.rm       = na.rm,
-      padding     = padding,
       n           = n,
       h           = h,
       adjust      = adjust,

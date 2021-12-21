@@ -18,7 +18,7 @@
 #'   layer simply adds a text label to each curve that follow the contour of
 #'   the density line when used as a drop-in replacement for
 #'   [`geom_density`][ggplot2::geom_density]
-#' @inheritParams ggplot2::layer
+#' @eval rd_dots(geom_textdensity)
 #' @inheritParams geom_textpath
 #' @inheritParams ggplot2::stat_density
 #'
@@ -41,15 +41,9 @@ geom_textdensity    <- function(mapping = NULL,
                                 adjust = 1,
                                 kernel = "gaussian",
                                 n = 512,
-                                gap = NA,
-                                upright = TRUE,
-                                offset = NULL,
-                                straight = FALSE,
-                                padding = unit(0.15, "inch"),
                                 lineend = "butt",
                                 linejoin = "round",
                                 linemitre = 10,
-                                halign = "center",
                                 na.rm = FALSE,
                                 show.legend = NA,
                                 inherit.aes = TRUE) {
@@ -62,20 +56,14 @@ geom_textdensity    <- function(mapping = NULL,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
     params = set_params(
-      halign        = halign,
       bw            = bw,
       adjust        = adjust,
       kernel        = kernel,
       n             = n,
-      gap           = gap,
-      upright       = upright,
-      offset        = offset,
-      straight      = straight,
       lineend       = lineend,
       linejoin      = linejoin,
       linemitre     = linemitre,
       na.rm         = na.rm,
-      padding       = padding,
       ...
     )
   )
@@ -87,20 +75,21 @@ geom_textdensity    <- function(mapping = NULL,
 #' @usage NULL
 #' @export
 #' @include geom_textpath.R
-GeomTextDensity <- ggproto("GeomTextDensity",
-                      GeomTextpath,
-                      required_aes = c("x", "label"),
-                      default_aes  = aes(colour     = "black",
-                                         size       = 3.88,
-                                         hjust      = 0.5,
-                                         vjust      = 0.5,
-                                         family     = "",
-                                         fontface   = 1,
-                                         lineheight = 1.2,
-                                         alpha      = 1,
-                                         linewidth  = 0.5,
-                                         linetype   = 1,
-                                         spacing    = 0,
-                                         linecolour = "_copy_text_colour_",
-                                         angle      = 0)
+GeomTextDensity <- ggproto(
+  "GeomTextDensity",
+  GeomTextpath,
+  required_aes = c("x", "label"),
+  default_aes  = aes(colour     = "black",
+                     size       = 3.88,
+                     hjust      = 0.5,
+                     vjust      = 0.5,
+                     family     = "",
+                     fontface   = 1,
+                     lineheight = 1.2,
+                     alpha      = 1,
+                     linewidth  = 0.5,
+                     linetype   = 1,
+                     spacing    = 0,
+                     linecolour = "_copy_text_colour_",
+                     angle      = 0)
 )

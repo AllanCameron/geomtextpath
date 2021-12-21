@@ -15,6 +15,7 @@ Authors@R: c(
 Description: Allows text to follow curved paths in ggplot2.
     This allows for neat labelling of curves and of plots in polar co-ordinates.
 License: MIT + file LICENSE
+LazyData: true
 URL: https://allancameron.github.io/geomtextpath
 BugReports: https://github.com/AllanCameron/geomtextpath/issues
 Encoding: UTF-8
@@ -35,7 +36,8 @@ Suggests:
     knitr,
     rmarkdown,
     ragg,
-    qpdf
+    qpdf,
+    roxygen2
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Collate: 
@@ -47,6 +49,7 @@ Collate:
     'geom_textdensity.R'
     'utils.R'
     'geom_textdensity2d.R'
+    'geom_textsegment.R'
     'geom_textsf.R'
     'geom_textsmooth.R'
     'geomtextpath-package.R'
@@ -57,4 +60,3 @@ Collate:
     'text_helpers.R'
     'text_placement.R'
     'trig_helpers.R'
-LazyData: true
