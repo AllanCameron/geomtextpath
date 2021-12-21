@@ -34,7 +34,8 @@ Suggests:
     rmarkdown,
     ragg,
     qpdf,
-    gridExtra
+    gridExtra,
+    roxygen2
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Collate: 

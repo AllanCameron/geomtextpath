@@ -426,8 +426,12 @@ rd_aesthetics <- function (type, name)
       )
 }
 
-# To automatically put the textpath argument under the `...` description in the
+# Automatically put the text-path arguments under the `...` description in the
 # documentation.
+# Checks whether a parameter is formally declared in the function
+# and if it is, will not put it in the ellipsis text. You can explicitly exclude
+# a parameter from documentation, e.g. if "gap" most definitely does not apply
+# to some geom or that kind of situation.
 rd_dots <- function(fun, exclude = character()) {
   exclude <- c(exclude, ".type")
   params  <- names(formals(static_text_params))
@@ -445,16 +449,26 @@ rd_dots <- function(fun, exclude = character()) {
     return(txt)
   }
 
-  doc  <- roxygen2::parse_file("R/utils.R")
+  # Use roxygen2 to parse this very file
+  file <- system.file("R", "utils.R", package = "geomtextpath")
+  doc  <- roxygen2::parse_file(file)
+
+  # Look for the doc with the "rd_dots" keyword, this should be in the
+  # `static_text_params()` function above.
   keep <- vapply(doc, function(x) {
     keywords <- roxygen2::block_get_tag_value(x, "keywords")
     isTRUE(grepl("rd_dots", keywords))
   }, logical(1))
   doc  <- doc[[which(keep)[1]]]
+
+  # Extract `@param` statements from the function's documentation
   tags <- roxygen2::block_get_tags(doc, "param")
 
+  # Separate the param names from description
   tag_names <- vapply(tags, function(x){x$val$name}, character(1))
   tag_descr <- vapply(tags, function(x){x$val$description}, character(1))
+
+  # Format such that they form new valid params
   tag_descr <- gsub("(\r\n|\r|\n)", " ", tag_descr)
   fmt_tags  <- paste0("\\item{\\code{", tag_names, "}}{",
                       tag_descr, "}")
