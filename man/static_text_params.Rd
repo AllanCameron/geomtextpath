@@ -64,3 +64,4 @@ This sets parameters for text on a path that aren't expected to change
 during the construction of a grob.
 }
 \keyword{internal}
+\keyword{rd_dots}

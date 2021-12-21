@@ -162,6 +162,7 @@ GeomLabelsegment <- ggproto(
 #' @param params The text parameters
 #' @param coord The coordinates
 #' @param ... Other arguments
+#' @noRd
 segment2path <- function(data, super, params, coord, ...) {
   if (is.null(data) || nrow(data) == 0 || ncol(data) == 0) {
     return(zeroGrob())
