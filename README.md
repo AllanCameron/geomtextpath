@@ -48,7 +48,6 @@ Once installed, we simply call:
 ``` r
 library(geomtextpath)
 #> Loading required package: ggplot2
-#> Warning: package 'ggplot2' was built under R version 4.1.1
 ```
 
 The core function in this package, `geom_textpath`, works like any other
@@ -79,11 +78,11 @@ Just as `geom_path` is the foundation for several other geoms in
 `ggplot2`, so too is `geom_textpath` the foundation of the other geoms
 in this package, which include:
 
--   `geom_textline`
--   `geom_textdensity`
--   `geom_textsmooth`
--   `geom_textcontour`
--   `geom_textdensity2d`
+  - `geom_textline`
+  - `geom_textdensity`
+  - `geom_textsmooth`
+  - `geom_textcontour`
+  - `geom_textdensity2d`
 
 Each of these aims to replicate all the functionality of the equivalent
 `ggplot2` function, but with direct text labels that follow the shape of
@@ -160,6 +159,7 @@ Adding labels to the level of your contour lines is now as simple as
 calling `geom_textcontour` instead of `geom_contour`:
 
 ``` r
+
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -305,18 +305,24 @@ p <- ggplot(df, aes(x, y, color = color, label = color)) +
        lims(x = c(0, 6), y = c(0, 8)) +
        theme_bw()
 
-p_text     <- p + geom_text(size = 5, hjust = -0.1)
-p_textpath <- p + geom_textpath(size = 5, hjust = -0.1)
+p_text     <- p + geom_text(size = 8, hjust = -0.1)
+p_textpath <- p + geom_textpath(size = 8, hjust = -0.1)
 ```
 
 Note that `p_text` and `p_textpath` are made with the same base plot and
 data. In normal Cartesian Co-ordinates they are essentially identical:
 
 ``` r
-gridExtra::grid.arrange(p_text, p_textpath, ncol = 2)
+p_text
 ```
 
 <img src="man/figures/README-cartesian_compare-1.png" width="100%" style="display: block; margin: auto;" />
+
+``` r
+p_textpath
+```
+
+<img src="man/figures/README-cartesian_compare-2.png" width="100%" style="display: block; margin: auto;" />
 
 But note the difference when we switch to polar co-ordinates:
 
@@ -324,10 +330,16 @@ But note the difference when we switch to polar co-ordinates:
 p_text <- p_text + coord_polar()
 p_textpath <- p_textpath + coord_polar()
 
-gridExtra::grid.arrange(p_text, p_textpath, ncol = 2)
+p_text
 ```
 
 <img src="man/figures/README-polar_compare-1.png" width="100%" style="display: block; margin: auto;" />
+
+``` r
+p_textpath
+```
+
+<img src="man/figures/README-polar_compare-2.png" width="100%" style="display: block; margin: auto;" />
 
 By default, any labels that would have been upside down (or even mostly
 upside down) are automatically flipped to be facing in a legible
@@ -377,6 +389,7 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
+
 p + coord_polar()
 ```
 
@@ -391,28 +404,31 @@ axis labels are curved. For example:
 ``` r
 clock <- function(x) {
   
-  hours <- c(rep(x[1] %% 12 + tail(x, 1) / 60, 2), 0, 3)
-  minutes <- c(rep(tail(x, 1)/5, 2), 0, 4)
+  hours <- c(rep(x[1] %% 12 + tail(x, 1) / 60, 2), 0, 3.5)
+  minutes <- c(rep(tail(x, 1)/5, 2), 0, 5)
 
   ggplot(as.data.frame(rbind(hours, minutes)), aes(V1, V3)) + 
       geom_segment(aes(xend = V2, yend = V4), 
-                   size = c(2, 1.5), lineend = "round") +
-      geom_point(x = 0, y = 0, size = 5) +
-      geom_hline(yintercept = 6) +
+                   size = c(3, 2), lineend = "round") +
+      geom_point(x = 0, y = 0, size = 6) +
       scale_x_continuous(limits = c(0, 12), breaks = 1:12,
                          label = as.roman) +
       scale_y_continuous(limits = c(0, 6), expand = c(0, 0)) +
       theme_void() + 
-      theme(axis.text.x = element_text(size = 12, face = 2, vjust = -1.3),
+      theme(axis.text.x = element_text(size = 25, face = 2),
             plot.margin = margin(20, 20, 20, 20))
 }
 
-gridExtra::grid.arrange(clock(03:35) + coord_polar(),
-                        clock(19:15) + coord_curvedpolar(),
-                        ncol = 2)
+clock(03:35) + coord_polar()
 ```
 
 <img src="man/figures/README-coord_curvedpolar-1.png" width="100%" style="display: block; margin: auto;" />
+
+``` r
+clock(19:15) + coord_curvedpolar()
+```
+
+<img src="man/figures/README-coord_curvedpolar-2.png" width="100%" style="display: block; margin: auto;" />
 
 This can be useful to achieve a particular aesthetic effect (as above),
 but can also be of practical utility when axis labels are long, which
@@ -427,13 +443,19 @@ p <- ggplot(df, aes(x, y, fill = x)) +
       geom_col(width = 0.5) +
       scale_fill_brewer(type = "qual") +
       theme_bw() +
-      theme(axis.text.x = element_text(size = 9),
+      theme(axis.text.x = element_text(size = 15),
             legend.position = "none")
 
-gridExtra::grid.arrange(p + coord_polar(), p + coord_curvedpolar(), ncol = 2)
+p + coord_polar()
 ```
 
 <img src="man/figures/README-coord_curvedpolar2-1.png" width="100%" style="display: block; margin: auto;" />
+
+``` r
+p + coord_curvedpolar()
+```
+
+<img src="man/figures/README-coord_curvedpolar2-2.png" width="100%" style="display: block; margin: auto;" />
 
 You can see more examples in the
 [gallery](https://allancameron.github.io/geomtextpath/articles/gallery.html)
@@ -456,11 +478,11 @@ problems than it would solve.
 
 Many paths will be too noisy or too angular to directly label in a
 visually appealing fashion if the text adheres too closely to the
-intricacies of the line. Often, a `geom_textsmooth` with
-`text_only = TRUE` is the best option in such cases, as in the examples
-above. There is also a `straight` parameter so that a label is still
-applied at an appropriate point and angle on the line, but the text will
-not attempt to follow every bump on the path.
+intricacies of the line. Often, a `geom_textsmooth` with `text_only =
+TRUE` is the best option in such cases, as in the examples above. There
+is also a `straight` parameter so that a label is still applied at an
+appropriate point and angle on the line, but the text will not attempt
+to follow every bump on the path.
 
 Other paths may have points of tight curvature, and setting an offset /
 vjust for the text that is larger than the distance to the focus point
