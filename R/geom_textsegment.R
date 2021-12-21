@@ -6,11 +6,13 @@
 #' (xend, yend) and places a text label on that line. It is the text-placement
 #' equivalent of [`geom_segment()`][ggplot2::geom_segment].
 #'
+#' @eval rd_dots(geom_textsegment)
 #' @inheritParams geom_textpath
 #'
 #' @return A `Layer` ggproto object that can be added to a plot.
 #' @export
 #' @md
+#' @eval rd_aesthetics("geom", "textsegment")
 #'
 #' @examples
 #' # The convenience here is that the position and angle
@@ -46,14 +48,7 @@ geom_textsegment <- function(
   na.rm    = FALSE,
   show.legend = NA,
   inherit.aes = TRUE,
-  text_only   = FALSE,
-  gap         = NA,
-  upright     = TRUE,
-  halign      = "center",
-  offset      = NULL,
-  parse       = FALSE,
-  straight    = NULL,
-  padding     = unit(0.15, "inch")
+  straight    = NULL
 ) {
   layer(
     data     = data,
@@ -68,13 +63,6 @@ geom_textsegment <- function(
       na.rm     = na.rm,
       lineend   = lineend,
       linejoin  = linejoin,
-      halign    = halign,
-      offset    = offset,
-      parse     = parse,
-      padding   = padding,
-      gap       = gap,
-      text_only = text_only,
-      upright   = upright,
       straight  = straight,
       ...
     )
@@ -95,14 +83,7 @@ geom_labelsegment <- function(
   na.rm    = FALSE,
   show.legend = NA,
   inherit.aes = TRUE,
-  text_only   = FALSE,
-  gap         = FALSE,
-  upright     = TRUE,
-  halign      = "center",
-  offset      = NULL,
-  parse       = FALSE,
   straight    = NULL,
-  padding     = unit(0.15, "inch"),
   label.r     = unit(0.15, "lines"),
   label.padding = unit(0.25, "lines")
 ) {
@@ -119,13 +100,6 @@ geom_labelsegment <- function(
       na.rm     = na.rm,
       lineend   = lineend,
       linejoin  = linejoin,
-      halign    = halign,
-      offset    = offset,
-      parse     = parse,
-      padding   = padding,
-      gap       = gap,
-      text_only = text_only,
-      upright   = upright,
       straight  = straight,
       label.r   = label.r,
       label.padding = label.padding,
