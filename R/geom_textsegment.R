@@ -113,6 +113,7 @@ geom_labelsegment <- function(
 #' @format NULL
 #' @usage NULL
 #' @export
+#' @rdname GeomTextpath
 GeomTextsegment <- ggproto(
   "GeomTextsegment", GeomTextpath,
   required_aes = c("x", "y", "xend", "yend", "label"),
@@ -132,6 +133,7 @@ GeomTextsegment <- ggproto(
 #' @format NULL
 #' @usage NULL
 #' @export
+#' @rdname GeomTextpath
 GeomLabelsegment <- ggproto(
   "GeomLabelsegment", GeomLabelpath,
   required_aes = c("x", "y", "xend", "yend", "label"),
@@ -168,8 +170,8 @@ segment2path <- function(data, super, params, coord, ...) {
     params$straight <- coord$is_linear()
   }
   data$group <- seq_len(nrow(data))
-  first <- subset(data, select = c(-xend, -yend))
-  final <- subset(data, select = c(-x,    -y))
+  first <- data[, setdiff(colnames(data), c("xend", "yend")), drop = FALSE]
+  final <- data[, setdiff(colnames(data), c("x",    "y")),    drop = FALSE]
 
   rename <- match(c("xend", "yend"), colnames(final))
   colnames(final)[rename] <- c("x", "y")

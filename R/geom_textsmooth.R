@@ -5,7 +5,7 @@
 #'   layer simply adds a text label to each curve that follow the contour of
 #'   this line when used as a drop-in replacement for
 #'   [`geom_smooth`][ggplot2::geom_smooth]
-#' @inheritParams ggplot2::layer
+#' @eval rd_dots(geom_textsmooth)
 #' @inheritParams ggplot2::geom_smooth
 #' @inheritParams geom_textpath
 #'
