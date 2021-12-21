@@ -148,7 +148,81 @@ approx_multiple <- function(x, xout, y = matrix()) {
   x
 }
 
+cases <- function (x, fun)
+{
+    ok <- vapply(x, fun, logical(nrow(x)))
+    if (is.vector(ok)) {
+        all(ok)
+    }
+    else {
+        rowSums(as.matrix(ok)) == ncol(x)
+    }
+}
 
+is_missing <- function (x)
+{
+  if (typeof(x) == "list") !vapply(x, is.null, logical(1)) else !is.na(x)
+}
+
+is_finite <- function (x)
+{
+  if (typeof(x) == "list") !vapply(x, is.null, logical(1)) else is.finite(x)
+}
+
+detect_missing <- function (df, vars, finite = FALSE)
+{
+    vars <- intersect(vars, names(df))
+    !cases(df[, vars, drop = FALSE], if (finite)
+        is_finite
+    else is_missing)
+}
+
+find_missing <- function(x, layer) {
+
+  detect_missing(x, c(layer$required_aes, layer$non_missing_aes))
+}
+
+match_labels <- function(x, ...) UseMethod("match_labels")
+
+match_labels.data.frame <- function(x, labels) {
+
+  if (length(labels) == 1) labels <- rep(labels, nrow(x))
+  if(nrow(x) != length(labels))
+  {
+    stop("Could not match labels to object ", deparse(substitute(x)))
+  }
+  labels
+}
+
+
+match_labels.default <- function(x, labels) {
+
+  if (length(labels) == 1) labels <- rep(labels, length(x))
+  if(length(x) != length(labels))
+  {
+    stop("Could not match labels to object ", deparse(substitute(x)))
+  }
+  labels
+}
+
+modify_list <- function (old, new)
+{
+    for (i in names(new)) old[[i]] <- new[[i]]
+    old
+}
+
+rename <- function (x, replace)
+{
+    current_names <- names(x)
+    old_names <- names(replace)
+    missing_names <- setdiff(old_names, current_names)
+    if (length(missing_names) > 0) {
+        replace <- replace[!old_names %in% missing_names]
+        old_names <- names(replace)
+    }
+    names(x)[match(old_names, current_names)] <- as.vector(replace)
+    x
+}
 
 safe_parse <- function (text)
 {
@@ -275,7 +349,7 @@ static_text_params <- function(
   halign    = "center",
   offset    = NULL,
   parse     = FALSE,
-  straight  = TRUE,
+  straight  = FALSE,
   padding   = unit(0.15, "inch")
 ) {
   if (is.null(gap)) {

@@ -3,7 +3,7 @@
 
 #' @import ggplot2
 #' @import grid
-#' @importFrom stats approx dnorm approxfun complete.cases ave bw.nrd
+#' @importFrom stats approx dnorm approxfun complete.cases ave bw.nrd setNames
 #' @importFrom utils head tail
 #' @importFrom graphics strwidth
 #' @importFrom systemfonts glyph_info
@@ -11,6 +11,7 @@
 #' @importFrom rlang abort warn `%||%`
 #' @importFrom scales rescale squish_infinite alpha
 #' @importFrom textshaping shape_text
+#' @importFrom sf st_as_grob st_geometry_type
 NULL
 
 # The following block is used by usethis to automatically manage

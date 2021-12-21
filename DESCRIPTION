@@ -25,6 +25,7 @@ Imports:
     grid,
     scales,
     systemfonts,
+    sf,
     rlang,
     textshaping
 RoxygenNote: 7.1.2
@@ -47,12 +48,14 @@ Collate:
     'geom_textdensity.R'
     'utils.R'
     'geom_textdensity2d.R'
+    'geom_textsf.R'
     'geom_textsegment.R'
     'geom_textsmooth.R'
     'geomtextpath-package.R'
     'grob_labelpath.R'
     'grob_textpath.R'
     'path_handling.R'
+    'sf_helpers.R'
     'text_helpers.R'
     'text_placement.R'
     'trig_helpers.R'
