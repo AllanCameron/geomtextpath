@@ -220,7 +220,8 @@ test_that("arrows are expanded correctly", {
   expect_equal(test$ends, c(1L, 1L, 2L, 2L, 1L))
 })
 
-# Aesthetics --------------------------------------------------------------
+
+# Documentation -----------------------------------------------------------
 
 # This is a snapshot test to warn us whenever there is a change in how the
 # aesthetics are autoprinted.
@@ -254,6 +255,21 @@ test_that("check_subclass works", {
   test <- substitute(check_subclass(12, "Geom"))
   expect_error(eval(test), "must be either a string")
 })
+
+
+# This is a snapshot test to warn us whenever there is a change in how the
+# dot argument is autoprinted.
+
+test_that("rd_dots works as before", {
+  file <- system.file("R", "utils.R", package = "geomtextpath")
+  skip_if_not(file.exists(file), message = "utils.R has been moved")
+  skip_if_not(requireNamespace("roxygen2", quietly = TRUE),
+              message = "roxygen2 is not installed")
+
+  txt <- rd_dots(geom_textsegment)
+  expect_snapshot(txt)
+})
+
 
 # Parameters --------------------------------------------------------------
 

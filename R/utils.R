@@ -340,7 +340,7 @@ set_params <- function(...) {
 #'
 #' @return A `list` with the parameters.
 #' @md
-#' @keywords internal
+#' @keywords internal rd_dots
 static_text_params <- function(
   .type = "text",
   text_only = FALSE,
@@ -362,7 +362,7 @@ static_text_params <- function(
     gap       = assert(gap,       "logical", allow_NAs = TRUE),
     upright   = assert(upright,   "logical"),
     parse     = assert(parse,     "logical"),
-    straight  = assert(straight,  "logical"),
+    straight  = assert(straight,  "logical", allow_NULL = TRUE),
     padding   = assert(padding,   "unit"),
     offset    = assert(offset,    "unit", allow_NULL = TRUE),
     halign    = halign
@@ -500,3 +500,60 @@ rd_aesthetics <- function (type, name)
       )
 }
 
+# Automatically put the text-path arguments under the `...` description in the
+# documentation.
+# Checks whether a parameter is formally declared in the function
+# and if it is, will not put it in the ellipsis text. You can explicitly exclude
+# a parameter from documentation, e.g. if "gap" most definitely does not apply
+# to some geom or that kind of situation.
+rd_dots <- function(fun, exclude = character()) {
+  exclude <- c(exclude, ".type")
+  params  <- names(formals(static_text_params))
+  forms   <- names(formals(fun))
+  exclude <- union(exclude, forms)
+
+  txt <- paste0(
+    "@param ... Other arguments passed on to ",
+    "\\code{\\link[ggplot2:layer]{layer}}. ",
+    "These are often aesthetics, used to set an aesthetic to a fixed value, ",
+    'like \\code{colour = "red"} or \\code{size = 3}.'
+  )
+
+  if (all(params %in% exclude)) {
+    return(txt)
+  }
+
+  # Use roxygen2 to parse this very file
+  file <- system.file("R", "utils.R", package = "geomtextpath")
+  doc  <- roxygen2::parse_file(file)
+
+  # Look for the doc with the "rd_dots" keyword, this should be in the
+  # `static_text_params()` function above.
+  keep <- vapply(doc, function(x) {
+    keywords <- roxygen2::block_get_tag_value(x, "keywords")
+    isTRUE(grepl("rd_dots", keywords))
+  }, logical(1))
+  doc  <- doc[[which(keep)[1]]]
+
+  # Extract `@param` statements from the function's documentation
+  tags <- roxygen2::block_get_tags(doc, "param")
+
+  # Separate the param names from description
+  tag_names <- vapply(tags, function(x){x$val$name}, character(1))
+  tag_descr <- vapply(tags, function(x){x$val$description}, character(1))
+
+  # Format such that they form new valid params
+  tag_descr <- gsub("(\r\n|\r|\n)", " ", tag_descr)
+  fmt_tags  <- paste0("\\item{\\code{", tag_names, "}}{",
+                      tag_descr, "}")
+  fmt_tags  <- fmt_tags[!(tag_names %in% exclude)]
+  fmt_tags  <- paste0(fmt_tags, collapse = "")
+
+  paste0(
+    txt,
+    " These can also be the following text-path parameters:",
+    "\\describe{",
+    fmt_tags,
+    "}"
+  )
+}

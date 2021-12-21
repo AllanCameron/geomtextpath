@@ -18,7 +18,7 @@
 #'   be labelled with the level of each contour. `geom_textcontour` adds this
 #'   ability.
 #'
-#' @inheritParams ggplot2::layer
+#' @eval rd_dots(geom_textcontour)
 #' @inheritParams ggplot2::geom_contour
 #' @inheritParams geom_textpath
 #' @eval rd_aesthetics("geom", "text_contour")
@@ -42,9 +42,7 @@ geom_textcontour <- function(
   position = "identity", na.rm = FALSE, show.legend = NA,
   inherit.aes = TRUE,
   lineend = "butt", linejoin = "round", linemitre = 10,
-  gap = NA, upright = TRUE,
-  offset = NULL, straight = FALSE, bins = NULL,
-  binwidth = NULL, breaks = NULL, padding = unit(0.15, "inch"),
+  bins = NULL, binwidth = NULL, breaks = NULL,
   ...
   )
 {
@@ -57,14 +55,9 @@ geom_textcontour <- function(
           lineend   = lineend,
           linejoin  = linejoin,
           linemitre = linemitre,
-          gap       = gap,
-          upright   = upright,
-          offset    = offset,
-          straight  = straight,
           bins      = bins,
           binwidth  = binwidth,
           breaks    = breaks,
-          padding   = padding,
           ...
         ))
 }

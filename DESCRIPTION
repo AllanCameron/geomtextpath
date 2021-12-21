@@ -35,7 +35,8 @@ Suggests:
     knitr,
     rmarkdown,
     ragg,
-    qpdf
+    qpdf,
+    roxygen2
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Collate: 
@@ -48,6 +49,7 @@ Collate:
     'utils.R'
     'geom_textdensity2d.R'
     'geom_textsf.R'
+    'geom_textsegment.R'
     'geom_textsmooth.R'
     'geomtextpath-package.R'
     'grob_labelpath.R'
@@ -57,4 +59,3 @@ Collate:
     'text_helpers.R'
     'text_placement.R'
     'trig_helpers.R'
-LazyData: true
