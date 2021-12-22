@@ -4,19 +4,39 @@
 #' curve, but the text can be formatted using a limited set of markdown or html
 #' tags.
 #'
-#' @eval rd_dots(geom_richtextpath)
+#' @eval rd_dots(geom_richtextpath, exclude = "parse")
 #' @inheritParams geom_textpath
 #'
 #' @return A `Layer` ggproto object that can be added to a plot.
 #' @export
 #' @md
 #'
+#' @details The currently supported HTML tags are `<p>`, `<span>`, `<b>`,
+#' `<strong>`, `<i>`, `<em>`, `<sub>`, `<sup>` and `<br>`.
+#'
 #' @note This function heavily relies on rich-text parsers copied from the
 #'   \{\pkg{gridtext}\} package. We thank Claus O. Wilke for developing
 #'   \{\pkg{gridtext}\} and allowing us to re-use his code under the MIT licence.
 #'
 #' @examples
-#' NULL
+#' # Label can contain a subset of HTML tags
+#' label <- paste0(
+#'   "Indometacin (",
+#'   "C<sub>19</sub>H<sub>16</sub>",
+#'   "<span style='color:limegreen'>Cl</span>",
+#'   "<span style='color:blue'>N</span>",
+#'   "<span style='color:red'>O</span><sub>4</sub>",
+#'   ") concentration"
+#' )
+#'
+#' ggplot(Indometh, aes(time, conc)) +
+#'   geom_point() +
+#'   geom_richtextpath(
+#'     label = label,
+#'     stat = "smooth", formula = y ~ x, method = "loess",
+#'     vjust = -3, size = 8
+#'   ) +
+#'   scale_x_log10()
 geom_richtextpath <- function(
   mapping  = NULL,
   data     = NULL,
@@ -57,6 +77,15 @@ geom_richtextpath <- function(
 #' @rdname GeomTextpath
 GeomRichtextpath <- ggproto(
   "GeomRichtextpath", GeomTextpath,
+
+  setup_params = function(data, params) {
+    if (params$text_params$parse) {
+      # Removed parse param in docs, but should warn anyway
+      params$text_params$parse <- FALSE
+      warn("Parsed (plotmath) expressions are incompatible with rich text.")
+    }
+    params
+  },
 
   draw_panel = function(
     data, panel_params, coord,
@@ -100,12 +129,6 @@ GeomRichtextpath <- ggproto(
         linejoin  = linejoin,
         linemitre = linemitre
       )
-    }
-
-    safe_labels <- if(text_params$parse) {
-      safe_parse(as.character(data$label[first]))
-    } else {
-      data$label[first]
     }
 
     #---- Dispatch data to grob -----------------------------#
