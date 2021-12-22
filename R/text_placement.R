@@ -92,6 +92,7 @@ place_text <- function(
   df <- as.list(path[setdiff(names(path), protect_column)])
   df <- approx_multiple(path$length, letters$base_length, df)
   df <- cbind(df, letters, id = path$id[1] %||% 1L)
+  df$substring <- label$substring %||% df$id
 
   if(any(df$exceed != 0) & !is.multichar(label$glyph)) {
 
@@ -303,7 +304,7 @@ project_text <- function(text, offset, xpos = c("xmin", "xmid", "xmax")) {
 # Grob constructor --------------------------------------------------------
 
 .add_text_grob <- function(grob, text, gp) {
-  text_lens <- run_len(text$id)
+  text_lens <- run_len(text$substring %||% text$id)
 
   # Recycle graphical parameters to match lengths of letters
   gp <- recycle_gp(gp, rep, times = text_lens)
