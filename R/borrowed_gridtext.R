@@ -1,0 +1,174 @@
+##---------------------------------------------------------------------------##
+##                                                                           ##
+##  Functions borrowed from the {gridtext} package                           ##
+##                                                                           ##
+##  Many of these functions are copied verbatim or with modifications        ##
+##  from the gridtext package. The copyright to the code this file           ##
+##  therefore belongs to Claus O. Wilke (2019), and was distributed          ##
+##  under the MIT licence.                                                   ##
+##                                                                           ##
+##  see https://mit-license.org                                              ##
+##  or the LICENSE file on                                                   ##
+##  https://github.com/wilkelab/gridtext/blob/master/LICENSE.md              ##
+##                                                                           ##
+##---------------------------------------------------------------------------##
+
+process_tags <- function(node, drawing_context) {
+  tags <- names(node)
+  new  <- lapply(
+    seq_along(node),
+    function(i) {
+      dispatch_tag(node[[i]], tags[i], drawing_context)
+    }
+  )
+  do.call(rbind, new)
+}
+
+dispatch_tag <- function(node, tag, drawing_context) {
+  if (is.null(tag) || tag == "") {
+    process_text(node, drawing_context)
+  } else {
+    switch(
+      tag,
+      "p"    = process_tag_p(node, drawing_context),
+      "span" = process_tag_span(node, drawing_context),
+      stop("!")
+    )
+  }
+}
+
+process_tag_p <- function(node, drawing_context) {
+  attr <- attributes(node)
+  drawing_context <- set_style(drawing_context, attr$style)
+  process_tags(node, drawing_context)
+}
+
+process_tag_span <- function(node, drawing_context) {
+  attr <- attributes(node)
+  drawing_context <- set_style(drawing_context, attr$style)
+  process_tags(node, drawing_context)
+}
+
+process_text <- function(node, drawing_context) {
+  cbind(list(unlist(node)), list(drawing_context$gp))
+}
+
+# Context -----------------------------------------------------------------
+
+setup_context <- function(fontsize = 12, fontfamily = "", fontface = "plain",
+                          colour = "black", lineheight = 1.2, gp = NULL) {
+  if (is.null(gp)) {
+    gp <- gpar(
+      fontsize = fontsize, fontfamily = fontfamily, fontface = fontface,
+      col = color, cex = 1, lineheight = lineheight
+    )
+  }
+  gp <- update_gpar(get.gpar(), gp)
+  set_context_gp(list(), gp)
+}
+
+update_gpar <- function(gp, gp_new) {
+  names_new <- names(gp_new)
+  names_old <- names(gp)
+  gp[c(intersect(names_old, names_new), "font")] <- NULL
+  gp_new["font"] <- NULL
+  do.call(gpar, c(gp, gp_new))
+}
+
+set_context_gp <- function(drawing_context, gp = NULL) {
+  gp <- update_gpar(drawing_context$gp, gp)
+  update_context(
+    drawing_context,
+    gp = gp
+  )
+}
+
+update_context <- function(drawing_context, ...) {
+  dc_new <- list(...)
+  names_new <- names(dc_new)
+  names_old <- names(drawing_context)
+  drawing_context[intersect(names_old, names_new)] <- NULL
+  c(drawing_context, dc_new)
+}
+
+set_style <- function(drawing_context, style = NULL) {
+  if (is.null(style)) return(drawing_context)
+
+  css <- parse_css(style)
+
+  if (!is.null(css$`font-size`)) {
+    font_size = convert_css_unit_pt(css$`font-size`)
+  } else {
+    font_size = NULL
+  }
+
+  drawing_context <- set_context_gp(
+    drawing_context,
+    gpar(col = css$color, fontfamily = css$`font-family`, fontsize = font_size)
+  )
+}
+
+# CSS parsing -------------------------------------------------------------
+
+parse_css <- function(text) {
+  lines <- strsplit(text, ";", fixed = TRUE)[[1]]
+  unlist(lapply(lines, parse_css_line), FALSE)
+}
+
+parse_css_line <- function(line) {
+  pattern <- "\\s*(\\S+)\\s*:\\s*(\"(.*)\"|'(.*)'|(\\S*))\\s*"
+  m <- attributes(regexpr(pattern, line, perl = TRUE))
+  start <- m$capture.start
+  end   <- start + m$capture.length - 1
+  if (start[1] > 0) {
+    key <- substr(line, start[1], end[1])
+  } else {
+    key <- NULL
+  }
+
+  if (start[3] > 0) {
+    value <- substr(line, start[3], end[3])
+  } else if (start[4] > 0) {
+    value <- substr(line, start[4], end[4])
+  } else if (start[5] > 0) {
+    value <- substr(line, start[5], end[5])
+  } else value <- NULL
+
+  if (is.null(key)) list()
+  else rlang::list2(!!key := value)
+}
+
+parse_css_unit <- function(x) {
+  pattern <- "^((-?\\d+\\.?\\d*)(%|[a-zA-Z]+)|(0))$"
+  m <- attributes(regexpr(pattern, x, perl = TRUE))
+  start <- m$capture.start
+  end   <- start + m$capture.length - 1
+  if (start[4] > 0) {
+    # matched null value
+    return(list(value = 0, unit = "pt"))
+  } else {
+    if (start[2] > 0) {
+      value <- as.numeric(
+        substr(x, start[2], end[2])
+      )
+      if (start[3] > 0) {
+        unit <- substr(x, start[3], end[3])
+        return(list(value = value, unit = unit))
+      }
+    }
+  }
+  abort(paste0("The string '", x, "' does not represent a valid CSS unit."))
+}
+
+convert_css_unit_pt <- function(x) {
+  u <- parse_css_unit(x)
+  switch(
+    u$unit,
+    pt   = u$value,
+    px   = (72/96)   * u$value,
+    `in` =  72       * u$value,
+    cm   = (72/2.54) * u$value,
+    mm   = (72/25.4) * u$value,
+    abort(paste0("Cannot convert ", u$value, u$unit, " to pt."))
+  )
+}

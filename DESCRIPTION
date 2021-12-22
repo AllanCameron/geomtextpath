@@ -37,10 +37,13 @@ Suggests:
     rmarkdown,
     ragg,
     qpdf,
-    roxygen2
+    roxygen2,
+    xml2,
+    markdown
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Collate: 
+    'borrowed_gridtext.R'
     'coord_curvedpolar.R'
     'data.R'
     'geom_textpath.R'
