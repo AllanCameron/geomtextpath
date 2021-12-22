@@ -58,5 +58,6 @@ Collate:
     'path_handling.R'
     'sf_helpers.R'
     'text_helpers.R'
+    'text_params.R'
     'text_placement.R'
     'trig_helpers.R'
