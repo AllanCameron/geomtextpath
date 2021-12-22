@@ -138,23 +138,27 @@ measure_richtext <- function(
   }
 
   txt <- shape_text(
-    strings    = label$text,
-    family     = gp$fontfamily %||% "",
-    size       = gp$fontsize   %||% 12,
-    lineheight = gp$lineheight %||% 1.2,
-    tracking   = gp$tracking   %||% 0,
-    id         = label$id,
+    strings    =  label$text,
+    family     =  gp$fontfamily %||% "",
+    size       =  gp$fontsize   %||% 12,
+    italic     = (gp$font       %||% 1) %in% c(3, 4),
+    bold       = (gp$font       %||% 1) %in% c(2, 4),
+    lineheight =  gp$lineheight %||% 1.2,
+    tracking   =  gp$tracking   %||% 0,
+    id         =  label$id,
     res = ppi, vjust = vjust, hjust = hjust, align = halign
   )
 
   # We use the original gp here because the new gp may have altered font size
   # due to super/subscripts etc.
   x_adjust <- shape_text(
-    strings    = rep("x", nlabel),
-    family     = old_gp$fontfamily %||% "",
-    size       = old_gp$fontsize   %||% 12,
-    lineheight = old_gp$lineheight %||% 1.2,
-    tracking   = old_gp$tracking   %||% 0,
+    strings    =  rep("x", nlabel),
+    family     =  old_gp$fontfamily %||% "",
+    size       =  old_gp$fontsize   %||% 12,
+    lineheight =  old_gp$lineheight %||% 1.2,
+    italic     = (old_gp$font       %||% 1) %in% c(3, 4),
+    bold       = (old_gp$font       %||% 1) %in% c(2, 4),
+    tracking   =  old_gp$tracking   %||% 0,
     res = ppi, vjust = 0.5, hjust = hjust, align = halign
   )$shape$y_offset
 
@@ -227,12 +231,14 @@ parse_richtext <- function(text, gp, md = TRUE, id = seq_along(text)) {
   size       <- vapply(gp, `[[`, i = "fontsize",   numeric(1))
   lineheight <- vapply(gp, `[[`, i = "lineheight", numeric(1))
   colour     <- vapply(gp, `[[`, i = "col",        character(1))
+  fontface   <- vapply(gp, `[[`, i = "font",       integer(1))
 
   data_frame(
     text       = strings,
     id         = id,
     fontfamily = family,
     fontsize   = size,
+    font       = fontface,
     lineheight = lineheight,
     col        = colour
   )

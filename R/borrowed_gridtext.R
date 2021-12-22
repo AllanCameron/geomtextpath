@@ -30,9 +30,16 @@ dispatch_tag <- function(node, tag, drawing_context) {
   } else {
     switch(
       tag,
-      "p"    = process_tag_p(node, drawing_context),
-      "span" = process_tag_span(node, drawing_context),
-      stop("!")
+      "p"      = process_tag_p(node, drawing_context),
+      "span"   = process_tag_p(node, drawing_context),
+      "b"      = process_tag_b(node, drawing_context),
+      "strong" = process_tag_b(node, drawing_context),
+      "i"      = process_tag_i(node, drawing_context),
+      "em"     = process_tag_i(node, drawing_context),
+      abort(paste0(
+        "The rich-text has a tag that isn't supported (yet): <", tag, ">\n",
+        "Only a very limited number of tags are currently supported."
+      ))
     )
   }
 }
@@ -43,10 +50,16 @@ process_tag_p <- function(node, drawing_context) {
   process_tags(node, drawing_context)
 }
 
-process_tag_span <- function(node, drawing_context) {
+process_tag_b <- function(node, drawing_context) {
   attr <- attributes(node)
   drawing_context <- set_style(drawing_context, attr$style)
-  process_tags(node, drawing_context)
+  process_tags(node, set_context_fontface(drawing_context, "bold"))
+}
+
+process_tag_i <- function(node, drawing_context) {
+  attr <- attributes(node)
+  drawing_context <- set_style(drawing_context, attr$style)
+  process_tags(node, set_context_fontface(drawing_context, "italic"))
 }
 
 process_text <- function(node, drawing_context) {
@@ -81,6 +94,21 @@ set_context_gp <- function(drawing_context, gp = NULL) {
     drawing_context,
     gp = gp
   )
+}
+
+set_context_fontface <- function(drawing_context, fontface = "plain",
+                                 overwrite = FALSE) {
+  fontface_old <- drawing_context$gp$fontface
+
+  if (!isTRUE(overwrite)) {
+    if (isTRUE(fontface == "italic") && isTRUE(fontface_old == "bold")) {
+      fontface <- "bold.italic"
+    } else if (isTRUE(fontface == "bold") && isTRUE(fontface_old == "italic")) {
+      fontface <- "bold.italic"
+    }
+  }
+
+  set_context_gp(drawing_context, gpar(fontface = fontface))
 }
 
 update_context <- function(drawing_context, ...) {
