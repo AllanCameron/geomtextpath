@@ -16,7 +16,8 @@
 #'
 #' @note This function heavily relies on rich-text parsers copied from the
 #'   \{\pkg{gridtext}\} package. We thank Claus O. Wilke for developing
-#'   \{\pkg{gridtext}\} and allowing us to re-use his code under the MIT licence.
+#'   \{\pkg{gridtext}\} and allowing us to re-use his code under the MIT
+#'   licence.
 #'
 #' @examples
 #' # Label can contain a subset of HTML tags
@@ -134,7 +135,7 @@ GeomRichtextpath <- ggproto(
     #---- Dispatch data to grob -----------------------------#
 
     richtextpathGrob(
-      label = safe_labels,
+      label = as.character(data$label[first]),
       x = data$x,
       y = data$y,
       id = data$group,

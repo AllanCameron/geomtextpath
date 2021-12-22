@@ -52,7 +52,7 @@ richtextpathGrob <- function(
 ) {
   rlang::check_installed(c("xml2", "markdown"), "for parsing rich text.")
   if (missing(label)) {
-    return(gTree(name = name, vp = vp, cl = "richtextpath"))
+    return(gTree(name = name, vp = vp, cl = "textpath"))
   }
 
   n_label <- length(label)
@@ -73,13 +73,13 @@ richtextpathGrob <- function(
   vjust  <- rep_len(resolveVJust(just, vjust), n_label)
   halign <- rep_len(halign, n_label)
 
-  gp_old <- gp_fill_defaults(gp_text)
-  parsed <- parse_richtext(label, gp_text)
-  gp_var <- setdiff(names(parsed), c("text", "id", "yoff"))
-  gp_new <- do.call(gpar, parsed[gp_var])
+  gp_old <- gp_fill_defaults(gp_text, fontface = "plain")
+  parsed <- parse_richtext(label, gp_old)
+  gp_new <- attr(parsed, "gp")
 
-  parsed <- measure_richtext(parsed, gp_new, vjust = vjust, halign = halign,
-                             straight = straight, old_gp = gp_old)
+  parsed <- measure_richtext(parsed, gp = gp_new, vjust = vjust,
+                             halign = halign, straight = straight,
+                             old_gp = gp_old)
 
   x <- as_unit(x, default.units)
   y <- as_unit(y, default.units)
@@ -128,6 +128,9 @@ measure_richtext <- function(
   straight = FALSE,
   old_gp = gpar()
 ) {
+  if (isTRUE(straight)) {
+    abort("Straight richtext doesn't work yet")
+  }
 
   halign <- match(halign, c("center", "left", "right"), nomatch = 2L)
   halign <- c("center", "left", "right")[halign]
@@ -163,7 +166,8 @@ measure_richtext <- function(
   metrics <- txt$metrics
   txt     <- txt$shape
 
-  txt$letter <- translate_glyph(txt$index, txt$metric_id, gp)
+  txt <- txt[order(txt$metric_id, txt$string_id), , drop = FALSE]
+  txt$letter <- translate_glyph(txt$index, group_id(txt, c("metric_id", "string_id")), gp)
   txt        <- cluster_glyphs(txt)
   txt        <- filter_glyphs(txt, nlabel)
 
@@ -172,10 +176,9 @@ measure_richtext <- function(
   metrics$x_adj  <-  - 0.5 * info$max_ascend / ppi
   txt$x_offset   <-  txt$x_offset   / ppi
   txt$x_midpoint <-  txt$x_midpoint / ppi
-  txt <- txt[order(txt$metric_id, txt$string_id), , drop = FALSE]
   substring <- group_id(txt, c("metric_id", "string_id"))
   txt$y_offset   <- (txt$y_offset - (-0.5 - label$yoff[substring]) *
-    info$max_ascend) / ppi
+    info$max_ascend[txt$metric_id]) / ppi
 
   ans <- data_frame(
     glyph =  txt$letter,
@@ -204,18 +207,25 @@ measure_richtext <- function(
   ans
 }
 
-parse_richtext <- function(text, gp, md = TRUE, id = seq_along(text)) {
+parse_richtext <- function(text, gp, md = TRUE, id = seq_along(text),
+                           inner = FALSE) {
   text <- as.character(text)
-  if (length(text) > 1) {
+  if (!inner) {
     # If text is multiple labels, loop myself
     gps <- lapply(seq_along(text), function(i) {
       recycle_gp(gp, function(x){x[pmin(length(x), i)]})
     })
-    ans  <- Map(parse_richtext, text, gp = gps, md = md, id = id)
+    ans  <- Map(parse_richtext, text, gp = gps, md = md, id = id, inner = TRUE)
     ans  <- rbind_dfs(ans)
+
+    ans_gp <- setdiff(names(ans), c("text", "id", "yoff"))
+    ans_gp <- do.call(gpar, ans[ans_gp])
+    attr(ans, "gp") <- ans_gp
+
     return(ans)
   }
 
+  old_gp <- gp
   if (md) {
     text <- markdown::markdownToHTML(text = text,
                                      options = c("use_xhtml", "fragment_only"))
@@ -245,6 +255,7 @@ parse_richtext <- function(text, gp, md = TRUE, id = seq_along(text)) {
     fontsize   = size,
     font       = fontface,
     lineheight = lineheight,
+    tracking   = old_gp$tracking[id] %||% 0,
     col        = colour,
     yoff       = yoff
   )

@@ -105,7 +105,7 @@ setup_context <- function(fontsize = 12, fontfamily = "", fontface = "plain",
   if (is.null(gp)) {
     gp <- gpar(
       fontsize = fontsize, fontfamily = fontfamily, fontface = fontface,
-      col = color, cex = 1, lineheight = lineheight
+      col = colour, cex = 1, lineheight = lineheight
     )
   }
   gp <- update_gpar(get.gpar(), gp)
@@ -131,11 +131,15 @@ set_context_gp <- function(drawing_context, gp = NULL) {
 set_context_fontface <- function(drawing_context, fontface = "plain",
                                  overwrite = FALSE) {
   fontface_old <- drawing_context$gp$fontface
+  old_bold <- fontface_old %in% c("bold",   "bold.italic")
+  new_bold <- fontface     %in% c("bold",   "bold.italic")
+  old_ital <- fontface_old %in% c("italic", "bold.italic")
+  new_ital <- fontface     %in% c("italic", "bold.italic")
 
   if (!isTRUE(overwrite)) {
-    if (isTRUE(fontface == "italic") && isTRUE(fontface_old == "bold")) {
+    if (isTRUE(new_ital) && isTRUE(old_bold)) {
       fontface <- "bold.italic"
-    } else if (isTRUE(fontface == "bold") && isTRUE(fontface_old == "italic")) {
+    } else if (isTRUE(new_bold) && isTRUE(old_ital)) {
       fontface <- "bold.italic"
     }
   }
