@@ -365,7 +365,7 @@ corner_smoother <- function(x0, y0, x1, y1, x2, y2, p = 20) {
 find_control_points <- function(x, y, radius = 0.5) {
 
   lens <- diff(.arclength_from_xy(x, y))
-  angs <- .angle_from_xy(x, y)
+  angs <- atan2(diff(y), diff(x))
 
   segs <- Map(function(x, y, len, ang) {
 

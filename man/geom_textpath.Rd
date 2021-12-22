@@ -38,7 +38,19 @@ geom_textline(
   orientation = NA,
   show.legend = NA,
   inherit.aes = TRUE,
-  ...
+  ...,
+  lineend = "butt",
+  linejoin = "round",
+  linemitre = 10,
+  text_only = FALSE,
+  gap = NA,
+  upright = TRUE,
+  halign = "center",
+  offset = NULL,
+  parse = FALSE,
+  straight = FALSE,
+  padding = unit(0.15, "inch"),
+  arrow = NULL
 )
 
 geom_labelpath(
