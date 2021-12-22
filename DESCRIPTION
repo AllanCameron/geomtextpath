@@ -57,6 +57,7 @@ Collate:
     'geom_textsmooth.R'
     'geomtextpath-package.R'
     'grob_labelpath.R'
+    'grob_richtextpath.R'
     'grob_textpath.R'
     'path_handling.R'
     'sf_helpers.R'
