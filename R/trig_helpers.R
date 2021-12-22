@@ -299,3 +299,96 @@ which.min_curvature <- function(x, y, k = 10) {
 }
 
 
+# Simple test for whether a path has "corners"
+has_corners <- function(x, y) {
+
+  angles <- .angle_from_xy(x, y, degrees = TRUE)
+  all(abs(diff(angles)) < 12)
+}
+
+
+#-------------------------------------------------------------------------------
+# Spline-based smoothing for noisy paths
+#-------------------------------------------------------------------------------
+
+# Simple single-variable spline interpolation
+spline_smooth <- function(x, n = 4) {
+
+  stopifnot("length must be 2 or more for smoothing" = length(x[!is.na(x)]) > 1)
+  t <- seq_along(x)
+  spline(t, x, n = n * length(x))$y
+}
+
+# Chunk the path into n parts and get the centroid of each chunk
+sample_path <- function(x, y, n = 50) {
+
+  path <- .arclength_from_xy(x, y)
+
+  breaks <- seq(1e-6, max(path) + 1e-6, len = n)
+  path_parts <- findInterval(path, breaks)
+  cbind(tapply(x, path_parts, mean),
+        tapply(y, path_parts, mean))
+
+}
+
+# Spline smooth the centroids of a path split into n chunks
+smooth_noisy <- function(x, y, samples = 50) {
+
+  path <- sample_path(x, y, n = samples)
+  x <- spline_smooth(path[,1])
+  y <- spline_smooth(path[,2])
+  cbind(x, y)
+}
+
+
+#-------------------------------------------------------------------------------
+# Rounding of corners using quadratic Bezier curves
+#-------------------------------------------------------------------------------
+
+# Quadratic Bezier function
+quad_bezier <- function(p0, p1, p2, t) {
+
+  (1 - t)^2 * p0 + 2 * t * (1 - t) * p1 + t^2 * p2
+}
+
+# Produces p points around a corner given the vertex (x1, y1) and two points
+# on the adjacent segment : (x0, y0) and (x2, y2)
+corner_smoother <- function(x0, y0, x1, y1, x2, y2, p = 20) {
+
+  t <- seq(0, 1, len = p)
+  cbind(quad_bezier(x0, x1, x2, t),
+        quad_bezier(y0, y1, y2, t))
+}
+
+# Takes a path and a corner radius to find the control points on the path
+# that will give Bezier curves with the given radius
+find_control_points <- function(x, y, radius = 0.5) {
+
+  lens <- diff(.arclength_from_xy(x, y))
+  angs <- .angle_from_xy(x, y)
+
+  segs <- Map(function(x, y, len, ang) {
+
+    if(len < 2 * radius){
+      cbind(c(x, x + 0.5 * cos(ang) * len), c(y, y + 0.5 * sin(ang) * len))
+    } else {
+      cbind(x + cos(ang) * c(0, radius, 0.5 * len, len - radius),
+            y + sin(ang) * c(0, radius, 0.5 * len, len - radius))
+    }
+  }, x = head(x, -1), y = head(y, -1), len = lens, ang = angs)
+
+  segs <- do.call(rbind, segs)
+  return(rbind(segs[1, ], segs,
+               cbind(c(tail(x, 1), tail(x, 1)), c(tail(y, 1), tail(y, 1)))))
+}
+
+# Co-ordinates the above functions to generate a Bezier-smoothed curve
+smooth_corners <- function(x, y, n = 20, radius = 0.1) {
+
+  cps <- find_control_points(x, y, radius = radius)
+  sections <- lapply(seq(1, nrow(cps) - 2, 2), function(x) cps[x + 0:2,])
+  out <- lapply(sections, function(x) corner_smoother(x[1, 1], x[1, 2],
+                                                      x[2, 1], x[2, 2],
+                                                      x[3, 1], x[3, 2], p = n))
+  do.call(rbind, out)
+}
