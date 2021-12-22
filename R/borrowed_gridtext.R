@@ -13,6 +13,11 @@
 ##                                                                           ##
 ##---------------------------------------------------------------------------##
 
+# The most notable change relative to {gridtext}'s code is that we've omitted
+# dealing with textboxes, which simplifies a few things.
+
+# Tag processing ----------------------------------------------------------
+
 process_tags <- function(node, drawing_context) {
   tags <- names(node)
   new  <- lapply(
@@ -30,18 +35,26 @@ dispatch_tag <- function(node, tag, drawing_context) {
   } else {
     switch(
       tag,
-      "p"      = process_tag_p(node, drawing_context),
-      "span"   = process_tag_p(node, drawing_context),
-      "b"      = process_tag_b(node, drawing_context),
-      "strong" = process_tag_b(node, drawing_context),
-      "i"      = process_tag_i(node, drawing_context),
-      "em"     = process_tag_i(node, drawing_context),
+      "p"      = process_tag_p(node,   drawing_context),
+      "span"   = process_tag_p(node,   drawing_context),
+      "b"      = process_tag_b(node,   drawing_context),
+      "strong" = process_tag_b(node,   drawing_context),
+      "i"      = process_tag_i(node,   drawing_context),
+      "em"     = process_tag_i(node,   drawing_context),
+      "sub"    = process_tag_sub(node, drawing_context),
+      "sup"    = process_tag_sup(node, drawing_context),
       abort(paste0(
         "The rich-text has a tag that isn't supported (yet): <", tag, ">\n",
         "Only a very limited number of tags are currently supported."
       ))
     )
   }
+}
+
+# Departs from gridtext:::process_text in that it returns a list-matrix
+process_text <- function(node, drawing_context) {
+  cbind(list(unlist(node)), list(drawing_context$gp),
+        list(drawing_context$yoff))
 }
 
 process_tag_p <- function(node, drawing_context) {
@@ -62,8 +75,24 @@ process_tag_i <- function(node, drawing_context) {
   process_tags(node, set_context_fontface(drawing_context, "italic"))
 }
 
-process_text <- function(node, drawing_context) {
-  cbind(list(unlist(node)), list(drawing_context$gp))
+process_tag_sub <- function(node, drawing_context) {
+  fontsize <- 0.8 * drawing_context$gp$fontsize
+  drawing_context <- set_context_gp(drawing_context, gpar(fontsize = fontsize))
+  attr <- attributes(node)
+  drawing_context <- set_style(drawing_context, attr$style)
+
+  drawing_context$yoff <- drawing_context$yoff - 0.5
+  process_tags(node, drawing_context)
+}
+
+process_tag_sup <- function(node, drawing_context) {
+  fontsize <- 0.8 * drawing_context$gp$fontsize
+  drawing_context <- set_context_gp(drawing_context, gpar(fontsize = fontsize))
+  attr <- attributes(node)
+  drawing_context <- set_style(drawing_context, attr$style)
+
+  drawing_context$yoff <- drawing_context$yoff + 0.5
+  process_tags(node, drawing_context)
 }
 
 # Context -----------------------------------------------------------------
@@ -77,7 +106,7 @@ setup_context <- function(fontsize = 12, fontfamily = "", fontface = "plain",
     )
   }
   gp <- update_gpar(get.gpar(), gp)
-  set_context_gp(list(), gp)
+  set_context_gp(list(yoff = 0), gp)
 }
 
 update_gpar <- function(gp, gp_new) {

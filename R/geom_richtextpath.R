@@ -31,6 +31,7 @@ geom_richtextpath <- function(
   show.legend = NA,
   inherit.aes = TRUE
 ) {
+  rlang::check_installed(c("xml2", "markdown"), "for parsing rich text.")
   layer(
     data     = data,
     mapping  = mapping,

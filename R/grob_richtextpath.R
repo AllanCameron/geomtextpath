@@ -75,7 +75,8 @@ richtextpathGrob <- function(
 
   gp_old <- gp_fill_defaults(gp_text)
   parsed <- parse_richtext(label, gp_text)
-  gp_new <- do.call(gpar, parsed[setdiff(names(parsed), c("text", "id"))])
+  gp_var <- setdiff(names(parsed), c("text", "id", "yoff"))
+  gp_new <- do.call(gpar, parsed[gp_var])
 
   parsed <- measure_richtext(parsed, gp_new, vjust = vjust, halign = halign,
                              straight = straight, old_gp = gp_old)
@@ -151,16 +152,13 @@ measure_richtext <- function(
 
   # We use the original gp here because the new gp may have altered font size
   # due to super/subscripts etc.
-  x_adjust <- shape_text(
-    strings    =  rep("x", nlabel),
-    family     =  old_gp$fontfamily %||% "",
-    size       =  old_gp$fontsize   %||% 12,
-    lineheight =  old_gp$lineheight %||% 1.2,
-    italic     = (old_gp$font       %||% 1) %in% c(3, 4),
-    bold       = (old_gp$font       %||% 1) %in% c(2, 4),
-    tracking   =  old_gp$tracking   %||% 0,
-    res = ppi, vjust = 0.5, hjust = hjust, align = halign
-  )$shape$y_offset
+  info <- systemfonts::font_info(
+    family =  old_gp$fontfamily %||% "",
+    italic = (old_gp$font       %||% 1) %in% c(3, 4),
+    bold   = (old_gp$font       %||% 1) %in% c(2, 4),
+    size   =  old_gp$fontsize   %||% 12,
+    res = ppi
+  )
 
   metrics <- txt$metrics
   txt     <- txt$shape
@@ -171,11 +169,13 @@ measure_richtext <- function(
 
   metrics$width  <-  metrics$width  / ppi
   metrics$height <-  metrics$height / ppi
-  metrics$x_adj  <-  x_adjust       / ppi
+  metrics$x_adj  <-  - 0.5 * info$max_ascend / ppi
   txt$x_offset   <-  txt$x_offset   / ppi
   txt$x_midpoint <-  txt$x_midpoint / ppi
-  txt$y_offset   <- (txt$y_offset - x_adjust[txt$metric_id]) / ppi
   txt <- txt[order(txt$metric_id, txt$string_id), , drop = FALSE]
+  substring <- group_id(txt, c("metric_id", "string_id"))
+  txt$y_offset   <- (txt$y_offset - (-0.5 - label$yoff[substring]) *
+    info$max_ascend) / ppi
 
   ans <- data_frame(
     glyph =  txt$letter,
@@ -225,7 +225,8 @@ parse_richtext <- function(text, gp, md = TRUE, id = seq_along(text)) {
 
   processed <- process_tags(doc, drawing_context)
   strings <- unlist(processed[, 1])
-  gp <- processed[, 2]
+  gp      <- processed[, 2]
+  yoff    <- unlist(processed[, 3])
 
   family     <- vapply(gp, `[[`, i = "fontfamily", character(1))
   size       <- vapply(gp, `[[`, i = "fontsize",   numeric(1))
@@ -240,7 +241,8 @@ parse_richtext <- function(text, gp, md = TRUE, id = seq_along(text)) {
     fontsize   = size,
     font       = fontface,
     lineheight = lineheight,
-    col        = colour
+    col        = colour,
+    yoff       = yoff
   )
 }
 
