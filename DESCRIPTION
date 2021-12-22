@@ -48,6 +48,7 @@ Collate:
     'data.R'
     'geom_textpath.R'
     'geom_labelpath.R'
+    'geom_richtextpath.R'
     'geom_textcontour.R'
     'geom_textdensity.R'
     'utils.R'
