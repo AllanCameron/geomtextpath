@@ -207,6 +207,7 @@ measure_richtext <- function(
 parse_richtext <- function(text, gp, md = TRUE, id = seq_along(text)) {
   text <- as.character(text)
   if (length(text) > 1) {
+    # If text is multiple labels, loop myself
     gps <- lapply(seq_along(text), function(i) {
       recycle_gp(gp, function(x){x[pmin(length(x), i)]})
     })
@@ -219,14 +220,17 @@ parse_richtext <- function(text, gp, md = TRUE, id = seq_along(text)) {
     text <- markdown::markdownToHTML(text = text,
                                      options = c("use_xhtml", "fragment_only"))
   }
+  # Deal with <br> now, they are a pain to handle after parsing
+  text <- gsub("<br>", "\n", text, fixed = TRUE)
+
   doc <- xml2::read_html(paste0("<!DOCTYPE html>", text))
   doc <- xml2::as_list(doc)$html$body
   drawing_context <- setup_context(gp = gp)
 
   processed <- process_tags(doc, drawing_context)
-  strings <- unlist(processed[, 1])
-  gp      <- processed[, 2]
-  yoff    <- unlist(processed[, 3])
+  strings   <- unlist(processed[, 1])
+  gp        <- processed[, 2]
+  yoff      <- unlist(processed[, 3])
 
   family     <- vapply(gp, `[[`, i = "fontfamily", character(1))
   size       <- vapply(gp, `[[`, i = "fontsize",   numeric(1))

@@ -75,6 +75,9 @@ process_tag_i <- function(node, drawing_context) {
   process_tags(node, set_context_fontface(drawing_context, "italic"))
 }
 
+# TODO: Are we handling nested <sub>/<sup> correctly in terms of y-offset?
+# Note that we departed here from {gridtext} in terms of how the y-offset is
+# handled
 process_tag_sub <- function(node, drawing_context) {
   fontsize <- 0.8 * drawing_context$gp$fontsize
   drawing_context <- set_context_gp(drawing_context, gpar(fontsize = fontsize))
