@@ -303,7 +303,7 @@ which.min_curvature <- function(x, y, k = 10) {
 has_corners <- function(x, y) {
 
   angles <- .angle_from_xy(x, y, degrees = TRUE)
-  all(abs(diff(angles)) < 12)
+  any(abs(diff(angles)) > 12)
 }
 
 
