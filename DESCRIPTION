@@ -37,14 +37,18 @@ Suggests:
     rmarkdown,
     ragg,
     qpdf,
-    roxygen2
+    roxygen2,
+    xml2,
+    markdown
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Collate: 
+    'borrowed_gridtext.R'
     'coord_curvedpolar.R'
     'data.R'
     'geom_textpath.R'
     'geom_labelpath.R'
+    'geom_richtextpath.R'
     'geom_textcontour.R'
     'geom_textdensity.R'
     'utils.R'
@@ -54,6 +58,7 @@ Collate:
     'geom_textsmooth.R'
     'geomtextpath-package.R'
     'grob_labelpath.R'
+    'grob_richtextpath.R'
     'grob_textpath.R'
     'path_handling.R'
     'sf_helpers.R'

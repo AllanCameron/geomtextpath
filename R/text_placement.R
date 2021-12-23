@@ -92,6 +92,7 @@ place_text <- function(
   df <- as.list(path[setdiff(names(path), protect_column)])
   df <- approx_multiple(path$length, letters$base_length, df)
   df <- cbind(df, letters, id = path$id[1] %||% 1L)
+  df$substring <- label$substring %||% df$id
 
   if(any(df$exceed != 0) & !is.multichar(label$glyph)) {
 
@@ -136,7 +137,17 @@ attempt_flip <- function(
   }
   # Invert path and hjust
   path  <- path[rev(seq_len(nrow(path))), ]
-  attr(label, "offset") <- 0 - attr(label, "offset")
+
+  yids   <- unique(label$y_id)
+  offset <- attr(label, "offset")
+  offlim <- range(offset[yids])
+  offnew <- (offset - offlim[1]) - offlim[2]
+  if (any(yids == 1) && offnew[1] != 0) {
+    attr(label, "offset") <- c(0, offnew)
+    label$y_id <- label$y_id + 1
+  } else {
+    attr(label, "offset") <- c(0, offnew[-1])
+  }
 
   if (is.numeric(hjust)) hjust <- 1 - hjust
 
@@ -303,7 +314,7 @@ project_text <- function(text, offset, xpos = c("xmin", "xmid", "xmax")) {
 # Grob constructor --------------------------------------------------------
 
 .add_text_grob <- function(grob, text, gp) {
-  text_lens <- run_len(text$id)
+  text_lens <- run_len(text$substring %||% text$id)
 
   # Recycle graphical parameters to match lengths of letters
   gp <- recycle_gp(gp, rep, times = text_lens)
