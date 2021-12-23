@@ -303,7 +303,7 @@ geom_textline <- function(mapping = NULL, data = NULL, stat = "identity",
 #' @usage NULL
 #' @export
 
-GeomTextLine <- ggproto("GeomLine", GeomTextpath,
+GeomTextLine <- ggproto("GeomTextLine", GeomTextpath,
   setup_params = function(data, params) {
     params$flipped_aes <- has_flipped_aes(data, params, ambiguous = TRUE)
     params

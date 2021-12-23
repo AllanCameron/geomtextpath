@@ -10,11 +10,29 @@ test_that("The geom_textpath() constructor works", {
 
 test_that("The geom_textline() constructor works", {
 
-  x <- geom_textline(stat = "density")
+  x <- geom_textline()
+
+  expect_s3_class(x, "LayerInstance")
+  expect_s3_class(x$geom, "GeomTextLine")
+  expect_s3_class(x$stat, "StatIdentity")
+})
+
+test_that("The geom_textdensity() constructor works", {
+
+  x <- geom_textdensity()
+
+  expect_s3_class(x, "LayerInstance")
+  expect_s3_class(x$geom, "GeomTextDensity")
+  expect_s3_class(x$stat, "StatDensity")
+})
+
+test_that("The geom_textsmooth() constructor works", {
+
+  x <- geom_textsmooth()
 
   expect_s3_class(x, "LayerInstance")
   expect_s3_class(x$geom, "GeomTextpath")
-  expect_s3_class(x$stat, "StatDensity")
+  expect_s3_class(x$stat, "StatSmooth")
 })
 
 test_that("Text path grob has correct types", {

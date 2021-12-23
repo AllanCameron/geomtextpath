@@ -57,8 +57,8 @@ test_that("We can make grobs from sf features", {
   df_missing <- df
   df_missing$geometry[[2]] <- sf::st_point()
   df_missing$size[2] <- NA
-  expect_silent(sf_textgrob(df))
 
+  expect_silent(sf_textgrob(df))
   expect_warning(sf_textgrob(df_missing, na.rm = FALSE))
 
 })
