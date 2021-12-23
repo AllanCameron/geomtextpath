@@ -62,6 +62,53 @@ geom_textcontour <- function(
         ))
 }
 
+#' @rdname geom_textcontour
+#' @inheritParams geom_textcontour
+#' @inheritParams geom_labelpath
+#' @export
+geom_labelcontour <- function(
+  mapping = NULL, data = NULL, stat = "text_contour",
+  position = "identity", na.rm = FALSE, show.legend = NA,
+  inherit.aes = TRUE, ...,
+  lineend = "butt", linejoin = "round", linemitre = 10,
+  text_only = FALSE, gap = FALSE, upright = TRUE,
+  halign = "center", offset = NULL, parse = FALSE,
+  straight = FALSE,
+  padding = unit(0.15, "inch"),
+  label.padding = unit(0.25, "lines"),
+  label.r = unit(0.15, "lines"),
+  arrow = NULL
+) {
+  layer(
+    geom        = GeomLabelpath,
+    mapping     = mapping,
+    data        = data,
+    stat        = stat,
+    position    = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = set_params(
+      na.rm         = na.rm,
+      lineend       = lineend,
+      linejoin      = linejoin,
+      linemitre     = linemitre,
+      text_only     = text_only,
+      gap           = gap,
+      upright       = upright,
+      halign        = halign,
+      offset        = offset,
+      parse         = parse,
+      straight      = straight,
+      padding       = padding,
+      label.padding = label.padding,
+      label.r       = label.r,
+      arrow         = arrow,
+      ...
+    )
+  )
+}
+
+
 
 #' @inheritParams geom_textcontour
 #' @param geom The geometric object to use display the data
@@ -116,6 +163,34 @@ GeomTextContour <- ggproto("GeomTextContour", GeomTextpath,
                     family = "", fontface = 1, lineheight = 1.2, alpha = 1,
                     linewidth = 0.5, linetype = 1, spacing = 0,
                     linecolour = "_copy_text_colour_", angle = 0)
+)
+
+#' @rdname geom_textcontour
+#' @format NULL
+#' @usage NULL
+#' @export
+#' @include geom_textpath.R
+GeomLabelContour <- ggproto("GeomLabelContour", GeomLabelpath,
+  required_aes = c("x", "y"),
+    default_aes = aes(
+    colour       = "black",
+    alpha        = 1,
+    size         = 3.88,
+    hjust        = 0.5,
+    vjust        = 0.5,
+    family       = "",
+    fontface     = 1,
+    lineheight   = 1.2,
+    linewidth    = 0.5,
+    linetype     = 1,
+    spacing      = 0,
+    linecolour   = "_copy_text_colour_",
+    angle        = 0,
+    fill         = "white",
+    boxcolour    = "_copy_text_colour_",
+    boxlinetype  = 1,
+    boxlinewidth = NULL
+  )
 )
 
 #' @rdname geom_textcontour

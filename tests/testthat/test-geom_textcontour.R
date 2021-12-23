@@ -5,6 +5,8 @@ test_that("We can produce labelled contour plots", {
 
   expect_silent(ggplot(df, aes(x, y, z = z)) + geom_textcontour())
   expect_silent(ggplot(df, aes(x, y, z = z)) + stat_textcontour())
+  expect_silent(ggplot(df, aes(x, y, z = z)) + geom_labelcontour())
+
 })
 
 test_that("We can produce labelled 2d density plots", {
