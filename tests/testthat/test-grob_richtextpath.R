@@ -50,20 +50,16 @@ test_that("fontfaces are combined correctly", {
   # Note 1 = plain, 2 = bold, 3 = italic, 4 = bold.italic
   label <- "<i>A</i>B<b>C</b><i><b>D</b></i>"
 
-  gp <- gp_fill_defaults(gpar(), fontface = "plain")
-  test <- parse_richtext(label, gp)
+  test <- parse_richtext(label, gpar(fontface = "plain"))
   expect_equal(test$font, c(3, 1, 2, 4))
 
-  gp <- gp_fill_defaults(gpar(), fontface = "italic")
-  test <- parse_richtext(label, gp)
+  test <- parse_richtext(label, gpar(fontface = "italic"))
   expect_equal(test$font, c(3, 3, 4, 4))
 
-  gp <- gp_fill_defaults(gpar(), fontface = "bold")
-  test <- parse_richtext(label, gp)
+  test <- parse_richtext(label, gpar(fontface = "bold"))
   expect_equal(test$font, c(4, 2, 2, 4))
 
-  gp <- gp_fill_defaults(gpar(), fontface = "bold.italic")
-  test <- parse_richtext(label, gp)
+  test <- parse_richtext(label, gpar(fontface = "bold.italic"))
   expect_equal(test$font, c(4, 4, 4, 4))
 })
 

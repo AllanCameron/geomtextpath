@@ -66,13 +66,13 @@ process_tag_p <- function(node, drawing_context) {
 process_tag_b <- function(node, drawing_context) {
   attr <- attributes(node)
   drawing_context <- set_style(drawing_context, attr$style)
-  process_tags(node, set_context_fontface(drawing_context, "bold"))
+  process_tags(node, set_context_font(drawing_context, 2))
 }
 
 process_tag_i <- function(node, drawing_context) {
   attr <- attributes(node)
   drawing_context <- set_style(drawing_context, attr$style)
-  process_tags(node, set_context_fontface(drawing_context, "italic"))
+  process_tags(node, set_context_font(drawing_context, 3))
 }
 
 # TODO: Are we handling nested <sub>/<sup> correctly in terms of y-offset?
@@ -115,8 +115,8 @@ setup_context <- function(fontsize = 12, fontfamily = "", fontface = "plain",
 update_gpar <- function(gp, gp_new) {
   names_new <- names(gp_new)
   names_old <- names(gp)
-  gp[c(intersect(names_old, names_new), "font")] <- NULL
-  gp_new["font"] <- NULL
+  gp[c(intersect(names_old, names_new), "fontface")] <- NULL
+  gp_new["fontface"] <- NULL
   do.call(gpar, c(gp, gp_new))
 }
 
@@ -128,23 +128,23 @@ set_context_gp <- function(drawing_context, gp = NULL) {
   )
 }
 
-set_context_fontface <- function(drawing_context, fontface = "plain",
+set_context_font<- function(drawing_context, font = 1,
                                  overwrite = FALSE) {
-  fontface_old <- drawing_context$gp$fontface
-  old_bold <- fontface_old %in% c("bold",   "bold.italic")
-  new_bold <- fontface     %in% c("bold",   "bold.italic")
-  old_ital <- fontface_old %in% c("italic", "bold.italic")
-  new_ital <- fontface     %in% c("italic", "bold.italic")
+  font_old <- drawing_context$gp$font
+  old_bold <- font_old %in% c(2, 4)
+  new_bold <- font     %in% c(2, 4)
+  old_ital <- font_old %in% c(3, 4)
+  new_ital <- font     %in% c(3, 4)
 
   if (!isTRUE(overwrite)) {
     if (isTRUE(new_ital) && isTRUE(old_bold)) {
-      fontface <- "bold.italic"
+      font <- 4
     } else if (isTRUE(new_bold) && isTRUE(old_ital)) {
-      fontface <- "bold.italic"
+      font <- 4
     }
   }
 
-  set_context_gp(drawing_context, gpar(fontface = fontface))
+  set_context_gp(drawing_context, gpar(font = font))
 }
 
 update_context <- function(drawing_context, ...) {
