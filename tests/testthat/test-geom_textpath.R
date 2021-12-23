@@ -8,6 +8,15 @@ test_that("The geom_textpath() constructor works", {
   expect_s3_class(x$stat, "StatDensity")
 })
 
+test_that("The geom_textline() constructor works", {
+
+  x <- geom_textline(stat = "density")
+
+  expect_s3_class(x, "LayerInstance")
+  expect_s3_class(x$geom, "GeomTextpath")
+  expect_s3_class(x$stat, "StatDensity")
+})
+
 test_that("Text path grob has correct types", {
 
   p <- ggplot(iris, aes(Sepal.Width)) +
