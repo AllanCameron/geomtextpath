@@ -134,3 +134,37 @@ test_that("We can find the flattest point of a curve", {
   y <- sin(seq(0, 2 * pi, len = 100))
   expect_equal(which.min_curvature(x, y), 1)
 })
+
+test_that("We can identify a path with 'corners'", {
+  x <- 1:10
+  y <- c(1, 2.1, 3.3, 4.6, 6.0, 7.5, 9.1, 10.8, 12.6, 14.5)
+  z <- c(0, 1, 1, 0, 6.0, 7.5, 9.1, 10.8, 12.6, 14.5)
+  expect_false(has_corners(x, y))
+  expect_true(has_corners(x, z))
+})
+
+
+test_that("We can spline smooth", {
+
+  x <- c(1, 4, 5, 6)
+  y <- c(1, 1.9, 2.6, 3.2, 3.6, 4, 4.3, 4.5,
+         4.7, 4.9, 5, 5.1, 5.3, 5.5, 5.7, 6)
+  z <- round(spline_smooth(x), 1)
+  expect_equal(y, z)
+})
+
+test_that("We can chunk a path", {
+
+  x <- seq(0, 2 * pi, len = 100)
+  y <- sin(x) + 0.3 * sin(x * 20)
+  z <- sample_path(x, y, n = 10)
+  expect_equal(sum(z), 28.336833)
+})
+
+test_that("We can smooth a noisy path", {
+  x <- seq(0, 2 * pi, len = 100)
+  y <- sin(x) + 0.3 * sin(x * 20)
+  a <- smooth_noisy(x, y, 20)
+  expect_true(has_corners(x, y))
+  expect_false(has_corners(a[,1], a[,2]))
+})

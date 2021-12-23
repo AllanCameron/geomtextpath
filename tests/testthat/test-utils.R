@@ -302,3 +302,64 @@ test_that("static_text_params asserts correctly", {
   expect_equal(test$gap, FALSE)
 })
 
+
+# Matching labels to vector & data frames --------------------------------------
+
+test_that("We can match labels to vectors and data frames", {
+
+  one_lab <- "label"
+  two_labs <- c("label1", "label2")
+  three_labs <- c("label1", "label2", "label3")
+  df <- data.frame(x = 1:3, y = 1:3)
+  expect_equal(match_labels(df, one_lab), rep("label", 3))
+  expect_equal(match_labels(df, three_labs), three_labs)
+  expect_error(match_labels(df, two_labs))
+  expect_equal(match_labels(1:3, one_lab), rep("label", 3))
+  expect_equal(match_labels(1:3, three_labs), three_labs)
+  expect_error(match_labels(1:3, two_labs))
+
+})
+
+# Functions taken from ggplot2 -------------------------------------------------
+
+test_that("We can find missing cases", {
+
+  x <- c(1, NA, 3)
+  y <- list(1, NULL, 3)
+  z <- c(1, Inf, 3)
+  res <- c(TRUE, FALSE, TRUE)
+  res2 <- c(TRUE, FALSE, FALSE)
+  df <- data.frame(x = x, y = c(1, 2, NA), z = z)
+
+  expect_equal(res, is_missing(x))
+  expect_equal(res, is_missing(y))
+  expect_equal(res, is_finite(z))
+  expect_equal(res, is_finite(y))
+  expect_equal(res2, cases(df, is_missing))
+  expect_equal(TRUE, cases(df[1, ], is_missing))
+  expect_equal(res2, !detect_missing(df, c("x", "y")))
+  expect_equal(res, !detect_missing(df, c("x", "z"), TRUE))
+  expect_equal(!res2, find_missing(df, ggplot2::GeomPoint))
+})
+
+
+test_that("We can modify a list", {
+  x <- list(a = 1, b = 2)
+  y <- list(a = 3, c = 4)
+  z <- list(a = 3, b = 2, c = 4)
+  expect_equal(z, modify_list(x, y))
+})
+
+
+test_that("Objects are renamed correctly", {
+  df1 <- data.frame(x = 1:3, y = 4:6)
+  df2 <- data.frame(a = 1:3, b = 4:6)
+  vec <- c(x = "a", y = "b", z = "c")
+  expect_equal(c("a", "b"), names(rename(df1, vec)))
+  expect_equal(c("a", "b"), names(rename(df2, vec)))
+})
+
+
+test_that("rd_dots can evaluate a function's dots", {
+  expect_equal(substr(rd_dots("geom_textpath"), 1, 10), "@param ...")
+})
