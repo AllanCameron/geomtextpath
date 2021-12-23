@@ -261,7 +261,12 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
 #' @rdname geom_textpath
 geom_textline <- function(mapping = NULL, data = NULL, stat = "identity",
                       position = "identity", na.rm = FALSE, orientation = NA,
-                      show.legend = NA, inherit.aes = TRUE, ...) {
+                      show.legend = NA, inherit.aes = TRUE, ...,
+                      lineend = "butt", linejoin = "round", linemitre = 10,
+                      text_only = FALSE, gap = NA, upright = TRUE,
+                      halign = "center", offset = NULL, parse = FALSE,
+                      straight = FALSE, padding = unit(0.15, "inch"),
+                      arrow = NULL) {
   layer(
     data = data,
     mapping = mapping,
@@ -271,10 +276,21 @@ geom_textline <- function(mapping = NULL, data = NULL, stat = "identity",
     show.legend = show.legend,
     inherit.aes = inherit.aes,
     params = set_params(
-      na.rm = na.rm,
-      orientation = orientation,
-      ...
-    )
+          na.rm         = na.rm,
+          lineend       = lineend,
+          linejoin      = linejoin,
+          linemitre     = linemitre,
+          text_only     = text_only,
+          gap           = gap,
+          upright       = upright,
+          halign        = halign,
+          offset        = offset,
+          parse         = parse,
+          straight      = straight,
+          padding       = padding,
+          arrow         = arrow,
+          ...
+        )
   )
 }
 

@@ -4,6 +4,7 @@
 #' @import ggplot2
 #' @import grid
 #' @importFrom stats approx dnorm approxfun complete.cases ave bw.nrd setNames
+#'   spline
 #' @importFrom utils head tail
 #' @importFrom graphics strwidth
 #' @importFrom systemfonts glyph_info

@@ -40,6 +40,7 @@ st_as_grob.sfc_LINESTRING_labelled <- function (
         textpathGrob(label = label[1], x = x[, 1], y = x[, 2],
                      id = id, arrow = arrow, hjust = hjust, vjust = vjust,
             default.units = default.units, name = name, gp_path = gp,
+            gp_text = textpath_vars$gp_text,
             vp = vp)
     }
     else nullGrob()
@@ -96,7 +97,7 @@ sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
 
   defaults[[4]] <- modify_list(
     defaults[[3]],
-    rename(GeomPoint$default_aes, c(size = "point_size", fill = "point_fill"))
+    rename(GeomTextpath$default_aes, c(size = "point_size", fill = "point_fill"))
   )
 
   default_names <- unique(unlist(lapply(defaults, names)))
@@ -107,27 +108,41 @@ sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
 
   # Set variables to build grobs
   alpha <- x$alpha %||% defaults$alpha[type_ind]
-  col   <- x$colour %||% defaults$colour[type_ind]
+
+  col   <- x$linecolour %||% defaults$linecolour[type_ind]
   col[is_point | is_line] <- alpha(col[is_point | is_line],
                                    alpha[is_point | is_line])
+
+  textcol <- x$colour %||% defaults$colour[type_ind]
+
   fill <- x$fill %||% defaults$fill[type_ind]
   fill <- alpha(fill, alpha)
-  size <- x$size %||% defaults$size[type_ind]
-  point_size <- ifelse(is_collection,
-                       x$size %||% defaults$point_size[type_ind],
-                       size)
-  stroke <- (x$stroke %||% defaults$stroke[1]) * .stroke / 2
-  fontsize <- point_size * .pt + stroke
-  lwd <- ifelse(is_point, stroke, stroke * .pt)
+
+  size <- (x$size %||% defaults$size[type_ind]) * .pt
+
+  lwd <- (x$linewidth %||% defaults$linewidth[type_ind]) * 3.779528
+
+  fontsize <- size
+
+  family <- x$family %||% defaults$family[type_ind]
+  fontface <- x$fontface %||% defaults$fontface[type_ind]
+
   pch <- x$shape %||% defaults$shape[type_ind]
   lty <- x$linetype %||% defaults$linetype[type_ind]
+
   gp <- gpar(
     col = col, fill = fill, fontsize = fontsize, lwd = lwd, lty = lty,
     lineend = lineend, linejoin = linejoin, linemitre = linemitre
   )
 
+  gp_text <- gpar(col = textcol, fontsize = fontsize, family = family,
+                  fontface = fontface, alpha = alpha
+
+  )
+
   tp_vars <- list(hjust = x$hjust %||% 0.5,
-                  vjust = x$vjust %||% 0.5)
+                  vjust = x$vjust %||% 0.5,
+                  gp_text = gp_text)
   # Build grobs
   out <- grid::gTree()
 
