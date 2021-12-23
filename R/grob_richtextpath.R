@@ -242,21 +242,18 @@ parse_richtext <- function(text, gp, md = TRUE, id = seq_along(text),
   gp        <- processed[, 2]
   yoff      <- unlist(processed[, 3])
 
-  family     <- vapply(gp, `[[`, i = "fontfamily", character(1))
-  size       <- vapply(gp, `[[`, i = "fontsize",   numeric(1))
-  lineheight <- vapply(gp, `[[`, i = "lineheight", numeric(1))
-  colour     <- vapply(gp, `[[`, i = "col",        character(1))
-  fontface   <- vapply(gp, `[[`, i = "font",       integer(1))
+  gp <- lapply(gp, function(x) do.call(data_frame, unclass(x)))
+  gp <- do.call(rbind, gp)
 
   data_frame(
     text       = strings,
     id         = id,
-    fontfamily = family,
-    fontsize   = size,
-    font       = fontface,
-    lineheight = lineheight,
+    fontfamily = gp$fontfamily,
+    fontsize   = gp$fontsize,
+    font       = gp$font,
+    lineheight = gp$lineheight,
     tracking   = old_gp$tracking[id] %||% 0,
-    col        = colour,
+    col        = gp$col,
     yoff       = yoff
   )
 }
