@@ -48,3 +48,17 @@ test_that("sf objects are converted to correct grob types", {
   expect_equal(class(multipolygongrob)[1], "pathgrob")
 
 })
+
+test_that("We can make grobs from sf features", {
+
+  p <- ggplot(waterways) + geom_textsf(label = "rivers")
+  p_built <- ggplot_build(p)
+  df <- p_built$data[[1]]
+  df_missing <- df
+  df_missing$geometry[[2]] <- sf::st_point()
+  df_missing$size[2] <- NA
+  expect_silent(sf_textgrob(df))
+
+  expect_warning(sf_textgrob(df_missing, na.rm = FALSE))
+
+})
