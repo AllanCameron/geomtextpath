@@ -31,7 +31,8 @@ geom_labelsmooth(
   method.args = list(),
   orientation = NA,
   show.legend = NA,
-  inherit.aes = TRUE
+  inherit.aes = TRUE,
+  ...
 )
 }
 \arguments{
