@@ -3,7 +3,9 @@
 \docType{data}
 \name{geom_textdensity2d}
 \alias{geom_textdensity2d}
+\alias{geom_labeldensity2d}
 \alias{GeomTextDensity2d}
+\alias{GeomLabelDensity2d}
 \title{Produce labelled contour lines of 2D density in  \pkg{ggplot2}}
 \usage{
 geom_textdensity2d(
@@ -22,6 +24,27 @@ geom_textdensity2d(
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE
+)
+
+geom_labeldensity2d(
+  mapping = NULL,
+  data = NULL,
+  stat = "density_2d",
+  position = "identity",
+  na.rm = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  ...,
+  contour_var = "density",
+  n = 100,
+  h = NULL,
+  adjust = c(1, 1),
+  lineend = "butt",
+  linejoin = "round",
+  linemitre = 10,
+  label.padding = unit(0.25, "lines"),
+  label.r = unit(0.15, "lines"),
+  arrow = NULL
 )
 }
 \arguments{
@@ -86,6 +109,12 @@ display.}
 rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
+
+\item{label.padding}{Amount of padding around label. Defaults to 0.25 lines.}
+
+\item{label.r}{Radius of rounded corners. Defaults to 0.15 lines.}
+
+\item{arrow}{Arrow specification, as created by \code{\link[grid:arrow]{grid::arrow()}}.}
 }
 \description{
 Contour lines representing 2D density are available already in
