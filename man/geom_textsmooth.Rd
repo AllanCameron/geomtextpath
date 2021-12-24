@@ -2,6 +2,7 @@
 % Please edit documentation in R/geom_textsmooth.R
 \name{geom_textsmooth}
 \alias{geom_textsmooth}
+\alias{geom_labelsmooth}
 \title{Labelled conditional means in \pkg{ggplot2}}
 \usage{
 geom_textsmooth(
@@ -10,6 +11,20 @@ geom_textsmooth(
   stat = "smooth",
   position = "identity",
   ...,
+  method = NULL,
+  formula = NULL,
+  na.rm = FALSE,
+  method.args = list(),
+  orientation = NA,
+  show.legend = NA,
+  inherit.aes = TRUE
+)
+
+geom_labelsmooth(
+  mapping = NULL,
+  data = NULL,
+  stat = "smooth",
+  position = "identity",
   method = NULL,
   formula = NULL,
   na.rm = FALSE,

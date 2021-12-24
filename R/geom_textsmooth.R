@@ -57,3 +57,44 @@ geom_textsmooth <- function(mapping = NULL, data = NULL,
     params = params
   )
 }
+
+
+#' @rdname geom_textsmooth
+#' @inheritParams ggplot2::geom_smooth
+#' @inheritParams geom_labelpath
+#' @export
+geom_labelsmooth <- function(mapping = NULL, data = NULL,
+   stat = "smooth", position = "identity",
+    method = NULL,
+    formula = NULL,
+    na.rm = FALSE,
+    method.args = list(),
+    orientation = NA,
+    show.legend = NA,
+    inherit.aes = TRUE,
+    ...) {
+
+  params <- set_params(
+    na.rm = na.rm,
+    orientation = orientation,
+    method.args = method.args,
+    ...
+  )
+
+  if (identical(stat, "smooth")) {
+    params$method <- method
+    params$formula <- formula
+  }
+
+  layer(
+    geom        = GeomLabelpath,
+    mapping     = mapping,
+    data        = data,
+    stat        = stat,
+    position    = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params      = params
+  )
+}
+

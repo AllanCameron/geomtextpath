@@ -53,6 +53,15 @@ test_that("The geom_labeldensity() constructor works", {
   expect_s3_class(x$stat, "StatDensity")
 })
 
+test_that("The geom_labelsmooth() constructor works", {
+
+  x <- geom_labelsmooth()
+
+  expect_s3_class(x, "LayerInstance")
+  expect_s3_class(x$geom, "GeomLabelpath")
+  expect_s3_class(x$stat, "StatSmooth")
+})
+
 test_that("The geom_labelcontour() constructor works", {
 
   x <- geom_labelcontour()
