@@ -208,3 +208,69 @@ GeomLabelpath <- ggproto(
     )
   }
 )
+
+#' @rdname geom_textpath
+#' @inheritParams ggplot2::geom_line
+#' @inheritParams labelpathGrob
+#' @export
+geom_labelline <- function(
+  mapping = NULL, data = NULL, stat = "identity",
+  position = "identity", na.rm = FALSE, show.legend = NA,
+  inherit.aes = TRUE, ...,
+  lineend = "butt", linejoin = "round", linemitre = 10,
+  text_only = FALSE, gap = FALSE, upright = TRUE,
+  halign = "center", offset = NULL, parse = FALSE,
+  straight = FALSE,
+  padding = unit(0.15, "inch"),
+  label.padding = unit(0.25, "lines"),
+  label.r = unit(0.15, "lines"),
+  arrow = NULL
+) {
+  layer(
+    geom        = GeomLabelpath,
+    mapping     = mapping,
+    data        = data,
+    stat        = stat,
+    position    = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = set_params(
+      na.rm         = na.rm,
+      lineend       = lineend,
+      linejoin      = linejoin,
+      linemitre     = linemitre,
+      text_only     = text_only,
+      gap           = gap,
+      upright       = upright,
+      halign        = halign,
+      offset        = offset,
+      parse         = parse,
+      straight      = straight,
+      padding       = padding,
+      label.padding = label.padding,
+      label.r       = label.r,
+      arrow         = arrow,
+      ...
+    )
+  )
+}
+
+#' @rdname geom_textpath
+#' @format NULL
+#' @usage NULL
+#' @export
+GeomLabelLine <- ggproto("GeomLabelLine", GeomLabelpath,
+  setup_params = function(data, params) {
+    params$flipped_aes <- has_flipped_aes(data, params, ambiguous = TRUE)
+    params
+  },
+
+  extra_params = c("na.rm", "orientation"),
+
+  setup_data = function(data, params) {
+    data$flipped_aes <- params$flipped_aes
+    data <- flip_data(data, params$flipped_aes)
+    data <- data[order(data$PANEL, data$group, data$x), ]
+    flip_data(data, params$flipped_aes)
+  }
+)
