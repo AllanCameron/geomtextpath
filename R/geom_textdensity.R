@@ -69,6 +69,53 @@ geom_textdensity    <- function(mapping = NULL,
   )
 }
 
+#' @rdname geom_textdensity
+#' @inheritParams geom_textdensity
+#' @inheritParams geom_labelpath
+#' @export
+geom_labeldensity <- function(mapping = NULL, data = NULL,
+  stat = "density", position = "identity",
+  na.rm = FALSE, show.legend = NA,
+  inherit.aes = TRUE,
+  ...,
+  lineend = "butt", linejoin = "round", linemitre = 10,
+  text_only = FALSE, gap = FALSE, upright = TRUE,
+  halign = "center", offset = NULL, parse = FALSE,
+  straight = FALSE,
+  padding = unit(0.15, "inch"),
+  label.padding = unit(0.25, "lines"),
+  label.r = unit(0.15, "lines"),
+  arrow = NULL
+) {
+  layer(
+    geom        = GeomLabelpath,
+    mapping     = mapping,
+    data        = data,
+    stat        = stat,
+    position    = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = set_params(
+      na.rm         = na.rm,
+      lineend       = lineend,
+      linejoin      = linejoin,
+      linemitre     = linemitre,
+      text_only     = text_only,
+      gap           = gap,
+      upright       = upright,
+      halign        = halign,
+      offset        = offset,
+      parse         = parse,
+      straight      = straight,
+      padding       = padding,
+      label.padding = label.padding,
+      label.r       = label.r,
+      arrow         = arrow,
+      ...
+    )
+  )
+}
+
 
 #' @rdname geom_textdensity
 #' @format NULL
@@ -92,4 +139,35 @@ GeomTextDensity <- ggproto(
                      spacing    = 0,
                      linecolour = "_copy_text_colour_",
                      angle      = 0)
+)
+
+
+#' @rdname geom_textdensity
+#' @format NULL
+#' @usage NULL
+#' @export
+#' @include geom_textpath.R
+GeomLabelDensity <- ggproto(
+  "GeomLabelDensity",
+  GeomLabelpath,
+  required_aes = c("x", "label"),
+  default_aes = aes(
+    colour       = "black",
+    alpha        = 1,
+    size         = 3.88,
+    hjust        = 0.5,
+    vjust        = 0.5,
+    family       = "",
+    fontface     = 1,
+    lineheight   = 1.2,
+    linewidth    = 0.5,
+    linetype     = 1,
+    spacing      = 0,
+    linecolour   = "_copy_text_colour_",
+    angle        = 0,
+    fill         = "white",
+    boxcolour    = "_copy_text_colour_",
+    boxlinetype  = 1,
+    boxlinewidth = NULL
+  )
 )

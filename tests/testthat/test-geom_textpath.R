@@ -35,6 +35,25 @@ test_that("The geom_textsmooth() constructor works", {
   expect_s3_class(x$stat, "StatSmooth")
 })
 
+test_that("The geom_labeldensity() constructor works", {
+
+  x <- geom_labeldensity()
+
+  expect_s3_class(x, "LayerInstance")
+  expect_s3_class(x$geom, "GeomLabelpath")
+  expect_s3_class(x$stat, "StatDensity")
+})
+
+test_that("The geom_labelcontour() constructor works", {
+
+  x <- geom_labelcontour()
+
+  expect_s3_class(x, "LayerInstance")
+  expect_s3_class(x$geom, "GeomLabelpath")
+  expect_s3_class(x$stat, "StatTextContour")
+})
+
+
 test_that("Text path grob has correct types", {
 
   p <- ggplot(iris, aes(Sepal.Width)) +
