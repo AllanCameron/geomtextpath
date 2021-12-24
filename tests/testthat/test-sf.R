@@ -61,4 +61,5 @@ test_that("We can make grobs from sf features", {
   expect_silent(sf_textgrob(df))
   expect_warning(sf_textgrob(df_missing, na.rm = FALSE))
 
+  expect_silent(sf_textgrob(df, as_textbox = TRUE))
 })
