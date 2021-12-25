@@ -25,9 +25,10 @@ associated line can also provide a neat alternative to legends, without
 the need for specifying exact label positions, and with a lower risk of
 overplotting.
 
-The text will always stick together and follow the path, even if you
-change the size and aspect ratio of your plotting device. It does so
-without the need to redraw your plot each time, as shown in the
+Using geomtextpath, your text can follow any path, and will remain
+correctly spaced and angled, even if you change the size and aspect
+ratio of your plotting device. It does so without the need to redraw
+your plot each time, as shown in the
 [introduction](https://allancameron.github.io/geomtextpath/articles/geomtextpath.html)
 vignette.
 
@@ -50,11 +51,11 @@ library(geomtextpath)
 #> Loading required package: ggplot2
 ```
 
-The core function in this package, `geom_textpath`, works like any other
-`geom` in `ggplot2`. It takes its x co-ordinates, its y co-ordinates and
-its text label from an aesthetic mapping. At its most basic, this allows
-the `label` to be plotted on an arbitrary path, as shown in the
-following example:
+The core functions in this package, `geom_textpath` and
+`geom_labelpath`, work like any other `geom` in `ggplot2`. They take
+their co-ordinates, their y co-ordinates and their text label from an
+aesthetic mapping. At its most basic, this allows the `label` to be
+plotted on an arbitrary path, as shown in the following example:
 
 ``` r
 t <- seq(5, -1, length.out = 1000) * pi
@@ -74,27 +75,54 @@ ggplot(spiral, aes(x, y, label = text)) +
 
 <img src="man/figures/README-spiral-1.png" width="100%" style="display: block; margin: auto;" />
 
-Just as `geom_path` is the foundation for several other geoms in
-`ggplot2`, so too is `geom_textpath` the foundation of the other geoms
-in this package, which include:
+If we want our text in a box, even when the text is curved, we can use
+`geom_labelpath` instead:
 
-  - `geom_textline`
-  - `geom_textdensity`
-  - `geom_textsmooth`
-  - `geom_textcontour`
-  - `geom_textdensity2d`
+``` r
+set.seed(5)
+
+df <- data.frame(x = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
+                 y = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
+                 z = "A curved textbox on an arbitrary path")
+
+ggplot(df, aes(x, y, label = z)) + geom_labelpath(size = 5)
+```
+
+<img src="man/figures/README-intro_label-1.png" width="100%" style="display: block; margin: auto;" />
+
+Of course, the point of this package is not to produce such graphical
+novelties, but to provide an easy and visually appealing way to present
+your data. Just as `geom_path` is the foundation for several other geoms
+in `ggplot2`, so too are `geom_textpath` and `geom_labelpath` the
+foundation of the other geoms in this package. The line-based geoms in
+`ggplot` all have two equivalents in this package:
+
+-   `geom_path` → `geom_textpath` and `geom_labelpath`
+-   `geom_line` → `geom_textline` and `geom_labelline`
+-   `geom_segment` → `geom_textsegment` and `geom_labelsegment`
+-   `geom_density` → `geom_textdensity` and `geom_labeldensity`
+-   `geom_smooth` → `geom_textsmooth` and `geom_labelsmooth`
+-   `geom_contour` → `geom_textcontour`and `geom_labelcontour`
+-   `geom_density2d` → `geom_textdensity2d` and `geom_labeldensity2d`
+-   `geom_sf` → `geom_textsf` and `geom_labelsf`
 
 Each of these aims to replicate all the functionality of the equivalent
 `ggplot2` function, but with direct text labels that follow the shape of
 the lines drawn.
 
-### `geom_textline`
+For the special case of `geom_sf`, which draws different shapes based on
+the geometry objects drawn, the equivalent `geom_textsf` and
+`geom_labelsf`, will identify and label the linestring components
+(typically rivers and roads), without attempting to label polygons.
 
-You can use `geom_textline` as a drop in for `geom_line` if you want it
-directly labelled. Just pass the `label` you want as an argument to
-`geom_textline` (or if you have grouped data you can pass the label as
-an aesthetic mapping). As in the other geoms here, you can specify the
-line’s appearance and the text’s appearance separately.
+### `geom_textline` and `geom_labelline`
+
+You can use `geom_textline` and `geom_labelline` as a drop in for
+`geom_line` if you want it directly labelled. Just pass the `label` you
+want as an argument to `geom_textline` (or if you have grouped data you
+can pass the label as an aesthetic mapping). As in the other geoms here,
+you can specify the line’s appearance and the text’s appearance
+separately.
 
 ``` r
 ggplot(pressure, aes(temperature, pressure)) +
@@ -106,10 +134,10 @@ ggplot(pressure, aes(temperature, pressure)) +
 
 <img src="man/figures/README-textline_demo-1.png" width="100%" style="display: block; margin: auto;" />
 
-### `geom_textdensity`
+### `geom_textdensity` and `geom_labeldensity`
 
-This is the analogue of `geom_density` that allows for smoothly curved
-labels on density plots
+These are the analogues of `geom_density` that allows for smoothly
+curved labels on density plots
 
 ``` r
 ggplot(iris, aes(x = Sepal.Length, colour = Species, label = Species)) +
@@ -122,10 +150,9 @@ ggplot(iris, aes(x = Sepal.Length, colour = Species, label = Species)) +
 Note that we have been able to “reclaim” the space normally taken up by
 the legend without leaving any ambiguity in the plot.
 
-### `geom_textsmooth`
+### `geom_textsmooth` and `geom_labelsmooth`
 
-We can use `geom_textsmooth` to get labelled trend lines through
-scatterplots:
+We can use these geoms to get labelled trend lines through scatterplots:
 
 ``` r
 ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
@@ -156,10 +183,10 @@ ggplot(economics, aes(date, unemploy)) +
 ### Labelled contour lines
 
 Adding labels to the level of your contour lines is now as simple as
-calling `geom_textcontour` instead of `geom_contour`:
+calling `geom_textcontour` or `geom_labelcontour` instead of
+`geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -173,8 +200,8 @@ ggplot(df, aes(x, y, z = z)) +
 
 <img src="man/figures/README-volcano-1.png" width="100%" style="display: block; margin: auto;" />
 
-We also have `geom_textdensity2d` for the common use case of 2D density
-contours:
+We also have `geom_textdensity2d` and `geom_labeldensity2d` for the
+common use case of 2D density contours:
 
 ``` r
 set.seed(1)
@@ -188,11 +215,31 @@ ggplot(df, aes(x, y)) +
 
 <img src="man/figures/README-density2d-1.png" width="100%" style="display: block; margin: auto;" />
 
+### `geom_textsf` and `geom_labelsf`
+
+These geoms behave much the same way as `geom_sf`, except linestrings
+such as rivers and roads can be given (curved) text labels:
+
+``` r
+crop_box <- sf::st_bbox(c(xmin = -4.2, xmax = -3.9, ymin = 55.9, ymax = 56))
+df <- sf::st_crop(waterways, crop_box)
+#> Warning: attribute variables are assumed to be spatially constant throughout all
+#> geometries
+
+ggplot(df) + geom_textsf(aes(label = name),
+                         hjust = 0.75, vjust = -0.3, fill = "#E4E0A3")
+#> Warning: The text offset exceeds the curvature in one or more paths. This will result in
+#> displaced letters. Consider reducing the vjust or text size, or use the hjust
+#> parameter to move the string to a different point on the path.
+```
+
+<img src="man/figures/README-geom_textsf-1.png" width="100%" style="display: block; margin: auto;" />
+
 ### Arbitrary `stat` transformations
 
-Other “stat” transformations can be used directly on `geom_textpath`.
-For example, functions can be labelled with paths created in
-`stat_function`:
+Other “stat” transformations can be used directly on `geom_textpath` and
+`geom_labelpath`. For example, functions can be labelled with paths
+created in `stat_function`:
 
 ``` r
 ggplot() + 
@@ -275,7 +322,7 @@ coordinates.
 df <- data.frame(x = c(1, 1000), y = 1, text = "This is a perfectly flat label")
 
 p <- ggplot(df, aes(x, y, label = text)) +
-  geom_textpath(size = 6, text_only = TRUE) +
+  geom_labelpath(size = 6, text_only = TRUE) +
   ylim(c(0.9, 1.1))
 
 p
@@ -389,7 +436,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 
@@ -478,11 +524,11 @@ problems than it would solve.
 
 Many paths will be too noisy or too angular to directly label in a
 visually appealing fashion if the text adheres too closely to the
-intricacies of the line. Often, a `geom_textsmooth` with `text_only =
-TRUE` is the best option in such cases, as in the examples above. There
-is also a `straight` parameter so that a label is still applied at an
-appropriate point and angle on the line, but the text will not attempt
-to follow every bump on the path.
+intricacies of the line. Often, a `geom_textsmooth` with
+`text_only = TRUE` is the best option in such cases, as in the examples
+above. There is also a `straight` parameter so that a label is still
+applied at an appropriate point and angle on the line, but the text will
+not attempt to follow every bump on the path.
 
 Other paths may have points of tight curvature, and setting an offset /
 vjust for the text that is larger than the distance to the focus point
