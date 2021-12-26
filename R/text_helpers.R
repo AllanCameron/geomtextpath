@@ -17,85 +17,99 @@
 #'
 #' @examples
 #' measure_text("Hello there,\nGeneral Kenobi")
-measure_text <- function(
-  label,
-  gp       = gpar(),
-  ppi      = 72,
-  vjust    = 0.5,
-  hjust    = 0,
-  halign   = "center",
-  straight = FALSE
+measure_label <- function(
+    label,
+    gp       = gpar(),
+    ppi      = 72,
+    vjust    = 0.5,
+    hjust    = 0,
+    halign   = "center",
+    straight = FALSE,
+    rich     = FALSE
 ) {
-  if (is.language(label) || straight) {
-    ans <- measure_exp(label = label, gp = gp, ppi = ppi, vjust = vjust)
-    return(ans)
+  n_label <- length(label)
+  gp <- rep_gp(gp_fill_defaults(gp), n_label)
+
+  if (isTRUE(rich)) {
+    rlang::check_installed(c("xml2", "markdown"), "for parsing rich text")
+    label  <- parse_richtext(label, gp)
+    gp_new <- attr(label, "gp")
   } else {
-    label <- as.character(label)
+    label  <- data_frame(text = label, id = seq_along(label), yoff = 0)
+    gp_new <- gp
   }
+
+  straight   <- isTRUE(straight)
+  plain_text <- anyDuplicated(label$id) == 0 && straight
+  if (is.language(label$text) || plain_text) {
+    ans <- measure_language(label = label, gp = gp_new,
+                            ppi = ppi, vjust = vjust)
+  } else if (straight) {
+    ans <- measure_straight(label = label, gp = gp_new,
+                            ppi = ppi, vjust = vjust)
+  } else {
+    ans <- measure_curved(label = label, gp = gp_new,
+                          ppi = ppi, vjust = vjust,
+                          halign = halign, old_gp = gp)
+  }
+  attr(ans, "gp") <- gp_new
+  ans
+}
+
+measure_curved <- function(
+    label,
+    gp = gpar(),
+    ppi = 72,
+    vjust = 0.5,
+    hjust = 0,
+    halign = "center",
+    straight = FALSE,
+    old_gp = gpar()
+) {
+  label$text <- as.character(label$text)
 
   halign <- match(halign, c("center", "left", "right"), nomatch = 2L)
   halign <- c("center", "left", "right")[halign]
-  nlabel <- length(label)
+  nlabel <- length(unique(label$id))
 
   if ({unit_vjust <- is.unit(vjust)}) {
     offset_unit <- rep(vjust, length.out = nlabel)
     vjust <- 0
   }
-  # Remedy for https://github.com/r-lib/systemfonts/issues/85
-  vjust[vjust == 1] <- 1 + .Machine$double.eps
 
-  # Parametrise call to shape_text
-  string_args <- list(
-    strings    =  label,
-    family     =  gp$fontfamily %||% "",
-    italic     = (gp$font       %||% 1) %in% c(3, 4),
-    bold       = (gp$font       %||% 1) %in% c(2, 4),
-    size       =  gp$fontsize   %||% 12,
-    lineheight =  gp$lineheight %||% 1.2,
-    tracking   =  gp$tracking   %||% 0,
-    res   = ppi,
-    vjust = vjust,
-    hjust = hjust,
-    align = halign
-  )
+  txt <- text_shape(label$text, label$id, gp, res = ppi, vjust = vjust,
+                    hjust = hjust, align = halign)
 
-  txt <- do.call(shape_text, string_args)
+  # We use the original gp here because the new gp may have altered font size
+  # due to super/subscripts etc.
+  info <- font_info_gp(old_gp, res = ppi)
 
-  # Acquire x-height
-  string_args$strings <- rep("x", length(label))
-  string_args$vjust   <- 0.5
-  x_adjust <- do.call(shape_text, string_args)$shape$y_offset
-
-  # Extract text and metrics
   metrics <- txt$metrics
   txt     <- txt$shape
 
-  # Translate and cluster glyphs
-  txt$letter <- translate_glyph(txt$index, txt$metric_id, gp)
-  txt        <- cluster_glyphs(txt)
-  txt        <- filter_glyphs(txt, nlabel)
+  txt <- txt[order(txt$metric_id, txt$string_id), , drop = FALSE]
+  txt$substring <- group_id(txt, c("metric_id", "string_id"))
+  txt$letter    <- translate_glyph(txt$index, txt$substring, gp)
+  txt           <- cluster_glyphs(txt)
+  txt           <- filter_glyphs(txt, nlabel)
 
-  # Adjust shape for resolution
-  metrics$width  <- metrics$width  / ppi
-  metrics$height <- measure_text_dim(label, gp, "height")
-  metrics$x_adj  <-  x_adjust / ppi
-  txt$x_offset   <-  txt$x_offset   / ppi
-  txt$x_midpoint <-  txt$x_midpoint / ppi
-  txt$y_offset   <- (txt$y_offset - x_adjust[txt$metric_id]) / ppi
+  metrics$x_adj  <-  - 0.5 * info$max_ascend
+  metrics$height <- metrics$height - info$lineheight
+  txt$y_offset   <- (txt$y_offset - (-0.5 - label$yoff[txt$substring]) *
+                       info$max_ascend[pmin(txt$metric_id, nrow(info))])
 
-  # Format shape
   ans <- data_frame(
     glyph =  txt$letter,
     ymin  =  txt$y_offset,
     xmin  =  txt$x_offset,
     xmid  = (txt$x_offset + txt$x_midpoint),
-    xmax  = (txt$x_offset + txt$x_midpoint * 2)
+    xmax  = (txt$x_offset + txt$x_midpoint * 2),
+    substring = group_id(txt, c("metric_id", "string_id"))
   )
 
-  # Split and assign group-specific attributes
   ans <- split(ans, txt$metric_id)
   ans <- lapply(seq_along(ans), function(i) {
-    df      <- ans[[i]]
+    df <- ans[[i]]
     offset  <- unique(c(0, df$ymin))
     df$y_id <- match(df$ymin, offset)
     if (unit_vjust) {
@@ -108,51 +122,39 @@ measure_text <- function(
     df
   })
 
-  return(ans)
+  ans
 }
 
-# This is a simpler version of measure_text for expressions only
-measure_exp <- function(label, gp = gpar(), ppi = 72, vjust = 0.5)
-{
-  width  <- measure_text_dim(label, gp, "width")
-  height <- measure_text_dim(label, gp, "height")
-  ymin   <- -(height * (vjust - 0.5))
+measure_language <- function(label, gp = gpar(), ppi = 72, vjust = 0.5) {
+  width  <- measure_text_dim(label$text, gp, "width")
+  height <- measure_text_dim(label$text, gp, "height")
+  ymin   <- - (height * (vjust - 0.5))
 
   Map(
     function(label, width, height) {
       ans <- data_frame(
         glyph = list(label),
         xmin  = 0,
-        xmid  = width / 2,
+        xmid  =  width / 2,
         xmax  = width,
         y_id  = 1L
       )
-      attr(ans, "offset")  <- ymin
-      attr(ans, "metrics") <- data_frame(width = width, height = height,
-                                         x_adj = -0.5 * height)
+      attr(ans, "offset") <- ymin
+      attr(ans, "metrics") <- data_frame(
+        width  = width,
+        height = height,
+        x_adj  = -0.5 * height
+      )
       ans
     },
-    label  = as.list(label),
+    label  = as.list(label$text),
     width  = width,
     height = height
   )
 }
 
-measure_text_dim <- function(labels, gp, dim = "height") {
-  dimfun <- switch(
-    dim,
-    height = grobHeight,
-    width  = grobWidth
-  )
-  gp <- lapply(seq_along(labels), function(i) {
-    recycle_gp(gp, `[`, i)
-  })
-  grobs <- Map(
-    textGrob, gp = gp, label = labels
-  )
-  ans <- do.call(unit.c, lapply(grobs, dimfun))
-  as_inch(ans, dim)
-}
+# TODO: Implement for rich text, now just a copy of measure_language
+measure_straight <- measure_language
 
 # Glyph translation -------------------------------------------------------
 
@@ -284,6 +286,22 @@ resolution_to_unit <- function(res = 72, unit = "inch") {
     convertUnit(unit(adj, "inch"), unitTo = unit, valueOnly = TRUE)
   }
   (1 / res) * adj
+}
+
+measure_text_dim <- function(labels, gp, dim = "height") {
+  dimfun <- switch(
+    dim,
+    height = grobHeight,
+    width  = grobWidth
+  )
+  gp <- lapply(seq_along(labels), function(i) {
+    recycle_gp(gp, `[`, i)
+  })
+  grobs <- Map(
+    textGrob, gp = gp, label = labels
+  )
+  ans <- do.call(unit.c, lapply(grobs, dimfun))
+  as_inch(ans, dim)
 }
 
 

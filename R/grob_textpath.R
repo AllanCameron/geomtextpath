@@ -180,6 +180,18 @@ recycle_gp <- function(gp, fun, ...) {
   return(gp)
 }
 
+rep_gp <- function(gp, length.out = max(lengths(gp))) {
+  gp[] <- lapply(gp, rep, length.out = length.out)
+  gp
+}
+
+split_gp <- function(gp, i = seq_len(max(lengths(gp)))) {
+  gp <- rep_gp(gp, max(i))
+  lapply(i, function(j) {
+    recycle_gp(gp, `[`, j)
+  })
+}
+
 # Helper function to fill in missing parameters by defaults
 # Based on ggplot2:::modify_list
 gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {

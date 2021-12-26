@@ -153,7 +153,8 @@ GeomRichtextpath <- ggproto(
         list(x = 0.5, y = 0.5, theta = coord$theta)
       } else NULL,
       padding = text_params$padding,
-      arrow = arrow
+      arrow = arrow,
+      rich = TRUE
     )
 
   }

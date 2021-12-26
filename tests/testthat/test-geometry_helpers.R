@@ -14,10 +14,10 @@ test_that("Text angles are correct", {
   expect_equal(angles[3:4], c(-45, -45))
   expect_equal(arclength, c(2 * 0:4))
 
-  labels <- measure_text("O")[[1]]
+  labels <- measure_label("O")[[1]]
 
-  # measure_text can handle unit vjust
-  expect_silent(measure_text("O", vjust = unit(0, "mm")))
+  # measure_label can handle unit vjust
+  expect_silent(measure_label("O", vjust = unit(0, "mm")))
 
   # Test angles of `place_text`
   test <- place_text(xy, labels, hjust = 0.25)
@@ -44,7 +44,7 @@ test_that("Appropriate warning with excess curvature", {
   angles    <- .angle_from_xy(xy$x, xy$y, degrees = TRUE)
   arclength <- .arclength_from_xy(xy$x, xy$y)
 
-  labels <- measure_text("O", vjust = -4)[[1]]
+  labels <- measure_label("O", vjust = -4)[[1]]
 
   # Test angles of `place_text`
   expect_warning(place_text(xy, labels, hjust = 0.25),
@@ -85,7 +85,7 @@ test_that("Path trimming is correct", {
   xy <- split(xy, xy$id)
   xy <- lapply(xy, function(x) {
     x$length <- .arclength_from_xy(x$x, x$y); x;})
-  label  <- measure_text(c("A", "B", "C"))
+  label  <- measure_label(c("A", "B", "C"))
   glyphs <- Map(place_text, path = xy, label = label)
   glyphs <- rbind_dfs(glyphs)
   xy     <- rbind_dfs(xy)
@@ -167,7 +167,7 @@ test_that("text can be placed on 2-point paths", {
 
   xy <- data.frame(x = c(1,2,3,4), y = c(1,2,2,1), id = c(1,1,2,2), size = 5)
   xy <- split(xy, xy$id)
-  label <- measure_text(c("A", "B"))
+  label <- measure_label(c("A", "B"))
 
   test <- Map(place_text, label = label, path = xy)
   test <- rbind_dfs(test)
@@ -204,7 +204,7 @@ test_that("Anchor point calculations are correct", {
 
 test_that("Flipping logic is correct", {
 
-  label <- measure_text("ABC")[[1]]
+  label <- measure_label("ABC")[[1]]
   xy <- data_frame(x = 2:1, y = 1:2)
   angle <- .angle_from_xy(xy$x, xy$y, norm = TRUE, degrees = TRUE)
   angle <- rep(angle, nrow(label))
@@ -237,8 +237,8 @@ test_that("Flipping logic is correct", {
 
 test_that("Flipping appropriately adjusts offset", {
 
-  label <- measure_text(c("ABC"))[[1]]
-  attr(label, "offset") <- 1
+  label <- measure_label(c("ABC"))[[1]]
+  attr(label, "offset") <- c(0, 1)
 
   xy <- data_frame(x = c(1, 0), y = 2)
 
@@ -251,8 +251,8 @@ test_that("Flipping appropriately adjusts offset", {
 
 test_that("Flipping leads to correctly clipped path", {
 
-  label <- measure_text(c("ABCD"))[[1]]
-  attr(label, "offset") <- 1
+  label <- measure_label(c("ABCD"))[[1]]
+  attr(label, "offset") <- c(0, 1)
 
   xy <- data_frame(x = c(2, 0), y = 2)
   xy$length <- .arclength_from_xy(xy$x, xy$y)

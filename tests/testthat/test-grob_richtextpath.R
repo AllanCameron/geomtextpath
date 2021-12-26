@@ -1,7 +1,7 @@
 test_that("label can be missing", {
 
-  case <- richtextpathGrob(x = c(0, 1), y = c(0, 1), id = c(1, 1))
-  ctrl <- richtextpathGrob(x = c(0, 1), y = c(0, 1), id = c(1, 1),
+  case <- richtextpathGrob(x = c(0, 1), y = c(0, 1), id = c(1, 1), rich = TRUE)
+  ctrl <- richtextpathGrob(x = c(0, 1), y = c(0, 1), id = c(1, 1), rich = TRUE,
                            label = "<i>A</i>B<b>C</b>")
 
   expect_null(case$textpath)
@@ -15,7 +15,7 @@ test_that("label can be missing", {
 
   test <- richtextpathGrob(
     x = c(0, 1), y = c(0, 1), id = c(1, 1), label = "<i>A</i>B<b>C</b>",
-    polar_params = list(x = 0.5, y = 0.5)
+    polar_params = list(x = 0.5, y = 0.5), rich = TRUE
   )
   ppar <- test$textpath$params$polar_params
   expect_equal(convertUnit(ppar$x, "npc", valueOnly = TRUE), 0.5)
@@ -64,22 +64,16 @@ test_that("fontfaces are combined correctly", {
 })
 
 test_that("unit vjust works", {
-  case <- richtextpathGrob(x = c(0, 1), y = c(0, 1), id = c(1, 1),
+  case <- richtextpathGrob(x = c(0, 1), y = c(0, 1), id = c(1, 1), rich = TRUE,
                            label = "<i>A</i>B<b>C</b>", vjust = unit(1, "cm"))
-  ctrl <- richtextpathGrob(x = c(0, 1), y = c(0, 1), id = c(1, 1),
+  ctrl <- richtextpathGrob(x = c(0, 1), y = c(0, 1), id = c(1, 1), rich = TRUE,
                            label = "<i>A</i>B<b>C</b>", vjust = 0)
-  # TODO: Implement straight method
-  err  <- substitute(
-    richtextpathGrob(x = c(0, 1), y = c(0, 1), id = c(1, 1),
-                     label = "<i>A</i>B<b>C</b>", straight = TRUE)
-  )
 
   case <- attr(case$textpath$label[[1]], "offset")
   ctrl <- attr(ctrl$textpath$label[[1]], "offset")
 
   expect_s3_class(case, "unit")
   expect_type(ctrl, "double")
-  expect_error(eval(err), "doesn't work yet")
 })
 
 # These tests are mostly to hit the coverage
