@@ -237,6 +237,62 @@ filter_glyphs <- function(
   shape
 }
 
+
+# Rich text ---------------------------------------------------------------
+
+parse_richtext <- function(text, gp, md = TRUE, id = seq_along(text),
+                           inner = FALSE) {
+
+  text <- as.character(text)
+
+  if (!inner) {
+    # If text is multiple labels, loop myself
+    gps <- lapply(seq_along(text), function(i) {
+      recycle_gp(gp, function(x){x[pmin(length(x), i)]})
+    })
+    ans  <- Map(parse_richtext, text, gp = gps, md = md, id = id, inner = TRUE)
+    ans  <- rbind_dfs(ans)
+    ans_gp <- setdiff(names(ans), c("text", "id", "yoff"))
+    ans_gp <- do.call(gpar, ans[ans_gp])
+    attr(ans, "gp") <- ans_gp
+    return(ans)
+
+  }
+
+  old_gp <- gp
+
+  if (md) {
+    text <- markdown::markdownToHTML(text = text,
+                                     options = c("use_xhtml", "fragment_only"))
+
+  }
+  # Deal with <br> now, they are a pain to handle after parsing
+  text <- gsub("<br>", "\n", text, fixed = TRUE)
+
+  doc <- xml2::read_html(paste0("<!DOCTYPE html>", text))
+  doc <- xml2::as_list(doc)$html$body
+  drawing_context <- setup_context(gp = gp)
+  processed <- process_tags(doc, drawing_context)
+  strings   <- unlist(processed[, 1])
+  gp        <- processed[, 2]
+  yoff      <- unlist(processed[, 3])
+
+  gp <- lapply(gp, function(x) do.call(data_frame, unclass(x)))
+  gp <- do.call(rbind, gp)
+
+  data_frame(
+    text       = strings,
+    id         = id,
+    fontfamily = gp$fontfamily,
+    fontsize   = gp$fontsize,
+    font       = gp$font,
+    lineheight = gp$lineheight,
+    tracking   = old_gp$tracking[id] %||% 0,
+    col        = gp$col,
+    yoff       = yoff
+  )
+}
+
 # Helpers -----------------------------------------------------------------
 
 font_info_gp <- function(gp = gpar(), res = 72, unit = "inch") {
