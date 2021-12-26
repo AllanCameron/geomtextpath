@@ -29,6 +29,7 @@ geom_textpath(
   parse = FALSE,
   straight = FALSE,
   padding = unit(0.15, "inch"),
+  text_smoothing = 0,
   arrow = NULL
 )
 
@@ -45,14 +46,6 @@ geom_textline(
   lineend = "butt",
   linejoin = "round",
   linemitre = 10,
-  text_only = FALSE,
-  gap = NA,
-  upright = TRUE,
-  halign = "center",
-  offset = NULL,
-  parse = FALSE,
-  straight = FALSE,
-  padding = unit(0.15, "inch"),
   arrow = NULL
 )
 
@@ -191,6 +184,10 @@ follow the curve. This might be helpful for noisy paths.}
 \item{padding}{A \code{\link[grid:unit]{unit}} object of length 1 to determine the
 padding between the text and the path when the \code{gap} parameter trims the
 path.}
+
+\item{text_smoothing}{a \code{numeric(1)} value between 0 and 100 that smooths
+the text without affecting the line portion of the geom. The default value
+of \strong{0} means no smoothing is applied.}
 
 \item{arrow}{Arrow specification, as created by \code{\link[grid:arrow]{grid::arrow()}}.}
 

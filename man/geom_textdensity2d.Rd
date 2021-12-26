@@ -3,7 +3,9 @@
 \docType{data}
 \name{geom_textdensity2d}
 \alias{geom_textdensity2d}
+\alias{geom_labeldensity2d}
 \alias{GeomTextDensity2d}
+\alias{GeomLabelDensity2d}
 \title{Produce labelled contour lines of 2D density in  \pkg{ggplot2}}
 \usage{
 geom_textdensity2d(
@@ -22,6 +24,27 @@ geom_textdensity2d(
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE
+)
+
+geom_labeldensity2d(
+  mapping = NULL,
+  data = NULL,
+  stat = "density_2d",
+  position = "identity",
+  na.rm = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  ...,
+  contour_var = "density",
+  n = 100,
+  h = NULL,
+  adjust = c(1, 1),
+  lineend = "butt",
+  linejoin = "round",
+  linemitre = 10,
+  label.padding = unit(0.25, "lines"),
+  label.r = unit(0.15, "lines"),
+  arrow = NULL
 )
 }
 \arguments{
@@ -51,7 +74,7 @@ layer, as a string.}
 \item{position}{Position adjustment, either as a string, or the result of
 a call to a position adjustment function.}
 
-\item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{layer}}. These are often aesthetics, used to set an aesthetic to a fixed value, like \code{colour = "red"} or \code{size = 3}. These can also be the following text-path parameters:\describe{\item{\code{text_only}}{A \code{logical(1)} indicating whether the path part should be plotted along with the text (\code{FALSE}, the default). If \code{TRUE}, any parameters or aesthetics relating to the drawing of the path will be ignored.}\item{\code{gap}}{A \code{logical(1)} which if \code{TRUE}, breaks the path into two sections with a gap on either side of the label. If \code{FALSE}, the path is plotted as a whole. Alternatively, if \code{NA}, the path will be broken if the string has a \code{vjust} between 0 and 1, and not otherwise. The default for the label variant is \code{FALSE} and for the text variant is \code{NA}.}\item{\code{upright}}{A \code{logical(1)} which if \code{TRUE} (default), inverts any text where the majority of letters would upside down along the path, to improve legibility. If \code{FALSE}, the path decides the orientation of text.}\item{\code{halign}}{A \code{character(1)} describing how multi-line text should be justified. Can either be \code{"center"} (default), \code{"left"} or \code{"right"}.}\item{\code{offset}}{A \code{\link[grid:unit]{unit}} object of length 1 to determine the offset of the text from the path. If this is \code{NULL} (default), the \code{vjust} parameter decides the offset. If not \code{NULL}, the \code{offset} argument overrules the \code{vjust} setting.}\item{\code{parse}}{A \code{logical(1)} which if \code{TRUE}, will coerce the labels into expressions, allowing for plotmath syntax to be used.}\item{\code{straight}}{A \code{logical(1)} which if \code{TRUE}, keeps the letters of a label on a straight baseline and if \code{FALSE} (default), lets individual letters follow the curve. This might be helpful for noisy paths.}\item{\code{padding}}{A \code{\link[grid:unit]{unit}} object of length 1 to determine the padding between the text and the path when the \code{gap} parameter trims the path.}}}
+\item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{layer}}. These are often aesthetics, used to set an aesthetic to a fixed value, like \code{colour = "red"} or \code{size = 3}. These can also be the following text-path parameters:\describe{\item{\code{text_only}}{A \code{logical(1)} indicating whether the path part should be plotted along with the text (\code{FALSE}, the default). If \code{TRUE}, any parameters or aesthetics relating to the drawing of the path will be ignored.}\item{\code{gap}}{A \code{logical(1)} which if \code{TRUE}, breaks the path into two sections with a gap on either side of the label. If \code{FALSE}, the path is plotted as a whole. Alternatively, if \code{NA}, the path will be broken if the string has a \code{vjust} between 0 and 1, and not otherwise. The default for the label variant is \code{FALSE} and for the text variant is \code{NA}.}\item{\code{upright}}{A \code{logical(1)} which if \code{TRUE} (default), inverts any text where the majority of letters would upside down along the path, to improve legibility. If \code{FALSE}, the path decides the orientation of text.}\item{\code{halign}}{A \code{character(1)} describing how multi-line text should be justified. Can either be \code{"center"} (default), \code{"left"} or \code{"right"}.}\item{\code{offset}}{A \code{\link[grid:unit]{unit}} object of length 1 to determine the offset of the text from the path. If this is \code{NULL} (default), the \code{vjust} parameter decides the offset. If not \code{NULL}, the \code{offset} argument overrules the \code{vjust} setting.}\item{\code{parse}}{A \code{logical(1)} which if \code{TRUE}, will coerce the labels into expressions, allowing for plotmath syntax to be used.}\item{\code{straight}}{A \code{logical(1)} which if \code{TRUE}, keeps the letters of a label on a straight baseline and if \code{FALSE} (default), lets individual letters follow the curve. This might be helpful for noisy paths.}\item{\code{padding}}{A \code{\link[grid:unit]{unit}} object of length 1 to determine the padding between the text and the path when the \code{gap} parameter trims the path.}\item{\code{text_smoothing}}{a \code{numeric(1)} value between 0 and 100 that smooths the text without affecting the line portion of the geom. The default value of \strong{0} means no smoothing is applied.}}}
 
 \item{contour_var}{Character string identifying the variable to contour
 by. Can be one of \code{"density"}, \code{"ndensity"}, or \code{"count"}. See the section
@@ -86,6 +109,12 @@ display.}
 rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
+
+\item{label.padding}{Amount of padding around label. Defaults to 0.25 lines.}
+
+\item{label.r}{Radius of rounded corners. Defaults to 0.15 lines.}
+
+\item{arrow}{Arrow specification, as created by \code{\link[grid:arrow]{grid::arrow()}}.}
 }
 \description{
 Contour lines representing 2D density are available already in

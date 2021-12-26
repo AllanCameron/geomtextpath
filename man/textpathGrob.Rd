@@ -47,6 +47,7 @@ textpathGrob(
   gp_box = gpar(),
   gap = NA,
   upright = TRUE,
+  text_smoothing = 0,
   polar_params = NULL,
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
@@ -132,6 +133,10 @@ path.}
 \item{name}{ A character identifier. }
 
 \item{vp}{A Grid viewport object (or NULL).}
+
+\item{text_smoothing}{a \code{numeric(1)} value between 0 and 100 that smooths
+the text without affecting the line portion of the geom. The default value
+of \strong{0} means no smoothing is applied.}
 }
 \value{
 An object of class \code{gTree}, containing grobs.

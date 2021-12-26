@@ -71,6 +71,14 @@ test_that("The geom_labelcontour() constructor works", {
   expect_s3_class(x$stat, "StatTextContour")
 })
 
+test_that("The geom_labeldensity2d() constructor works", {
+
+  x <- geom_labeldensity2d()
+
+  expect_s3_class(x, "LayerInstance")
+  expect_s3_class(x$geom, "GeomLabelDensity2d")
+  expect_s3_class(x$stat, "StatDensity2d")
+})
 
 test_that("Text path grob has correct types", {
 

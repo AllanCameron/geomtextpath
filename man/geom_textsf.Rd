@@ -3,10 +3,23 @@
 \docType{data}
 \name{geom_textsf}
 \alias{geom_textsf}
+\alias{geom_labelsf}
 \alias{GeomTextSf}
+\alias{GeomLabelSf}
 \title{Visualise sf objects with labels}
 \usage{
 geom_textsf(
+  mapping = aes(),
+  data = NULL,
+  stat = "sf",
+  position = "identity",
+  na.rm = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  ...
+)
+
+geom_labelsf(
   mapping = aes(),
   data = NULL,
   stat = "sf",

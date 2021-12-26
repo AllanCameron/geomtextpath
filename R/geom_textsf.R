@@ -97,6 +97,32 @@ geom_textsf <- function(mapping = aes(), data = NULL, stat = "sf",
 
 #' @export
 #' @rdname geom_textsf
+#' @inheritParams ggplot2::geom_point
+#' @inheritParams geom_labelpath
+#' @param ... Extra arguments passed to [`geom_textpath`][geom_textpath]
+geom_labelsf <- function(mapping = aes(), data = NULL, stat = "sf",
+                    position = "identity", na.rm = FALSE, show.legend = NA,
+                    inherit.aes = TRUE, ...) {
+  c(
+    layer_sf(
+      geom = GeomLabelSf,
+      data = data,
+      mapping = mapping,
+      stat = stat,
+      position = position,
+      show.legend = show.legend,
+      inherit.aes = inherit.aes,
+      params = list(
+        na.rm = na.rm,
+        ...
+      )
+    ),
+    coord_sf(default = TRUE)
+  )
+}
+
+#' @export
+#' @rdname geom_textsf
 #' @usage NULL
 #' @format NULL
 GeomTextSf <- ggproto("GeomTextSf", GeomSf,
@@ -121,6 +147,7 @@ GeomTextSf <- ggproto("GeomTextSf", GeomSf,
 
   draw_panel = function(data, panel_params, coord, legend = NULL,
                         lineend = "butt", linejoin = "round", linemitre = 10,
+                        text_smoothing = 0,
                         arrow = NULL, na.rm = TRUE) {
     if (!inherits(coord, "CoordSf")) {
       abort("geom_sf() must be used with coord_sf()")
@@ -128,7 +155,49 @@ GeomTextSf <- ggproto("GeomTextSf", GeomSf,
 
     data <- coord$transform(data, panel_params)
     sf_textgrob(data, lineend = lineend, linejoin = linejoin,
-                   linemitre = linemitre,
+                   linemitre = linemitre, text_smoothing = text_smoothing,
                    arrow = arrow, na.rm = na.rm)
+  }
+)
+
+
+#' @export
+#' @rdname geom_textsf
+#' @usage NULL
+#' @format NULL
+GeomLabelSf <- ggproto("GeomLabelSf", GeomSf,
+  required_aes = c("geometry", "label"),
+  default_aes = aes(
+    colour       = "black",
+    alpha        = 1,
+    size         = 3.88,
+    hjust        = 0.5,
+    vjust        = 0.5,
+    family       = "",
+    fontface     = 1,
+    lineheight   = 1.2,
+    linewidth    = 0.5,
+    linetype     = 1,
+    spacing      = 0,
+    linecolour   = "_copy_text_colour_",
+    angle        = 0,
+    fill         = "white",
+    boxfill      = "white",
+    boxcolour    = "_copy_text_colour_",
+    boxlinetype  = 1,
+    boxlinewidth = NULL
+  ),
+
+  draw_panel = function(data, panel_params, coord, legend = NULL,
+                        lineend = "butt", linejoin = "round", linemitre = 10,
+                        arrow = NULL, text_smoothing = 0, na.rm = TRUE) {
+    if (!inherits(coord, "CoordSf")) {
+      abort("geom_sf() must be used with coord_sf()")
+    }
+
+    data <- coord$transform(data, panel_params)
+    sf_textgrob(data, lineend = lineend, linejoin = linejoin,
+                   linemitre = linemitre, text_smoothing = text_smoothing,
+                   arrow = arrow, na.rm = na.rm, as_textbox = TRUE)
   }
 )

@@ -33,20 +33,24 @@
 #' @param padding A [`unit`][grid::unit()] object of length 1 to determine the
 #'   padding between the text and the path when the `gap` parameter trims the
 #'   path.
+#' @param text_smoothing a `numeric(1)` value between 0 and 100 that smooths
+#'   the text without affecting the line portion of the geom. The default value
+#'   of **0** means no smoothing is applied.
 #'
 #' @return A `list` with the parameters.
 #' @md
 #' @keywords internal rd_dots
 static_text_params <- function(
-  .type = "text",
-  text_only = FALSE,
-  gap       = NULL,
-  upright   = TRUE,
-  halign    = "center",
-  offset    = NULL,
-  parse     = FALSE,
-  straight  = FALSE,
-  padding   = unit(0.15, "inch")
+  .type          = "text",
+  text_only      = FALSE,
+  gap            = NULL,
+  upright        = TRUE,
+  halign         = "center",
+  offset         = NULL,
+  parse          = FALSE,
+  straight       = FALSE,
+  padding        = unit(0.15, "inch"),
+  text_smoothing = 0
 ) {
   if (is.null(gap)) {
     gap <- switch(.type, text = NA, FALSE)
@@ -54,13 +58,14 @@ static_text_params <- function(
   halign <- rlang::arg_match0(halign, c("center", "left", "right"))
 
   list(
-    text_only = assert(text_only, "logical"),
-    gap       = assert(gap,       "logical", allow_NAs = TRUE),
-    upright   = assert(upright,   "logical"),
-    parse     = assert(parse,     "logical"),
-    straight  = assert(straight,  "logical", allow_NULL = TRUE),
-    padding   = assert(padding,   "unit"),
-    offset    = assert(offset,    "unit", allow_NULL = TRUE),
-    halign    = halign
+    text_only      = assert(text_only,      "logical"),
+    gap            = assert(gap,            "logical", allow_NAs = TRUE),
+    upright        = assert(upright,        "logical"),
+    parse          = assert(parse,          "logical"),
+    straight       = assert(straight,       "logical", allow_NULL = TRUE),
+    padding        = assert(padding,        "unit"),
+    offset         = assert(offset,         "unit", allow_NULL = TRUE),
+    text_smoothing = assert(text_smoothing, "numeric"),
+    halign         = halign
   )
 }

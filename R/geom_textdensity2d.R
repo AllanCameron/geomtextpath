@@ -75,6 +75,45 @@ geom_textdensity2d <- function(mapping = NULL,
   )
 }
 
+#' @rdname geom_textdensity2d
+#' @inheritParams geom_textdensity2d
+#' @inheritParams geom_labelpath
+#' @export
+geom_labeldensity2d <- function(mapping = NULL, data = NULL,
+  stat = "density_2d", position = "identity",
+  na.rm = FALSE, show.legend = NA,
+  inherit.aes = TRUE,
+  ...,
+  contour_var = "density",
+  n = 100,
+  h = NULL,
+  adjust = c(1, 1),
+  lineend = "butt", linejoin = "round", linemitre = 10,
+  label.padding = unit(0.25, "lines"),
+  label.r = unit(0.15, "lines"),
+  arrow = NULL
+) {
+  layer(
+    geom        = GeomLabelDensity2d,
+    mapping     = mapping,
+    data        = data,
+    stat        = stat,
+    position    = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = set_params(
+      na.rm         = na.rm,
+      lineend       = lineend,
+      linejoin      = linejoin,
+      linemitre     = linemitre,
+      contour       = TRUE,
+      label.padding = label.padding,
+      label.r       = label.r,
+      arrow         = arrow,
+      ...
+    )
+  )
+}
 
 #' @rdname geom_textdensity2d
 #' @format NULL
@@ -96,6 +135,40 @@ GeomTextDensity2d <- ggproto("GeomTextDensity2d", GeomTextpath,
                     spacing = 0,
                     linecolour = "_copy_text_colour_",
                     angle = 0),
+
+  setup_data = function(data, params) {
+
+    data$label <- as.character(data$level)
+    data
+  }
+)
+
+#' @rdname geom_textdensity2d
+#' @format NULL
+#' @usage NULL
+#' @export
+#' @include geom_textpath.R
+GeomLabelDensity2d <- ggproto("GeomLabelDensity2d", GeomLabelpath,
+  required_aes = c("x", "y"),
+  default_aes = aes(
+    colour       = "black",
+    alpha        = 1,
+    size         = 3.88,
+    hjust        = 0.5,
+    vjust        = 0.5,
+    family       = "",
+    fontface     = 1,
+    lineheight   = 1.2,
+    linewidth    = 0.5,
+    linetype     = 1,
+    spacing      = 0,
+    linecolour   = "_copy_text_colour_",
+    angle        = 0,
+    fill         = "white",
+    boxcolour    = "_copy_text_colour_",
+    boxlinetype  = 1,
+    boxlinewidth = NULL
+  ),
 
   setup_data = function(data, params) {
 
