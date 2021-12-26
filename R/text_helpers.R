@@ -238,5 +238,52 @@ filter_glyphs <- function(
   shape
 }
 
+font_info_gp <- function(gp = gpar(), res = 72, unit = "inch") {
+  info <- systemfonts::font_info(
+    family =  gp$fontfamily %||% "",
+    italic = (gp$font       %||% 1) %in% c(3, 4),
+    bold   = (gp$font       %||% 1) %in% c(2, 4),
+    size   =  gp$fontsize   %||% 12,
+    res    = res
+  )
+  adj <- resolution_to_unit(res = res, unit = unit)
+  info$bbox <- lapply(info$bbox, `*`, adj)
+  vars <- c("max_ascend", "max_descend",
+            "max_advance_width", "max_advance_height", "lineheight",
+            "underline_pos", "underline_size")
+  info[, vars] <- info[, vars] * adj
+  info
+}
+
+# Takes care of default gpar() settings and translates units from pixels
+text_shape <- function(text, id, gp, res = 72, vjust = 0.5, hjust = 0.5,
+                       align = "center", unit = "inch") {
+  txt <- shape_text(
+    strings    =  text,
+    family     =  gp$fontfamily %||% "",
+    size       =  gp$fontsize   %||% 12,
+    italic     = (gp$font       %||% 1) %in% c(3, 4),
+    bold       = (gp$font       %||% 1) %in% c(2, 4),
+    lineheight =  gp$lineheight %||% 1.2,
+    tracking   =  gp$tracking   %||% 0,
+    id         =  id,
+    res = res, vjust = vjust, hjust = hjust, align = align
+  )
+  adj <- resolution_to_unit(res = res, unit = unit)
+  shape_vars  <- c("x_offset", "y_offset", "x_midpoint")
+  metric_vars <- c("width", "height", "left_bearing", "right_bearing",
+                   "top_bearing", "left_border", "top_border", "pen_x", "pen_y")
+  txt$shape[, shape_vars]    <- txt$shape[, shape_vars]    * adj
+  txt$metrics[, metric_vars] <- txt$metrics[, metric_vars] * adj
+  txt
+}
+
+resolution_to_unit <- function(res = 72, unit = "inch") {
+  adj <- 1L
+  if (unit != "inch") {
+    convertUnit(unit(adj, "inch"), unitTo = unit, valueOnly = TRUE)
+  }
+  (1 / res) * adj
+}
 
 
