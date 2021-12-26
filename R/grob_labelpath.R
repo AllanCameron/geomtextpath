@@ -154,8 +154,10 @@ makeContent.labelpath <- function(x) {
 
   # Construct text grobs as list
   textgrob <- lapply(seq_len(ntext), function(i) {
-    gp  <- recycle_gp(v$gp_text, function(x) x[pmin(i, length(x))])
     dat <- text[text$id == i, , drop = FALSE]
+    sub <- dat$substring %||% dat$id
+    gp  <- recycle_gp(v$gp_text, function(x) x[pmin(sub, length(x))])
+
     textGrob(
       label = make_label(dat$label),
       x = dat$x, y = dat$y, rot = dat$angle,
