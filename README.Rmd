@@ -182,8 +182,12 @@ These geoms behave much the same way as `geom_sf`, except linestrings such as ri
 crop_box <- sf::st_bbox(c(xmin = -4.2, xmax = -3.9, ymin = 55.9, ymax = 56))
 df <- sf::st_crop(waterways, crop_box)
 
-ggplot(df) + geom_textsf(aes(label = name),
-                         hjust = 0.75, vjust = -0.3, fill = "#E4E0A3")
+ggplot(df) +
+  geom_textsf(aes(label = name), text_smoothing = 80, linecolour = "blue4", 
+              color = "gray50", hjust = 0.39, vjust = 1.8, fill = "#E6F0B3", 
+              fontface = 3) + 
+  lims(x = c(-4.18, -3.92), y = c(55.92, 55.995))
+
 ```
 
 ### Arbitrary `stat` transformations

@@ -147,6 +147,7 @@ GeomRichtextpath <- ggproto(
       gp_path  = path_gp,
       straight = text_params$straight,
       upright  = text_params$upright,
+      text_smoothing = text_params$text_smoothing,
       default.units = "npc",
       angle = data$angle,
       polar_params = if (inherits(coord, "CoordPolar")){

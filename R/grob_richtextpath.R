@@ -45,6 +45,7 @@ richtextpathGrob <- function(
   upright = TRUE,
   polar_params  = NULL,
   padding = unit(0.15, "inch"),
+  text_smoothing = 0,
   arrow = NULL,
   default.units = "npc",
   name = NULL,
@@ -91,13 +92,20 @@ richtextpathGrob <- function(
 
   path <- data_frame(x = x, y = y, id = rep(seq_along(id_lens), id_lens))
 
+  text_path <- if(text_smoothing != 0) {
+    path_smoother(path, text_smoothing)
+  } else {
+    path
+  }
+
   gTree(
     textpath = list(
-      data    = path,
-      label   = parsed,
-      gp_text = gp_new,
-      gp_path = gp_path,
-      params  = list(
+      data      = path,
+      text_path = text_path,
+      label     = parsed,
+      gp_text   = gp_new,
+      gp_path   = gp_path,
+      params    = list(
         upright      = upright,
         polar_params = polar_params,
         angle        = angle,

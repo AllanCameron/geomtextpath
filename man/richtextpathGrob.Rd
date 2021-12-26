@@ -21,6 +21,7 @@ richtextpathGrob(
   upright = TRUE,
   polar_params = NULL,
   padding = unit(0.15, "inch"),
+  text_smoothing = 0,
   arrow = NULL,
   default.units = "npc",
   name = NULL,
@@ -88,6 +89,10 @@ single-point labels will be wrapped.}
 \item{padding}{A \code{\link[grid:unit]{unit}} object of length 1 to determine the
 padding between the text and the path when the \code{gap} parameter trims the
 path.}
+
+\item{text_smoothing}{a \code{numeric(1)} value between 0 and 100 that smooths
+the text without affecting the line portion of the geom. The default value
+of \strong{0} means no smoothing is applied.}
 
 \item{arrow}{Arrow specification, as created by \code{\link[grid:arrow]{arrow()}}.}
 

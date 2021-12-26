@@ -332,12 +332,20 @@ sample_path <- function(x, y, n = 50) {
 }
 
 # Spline smooth the centroids of a path split into n chunks
-smooth_noisy <- function(x, y, samples = 50) {
+smooth_noisy <- function(data, samples = 50) {
+
+  x <- grid::convertUnit(data$x, "npc", valueOnly = TRUE)
+  y <- grid::convertUnit(data$y, "npc", valueOnly = TRUE)
 
   path <- sample_path(x, y, n = samples)
   x <- spline_smooth(path[,1])
   y <- spline_smooth(path[,2])
-  cbind(x, y)
+  id <- rep(data$id[1], length(x))
+  id_lens <- rep(data$id_lens[1], length(x))
+  out <- data.frame(x = x, y = y, id = id)
+  out$x <- grid::unit(out$x, "npc")
+  out$y <- grid::unit(out$y, "npc")
+  out
 }
 
 
@@ -362,7 +370,7 @@ corner_smoother <- function(x0, y0, x1, y1, x2, y2, p = 20) {
 
 # Takes a path and a corner radius to find the control points on the path
 # that will give Bezier curves with the given radius
-find_control_points <- function(x, y, radius = 0.5) {
+find_control_points <- function(x, y, radius = 0.1) {
 
   lens <- diff(.arclength_from_xy(x, y))
   angs <- atan2(diff(y), diff(x))
@@ -383,12 +391,39 @@ find_control_points <- function(x, y, radius = 0.5) {
 }
 
 # Co-ordinates the above functions to generate a Bezier-smoothed curve
-smooth_corners <- function(x, y, n = 20, radius = 0.1) {
+smooth_corners <- function(data, n = 20, radius = 0.1) {
+
+  x <- grid::convertUnit(data$x, "npc", valueOnly = TRUE)
+  y <- grid::convertUnit(data$y, "npc", valueOnly = TRUE)
 
   cps <- find_control_points(x, y, radius = radius)
   sections <- lapply(seq(1, nrow(cps) - 2, 2), function(x) cps[x + 0:2,])
   out <- lapply(sections, function(x) corner_smoother(x[1, 1], x[1, 2],
                                                       x[2, 1], x[2, 2],
                                                       x[3, 1], x[3, 2], p = n))
-  do.call(rbind, out)
+
+  out <- do.call(rbind, out)
+  out <- as.data.frame(out)
+  out <- setNames(out, c("x", "y"))
+  out$x <- grid::unit(out$x, "npc")
+  out$y <- grid::unit(out$y, "npc")
+  out$id <- data$id[1]
+  out
+}
+
+
+# Applies the smoothing functions to a data frame consisting of x, y and id
+path_smoother <- function(path, text_smoothing) {
+
+  text_smoothing[text_smoothing > 100] <- 100
+  text_smoothing[text_smoothing < 0]   <- 0
+  path  <- split(path, path$id)
+  lens  <- vapply(path, FUN = nrow, FUN.VALUE = numeric(1))
+  radii <- 0.5 * (100 - text_smoothing)
+  samps <- round((100 - text_smoothing) / 100 * lens)
+  samps[samps < 3] <- 3
+  path <- Map(smooth_corners, data = path, radius = radii)
+  path <- Map(smooth_noisy, data = path, samples = samps)
+  do.call(rbind, path)
+
 }

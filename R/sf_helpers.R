@@ -35,7 +35,7 @@ st_as_grob.sfc_LINESTRING_labelled <- function (
   }
   hjust <- textpath_vars$hjust %||% 0.5
   vjust <- textpath_vars$vjust %||% 0.5
-
+  text_smoothing <- textpath_vars$text_smoothing %||% 0
     if (length(x)) {
         x <- unclass(x)
         n_points <- vapply(x, nrow, integer(1))
@@ -45,6 +45,7 @@ st_as_grob.sfc_LINESTRING_labelled <- function (
                      id = id, arrow = arrow, hjust = hjust, vjust = vjust,
             default.units = default.units, name = name, gp_path = gp,
             gp_text = textpath_vars$gp_text,
+            text_smoothing = text_smoothing,
             vp = vp)
     }
     else nullGrob()
@@ -98,7 +99,7 @@ sf_types <- c(GEOMETRY = "other", POINT = "point", LINESTRING = "line",
 
 sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
                         linemitre = 10, arrow = NULL, na.rm = TRUE,
-                        as_textbox = FALSE) {
+                        as_textbox = FALSE, text_smoothing = 0) {
   # Match labels to data
   labels <- x$label %||% ""
   labels <- match_labels(x, labels)
@@ -200,6 +201,7 @@ sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
 
   tp_vars <- list(hjust = x$hjust %||% 0.5,
                   vjust = x$vjust %||% 0.5,
+                  text_smoothing = text_smoothing %||% 0,
                   gp_text = gp_text,
                   gp_box = gp_box)
   # Build grobs

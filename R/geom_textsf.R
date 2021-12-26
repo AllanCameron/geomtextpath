@@ -147,6 +147,7 @@ GeomTextSf <- ggproto("GeomTextSf", GeomSf,
 
   draw_panel = function(data, panel_params, coord, legend = NULL,
                         lineend = "butt", linejoin = "round", linemitre = 10,
+                        text_smoothing = 0,
                         arrow = NULL, na.rm = TRUE) {
     if (!inherits(coord, "CoordSf")) {
       abort("geom_sf() must be used with coord_sf()")
@@ -154,7 +155,7 @@ GeomTextSf <- ggproto("GeomTextSf", GeomSf,
 
     data <- coord$transform(data, panel_params)
     sf_textgrob(data, lineend = lineend, linejoin = linejoin,
-                   linemitre = linemitre,
+                   linemitre = linemitre, text_smoothing = text_smoothing,
                    arrow = arrow, na.rm = na.rm)
   }
 )
@@ -189,14 +190,14 @@ GeomLabelSf <- ggproto("GeomLabelSf", GeomSf,
 
   draw_panel = function(data, panel_params, coord, legend = NULL,
                         lineend = "butt", linejoin = "round", linemitre = 10,
-                        arrow = NULL, na.rm = TRUE) {
+                        arrow = NULL, text_smoothing = 0, na.rm = TRUE) {
     if (!inherits(coord, "CoordSf")) {
       abort("geom_sf() must be used with coord_sf()")
     }
 
     data <- coord$transform(data, panel_params)
     sf_textgrob(data, lineend = lineend, linejoin = linejoin,
-                   linemitre = linemitre,
+                   linemitre = linemitre, text_smoothing = text_smoothing,
                    arrow = arrow, na.rm = na.rm, as_textbox = TRUE)
   }
 )
