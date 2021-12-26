@@ -33,6 +33,7 @@ geom_labelpath <- function(
   halign = "center", offset = NULL, parse = FALSE,
   straight = FALSE,
   padding = unit(0.15, "inch"),
+  rich = FALSE,
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
   arrow = NULL
@@ -58,6 +59,7 @@ geom_labelpath <- function(
       parse         = parse,
       straight      = straight,
       padding       = padding,
+      rich          = rich,
       label.padding = label.padding,
       label.r       = label.r,
       arrow         = arrow,
@@ -202,6 +204,7 @@ GeomLabelpath <- ggproto(
         list(x = 0.5, y = 0.5, theta = coord$theta)
       } else NULL,
       padding = text_params$padding,
+      rich    = text_params$rich,
       label.padding = label.padding,
       label.r = label.r,
       arrow = arrow
