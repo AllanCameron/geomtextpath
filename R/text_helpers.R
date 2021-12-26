@@ -94,9 +94,10 @@ measure_curved <- function(
   txt           <- filter_glyphs(txt, nlabel)
 
   metrics$x_adj  <-  - 0.5 * info$max_ascend
-  metrics$height <- metrics$height - info$lineheight
   txt$y_offset   <- (txt$y_offset - (-0.5 - label$yoff[txt$substring]) *
                        info$max_ascend[pmin(txt$metric_id, nrow(info))])
+  metrics$height <- diff(range(txt$y_offset)) +
+    info$max_ascend - info$max_descend
 
   ans <- data_frame(
     glyph =  txt$letter,
