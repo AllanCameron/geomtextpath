@@ -156,7 +156,7 @@ measure_language <- function(label, gp = gpar(), ppi = 72, vjust = 0.5) {
 # TODO: Implement for rich text, now just a copy of measure_language
 measure_straight <- measure_language
 
-# Glyph translation -------------------------------------------------------
+# Glyph utilities ---------------------------------------------------------
 
 # Here a cache that stores index lookup tables of fonts
 index_cache <- new.env(parent = emptyenv())
@@ -203,9 +203,6 @@ translate_glyph <- function(index, id, gp = gpar()) {
   intToUtf8(index, multiple = TRUE)
 }
 
-# Helpers -----------------------------------------------------------------
-
-
 cluster_glyphs <- function(
   shape,
   vars = c("glyph", "metric_id", "string_id")
@@ -239,6 +236,8 @@ filter_glyphs <- function(
   }
   shape
 }
+
+# Helpers -----------------------------------------------------------------
 
 font_info_gp <- function(gp = gpar(), res = 72, unit = "inch") {
   info <- systemfonts::font_info(
