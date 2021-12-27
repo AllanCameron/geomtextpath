@@ -21,7 +21,7 @@ BugReports: https://github.com/AllanCameron/geomtextpath/issues
 Encoding: UTF-8
 Depends:
     ggplot2,
-    R (>= 2.10)
+    R (>= 3.5.0)
 Imports:
     grid,
     scales,

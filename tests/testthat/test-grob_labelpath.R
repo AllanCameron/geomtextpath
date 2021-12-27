@@ -52,12 +52,12 @@ test_that("straight and curved setting produce similar boxes", {
   x1 <- as_inch(box1$x)
   x2 <- as_inch(box2$x)
 
-  expect_lt(sum(abs(x1 - x2)), 1)
+  expect_lt(sum(abs(x1 - x2)), 2)
 
   y1 <- as_inch(box1$y)
   y2 <- as_inch(box2$y)
 
-  expect_lt(sum(abs(y1 - y2)), 1)
+  expect_lt(sum(abs(y1 - y2)), 2)
 })
 
 test_that("radius is shrunk when needed", {
@@ -114,7 +114,7 @@ test_that("straight richtext is similar to 'curved' richtext on straight path", 
   case <- makeContent(case)$children[[2]]
 
   expect_equal(ctrl$gp, case$gp)
-  expect_equal(ctrl$x, case$x)
-  expect_equal(ctrl$y, case$y)
+  expect_equal(ctrl$x, case$x, tolerance = 0.02)
+  expect_equal(ctrl$y, case$y, tolerance = 0.02)
   expect_equal(ctrl$label, case$label)
 })
