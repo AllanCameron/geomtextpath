@@ -58,6 +58,7 @@ textpathGrob <- function(
   halign = "left",
   angle = 0,
   straight = FALSE,
+  rich     = FALSE,
   gp_text = gpar(),
   gp_path = gpar(),
   gp_box  = gpar(),
@@ -100,11 +101,9 @@ textpathGrob <- function(
   vjust  <- rep_len(resolveVJust(just, vjust), n_label)
   halign <- rep_len(halign, n_label)
 
-  # Reconstitute data
-  gp_text <- gp_fill_defaults(gp_text)
-
-  label <- measure_text(label, gp_text, vjust = vjust, halign = halign,
-                        straight = straight)
+  label <- measure_label(label, gp = gp_text, vjust = vjust,
+                         halign = halign, straight = straight,
+                         rich = rich)
 
   x <- as_unit(x, default.units)
   y <- as_unit(y, default.units)
@@ -127,7 +126,7 @@ textpathGrob <- function(
       data          = path,
       text_path     = text_path,
       label         = label,
-      gp_text       = gp_text,
+      gp_text       = attr(label, "gp"),
       gp_path       = gp_path,
       gp_box        = gp_box,
       params = list(
@@ -188,6 +187,18 @@ recycle_gp <- function(gp, fun, ...) {
   # Never ever have zero-length objects in the gpar
   gp[lengths(gp) == 0] <- list(NULL)
   return(gp)
+}
+
+rep_gp <- function(gp, length.out = max(lengths(gp))) {
+  gp[] <- lapply(gp, rep, length.out = length.out)
+  gp
+}
+
+split_gp <- function(gp, i = seq_len(max(lengths(gp)))) {
+  gp <- rep_gp(gp, max(i))
+  lapply(i, function(j) {
+    recycle_gp(gp, `[`, j)
+  })
 }
 
 # Helper function to fill in missing parameters by defaults

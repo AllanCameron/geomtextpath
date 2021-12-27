@@ -30,6 +30,7 @@ geom_textpath(
   straight = FALSE,
   padding = unit(0.15, "inch"),
   text_smoothing = 0,
+  rich = FALSE,
   arrow = NULL
 )
 
@@ -69,6 +70,7 @@ geom_labelpath(
   parse = FALSE,
   straight = FALSE,
   padding = unit(0.15, "inch"),
+  rich = FALSE,
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
   arrow = NULL
@@ -187,7 +189,11 @@ path.}
 
 \item{text_smoothing}{a \code{numeric(1)} value between 0 and 100 that smooths
 the text without affecting the line portion of the geom. The default value
-of \strong{0} means no smoothing is applied.}
+of \code{0} means no smoothing is applied.}
+
+\item{rich}{A \code{logical(1)} whether to interpret the text as html/markdown
+formatted rich text. Default: \code{FALSE}. See also the rich text section of
+the details in \code{\link[=geom_textpath]{geom_textpath()}}.}
 
 \item{arrow}{Arrow specification, as created by \code{\link[grid:arrow]{grid::arrow()}}.}
 
@@ -212,6 +218,8 @@ visual effect, or it may be to label a circular / polar plot in a more
 "natural" way.
 }
 \details{
+\subsection{Limitations}{
+
 There are limitations inherent in the plotting of text elements in
 \pkg{ggplot2} due to the way that the underlying \pkg{grid} graphics handles
 text. A text string is dealt with as a zero-width object, and therefore the
@@ -241,6 +249,16 @@ This means that if we have a data frame with an x column, a y column and a
 grouping variable column, there can only be a single label for the group.
 Typically, this will be the grouping variable itself (see the examples,
 particularly those using the built-in \code{iris} data set.)
+}
+
+\subsection{Rich text}{
+
+The rich text option (\code{rich = TRUE}) relies heavily on rich-text parsers
+copied from the \{\pkg{gridtext}\} package. We thank Claus O. Wilke for
+developing \{\pkg{gridtext}\} and allowing us to re-use his code under the
+MIT licence. Currently, the supported HTML tags are \verb{<p>}, \verb{<span>}, \verb{<b>},
+\verb{<strong>}, \verb{<i>}, \verb{<em>}, \verb{<sub>}, \verb{<sup>} and \verb{<br>}.
+}
 }
 \section{Aesthetics}{
 
@@ -313,5 +331,25 @@ understands the following aesthetics related to the textbox:
 
 ggplot(df, aes(x, y, label = label, color = label)) +
    geom_textline(size = 6) + theme(legend.position = "none")
+
+# Rich text labels can contain a subset of HTML tags
+label <- paste0(
+  "Indometacin (",
+  "C<sub>19</sub>H<sub>16</sub>",
+  "<span style='color:limegreen'>Cl</span>",
+  "<span style='color:blue'>N</span>",
+  "<span style='color:red'>O</span><sub>4</sub>",
+  ") concentration"
+)
+
+# These are interpreted when `rich = TRUE`
+ggplot(Indometh, aes(time, conc)) +
+  geom_point() +
+  geom_labelpath(
+    label = label,
+    stat = "smooth", formula = y ~ x, method = "loess",
+    vjust = -3, size = 8, rich = TRUE
+  ) +
+  scale_x_log10()
 }
 \keyword{datasets}

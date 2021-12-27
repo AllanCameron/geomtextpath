@@ -22,6 +22,27 @@
 #'  \item{\code{boxlinetype}}
 #'  \item{\code{boxlinewidth}}
 #' }
+#' @examples
+#'
+#' # Rich text labels can contain a subset of HTML tags
+#' label <- paste0(
+#'   "Indometacin (",
+#'   "C<sub>19</sub>H<sub>16</sub>",
+#'   "<span style='color:limegreen'>Cl</span>",
+#'   "<span style='color:blue'>N</span>",
+#'   "<span style='color:red'>O</span><sub>4</sub>",
+#'   ") concentration"
+#' )
+#'
+#' # These are interpreted when `rich = TRUE`
+#' ggplot(Indometh, aes(time, conc)) +
+#'   geom_point() +
+#'   geom_labelpath(
+#'     label = label,
+#'     stat = "smooth", formula = y ~ x, method = "loess",
+#'     vjust = -3, size = 8, rich = TRUE
+#'   ) +
+#'   scale_x_log10()
 geom_labelpath <- function(
   mapping = NULL, data = NULL,
   stat = "identity", position = "identity",
@@ -33,6 +54,7 @@ geom_labelpath <- function(
   halign = "center", offset = NULL, parse = FALSE,
   straight = FALSE,
   padding = unit(0.15, "inch"),
+  rich = FALSE,
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
   arrow = NULL
@@ -58,6 +80,7 @@ geom_labelpath <- function(
       parse         = parse,
       straight      = straight,
       padding       = padding,
+      rich          = rich,
       label.padding = label.padding,
       label.r       = label.r,
       arrow         = arrow,
@@ -121,7 +144,7 @@ GeomLabelpath <- ggproto(
 
     # If there is more than one text string associated with any of the groups,
     # we warn that only the first is used
-    if(!all(vapply(split(data$label, data$group),
+    if(!all(gapply(data$label, data$group,
                    function(x) all(x == x[1]), logical(1))))
     {
       warn(paste("geom_labelpath: Multiple strings found in at",
@@ -202,6 +225,7 @@ GeomLabelpath <- ggproto(
         list(x = 0.5, y = 0.5, theta = coord$theta)
       } else NULL,
       padding = text_params$padding,
+      rich    = text_params$rich,
       label.padding = label.padding,
       label.r = label.r,
       arrow = arrow

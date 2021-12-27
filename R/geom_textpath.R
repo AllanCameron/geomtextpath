@@ -31,6 +31,7 @@
 #'    for more detail.
 #'
 #' @details
+#' ## Limitations
 #' There are limitations inherent in the plotting of text elements in
 #' \pkg{ggplot2} due to the way that the underlying \pkg{grid} graphics handles
 #' text. A text string is dealt with as a zero-width object, and therefore the
@@ -60,6 +61,14 @@
 #' grouping variable column, there can only be a single label for the group.
 #' Typically, this will be the grouping variable itself (see the examples,
 #' particularly those using the built-in `iris` data set.)
+#'
+#' ## Rich text
+#' The rich text option (`rich = TRUE`) relies heavily on rich-text parsers
+#' copied from the \{\pkg{gridtext}\} package. We thank Claus O. Wilke for
+#' developing \{\pkg{gridtext}\} and allowing us to re-use his code under the
+#' MIT licence. Currently, the supported HTML tags are `<p>`, `<span>`, `<b>`,
+#' `<strong>`, `<i>`, `<em>`, `<sub>`, `<sup>` and `<br>`.
+#'
 #'
 #' @eval rd_aesthetics("geom", "textpath")
 #'
@@ -104,7 +113,7 @@ geom_textpath <- function(
   lineend = "butt", linejoin = "round", linemitre = 10,
   text_only = FALSE, gap = NA, upright = TRUE,
   halign = "center", offset = NULL, parse = FALSE, straight = FALSE,
-  padding = unit(0.15, "inch"), text_smoothing = 0, arrow = NULL
+  padding = unit(0.15, "inch"), text_smoothing = 0, rich = FALSE, arrow = NULL
   )
 {
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
@@ -124,6 +133,7 @@ geom_textpath <- function(
           straight       = straight,
           padding        = padding,
           text_smoothing = text_smoothing,
+          rich           = rich,
           arrow          = arrow,
           ...
         ))
@@ -183,8 +193,8 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
 
     # If there is more than one text string associated with any of the groups,
     # we warn that only the first is used
-    if(!all(vapply(split(data$label, data$group),
-           function(x) all(x == x[1]), logical(1))))
+    if(!all(gapply(data$label, data$group,
+                   function(x) all(x == x[1]), logical(1))))
     {
          warn(paste("geom_textpath: Multiple strings found in at",
          "least one group. Only the first will be used."))
@@ -254,6 +264,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
                        list(x = 0.5, y = 0.5, theta = coord$theta)
                      } else NULL,
       padding = text_params$padding,
+      rich    = text_params$rich,
       arrow = arrow
     )
   }

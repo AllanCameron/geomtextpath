@@ -363,3 +363,9 @@ test_that("Objects are renamed correctly", {
 test_that("rd_dots can evaluate a function's dots", {
   expect_equal(substr(rd_dots("geom_textpath"), 1, 10), "@param ...")
 })
+
+test_that("resolution_to_unit works", {
+  x <- resolution_to_unit(unit = "cm")
+  y <- resolution_to_unit()
+  expect_equal(x / 2.54, y)
+})

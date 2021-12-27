@@ -35,7 +35,10 @@
 #'   path.
 #' @param text_smoothing a `numeric(1)` value between 0 and 100 that smooths
 #'   the text without affecting the line portion of the geom. The default value
-#'   of **0** means no smoothing is applied.
+#'   of `0` means no smoothing is applied.
+#' @param rich A `logical(1)` whether to interpret the text as html/markdown
+#'   formatted rich text. Default: `FALSE`. See also the rich text section of
+#'   the details in [`geom_textpath()`][geom_textpath].
 #'
 #' @return A `list` with the parameters.
 #' @md
@@ -50,12 +53,18 @@ static_text_params <- function(
   parse          = FALSE,
   straight       = FALSE,
   padding        = unit(0.15, "inch"),
-  text_smoothing = 0
+  text_smoothing = 0,
+  rich           = FALSE
 ) {
   if (is.null(gap)) {
     gap <- switch(.type, text = NA, FALSE)
   }
   halign <- rlang::arg_match0(halign, c("center", "left", "right"))
+  if (!isFALSE(rich) && !isFALSE(parse)) {
+    warn(paste0("Plotmath expressions are incompatible with rich text.\n",
+                "Setting `rich = FALSE`. for now."))
+    rich <- FALSE
+  }
 
   list(
     text_only      = assert(text_only,      "logical"),
@@ -66,6 +75,7 @@ static_text_params <- function(
     padding        = assert(padding,        "unit"),
     offset         = assert(offset,         "unit", allow_NULL = TRUE),
     text_smoothing = assert(text_smoothing, "numeric"),
+    rich           = assert(rich,           "logical"),
     halign         = halign
   )
 }

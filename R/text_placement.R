@@ -93,6 +93,8 @@ place_text <- function(
   df <- approx_multiple(path$length, letters$base_length, df)
   df <- cbind(df, letters, id = path$id[1] %||% 1L)
   df$substring <- label$substring %||% df$id
+  df$xoffset <- label$xoff
+  df$yoffset <- label$yoff
 
   if(any(df$exceed != 0) & !is.multichar(label$glyph)) {
 
@@ -314,16 +316,32 @@ project_text <- function(text, offset, xpos = c("xmin", "xmid", "xmax")) {
 # Grob constructor --------------------------------------------------------
 
 .add_text_grob <- function(grob, text, gp) {
-  text_lens <- run_len(text$substring %||% text$id)
+  sub <- unlist(text$substring, FALSE, FALSE) %||% text$id
+  text_lens <- run_len(sub)
 
   # Recycle graphical parameters to match lengths of letters
   gp <- recycle_gp(gp, rep, times = text_lens)
+
+  if (is.list(text$xoffset)) {
+    # This is a rich straight label
+    xx <- unlist(text$xoffset, FALSE, FALSE)
+    yy <- unlist(text$yoffset, FALSE, FALSE)
+    nsub <- lengths(text$xoffset)
+    angle <- rep(text$angle, nsub) * .deg2rad
+    x <- xx * cos(angle) - yy * sin(angle) + rep(text$x, nsub)
+    y <- xx * sin(angle) + yy * cos(angle) + rep(text$y, nsub)
+  } else {
+    # This is a regular label
+    x <- text$x
+    y <- text$y
+    nsub <- 1
+  }
 
   # Write text grob
   grob <- addGrob(
     grob, textGrob(
       label = make_label(text$label),
-      x = text$x, y = text$y, rot = text$angle,
+      x = x, y = y, rot = rep(text$angle, nsub),
       vjust = 0.5, hjust = 0.5, gp = gp,
       default.units = "inches"
     )

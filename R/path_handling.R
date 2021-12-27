@@ -87,15 +87,12 @@ make_gap <- function(path, letters, gap = NA,
     path$length <- path$length %||% .arclength_from_xy(path$x, path$y, path$id)
 
     # Get locations where strings start and end
-    lefts <- vapply(split(letters$left, letters$id), min,
-                     numeric(1), USE.NAMES = FALSE)
-    rights <- vapply(split(letters$right, letters$id), max,
-                     numeric(1), USE.NAMES = FALSE)
+    lefts  <- gapply(letters$left,  letters$id, min, numeric(1))
+    rights <- gapply(letters$right, letters$id, max, numeric(1))
     ranges <- rbind(lefts, rights)
 
     # Create breathing space around letters
-    path_max <- vapply(split(path$length, path$id), max,
-                       numeric(1), USE.NAMES = FALSE)
+    path_max <- gapply(path$length, path$id, max, numeric(1))
     trim <- rep_len(trim, length(path_max))
 
     mins <- pmax(0,        ranges[1, ] - padding)

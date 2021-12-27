@@ -21,7 +21,7 @@ BugReports: https://github.com/AllanCameron/geomtextpath/issues
 Encoding: UTF-8
 Depends:
     ggplot2,
-    R (>= 2.10)
+    R (>= 3.5.0)
 Imports:
     grid,
     scales,
@@ -48,7 +48,6 @@ Collate:
     'data.R'
     'geom_textpath.R'
     'geom_labelpath.R'
-    'geom_richtextpath.R'
     'geom_textcontour.R'
     'geom_textdensity.R'
     'utils.R'
@@ -58,7 +57,6 @@ Collate:
     'geom_textsmooth.R'
     'geomtextpath-package.R'
     'grob_labelpath.R'
-    'grob_richtextpath.R'
     'grob_textpath.R'
     'path_handling.R'
     'sf_helpers.R'

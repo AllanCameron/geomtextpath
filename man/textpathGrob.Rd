@@ -21,6 +21,7 @@ labelpathGrob(
   gp_box = gpar(),
   gap = NA,
   upright = TRUE,
+  rich = FALSE,
   polar_params = NULL,
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
@@ -42,6 +43,7 @@ textpathGrob(
   halign = "left",
   angle = 0,
   straight = FALSE,
+  rich = FALSE,
   gp_text = gpar(),
   gp_path = gpar(),
   gp_box = gpar(),
@@ -112,6 +114,10 @@ variant is \code{FALSE} and for the text variant is \code{NA}.}
 where the majority of letters would upside down along the path, to improve
 legibility. If \code{FALSE}, the path decides the orientation of text.}
 
+\item{rich}{A \code{logical(1)} whether to interpret the text as html/markdown
+formatted rich text. Default: \code{FALSE}. See also the rich text section of
+the details in \code{\link[=geom_textpath]{geom_textpath()}}.}
+
 \item{polar_params}{a list consisting of an x, y, and r component that
 specifies the central point and radius of a circle around which
 single-point labels will be wrapped.}
@@ -136,7 +142,7 @@ path.}
 
 \item{text_smoothing}{a \code{numeric(1)} value between 0 and 100 that smooths
 the text without affecting the line portion of the geom. The default value
-of \strong{0} means no smoothing is applied.}
+of \code{0} means no smoothing is applied.}
 }
 \value{
 An object of class \code{gTree}, containing grobs.
@@ -162,4 +168,5 @@ grob <- textpathGrob(
 )
 
 grid.newpage(); grid.draw(grob)
+
 }

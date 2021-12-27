@@ -288,6 +288,16 @@ group_id <- function(data, vars) {
   discretise(id)
 }
 
+# Shorthand for `vapply(split(x, group), ...)`
+gapply <- function(x, group, FUN, FUN.VALUE, ..., USE.NAMES = FALSE) {
+  vapply(
+    split(x, group),
+    FUN = FUN, FUN.VALUE = FUN.VALUE,
+    ...,
+    USE.NAMES = USE.NAMES
+  )
+}
+
 # Parameters --------------------------------------------------------------
 
 # Automatically capture static text parameters
