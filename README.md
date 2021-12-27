@@ -231,9 +231,12 @@ df <- sf::st_crop(waterways, crop_box)
 
 ggplot(df) +
   geom_textsf(aes(label = name), text_smoothing = 80, linecolour = "blue4", 
-              color = "gray50", hjust = 0.39, vjust = 1.8, fill = "#E6F0B3", 
+              color = "gray50", hjust = 0.7, vjust = -0.5, fill = "#E6F0B3", 
               fontface = 3) + 
   lims(x = c(-4.18, -3.92), y = c(55.92, 55.995))
+#> Warning: The text offset exceeds the curvature in one or more paths. This will result in
+#> displaced letters. Consider reducing the vjust or text size, or use the hjust
+#> parameter to move the string to a different point on the path.
 ```
 
 <img src="man/figures/README-geom_textsf-1.png" width="100%" style="display: block; margin: auto;" />
