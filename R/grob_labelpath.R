@@ -155,12 +155,25 @@ makeContent.labelpath <- function(x) {
   # Construct text grobs as list
   textgrob <- lapply(seq_len(ntext), function(i) {
     dat <- text[text$id == i, , drop = FALSE]
-    sub <- dat$substring %||% dat$id
+    sub <- unlist(dat$substring, FALSE, FALSE) %||% dat$id
     gp  <- recycle_gp(v$gp_text, function(x) x[pmin(sub, length(x))])
+
+    if (is.list(dat$xoffset)) {
+      xx <- unlist(dat$xoffset, FALSE, FALSE)
+      yy <- unlist(dat$yoffset, FALSE, FALSE)
+      angle <- dat$angle * .deg2rad
+      x <- xx * cos(angle) - yy * sin(angle) + dat$x
+      y <- xx * sin(angle) + yy * cos(angle) + dat$y
+    } else {
+      x <- dat$x
+      y <- dat$y
+    }
 
     textGrob(
       label = make_label(dat$label),
-      x = dat$x, y = dat$y, rot = dat$angle,
+      x = x,
+      y = y,
+      rot = dat$angle,
       vjust = 0.5, hjust = 0.5, gp = gp,
       default.units = "inches"
     )
