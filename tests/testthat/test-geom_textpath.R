@@ -139,3 +139,28 @@ test_that("Text path grob has correct types", {
     rep(c("red", "#000000"), times = c(3, 20))
   )
 })
+
+test_that("straight richtext is similar to 'curved' richtext on straight path", {
+  labels <- c(
+    "A<span style='color:blue'>B</span>C",
+    "D\nE<br>F"
+  )
+  x <- c(0, 1, 0, 1)
+  y <- c(0, 1, 1, 0)
+  id <- c(1, 1, 2, 2)
+
+
+  ctrl <- textpathGrob(x = x, y = y, id = id,
+                       label = labels, rich = TRUE,
+                       default.units = "inch")
+  case <- textpathGrob(x = x, y = y, id = id,
+                       label = labels, rich = TRUE, straight = TRUE,
+                       default.units = "inch")
+  ctrl <- makeContent(ctrl)$children[[2]]
+  case <- makeContent(case)$children[[2]]
+
+  expect_equal(ctrl$gp, case$gp)
+  expect_equal(ctrl$x, case$x)
+  expect_equal(ctrl$y, case$y)
+  expect_equal(ctrl$label, case$label)
+})

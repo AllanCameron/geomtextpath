@@ -427,7 +427,7 @@ text_shape <- function(text, id, gp, res = 72, vjust = 0.5, hjust = 0.5,
 resolution_to_unit <- function(res = 72, unit = "inch") {
   adj <- 1L
   if (unit != "inch") {
-    convertUnit(unit(adj, "inch"), unitTo = unit, valueOnly = TRUE)
+    adj <- convertUnit(unit(adj, "inch"), unitTo = unit, valueOnly = TRUE)
   }
   (1 / res) * adj
 }
