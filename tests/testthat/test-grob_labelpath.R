@@ -114,7 +114,7 @@ test_that("straight richtext is similar to 'curved' richtext on straight path", 
   case <- makeContent(case)$children[[2]]
 
   expect_equal(ctrl$gp, case$gp)
-  expect_equal(ctrl$x, case$x, tolerance = 0.02)
-  expect_equal(ctrl$y, case$y, tolerance = 0.02)
+  expect_equal(ctrl$x, case$x, tolerance = 0.05)
+  expect_equal(ctrl$y, case$y, tolerance = 0.05)
   expect_equal(ctrl$label, case$label)
 })
