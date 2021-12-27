@@ -14,7 +14,8 @@ static_text_params(
   parse = FALSE,
   straight = FALSE,
   padding = unit(0.15, "inch"),
-  text_smoothing = 0
+  text_smoothing = 0,
+  rich = FALSE
 )
 }
 \arguments{
@@ -59,7 +60,11 @@ path.}
 
 \item{text_smoothing}{a \code{numeric(1)} value between 0 and 100 that smooths
 the text without affecting the line portion of the geom. The default value
-of \strong{0} means no smoothing is applied.}
+of \code{0} means no smoothing is applied.}
+
+\item{rich}{A \code{logical(1)} whether to interpret the text as html/markdown
+formatted rich text. Default: \code{FALSE}. See also the rich text section of
+the details in \code{\link[=geom_textpath]{geom_textpath()}}.}
 }
 \value{
 A \code{list} with the parameters.

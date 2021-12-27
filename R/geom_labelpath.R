@@ -22,6 +22,27 @@
 #'  \item{\code{boxlinetype}}
 #'  \item{\code{boxlinewidth}}
 #' }
+#' @examples
+#'
+#' # Rich text labels can contain a subset of HTML tags
+#' label <- paste0(
+#'   "Indometacin (",
+#'   "C<sub>19</sub>H<sub>16</sub>",
+#'   "<span style='color:limegreen'>Cl</span>",
+#'   "<span style='color:blue'>N</span>",
+#'   "<span style='color:red'>O</span><sub>4</sub>",
+#'   ") concentration"
+#' )
+#'
+#' # These are interpreted when `rich = TRUE`
+#' ggplot(Indometh, aes(time, conc)) +
+#'   geom_point() +
+#'   geom_labelpath(
+#'     label = label,
+#'     stat = "smooth", formula = y ~ x, method = "loess",
+#'     vjust = -3, size = 8, rich = TRUE
+#'   ) +
+#'   scale_x_log10()
 geom_labelpath <- function(
   mapping = NULL, data = NULL,
   stat = "identity", position = "identity",
