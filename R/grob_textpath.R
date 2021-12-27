@@ -122,7 +122,6 @@ textpathGrob <- function(
     path
   }
 
-
   gTree(
     textpath = list(
       data          = path,

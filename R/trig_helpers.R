@@ -337,6 +337,9 @@ smooth_noisy <- function(data, samples = 50) {
   x <- grid::convertUnit(data$x, "npc", valueOnly = TRUE)
   y <- grid::convertUnit(data$y, "npc", valueOnly = TRUE)
 
+  x <- approx(seq_along(data$x), x, seq(1, length(data$x), len = 250))$y
+  y <- approx(seq_along(data$x), y, seq(1, length(data$x), len = 250))$y
+
   path <- sample_path(x, y, n = samples)
   x <- spline_smooth(path[,1])
   y <- spline_smooth(path[,2])
@@ -419,11 +422,11 @@ path_smoother <- function(path, text_smoothing) {
   text_smoothing[text_smoothing < 0]   <- 0
   path  <- split(path, path$id)
   lens  <- vapply(path, FUN = nrow, FUN.VALUE = numeric(1))
-  radii <- 0.5 * (100 - text_smoothing)
-  samps <- round((100 - text_smoothing) / 100 * lens)
+  radii <- 0.1 * text_smoothing / 100
+  samps <- round(500 * (100 - text_smoothing) / 100)
   samps[samps < 3] <- 3
   path <- Map(smooth_corners, data = path, radius = radii)
-  path <- Map(smooth_noisy, data = path, samples = samps)
+  #path <- Map(smooth_noisy, data = path, samples = samps)
   do.call(rbind, path)
 
 }
