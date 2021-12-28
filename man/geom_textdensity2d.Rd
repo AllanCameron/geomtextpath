@@ -141,6 +141,7 @@ does not allow the lines to be labelled with the level of each contour.
   \item \code{linewidth}
   \item \code{size}
   \item \code{spacing}
+  \item \code{textcolour}
   \item \code{vjust}
 }
 The `spacing` aesthetic allows fine control of spacing of text,
