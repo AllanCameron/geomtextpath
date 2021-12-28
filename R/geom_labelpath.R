@@ -170,38 +170,15 @@ GeomLabelpath <- ggproto(
     # Get first observation of each group
     first <- run_start(data$group)
 
-    text_gp <- gpar(
-      col  = alpha(data$colour, data$alpha)[first],
-      fontsize   = data$size[first] * .pt,
-      fontface   = data$fontface[first],
-      fontfamily = data$family[first],
-      lineheight = data$lineheight[first],
-      tracking   = data$spacing[first]
+    text_gp <- data_to_text_gp(data[first, , drop = FALSE])
+    path_gp <- data_to_path_gp(
+      data[first, , drop = FALSE],
+      lineend = lineend, linejoin = linejoin, linemitre = linemitre
     )
-
-    box_gp <- gpar(
-      col  = alpha(data$boxcolour, data$alpha)[first],
-      fill = alpha(data$fill, data$alpha)[first],
-      lwd  = data$boxlinewidth[first] * .pt,
-      lty  = data$boxlinetype[first],
-      lineend   = lineend,
-      linejoin  = linejoin,
-      linemitre = linemitre
+    box_gp <- data_to_box_gp(
+      data[first, , drop = FALSE],
+      lineend = lineend, linejoin = linejoin, linemitre = linemitre
     )
-
-    if (all(data$linetype %in% c("0", "blank", NA))) {
-      path_gp <- gpar(lty = 0)
-    } else {
-      path_gp <- gpar(
-        col  = alpha(data$linecolour, data$alpha)[first],
-        fill = alpha(data$linecolour, data$alpha)[first],
-        lwd  = data$linewidth[first] * .pt,
-        lty  = data$linetype[first],
-        lineend   = lineend,
-        linejoin  = linejoin,
-        linemitre = linemitre
-      )
-    }
 
     safe_labels <- if (text_params$parse) {
       safe_parse(as.character(data$label[first]))

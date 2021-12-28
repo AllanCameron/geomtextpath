@@ -277,6 +277,47 @@ make_label <- function(x) {
 
 # Grid utilities ----------------------------------------------------------
 
+data_to_text_gp <- function(data) {
+  gpar(
+    col        = alpha(data$colour, data$alpha),
+    fontsize   = data$size * .pt,
+    fontface   = data$fonface,
+    fontfamily = data$family,
+    lineheight = data$lineheight,
+    tracking   = data$spacing
+  )
+}
+
+data_to_path_gp <- function(data, lineend = "butt", linejoin = "round",
+                            linemitre = 10) {
+  if (all(data$linetype %in% c("0", "blank", NA))) {
+    gpar(lty = 0)
+  } else {
+    gpar(
+      col  = alpha(data$colour, data$alpha),
+      fill = alpha(data$colour, data$alpha),
+      lwd  = data$linewidth * .pt,
+      lty  = data$linetype,
+      lineend   = lineend,
+      linejoin  = linejoin,
+      linemitre = linemitre
+    )
+  }
+}
+
+data_to_box_gp <- function(data, lineend = "butt", linejoin = "round",
+                           linemitre = 10) {
+  gpar(
+    col  = alpha(data$boxcolour, data$alpha),
+    fill = alpha(data$fill, data$alpha),
+    lwd  = data$boxlinewidth[first] * .pt,
+    lty  = data$boxlinetype[first],
+    lineend = lineend,
+    linejoin = linejoin,
+    linemitre = linemitre
+  )
+}
+
 # Helper function to do safe(r) recycling on "gpar" class objects.
 recycle_gp <- function(gp, fun, ...) {
   # Recycling rules only apply to non-unique parameters
