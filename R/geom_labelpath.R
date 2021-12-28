@@ -111,11 +111,12 @@ GeomLabelpath <- ggproto(
     linewidth    = 0.5,
     linetype     = 1,
     spacing      = 0,
-    linecolour   = "_copy_text_colour_",
     angle        = 0,
     fill         = "white",
-    boxcolour    = "_copy_text_colour_",
-    boxlinetype  = 1,
+    linecolour   = NULL,
+    textcolour   = NULL,
+    boxcolour    = NULL,
+    boxlinetype  = NULL,
     boxlinewidth = NULL
   ),
 
@@ -133,17 +134,7 @@ GeomLabelpath <- ggproto(
     text_params = static_text_params("label")
   ) {
 
-
     #---- type conversion, checks & warnings ---------------------------#
-
-    copy_me <- data$linecolour == "_copy_text_colour_"
-    data$linecolour[copy_me]   <- data$colour[copy_me]
-    copy_me <- data$boxcolour  == "_copy_text_colour_"
-    data$boxcolour[copy_me]    <- data$colour[copy_me]
-
-    if (is.null(data$boxlinewidth)) {
-      data$boxlinewidth <- data$linewidth
-    }
 
     # We need to change groups to numeric to order them appropriately
     data$group <- discretise(data$group)

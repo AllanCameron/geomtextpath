@@ -155,10 +155,22 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   required_aes = c("x", "y", "label"),
 
   # These aesthetics will all be available to the draw_panel function
-  default_aes = aes(colour = "black", size = 3.88, hjust = 0.5, vjust = 0.5,
-                    family = "", fontface = 1, lineheight = 1.2, alpha = 1,
-                    linewidth = 0.5, linetype = 1, spacing = 0,
-                    linecolour = "_copy_text_colour_", angle = 0),
+  default_aes = aes(
+    colour = "black",
+    size = 3.88,
+    hjust = 0.5,
+    vjust = 0.5,
+    family = "",
+    fontface = 1,
+    lineheight = 1.2,
+    alpha = 1,
+    linewidth = 0.5,
+    linetype = 1,
+    spacing = 0,
+    linecolour = NULL,
+    textcolour = NULL,
+    angle = 0
+  ),
 
   extra_params = c("na.rm", names(formals(static_text_params))[-1]),
 
@@ -187,11 +199,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     text_params = static_text_params("text"), arrow = NULL
   ) {
 
-
     #---- type conversion, checks & warnings ---------------------------#
-
-    copy_colour <- data$linecolour == "_copy_text_colour_"
-    data$linecolour[copy_colour] <- data$colour[copy_colour]
 
     # We need to change groups to numeric to order them appropriately
     data$group <- discretise(data$group)
@@ -274,13 +282,13 @@ geom_textline <- function(mapping = NULL, data = NULL, stat = "identity",
     show.legend = show.legend,
     inherit.aes = inherit.aes,
     params = set_params(
-          na.rm         = na.rm,
-          lineend       = lineend,
-          linejoin      = linejoin,
-          linemitre     = linemitre,
-          arrow         = arrow,
-          ...
-        )
+      na.rm     = na.rm,
+      lineend   = lineend,
+      linejoin  = linejoin,
+      linemitre = linemitre,
+      arrow     = arrow,
+      ...
+    )
   )
 }
 

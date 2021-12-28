@@ -279,7 +279,7 @@ make_label <- function(x) {
 
 data_to_text_gp <- function(data) {
   gpar(
-    col        = alpha(data$colour, data$alpha),
+    col        = alpha(data$textcolour %||% data$colour, data$alpha),
     fontsize   = data$size * .pt,
     fontface   = data$fonface,
     fontfamily = data$family,
@@ -294,8 +294,8 @@ data_to_path_gp <- function(data, lineend = "butt", linejoin = "round",
     gpar(lty = 0)
   } else {
     gpar(
-      col  = alpha(data$colour, data$alpha),
-      fill = alpha(data$colour, data$alpha),
+      col  = alpha(data$linecolour %||% data$colour, data$alpha),
+      fill = alpha(data$linecolour %||% data$colour, data$alpha),
       lwd  = data$linewidth * .pt,
       lty  = data$linetype,
       lineend   = lineend,
@@ -308,12 +308,13 @@ data_to_path_gp <- function(data, lineend = "butt", linejoin = "round",
 data_to_box_gp <- function(data, lineend = "butt", linejoin = "round",
                            linemitre = 10) {
   gpar(
-    col  = alpha(data$boxcolour, data$alpha),
+    col  = alpha(data$boxcolour %||% data$linecolour %||% data$colour,
+                 data$alpha),
     fill = alpha(data$fill, data$alpha),
-    lwd  = data$boxlinewidth[first] * .pt,
-    lty  = data$boxlinetype[first],
-    lineend = lineend,
-    linejoin = linejoin,
+    lwd  = data$boxlinewidth %||% data$linewidth * .pt,
+    lty  = data$boxlinetype  %||% data$linetype,
+    lineend   = lineend,
+    linejoin  = linejoin,
     linemitre = linemitre
   )
 }
