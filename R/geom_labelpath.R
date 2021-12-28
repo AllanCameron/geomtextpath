@@ -116,7 +116,7 @@ GeomLabelpath <- ggproto(
     linecolour   = NULL,
     textcolour   = NULL,
     boxcolour    = NULL,
-    boxlinetype  = NULL,
+    boxlinetype  = 1,
     boxlinewidth = NULL
   ),
 
