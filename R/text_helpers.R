@@ -96,8 +96,8 @@ measure_curved <- function(
   txt           <- filter_glyphs(txt, nlabel)
 
   metrics$x_adj  <-  - 0.5 * info$max_ascend
-  txt$y_offset   <- (txt$y_offset - (-0.5 - label$yoff[txt$substring]) *
-                       info$max_ascend[pmin(txt$metric_id, nrow(info))])
+  txt$y_offset   <- txt$y_offset - metrics$x_adj[txt$metric_id] +
+    label$yoff[txt$substring]
 
   height <- gapply(txt$y_offset, txt$metric_id,
                    function(x){diff(range(x))}, numeric(1))
@@ -399,6 +399,13 @@ font_info_gp <- function(gp = gpar(), res = 72, unit = "inch") {
             "underline_pos", "underline_size")
   info[, vars] <- info[, vars] * adj
   info
+}
+
+x_height <- function(gp) {
+  systemfonts::string_metrics_dev(
+    "x", family = gp$fontfamily %||% "", face = gp$fontface %||% 1,
+    size = gp$fontsize %||% 12, unit = "inches"
+  )$ascent
 }
 
 # Takes care of default gpar() settings and translates units from pixels

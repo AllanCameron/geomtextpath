@@ -84,7 +84,7 @@ process_tag_sub <- function(node, drawing_context) {
   attr <- attributes(node)
   drawing_context <- set_style(drawing_context, attr$style)
 
-  drawing_context$yoff <- drawing_context$yoff - 0.5
+  drawing_context$yoff <- drawing_context$yoff - drawing_context$ascent / 2
   process_tags(node, drawing_context)
 }
 
@@ -94,7 +94,7 @@ process_tag_sup <- function(node, drawing_context) {
   attr <- attributes(node)
   drawing_context <- set_style(drawing_context, attr$style)
 
-  drawing_context$yoff <- drawing_context$yoff + 0.5
+  drawing_context$yoff <- drawing_context$yoff + drawing_context$ascent / 2
   process_tags(node, drawing_context)
 }
 
@@ -124,6 +124,7 @@ set_context_gp <- function(drawing_context, gp = NULL) {
   gp <- update_gpar(drawing_context$gp, gp)
   update_context(
     drawing_context,
+    ascent = x_height(gp),
     gp = gp
   )
 }
