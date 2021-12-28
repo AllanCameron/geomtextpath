@@ -220,7 +220,7 @@ curved_textbox <- function(
 
     # Apply height to minimal offset
     offset <- as_inch(attr(label, "offset"))[unique(label$y_id)]
-    offset <- min(offset) + metrics$x_adj
+    offset <- min(offset) - 0.5 * metrics$lineheight
     offset <- c(0, offset + height)
 
     # Calculate offsets

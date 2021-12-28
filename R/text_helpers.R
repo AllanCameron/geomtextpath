@@ -94,13 +94,14 @@ measure_curved <- function(
   txt           <- cluster_glyphs(txt)
   txt           <- filter_glyphs(txt, nlabel)
 
-  metrics$x_adj  <-  - 0.5 * info$max_ascend
-  txt$y_offset   <- txt$y_offset - metrics$x_adj[txt$metric_id] +
+  adjust  <-  - 0.5 * info$max_ascend
+  txt$y_offset   <- txt$y_offset - adjust[txt$metric_id] +
     label$yoff[txt$substring]
 
   height <- gapply(txt$y_offset, txt$metric_id,
                    function(x){diff(range(x))}, numeric(1))
   metrics$height <- height + info$max_ascend - info$max_descend
+  metrics$lineheight <- info$lineheight
 
   ans <- data_frame(
     glyph =  txt$letter,
