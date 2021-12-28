@@ -41,7 +41,7 @@ angle_from_xy <- function(x, y, degrees = FALSE, norm = FALSE) {
 
   # Allow x and y to be grid units
   if (grid::is.unit(x)) x <- grid::convertUnit(x, "npc", valueOnly = TRUE)
-  if (grid::is.unit(y)) y <- grid::convertUnit(x, "npc", valueOnly = TRUE)
+  if (grid::is.unit(y)) y <- grid::convertUnit(y, "npc", valueOnly = TRUE)
 
   check_xy(x, y)
 
@@ -60,9 +60,12 @@ angle_from_xy <- function(x, y, degrees = FALSE, norm = FALSE) {
 
 arclength_from_xy <- function(x, y, id = NULL) {
 
+  # Handle length-1 paths correctly
+  if (length(x) == 1) return(0 * x + 0 * y[1])
+
   # Allow x and y to be grid units
   if (grid::is.unit(x)) x <- grid::convertUnit(x, "npc", valueOnly = TRUE)
-  if (grid::is.unit(y)) y <- grid::convertUnit(x, "npc", valueOnly = TRUE)
+  if (grid::is.unit(y)) y <- grid::convertUnit(y, "npc", valueOnly = TRUE)
 
   check_xy(x, y)
 
@@ -235,6 +238,7 @@ which.min_curvature <- function(x, y, k = 10) {
 # y <- c(0, 0, 1, 1, 0)
 # plot(round_corners(x, y, 0.2, c(2, 4)), type = 'l')
 round_corners <- function(x, y, radius, at, n = 10) {
+
   len  <- arclength_from_xy(x, y)
 
   # Find surrounding points around corners at radius distance
@@ -319,11 +323,8 @@ sample_path <- function(x, y, n = 50) {
 # Spline smooth the centroids of a path split into n chunks
 smooth_noisy <- function(data, samples = 50) {
 
-  x <- grid::convertUnit(data$x, "npc", valueOnly = TRUE)
-  y <- grid::convertUnit(data$y, "npc", valueOnly = TRUE)
-
-  x <- approx(seq_along(data$x), x, seq(1, length(data$x), len = 250))$y
-  y <- approx(seq_along(data$x), y, seq(1, length(data$x), len = 250))$y
+  x <- approx(seq_along(data$x), data$x, seq(1, length(data$x), len = 250))$y
+  y <- approx(seq_along(data$x), data$y, seq(1, length(data$x), len = 250))$y
 
   path <- sample_path(x, y, n = samples)
   x <- spline_smooth(path[,1])
@@ -331,8 +332,7 @@ smooth_noisy <- function(data, samples = 50) {
   id <- rep(data$id[1], length(x))
   id_lens <- rep(data$id_lens[1], length(x))
   out <- data.frame(x = x, y = y, id = id)
-  out$x <- grid::unit(out$x, "npc")
-  out$y <- grid::unit(out$y, "npc")
+
   out
 }
 
@@ -349,52 +349,69 @@ quad_bezier <- function(p0, p1, p2, t) {
 
 # Produces p points around a corner given the vertex (x1, y1) and two points
 # on the adjacent segment : (x0, y0) and (x2, y2)
-corner_smoother <- function(x0, y0, x1, y1, x2, y2, p = 20) {
+corner_smoother <- function(x0, y0, x1, y1, x2, y2, l1, l2, p = 20) {
 
   t <- seq(0, 1, len = p)
   cbind(quad_bezier(x0, x1, x2, t),
-        quad_bezier(y0, y1, y2, t))
+        quad_bezier(y0, y1, y2, t),
+        seq(l1, l2, len = p))
+}
+
+segment_control_points <- function(x, y, len, ang, n, radius) {
+
+    if (len < 2 * radius) {
+      cbind(c(x, x + 0.5 * cos(ang) * len),
+            c(y, y + 0.5 * sin(ang) * len),
+            c(n, n + 0.5))
+    } else {
+      cbind(x + cos(ang) * c(0, radius, 0.5 * len, len - radius),
+            y + sin(ang) * c(0, radius, 0.5 * len, len - radius),
+            c(n, n + radius / len, n + 0.5, n + 1 - radius / len))
+    }
 }
 
 # Takes a path and a corner radius to find the control points on the path
 # that will give Bezier curves with the given radius
-find_control_points <- function(x, y, radius = 0.1) {
+find_control_points <- function(data, radius = 0.1) {
 
-  lens <- diff(arclength_from_xy(x, y))
-  angs <- atan2(diff(y), diff(x))
+  lens <- diff(arclength_from_xy(data$x, data$y))
+  angs <- angle_from_xy(data$x, data$y)
 
-  segs <- Map(function(x, y, len, ang) {
-
-    if (len < 2 * radius){
-      cbind(c(x, x + 0.5 * cos(ang) * len), c(y, y + 0.5 * sin(ang) * len))
-    } else {
-      cbind(x + cos(ang) * c(0, radius, 0.5 * len, len - radius),
-            y + sin(ang) * c(0, radius, 0.5 * len, len - radius))
-    }
-  }, x = head(x, -1), y = head(y, -1), len = lens, ang = angs)
+  segs <- Map(segment_control_points,
+              x   = head(data$x, -1),
+              y   = head(data$y, -1),
+              len = lens,
+              ang = angs,
+              n   = seq_along(angs),
+              radius = radius)
 
   segs <- do.call(rbind, segs)
-  return(rbind(segs[1, ], segs,
-               cbind(c(tail(x, 1), tail(x, 1)), c(tail(y, 1), tail(y, 1)))))
+
+  segs[, 3] <- approx(seq(nrow(data)), cumsum(c(0, lens)), segs[, 3])$y
+
+  rbind(segs[1, ],
+        segs,
+        cbind(c(tail(data$x, 1), tail(data$x, 1)),
+              c(tail(data$y, 1), tail(data$y, 1)),
+              c(sum(lens), sum(lens))
+              ))
 }
 
 # Co-ordinates the above functions to generate a Bezier-smoothed curve
 smooth_corners <- function(data, n = 20, radius = 0.1) {
 
-  x <- grid::convertUnit(data$x, "npc", valueOnly = TRUE)
-  y <- grid::convertUnit(data$y, "npc", valueOnly = TRUE)
-
-  cps <- find_control_points(x, y, radius = radius)
+  cps <- find_control_points(data, radius = radius)
   sections <- lapply(seq(1, nrow(cps) - 2, 2), function(x) cps[x + 0:2,])
   out <- lapply(sections, function(x) corner_smoother(x[1, 1], x[1, 2],
                                                       x[2, 1], x[2, 2],
-                                                      x[3, 1], x[3, 2], p = n))
+                                                      x[3, 1], x[3, 2],
+                                                      x[1, 3], x[3, 3],
+                                                      p = n))
 
   out <- do.call(rbind, out)
   out <- as.data.frame(out)
-  out <- setNames(out, c("x", "y"))
-  out$x <- grid::unit(out$x, "npc")
-  out$y <- grid::unit(out$y, "npc")
+  out <- setNames(out, c("x", "y", "map"))
+
   out$id <- data$id[1]
   out
 }
@@ -402,6 +419,13 @@ smooth_corners <- function(data, n = 20, radius = 0.1) {
 
 # Applies the smoothing functions to a data frame consisting of x, y and id
 path_smoother <- function(path, text_smoothing) {
+
+  if (grid::is.unit(path$x)) {
+    path$x <- grid::convertUnit(path$x, "npc", valueOnly = TRUE)
+  }
+  if (grid::is.unit(path$y)) {
+    path$y <- grid::convertUnit(path$y, "npc", valueOnly = TRUE)
+  }
 
   text_smoothing[text_smoothing > 100] <- 100
   text_smoothing[text_smoothing < 0]   <- 0
@@ -412,6 +436,11 @@ path_smoother <- function(path, text_smoothing) {
   samps[samps < 3] <- 3
   path <- Map(smooth_corners, data = path, radius = radii)
   path <- Map(smooth_noisy, data = path, samples = samps)
-  do.call(rbind, path)
+  path <- do.call(rbind, path)
+
+  path$x <- grid::unit(path$x, "npc")
+  path$y <- grid::unit(path$y, "npc")
+
+  path
 
 }

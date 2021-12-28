@@ -79,7 +79,6 @@ If we want our text in a box, even when the text is curved, we can use
 `geom_labelpath` instead:
 
 ``` r
-
 set.seed(5)
 
 df <- data.frame(x = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
@@ -98,14 +97,14 @@ in `ggplot2`, so too are `geom_textpath` and `geom_labelpath` the
 foundation of the other geoms in this package. The line-based geoms in
 `ggplot` all have two equivalents in this package:
 
-  - `geom_path` → `geom_textpath` and `geom_labelpath`
-  - `geom_line` → `geom_textline` and `geom_labelline`
-  - `geom_segment` → `geom_textsegment` and `geom_labelsegment`
-  - `geom_density` → `geom_textdensity` and `geom_labeldensity`
-  - `geom_smooth` → `geom_textsmooth` and `geom_labelsmooth`
-  - `geom_contour` → `geom_textcontour`and `geom_labelcontour`
-  - `geom_density2d` → `geom_textdensity2d` and `geom_labeldensity2d`
-  - `geom_sf` → `geom_textsf` and `geom_labelsf`
+-   `geom_path` → `geom_textpath` and `geom_labelpath`
+-   `geom_line` → `geom_textline` and `geom_labelline`
+-   `geom_segment` → `geom_textsegment` and `geom_labelsegment`
+-   `geom_density` → `geom_textdensity` and `geom_labeldensity`
+-   `geom_smooth` → `geom_textsmooth` and `geom_labelsmooth`
+-   `geom_contour` → `geom_textcontour`and `geom_labelcontour`
+-   `geom_density2d` → `geom_textdensity2d` and `geom_labeldensity2d`
+-   `geom_sf` → `geom_textsf` and `geom_labelsf`
 
 Each of these aims to replicate all the functionality of the equivalent
 `ggplot2` function, but with direct text labels that follow the shape of
@@ -188,7 +187,6 @@ calling `geom_textcontour` or `geom_labelcontour` instead of
 `geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -223,7 +221,6 @@ These geoms behave much the same way as `geom_sf`, except linestrings
 such as rivers and roads can be given (curved) text labels:
 
 ``` r
-
 crop_box <- sf::st_bbox(c(xmin = -4.2, xmax = -3.9, ymin = 55.9, ymax = 56))
 df <- sf::st_crop(waterways, crop_box)
 #> Warning: attribute variables are assumed to be spatially constant throughout all
@@ -439,7 +436,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 
@@ -528,11 +524,11 @@ problems than it would solve.
 
 Many paths will be too noisy or too angular to directly label in a
 visually appealing fashion if the text adheres too closely to the
-intricacies of the line. Often, a `geom_textsmooth` with `text_only =
-TRUE` is the best option in such cases, as in the examples above. There
-is also a `straight` parameter so that a label is still applied at an
-appropriate point and angle on the line, but the text will not attempt
-to follow every bump on the path.
+intricacies of the line. Often, a `geom_textsmooth` with
+`text_only = TRUE` is the best option in such cases, as in the examples
+above. There is also a `straight` parameter so that a label is still
+applied at an appropriate point and angle on the line, but the text will
+not attempt to follow every bump on the path.
 
 Other paths may have points of tight curvature, and setting an offset /
 vjust for the text that is larger than the distance to the focus point

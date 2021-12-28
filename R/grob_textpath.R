@@ -115,6 +115,8 @@ textpathGrob <- function(
 
   path <- data_frame(x = x, y = y, id = rep(seq_along(id_lens), id_lens))
 
+  path$map <- arclength_from_xy(x, y, path$id)
+
   text_path <- if (text_smoothing != 0) {
     path_smoother(path, text_smoothing)
   } else {
