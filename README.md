@@ -49,6 +49,7 @@ Once installed, we simply call:
 ``` r
 library(geomtextpath)
 #> Loading required package: ggplot2
+#> Warning: package 'ggplot2' was built under R version 4.1.1
 ```
 
 The core functions in this package, `geom_textpath` and
@@ -79,7 +80,6 @@ If we want our text in a box, even when the text is curved, we can use
 `geom_labelpath` instead:
 
 ``` r
-
 set.seed(5)
 
 df <- data.frame(x = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
@@ -98,14 +98,14 @@ in `ggplot2`, so too are `geom_textpath` and `geom_labelpath` the
 foundation of the other geoms in this package. The line-based geoms in
 `ggplot` all have two equivalents in this package:
 
-  - `geom_path` → `geom_textpath` and `geom_labelpath`
-  - `geom_line` → `geom_textline` and `geom_labelline`
-  - `geom_segment` → `geom_textsegment` and `geom_labelsegment`
-  - `geom_density` → `geom_textdensity` and `geom_labeldensity`
-  - `geom_smooth` → `geom_textsmooth` and `geom_labelsmooth`
-  - `geom_contour` → `geom_textcontour`and `geom_labelcontour`
-  - `geom_density2d` → `geom_textdensity2d` and `geom_labeldensity2d`
-  - `geom_sf` → `geom_textsf` and `geom_labelsf`
+-   `geom_path` → `geom_textpath` and `geom_labelpath`
+-   `geom_line` → `geom_textline` and `geom_labelline`
+-   `geom_segment` → `geom_textsegment` and `geom_labelsegment`
+-   `geom_density` → `geom_textdensity` and `geom_labeldensity`
+-   `geom_smooth` → `geom_textsmooth` and `geom_labelsmooth`
+-   `geom_contour` → `geom_textcontour`and `geom_labelcontour`
+-   `geom_density2d` → `geom_textdensity2d` and `geom_labeldensity2d`
+-   `geom_sf` → `geom_textsf` and `geom_labelsf`
 
 Each of these aims to replicate all the functionality of the equivalent
 `ggplot2` function, but with direct text labels that follow the shape of
@@ -129,8 +129,7 @@ separately.
 ggplot(pressure, aes(temperature, pressure)) +
   geom_textline(label = "Mercury vapor pressure", size = 8, vjust = -0.5,
                 linewidth = 1, linecolor = "red4", linetype = 2, 
-                color = "deepskyblue4") + 
-  theme_bw()
+                color = "deepskyblue4")
 ```
 
 <img src="man/figures/README-textline_demo-1.png" width="100%" style="display: block; margin: auto;" />
@@ -162,7 +161,6 @@ ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
                 method = "loess", formula = y ~ x,
                 size = 7, linetype = 3, fontface = 2, linewidth = 1) +
   scale_colour_manual(values = c("forestgreen", "deepskyblue4", "tomato4")) +
-  theme_bw() + 
   theme(legend.position = "none")
 ```
 
@@ -188,7 +186,6 @@ calling `geom_textcontour` or `geom_labelcontour` instead of
 `geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -196,7 +193,6 @@ ggplot(df, aes(x, y, z = z)) +
   geom_contour_filled(bins = 6, alpha = 0.6) + 
   geom_textcontour(bins = 6, size = 2.5, padding = unit(0.05, "in")) + 
   scale_fill_manual(values = terrain.colors(11)) + 
-  theme_classic() +
   theme(legend.position = "none")
 ```
 
@@ -211,8 +207,7 @@ set.seed(1)
 df  <- data.frame(x = rnorm(100), y = rnorm(100))
 
 ggplot(df, aes(x, y)) + 
-  geom_textdensity2d() +
-  theme_classic()
+  geom_textdensity2d()
 ```
 
 <img src="man/figures/README-density2d-1.png" width="100%" style="display: block; margin: auto;" />
@@ -223,7 +218,6 @@ These geoms behave much the same way as `geom_sf`, except linestrings
 such as rivers and roads can be given (curved) text labels:
 
 ``` r
-
 crop_box <- sf::st_bbox(c(xmin = -4.2, xmax = -3.9, ymin = 55.9, ymax = 56))
 df <- sf::st_crop(waterways, crop_box)
 #> Warning: attribute variables are assumed to be spatially constant throughout all
@@ -258,8 +252,7 @@ ggplot() +
   stat_function(geom = "textpath",
                 fun = dgamma, color = "green4",
                 label = "gamma distribution with shape = 3",
-                size = 5, vjust = -0.2, hjust = 0.1, args = list(shape = 3)) +
-  theme_bw() 
+                size = 5, vjust = -0.2, hjust = 0.1, args = list(shape = 3))
 ```
 
 <img src="man/figures/README-stat_function-1.png" width="100%" style="display: block; margin: auto;" />
@@ -352,8 +345,7 @@ df <- data.frame(x = 1:4, y = c(4, 7, 6, 3),
 p <- ggplot(df, aes(x, y, color = color, label = color)) +
        geom_point(size = 1.5) +
        scale_color_identity() +
-       lims(x = c(0, 6), y = c(0, 8)) +
-       theme_bw()
+       lims(x = c(0, 6), y = c(0, 8))
 
 p_text     <- p + geom_text(size = 8, hjust = -0.1)
 p_textpath <- p + geom_textpath(size = 8, hjust = -0.1)
@@ -439,7 +431,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 
@@ -492,7 +483,6 @@ df <- data.frame(x = c("A long axis label", "Another long label",
 p <- ggplot(df, aes(x, y, fill = x)) + 
       geom_col(width = 0.5) +
       scale_fill_brewer(type = "qual") +
-      theme_bw() +
       theme(axis.text.x = element_text(size = 15),
             legend.position = "none")
 
@@ -528,11 +518,11 @@ problems than it would solve.
 
 Many paths will be too noisy or too angular to directly label in a
 visually appealing fashion if the text adheres too closely to the
-intricacies of the line. Often, a `geom_textsmooth` with `text_only =
-TRUE` is the best option in such cases, as in the examples above. There
-is also a `straight` parameter so that a label is still applied at an
-appropriate point and angle on the line, but the text will not attempt
-to follow every bump on the path.
+intricacies of the line. Often, a `geom_textsmooth` with
+`text_only = TRUE` is the best option in such cases, as in the examples
+above. There is also a `straight` parameter so that a label is still
+applied at an appropriate point and angle on the line, but the text will
+not attempt to follow every bump on the path.
 
 Other paths may have points of tight curvature, and setting an offset /
 vjust for the text that is larger than the distance to the focus point
