@@ -84,7 +84,7 @@ make_gap <- function(path, letters, gap = NA,
   if (!any(trim)) {
     path$section <- "all"
   } else {
-    path$length <- path$length %||% .arclength_from_xy(path$x, path$y, path$id)
+    path$length <- path$length %||% arclength_from_xy(path$x, path$y, path$id)
 
     # Get locations where strings start and end
     lefts  <- gapply(letters$left,  letters$id, min, numeric(1))
@@ -156,7 +156,7 @@ make_gap <- function(path, letters, gap = NA,
 
 dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
 
-  vecs <- data_frame(x = .interp_na(x), y = .interp_na(y), id = id)
+  vecs <- data_frame(x = interp_na(x), y = interp_na(y), id = id)
   lens <- lengths(vecs)
   n    <- max(lengths(vecs))
   vecs[lens != n] <- lapply(vecs[lens != n], rep_len, length.out = n)
@@ -182,12 +182,12 @@ pathify <- function(data, hjust, angle, width,
   angle <- pi * angle / 180
   multi_seq <- Vectorize(seq.default)
 
-  if(!is.null(polar_x) & !is.null(polar_y) & !is.null(thet)) {
+  if (!is.null(polar_x) & !is.null(polar_y) & !is.null(thet)) {
 
     polar_x <- as_inch(polar_x, "x")
     polar_y <- as_inch(polar_y, "y")
 
-    if(thet == "y") angle <- angle - pi/2
+    if (thet == "y") angle <- angle - pi/2
     r <- sqrt((data$x - polar_x)^2 + (data$y - polar_y)^2)
     width <- width / r
     theta <- atan2(data$y - polar_y, data$x - polar_x)

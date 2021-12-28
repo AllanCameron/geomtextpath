@@ -1,17 +1,17 @@
 
-test_that(".before and .after give sensible outputs", {
+test_that("before and after give sensible outputs", {
 
   x <- numeric()
 
-  expect_equal(length(.before(x)), 0)
-  expect_equal(length(.after(x)), 0)
+  expect_equal(length(before(x)), 0)
+  expect_equal(length(after(x)), 0)
 
   x <- 1:5
-  expect_equal(.before(x), c(1, 1:5))
-  expect_equal(.after(x), c(1:5, 5))
+  expect_equal(before(x), c(1, 1:5))
+  expect_equal(after(x), c(1:5, 5))
 })
 
-test_that(".angle_from_xy gives correct results", {
+test_that("angle_from_xy gives correct results", {
 
   # Equilateral triangle
   t <- seq(pi, -pi, length.out = 4)
@@ -19,27 +19,27 @@ test_that(".angle_from_xy gives correct results", {
   y <- sin(t)
 
   # Correct angles (*not* -30, 90, 30 as one might expect)
-  ang <- .angle_from_xy(x, y, degrees = TRUE)
-  expect_equal(ang, c(30, 90, 150))
+  ang <- angle_from_xy(x, y, degrees = TRUE)
+  expect_equal(ang, c(30, -90, 150))
 
   # Reverse path should gave same angles as forward path, but negative
-  ang_test <- .angle_from_xy(rev(x), rev(y), degrees = TRUE)
+  ang_test <- angle_from_xy(rev(x), rev(y), degrees = TRUE)
   expect_equal(ang_test, -ang)
 
   # Radian and degree mode give same angles
-  ang_test <- .angle_from_xy(x, y, degrees = FALSE)
+  ang_test <- angle_from_xy(x, y, degrees = FALSE)
   expect_equal(ang_test, ang / 180 * pi)
 
   # Normal should be 90 degrees offset
-  ang_test <- .angle_from_xy(x, y, norm = TRUE, degrees = TRUE)
+  ang_test <- angle_from_xy(x, y, norm = TRUE, degrees = TRUE)
   expect_equal(ang_test, ang + 90)
 
   # Should be able to handle length-2 vectors
-  ang_test <- .angle_from_xy(x[1:2], y[1:2], degrees = TRUE)
+  ang_test <- angle_from_xy(x[1:2], y[1:2], degrees = TRUE)
   expect_equal(ang_test, 30)
 })
 
-test_that(".arclength_from_xy gives correct results", {
+test_that("arclength_from_xy gives correct results", {
 
   # Vector mode
   lens   <- runif(50)
@@ -48,37 +48,24 @@ test_that(".arclength_from_xy gives correct results", {
   x <- cumsum(lens * cos(angles))
   y <- cumsum(lens * sin(angles))
 
-  arclen <- .arclength_from_xy(x, y)
+  arclen <- arclength_from_xy(x, y)
   expect_equal(arclen[50], sum(lens[2:50]))
 
   # Matrix mode
   x <- cbind(x[1:25], x[26:50])
   y <- cbind(y[1:25], y[26:50])
 
-  arclen <- .arclength_from_xy(x, y)
+  arclen <- arclength_from_xy(x, y)
   expect_equal(arclen[25,], c(sum(lens[2:25]), sum(lens[27:50])))
 
-  # Ensure accuracy is improved with accuracy parameter
-
-  t <- seq(0, 360, length.out = 1000) * pi / 180
-  x <- cos(t)
-  y <- sin(t)
-
-  basic <- abs(max(.arclength_from_xy(x, y)) - 2 * pi)
-  accurate <-  abs(max(.arclength_spline(x, y, accuracy = 5)) - 2 * pi)
-
-  expect_lt(accurate, basic)
-
-  accurate <- abs(max(.arclength_spline(x, y, accuracy = NA)) - 2 * pi)
-  expect_equal(accurate, basic)
 })
 
-test_that(".get_offset offsets correctly", {
+test_that("get_offset offsets correctly", {
 
   x <- c(1:5)
   y <- c(1,2,3,2,1)
 
-  offset <- .get_offset(x, y, d = 1:2 / sqrt(2))
+  offset <- get_offset(x, y, d = 1:2 / sqrt(2))
 
   expect_equal(
     offset$x,
@@ -103,7 +90,7 @@ test_that("We can measure curvature accurately", {
   x <- cos(t)
   y <- sin(t)
 
-  curv_1 <- .get_curvature(x, y)
+  curv_1 <- get_curvature(x, y)
 
   # the curvature should be the reciprocal of the radius
   radius_1 <- 1 / curv_1
@@ -113,7 +100,7 @@ test_that("We can measure curvature accurately", {
   )
 
   # Doubling the radius of the circle should half the curvature
-  curv_2 <- .get_curvature(2 * x, 2 * y)
+  curv_2 <- get_curvature(2 * x, 2 * y)
 
   expect_true(
     all( abs((curv_1 / curv_2) - 2) < 0.001)
@@ -123,8 +110,8 @@ test_that("We can measure curvature accurately", {
 test_that("We can roll our own means", {
 
   val <- c(4.25, 5.75, 5.75, 6, 5.5, 5.5, 5, 6, 5, 3.5, 4)
-  expect_equal(val, .safe_rollmean(c(3, 8, 9, 3, 4, 6, 9, 1, 8, 2, 3), k = 4))
-  expect_equal(val, .safe_rollmean(val, k = 1))
+  expect_equal(val, safe_rollmean(c(3, 8, 9, 3, 4, 6, 9, 1, 8, 2, 3), k = 4))
+  expect_equal(val, safe_rollmean(val, k = 1))
 })
 
 
@@ -134,6 +121,7 @@ test_that("We can find the flattest point of a curve", {
   y <- sin(seq(0, 2 * pi, len = 100))
   expect_equal(which.min_curvature(x, y), 1)
 })
+
 
 test_that("We can identify a path with 'corners'", {
   x <- 1:10

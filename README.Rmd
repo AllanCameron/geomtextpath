@@ -183,8 +183,8 @@ crop_box <- sf::st_bbox(c(xmin = -4.2, xmax = -3.9, ymin = 55.9, ymax = 56))
 df <- sf::st_crop(waterways, crop_box)
 
 ggplot(df) +
-  geom_textsf(aes(label = name), text_smoothing = 80, linecolour = "blue4", 
-              color = "gray50", hjust = 0.7, vjust = -0.5, fill = "#E6F0B3", 
+  geom_textsf(aes(label = name), text_smoothing = 95, linecolour = "blue4", 
+              color = "gray50", hjust = 0.25, vjust = -0.5, fill = "#E6F0B3", 
               fontface = 3) + 
   lims(x = c(-4.18, -3.92), y = c(55.92, 55.995))
 

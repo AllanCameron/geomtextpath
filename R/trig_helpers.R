@@ -10,60 +10,69 @@
 # We can only define paths if they have two or more valid numeric points, and no
 # path can contain any infinite values
 
-.check_xy <- function(x, y) {
+check_xy <- function(x, y) {
 
-  stopifnot("x and y must be the same length" = {(n <- length(x)) == length(y)},
-            "x and y must both be numeric" = {(is.numeric(x) & is.numeric(y))},
-            "x and y must be length 2 or more" = {n > 1},
-            "x and y must not contain infinite points" =
-              {all(is.finite(x[!is.na(x)]) & is.finite(y[!is.na(y)]))})
+  stopifnot(
+
+    "x and y must be the same length" = {
+      (n <- length(x)) == length(y)
+    },
+
+    "x and y must both be numeric" = {
+      (is.numeric(x) & is.numeric(y))
+    },
+
+    "x and y must be length 2 or more" = {
+      n > 1
+    },
+
+    "x and y must not contain infinite points" = {
+      all(is.finite(x[!is.na(x)]) & is.finite(y[!is.na(y)]))
+    }
+  )
 }
 
 # Angles ------------------------------------------------------------------
 
-# This is a safe way to get the direction along a path. Since we use approx
-# to interpolate angles later, we can't have any sudden transitions
-# where angles "wrap around" from +180 to -180, otherwise we might
-# interpolate in this transition and get letters with an angle of
-# around 0. When combined with a vjust, this also makes the letters
-# jump out of alignment. This little algorithm makes sure the changes
-# in angle never wrap around.
+# This is a safe way to get the direction along a path (or its norm)
+# in radians or degrees, whether in grid units or bare numbers.
 
-.angle_from_xy <- function(x, y, degrees = FALSE, norm = FALSE)
-{
-  .check_xy(x, y)
-  x <- .interp_na(x)
-  y <- .interp_na(y)
+angle_from_xy <- function(x, y, degrees = FALSE, norm = FALSE) {
 
-  grad       <- diff(y) / diff(x)
-  first     <- atan2(diff(y[1:2]), diff(x[1:2]))
-  diff_rads <- diff(atan(grad))
-  diff_rads[i] <- diff_rads[{i <- diff_rads < - .halfpi}] + pi
-  diff_rads[i] <- diff_rads[{i <- diff_rads > + .halfpi}] - pi
-  rads      <- cumsum(c(first, diff_rads))
-  if(norm) rads <- rads + .halfpi
-  if(degrees) rads * .rad2deg else rads
+  # Allow x and y to be grid units
+  if (grid::is.unit(x)) x <- grid::convertUnit(x, "npc", valueOnly = TRUE)
+  if (grid::is.unit(y)) y <- grid::convertUnit(x, "npc", valueOnly = TRUE)
+
+  check_xy(x, y)
+
+  x <- interp_na(x)
+  y <- interp_na(y)
+
+  rads <- atan2(diff(y), diff(x))
+
+  if (norm) rads <- rads + .halfpi
+  if (degrees) rads * .rad2deg else rads
 }
 
 # Arclength ---------------------------------------------------------------
 
-# Get the cumulative length of an x, y path. The accuracy can be improved by
-# setting accuracy to 1 or more, which will interpolate the points with splines
-# to emulate a smooth curve through the points.
+# Get the cumulative length of an x, y path safely
 
-.arclength_from_xy <- function(x, y, id = NULL)
-{
-  .check_xy(x, y)
-  x <- .interp_na(x)
-  y <- .interp_na(y)
+arclength_from_xy <- function(x, y, id = NULL) {
 
-  if (is.null(id)) {
-    id <- rep(seq_len(NCOL(x)), each = NROW(x))
-  }
+  # Allow x and y to be grid units
+  if (grid::is.unit(x)) x <- grid::convertUnit(x, "npc", valueOnly = TRUE)
+  if (grid::is.unit(y)) y <- grid::convertUnit(x, "npc", valueOnly = TRUE)
+
+  check_xy(x, y)
+
+  x <- interp_na(x)
+  y <- interp_na(y)
+
+  if (is.null(id)) id <- rep(seq_len(NCOL(x)), each = NROW(x))
 
   start <- run_start(id)
-
-  dist <- sqrt(diff(x)^2 + diff(y)^2)
+  dist  <- sqrt(diff(x)^2 + diff(y)^2)
 
   # Should ideally be something like vctrs::vec_c(0, dist)
   if (is.null(dim(dist))) {
@@ -76,44 +85,20 @@
   ave(dist, id, FUN = cumsum)
 }
 
-.arclength_spline <- function(x, y, accuracy = NA) {
-  .check_xy(x, y)
-
-  x <- .interp_na(x)
-  y <- .interp_na(y)
-
-  if(is.na(accuracy)) return(c(0, cumsum(sqrt(diff(x)^2 + diff(y)^2))))
-
-  stopifnot(
-    "accuracy must be a positive integer" =
-      is.numeric(accuracy) & length(accuracy) == 1 & accuracy >= 0
-  )
-
-  t <- seq_along(x)
-  n <- length(x)
-
-  new_x <- stats::spline(x ~ t, n = n + floor(accuracy) * (n - 1))
-  new_y <- stats::spline(y ~ t, n = n + floor(accuracy) * (n - 1))$y
-
-  dist <- c(0, cumsum(sqrt(diff(new_x$y)^2 + diff(new_y)^2)))
-
-  return(dist[match(t, new_x$x)])
-}
-
 # Before / After ----------------------------------------------------------
 
 # We sometimes need to compare angles along a path, but ensure that the first
 # and last elements are compared to themselves. These little utility functions
 # allow a shorthand method of doing this.
 
-.before <- function(x) {
+before <- function(x) {
 
-  if(length(x) == 0) x else x[c(1, seq_along(x))]
+  if (length(x) == 0) x else x[c(1, seq_along(x))]
 }
 
-.after <- function(x) {
+after <- function(x) {
 
-  if(length(x) == 0) x else x[c(seq_along(x), length(x))]
+  if (length(x) == 0) x else x[c(seq_along(x), length(x))]
 }
 
 # Some features of a path are associated with its points, such as its x and y
@@ -128,9 +113,9 @@
 # segments, and all intervening points with the mean of their two adjacent
 # segments.
 
-.average_segments_at_points <- function(x) {
+average_segments_at_points <- function(x) {
 
-  (.before(x) + .after(x)) / 2
+  (before(x) + after(x)) / 2
 }
 
 # Bisect offset -----------------------------------------------------------
@@ -139,19 +124,19 @@
 # segment of the path and finds the line at distance d that runs parallel to
 # it. The offset path is the set of points where adjacent offset lines meet.
 
-.get_offset <- function(x, y, d = 0) {
+get_offset <- function(x, y, d = 0) {
 
   # Get angle normal to each segment of the path
-  theta <- .angle_from_xy(x, y, norm = TRUE)
+  theta <- angle_from_xy(x, y, norm = TRUE)
 
   # Find the angle of the lines which, when drawn at each point on the path
   # will project onto the intersections between adjacent offset segments
-  theta_bisect <- .average_segments_at_points(theta)
+  theta_bisect <- average_segments_at_points(theta)
 
   # Find the distances to these intersecting points when the offset is d.
   # Since d can be a vector of distances, we need a matrix result, where
   # each column is the distance to intersections at different values of d
-  offset <- outer(1/cos(theta_bisect - .after(theta)), d)
+  offset <- outer(1/cos(theta_bisect - after(theta)), d)
 
   # Calculate the actual positions of the intersection points - these are
   # our new offset paths - one matrix for x positions and one for y
@@ -160,16 +145,16 @@
 
   # Calculate arc length of the new paths: one length for each column in
   # our x and y matrices.
-  arc_length <- .arclength_from_xy(xout, yout)
+  arc_length <- arclength_from_xy(xout, yout)
 
   return(list(x = xout, y = yout, arc_length = arc_length))
 }
 
 # Smooth offset -----------------------------------------------------------
 
-.get_smooth_offset <- function(x, y, d, width = 0.02) {
+get_smooth_offset <- function(x, y, d, width = 0.02) {
 
-  dist <- .arclength_from_xy(x, y)
+  dist <- arclength_from_xy(x, y)
   sd   <- max(dist) * width
 
   x <- sapply(dist, function(i) {
@@ -182,7 +167,7 @@
     sum(y * dn/sum(dn))
   })
 
-  .get_offset(x, y, d)
+  get_offset(x, y, d)
 }
 
 # Curvature ---------------------------------------------------------------
@@ -190,9 +175,9 @@
 # Finds the curvature (change in angle per change in arc length)
 # This in effect finds 1/R, where R is the radius of the curve
 
-.get_curvature <- function(x, y)
+get_curvature <- function(x, y)
 {
-  if(length(x) < 3) return(rep(0, length(x)))
+  if (length(x) < 3) return(rep(0, length(x)))
 
   dx  <- diff(x)
   ddx <- diff(dx)
@@ -205,21 +190,21 @@
 
   # Duplicate first and last entries, since these are the best estimates
   # of the curvature at these points, which is otherwise undefined.
-  .before(.after(curv))
+  before(after(curv))
 }
 
-.exceeds_curvature <- function(x, y, d, tolerance = 0.1)
+exceeds_curvature <- function(x, y, d, tolerance = 0.1)
 {
-  curve_radius <- 1 / .get_curvature(x, y)
+  curve_radius <- 1 / get_curvature(x, y)
   as.numeric(apply(outer(curve_radius, d,
         FUN = function(a, b) {
           (abs(a) < abs(b)) & (sign(a) == sign(b))
         }), 1, any))
 }
 
-.safe_rollmean <- function(vec, k = 10) {
+safe_rollmean <- function(vec, k = 10) {
 
-  if(k < 2) return(vec)
+  if (k < 2) return(vec)
 
   mat <- sapply(-(k/2 - 1):(length(vec) - k/2), function(x) x + 0:(k - 1))
   mat[mat < 1] <- 1
@@ -232,10 +217,10 @@
 
 
 which.min_curvature <- function(x, y, k = 10) {
-  len <- .arclength_from_xy(x, y)
+  len <- arclength_from_xy(x, y)
   len <- len / max(len)
-  curv <- abs(.get_curvature(x, y))
-  mean_curv <- .safe_rollmean(curv, k)
+  curv <- abs(get_curvature(x, y))
+  mean_curv <- safe_rollmean(curv, k)
   which.min(abs(mean_curv) - min(abs(mean_curv)))
 }
 
@@ -248,9 +233,9 @@ which.min_curvature <- function(x, y, k = 10) {
 # # Make rectangle
 # x <- c(0, 1, 1, 0, 0)
 # y <- c(0, 0, 1, 1, 0)
-# plot(.round_corners(x, y, 0.2, c(2, 4)), type = 'l')
-.round_corners <- function(x, y, radius, at, n = 10) {
-  len  <- .arclength_from_xy(x, y)
+# plot(round_corners(x, y, 0.2, c(2, 4)), type = 'l')
+round_corners <- function(x, y, radius, at, n = 10) {
+  len  <- arclength_from_xy(x, y)
 
   # Find surrounding points around corners at radius distance
   pts <- len[at]
@@ -302,7 +287,7 @@ which.min_curvature <- function(x, y, k = 10) {
 # Simple test for whether a path has "corners"
 has_corners <- function(x, y) {
 
-  angles <- .angle_from_xy(x, y, degrees = TRUE)
+  angles <- angle_from_xy(x, y, degrees = TRUE)
   any(abs(diff(angles)) > 12)
 }
 
@@ -322,7 +307,7 @@ spline_smooth <- function(x, n = 4) {
 # Chunk the path into n parts and get the centroid of each chunk
 sample_path <- function(x, y, n = 50) {
 
-  path <- .arclength_from_xy(x, y)
+  path <- arclength_from_xy(x, y)
 
   breaks <- seq(1e-6, max(path) + 1e-6, len = n)
   path_parts <- findInterval(path, breaks)
@@ -375,12 +360,12 @@ corner_smoother <- function(x0, y0, x1, y1, x2, y2, p = 20) {
 # that will give Bezier curves with the given radius
 find_control_points <- function(x, y, radius = 0.1) {
 
-  lens <- diff(.arclength_from_xy(x, y))
+  lens <- diff(arclength_from_xy(x, y))
   angs <- atan2(diff(y), diff(x))
 
   segs <- Map(function(x, y, len, ang) {
 
-    if(len < 2 * radius){
+    if (len < 2 * radius){
       cbind(c(x, x + 0.5 * cos(ang) * len), c(y, y + 0.5 * sin(ang) * len))
     } else {
       cbind(x + cos(ang) * c(0, radius, 0.5 * len, len - radius),
@@ -426,7 +411,7 @@ path_smoother <- function(path, text_smoothing) {
   samps <- round(500 * (100 - text_smoothing) / 100)
   samps[samps < 3] <- 3
   path <- Map(smooth_corners, data = path, radius = radii)
-  #path <- Map(smooth_noisy, data = path, samples = samps)
+  path <- Map(smooth_noisy, data = path, samples = samps)
   do.call(rbind, path)
 
 }
