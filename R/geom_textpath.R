@@ -74,6 +74,7 @@
 #'
 #' @export
 #' @md
+#' @include text_params.R
 #'
 #' @examples
 #'# Plot text along an arbitrary path
@@ -159,7 +160,11 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
                     linewidth = 0.5, linetype = 1, spacing = 0,
                     linecolour = "_copy_text_colour_", angle = 0),
 
-  extra_params = c("na.rm"),
+  extra_params = c("na.rm", names(formals(static_text_params))[-1]),
+
+  setup_params = function(data, params) {
+    update_params(params, type = "text")
+  },
 
   setup_data = function(data, params) {
     if (isTRUE(params$text_params$text_only)) {
@@ -308,7 +313,7 @@ geom_textline <- function(mapping = NULL, data = NULL, stat = "identity",
 GeomTextLine <- ggproto("GeomTextLine", GeomTextpath,
   setup_params = function(data, params) {
     params$flipped_aes <- has_flipped_aes(data, params, ambiguous = TRUE)
-    params
+    update_params(params, type = "text")
   },
 
   extra_params = c("na.rm", "orientation"),

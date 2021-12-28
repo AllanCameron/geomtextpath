@@ -119,6 +119,12 @@ GeomLabelpath <- ggproto(
     boxlinewidth = NULL
   ),
 
+  extra_params = c("na.rm", names(formals(static_text_params))[-1]),
+
+  setup_params = function(data, params) {
+    update_params(params, type = "label")
+  },
+
   draw_panel = function(
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
@@ -286,7 +292,7 @@ geom_labelline <- function(
 GeomLabelLine <- ggproto("GeomLabelLine", GeomLabelpath,
   setup_params = function(data, params) {
     params$flipped_aes <- has_flipped_aes(data, params, ambiguous = TRUE)
-    params
+    update_params(params, type = "label")
   },
 
   extra_params = c("na.rm", "orientation"),

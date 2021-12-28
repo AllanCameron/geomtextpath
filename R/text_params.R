@@ -91,6 +91,18 @@ set_params <- function(...) {
   params
 }
 
+update_params <- function(params, type = "text") {
+  text_params <- params$text_params %||% static_text_params(.type = type)
+  text_names  <- names(formals(static_text_params))
+  text_names  <- intersect(text_names, names(params))
+  for (i in text_names) {
+    text_params[[i]] <- params[[i]]
+    params[[i]] <- NULL
+  }
+  params$text_params <- text_params
+  params
+}
+
 # This function is to check that user input is what we would expect it to be.
 # It checks `value` for being of a particular class `type` and have `length`
 # length. Optionally, one can allow NAs or NULLs.
