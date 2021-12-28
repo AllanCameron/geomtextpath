@@ -79,3 +79,53 @@ static_text_params <- function(
     halign         = halign
   )
 }
+
+# Automatically capture static text parameters
+set_params <- function(...) {
+  params <- list(...)
+  text_names  <- names(formals(static_text_params))
+  text_names  <- intersect(text_names, names(params))
+  text_params <- do.call(static_text_params, params[text_names])
+  params      <- params[setdiff(names(params), text_names)]
+  params$text_params <- text_params
+  params
+}
+
+# This function is to check that user input is what we would expect it to be.
+# It checks `value` for being of a particular class `type` and have `length`
+# length. Optionally, one can allow NAs or NULLs.
+assert <- function(value, type, length = 1L,
+                   allow_NAs = FALSE, allow_NULL = FALSE,
+                   argname = deparse(substitute(value))) {
+  if (is.null(value) && allow_NULL) {
+    return(NULL)
+  }
+  force(argname)
+  message <- character()
+  if (!inherits(value, type)) {
+    message <- c(
+      message,
+      paste0("`", argname, "` must be a `", type, "` vector.")
+    )
+  }
+  if (length(value) != length) {
+    message <- c(
+      message,
+      paste0("`", argname, "` must be of length ", length, ".")
+    )
+  }
+  if (isFALSE(allow_NAs) && anyNA(value)) {
+    message <- c(
+      message,
+      paste0("`", argname, "` contains NAs whereas it cannot.")
+    )
+  }
+  if (length(message)) {
+    message <- c(
+      "Unexpected input:",
+      message
+    )
+    abort(message)
+  }
+  value
+}

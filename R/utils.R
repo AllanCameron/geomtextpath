@@ -1,17 +1,3 @@
-# ------------------------------------------------------------------------------
-# Row-bind a list of data.frames
-# `df_list` is a list of data.frames
-# `idcol` is a name for an id column, or NULL if it is to be omitted
-rbind_dfs <- function(df_list, idcol = NULL) {
-  # Ideally, we'd use vctrs::vec_c(!!!df_list) which is 10x faster
-  ans <- do.call(rbind.data.frame, c(df_list, make.row.names = FALSE))
-  if (!is.null(idcol)) {
-    n <- vapply(df_list, nrow, integer(1), USE.NAMES = FALSE)
-    ans[[idcol]] <- rep(names(df_list) %||% seq_along(n), times = n)
-  }
-  ans
-}
-
 # Run length utilities ----------------------------------------------------
 
 # Simplified `rle(x)$lengths`
@@ -40,14 +26,14 @@ run_end <- function(x, is_lengths = FALSE) {
   cumsum(x)
 }
 
-# ------------------------------------------------------------------------------
+# Utilities for data.frames -----------------------------------------------
+
 # Cheaper data.frame constructor for internal use.
 # Only use when `...` has valid names and content are valid data.frame columns
 data_frame <- function(...) {
   list_to_df(x = list(...))
 }
 
-# ------------------------------------------------------------------------------
 # Similar in scope to base::list2DF or ggplot2:::new_data_frame  or
 # vctrs::df_list
 # without bothering with 'n'/'size'
@@ -70,13 +56,43 @@ list_to_df <- function(x = list()) {
   x
 }
 
-# ------------------------------------------------------------------------------
+# Row-bind a list of data.frames
+# `df_list` is a list of data.frames
+# `idcol` is a name for an id column, or NULL if it is to be omitted
+rbind_dfs <- function(df_list, idcol = NULL) {
+  # Ideally, we'd use vctrs::vec_c(!!!df_list) which is 10x faster
+  ans <- do.call(rbind.data.frame, c(df_list, make.row.names = FALSE))
+  if (!is.null(idcol)) {
+    n <- vapply(df_list, nrow, integer(1), USE.NAMES = FALSE)
+    ans[[idcol]] <- rep(names(df_list) %||% seq_along(n), times = n)
+  }
+  ans
+}
+
+# Grouping utilities ------------------------------------------------------
 
 discretise <- function(x) {
   match(x, unique(x))
 }
 
-# ------------------------------------------------------------------------------
+group_id <- function(data, vars) {
+  id <- lapply(data[vars], discretise)
+  id <- do.call(paste, c(list(sep = "&"), id))
+  discretise(id)
+}
+
+# Shorthand for `vapply(split(x, group), ...)`
+gapply <- function(x, group, FUN, FUN.VALUE, ..., USE.NAMES = FALSE) {
+  vapply(
+    split(x, group),
+    FUN = FUN, FUN.VALUE = FUN.VALUE,
+    ...,
+    USE.NAMES = USE.NAMES
+  )
+}
+
+# Approx utilities --------------------------------------------------------
+
 # Function for `approx()`-ing a number of `y` variables. More efficient
 # than looping `approx()` due to not having to recalculate indices every
 # iteration. For non-numeric values, repeats first entry to match length.
@@ -131,11 +147,7 @@ approx_multiple <- function(x, xout, y = matrix()) {
   return(out)
 }
 
-
-# ------------------------------------------------------------------------------
-# In general, missing (NA) points on a path can be interpolated between the
-# existing points without affecting the shape of the path. To keep all vectors
-# the same length, we therefore need a function to linearly interpolate at NAs
+# Missingness utilities ---------------------------------------------------
 
 .interp_na <- function(x) {
 
@@ -182,6 +194,8 @@ find_missing <- function(x, layer) {
   detect_missing(x, c(layer$required_aes, layer$non_missing_aes))
 }
 
+# Label utilities ---------------------------------------------------------
+
 match_labels <- function(x, ...) UseMethod("match_labels")
 
 match_labels.data.frame <- function(x, labels) {
@@ -224,6 +238,8 @@ rename <- function (x, replace)
     x
 }
 
+# Text utilities ----------------------------------------------------------
+
 safe_parse <- function (text)
 {
   if (!is.character(text)) stop("`text` must be a character vector")
@@ -259,6 +275,40 @@ make_label <- function(x) {
   }
 }
 
+# Grid utilities ----------------------------------------------------------
+
+# Helper function to do safe(r) recycling on "gpar" class objects.
+recycle_gp <- function(gp, fun, ...) {
+  # Recycling rules only apply to non-unique parameters
+  do_recycle <- lengths(gp) > 1
+  gp[do_recycle] <- lapply(unclass(gp)[do_recycle], fun, ...)
+  # Never ever have zero-length objects in the gpar
+  gp[lengths(gp) == 0] <- list(NULL)
+  return(gp)
+}
+
+rep_gp <- function(gp, length.out = max(lengths(gp))) {
+  gp[] <- lapply(gp, rep, length.out = length.out)
+  gp
+}
+
+split_gp <- function(gp, i = seq_len(max(lengths(gp)))) {
+  gp <- rep_gp(gp, max(i))
+  lapply(i, function(j) {
+    recycle_gp(gp, `[`, j)
+  })
+}
+
+# Helper function to fill in missing parameters by defaults
+# Based on ggplot2:::modify_list
+gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {
+  extra <- list(...)
+  for (i in names(extra)) defaults[[i]] <- extra[[i]]
+  for (i in names(gp))    defaults[[i]] <- gp[[i]]
+  defaults
+}
+
+
 as_inch <- function(value, from = "x") {
   if (is.unit(value)) {
     switch(
@@ -280,74 +330,6 @@ as_unit <- function(x, units = NULL, ...) {
     x <- unit(x, units, ...)
   }
   x
-}
-
-group_id <- function(data, vars) {
-  id <- lapply(data[vars], discretise)
-  id <- do.call(paste, c(list(sep = "&"), id))
-  discretise(id)
-}
-
-# Shorthand for `vapply(split(x, group), ...)`
-gapply <- function(x, group, FUN, FUN.VALUE, ..., USE.NAMES = FALSE) {
-  vapply(
-    split(x, group),
-    FUN = FUN, FUN.VALUE = FUN.VALUE,
-    ...,
-    USE.NAMES = USE.NAMES
-  )
-}
-
-# Parameters --------------------------------------------------------------
-
-# Automatically capture static text parameters
-set_params <- function(...) {
-  params <- list(...)
-  text_names  <- names(formals(static_text_params))
-  text_names  <- intersect(text_names, names(params))
-  text_params <- do.call(static_text_params, params[text_names])
-  params      <- params[setdiff(names(params), text_names)]
-  params$text_params <- text_params
-  params
-}
-
-# This function is to check that user input is what we would expect it to be.
-# It checks `value` for being of a particular class `type` and have `length`
-# length. Optionally, one can allow NAs or NULLs.
-assert <- function(value, type, length = 1L,
-                   allow_NAs = FALSE, allow_NULL = FALSE,
-                   argname = deparse(substitute(value))) {
-  if (is.null(value) && allow_NULL) {
-    return(NULL)
-  }
-  force(argname)
-  message <- character()
-  if (!inherits(value, type)) {
-    message <- c(
-      message,
-      paste0("`", argname, "` must be a `", type, "` vector.")
-    )
-  }
-  if (length(value) != length) {
-    message <- c(
-      message,
-      paste0("`", argname, "` must be of length ", length, ".")
-    )
-  }
-  if (isFALSE(allow_NAs) && anyNA(value)) {
-    message <- c(
-      message,
-      paste0("`", argname, "` contains NAs whereas it cannot.")
-    )
-  }
-  if (length(message)) {
-    message <- c(
-      "Unexpected input:",
-      message
-    )
-    abort(message)
-  }
-  value
 }
 
 # Documentation helpers ---------------------------------------------------
