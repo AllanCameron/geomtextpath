@@ -158,11 +158,7 @@ stat_textcontour <- function(mapping = NULL, data = NULL,
 #' @export
 #' @include geom_textpath.R
 GeomTextContour <- ggproto("GeomTextContour", GeomTextpath,
-  required_aes = c("x", "y"),
-  default_aes = aes(colour = "black", size = 3.88, hjust = 0.5, vjust = 0.5,
-                    family = "", fontface = 1, lineheight = 1.2, alpha = 1,
-                    linewidth = 0.5, linetype = 1, spacing = 0,
-                    linecolour = "_copy_text_colour_", angle = 0)
+  required_aes = c("x", "y")
 )
 
 #' @rdname geom_textcontour
@@ -171,26 +167,7 @@ GeomTextContour <- ggproto("GeomTextContour", GeomTextpath,
 #' @export
 #' @include geom_textpath.R
 GeomLabelContour <- ggproto("GeomLabelContour", GeomLabelpath,
-  required_aes = c("x", "y"),
-    default_aes = aes(
-    colour       = "black",
-    alpha        = 1,
-    size         = 3.88,
-    hjust        = 0.5,
-    vjust        = 0.5,
-    family       = "",
-    fontface     = 1,
-    lineheight   = 1.2,
-    linewidth    = 0.5,
-    linetype     = 1,
-    spacing      = 0,
-    linecolour   = "_copy_text_colour_",
-    angle        = 0,
-    fill         = "white",
-    boxcolour    = "_copy_text_colour_",
-    boxlinetype  = 1,
-    boxlinewidth = NULL
-  )
+  required_aes = c("x", "y")
 )
 
 #' @rdname geom_textcontour
