@@ -224,8 +224,8 @@ df <- sf::st_crop(waterways, crop_box)
 #> geometries
 
 ggplot(df) +
-  geom_textsf(aes(label = name), text_smoothing = 80, linecolour = "blue4", 
-              color = "gray50", hjust = 0.39, vjust = 1.8, fill = "#E6F0B3", 
+  geom_textsf(aes(label = name), text_smoothing = 95, linecolour = "blue4", 
+              color = "gray50", hjust = 0.25, vjust = -0.5, fill = "#E6F0B3", 
               fontface = 3) + 
   lims(x = c(-4.18, -3.92), y = c(55.92, 55.995))
 ```

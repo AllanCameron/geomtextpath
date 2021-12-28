@@ -149,12 +149,11 @@ approx_multiple <- function(x, xout, y = matrix()) {
 
 # Missingness utilities ---------------------------------------------------
 
-.interp_na <- function(x) {
+interp_na <- function(x) {
 
-  if(!anyNA(x)) return(x)
+  if (!anyNA(x)) return(x)
 
-  stopifnot("Cannot interpolate NA in non-numeric vectors" = is.numeric(x),
-            "Cannot interpolate NA if no non-NA values" = !all(is.na(x)))
+  stopifnot("Cannot interpolate NA in non-numeric vectors" = is.numeric(x))
 
   x[] <- approx(seq_along(x), x, seq_along(x))$y
   x
@@ -201,7 +200,7 @@ match_labels <- function(x, ...) UseMethod("match_labels")
 match_labels.data.frame <- function(x, labels) {
 
   if (length(labels) == 1) labels <- rep(labels, nrow(x))
-  if(nrow(x) != length(labels))
+  if (nrow(x) != length(labels))
   {
     stop("Could not match labels to object ", deparse(substitute(x)))
   }
@@ -212,7 +211,7 @@ match_labels.data.frame <- function(x, labels) {
 match_labels.default <- function(x, labels) {
 
   if (length(labels) == 1) labels <- rep(labels, length(x))
-  if(length(x) != length(labels))
+  if (length(x) != length(labels))
   {
     stop("Could not match labels to object ", deparse(substitute(x)))
   }
@@ -257,9 +256,9 @@ safe_parse <- function (text)
 
 is.multichar <- function(x) {
 
-  if(is.list(x)) return(any(vapply(x, is.multichar, logical(1))))
-  if(is.factor(x)) x <- as.character(x)
-  if(is.character(x)) return(any(nchar(x) > 1))
+  if (is.list(x)) return(any(vapply(x, is.multichar, logical(1))))
+  if (is.factor(x)) x <- as.character(x)
+  if (is.character(x)) return(any(nchar(x) > 1))
   is.language(x)
 }
 

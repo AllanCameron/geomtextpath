@@ -206,7 +206,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
 
     # If there is more than one text string associated with any of the groups,
     # we warn that only the first is used
-    if(!all(gapply(data$label, data$group,
+    if (!all(gapply(data$label, data$group,
                    function(x) all(x == x[1]), logical(1))))
     {
          warn(paste("geom_textpath: Multiple strings found in at",

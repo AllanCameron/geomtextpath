@@ -34,7 +34,7 @@ labelpathGrob <- function(
   vp = NULL
 ) {
 
-  if(missing(label)) return(gTree(name = name, vp = vp, cl = "labelpath"))
+  if (missing(label)) return(gTree(name = name, vp = vp, cl = "labelpath"))
 
   n_label <- length(label)
   id_lens <- run_len(id)
@@ -106,7 +106,7 @@ labelpathGrob <- function(
 #' @export
 makeContent.labelpath <- function(x) {
 
-  if(is.null(x$textpath)) return(zeroGrob())
+  if (is.null(x$textpath)) return(zeroGrob())
   v <- x$textpath
   x$textpath <- NULL
   params <- v$params
@@ -224,7 +224,7 @@ curved_textbox <- function(
     offset <- c(0, offset + height)
 
     # Calculate offsets
-    offset <- .get_offset(path$x, path$y, offset)
+    offset <- get_offset(path$x, path$y, offset)
 
     # Set start / end at 0-offset, then translate to mid-height offset
     lims <- range(text$left, text$right)
@@ -270,7 +270,7 @@ curved_textbox <- function(
 
     # Round corners
     corners <- c(2, 3 + nkeep, 4 + nkeep, 5 + 2 * nkeep)
-    xy <- .round_corners(x, y, radius, at = corners)
+    xy <- round_corners(x, y, radius, at = corners)
     x <- xy$x
     y <- xy$y
   }

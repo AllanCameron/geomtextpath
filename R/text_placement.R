@@ -61,11 +61,11 @@ place_text <- function(
   # Calculate offsets and anchorpoints
   offset <- as_inch(attr(letters, "offset"))
 
-  path$exceed <- .exceeds_curvature(path$x, path$y, d = offset)
-  offset <- if(is.multichar(letters$glyph)) {
-    .get_smooth_offset(path$x, path$y, d = offset)
+  path$exceed <- exceeds_curvature(path$x, path$y, d = offset)
+  offset <- if (is.multichar(letters$glyph)) {
+    get_smooth_offset(path$x, path$y, d = offset)
   } else {
-    .get_offset(path$x, path$y, d = offset)
+    get_offset(path$x, path$y, d = offset)
   }
   anchor <- anchor_points(offset, attr(letters, "metrics")$width,
                           hjust = hjust, halign = halign)
@@ -86,7 +86,7 @@ place_text <- function(
   }
 
   # Interpolate whatever else is in `path` at text positions
-  path$length <- .arclength_from_xy(path$x, path$y)
+  path$length <- arclength_from_xy(path$x, path$y)
 
   protect_column <- c("x", "y", "angle", "length", "id", "left", "right")
   df <- as.list(path[setdiff(names(path), protect_column)])
@@ -96,7 +96,7 @@ place_text <- function(
   df$xoffset <- label$xoff
   df$yoffset <- label$yoff
 
-  if(any(df$exceed != 0) & !is.multichar(label$glyph)) {
+  if (any(df$exceed != 0) & !is.multichar(label$glyph)) {
 
     warn(paste(
       "The text offset exceeds the curvature in one or more paths.",
@@ -158,7 +158,7 @@ attempt_flip <- function(
     upright = FALSE
   )
   # Invert length so path is trimmed correctly
-  length <- path$length %||% .arclength_from_xy(path$x, path$y)
+  length <- path$length %||% arclength_from_xy(path$x, path$y)
   maxlen <- max(length)
   out$length <- maxlen - out$length
   rights     <- maxlen - out$right
@@ -193,9 +193,9 @@ anchor_points <- function(
   # Convert halign to a weight
   halign <- (match(halign, c("right", "center", "left")) - 1) / 2
 
-  text_hjust <- if(is.numeric(hjust)) hjust[1] else 0.5
+  text_hjust <- if (is.numeric(hjust)) hjust[1] else 0.5
 
-  if(is.character(hjust)) hjust <- interpret_hjust(hjust[1], offset, text_width)
+  if (is.character(hjust)) hjust <- interpret_hjust(hjust[1], offset, text_width)
 
   anchor <- hjust * offset$arc_length[nrow(offset$arc_length), 1]
   # Get left and right positions

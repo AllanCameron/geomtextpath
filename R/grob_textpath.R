@@ -75,7 +75,7 @@ textpathGrob <- function(
   vp = NULL
 ) {
 
-  if(missing(label)) return(gTree(name = name, vp = vp, cl = "textpath"))
+  if (missing(label)) return(gTree(name = name, vp = vp, cl = "textpath"))
 
   n_label <- length(label)
   id_lens <- run_len(id)
@@ -115,12 +115,13 @@ textpathGrob <- function(
 
   path <- data_frame(x = x, y = y, id = rep(seq_along(id_lens), id_lens))
 
-  text_path <- if(text_smoothing != 0) {
+  path$map <- arclength_from_xy(x, y, path$id)
+
+  text_path <- if (text_smoothing != 0) {
     path_smoother(path, text_smoothing)
   } else {
     path
   }
-
 
   gTree(
     textpath = list(
@@ -155,7 +156,7 @@ textpathGrob <- function(
 #' @export
 makeContent.textpath <- function(x) {
 
-  if(is.null(x$textpath)) return(zeroGrob())
+  if (is.null(x$textpath)) return(zeroGrob())
   v <- x$textpath
   x$textpath <- NULL
   params <- v$params

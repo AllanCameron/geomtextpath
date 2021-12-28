@@ -7,7 +7,7 @@ label_sf.sfc_LINESTRING <- function(x, label, as_textbox = FALSE) {
 
   label <- match_labels(x, label)
   attr(x, "label") <- label
-  if(!as_textbox) {
+  if (!as_textbox) {
     class(x)[class(x) == "sfc_LINESTRING"] <- "sfc_LINESTRING_labelled"
   } else {
     class(x)[class(x) == "sfc_LINESTRING"] <- "sfc_LINESTRING_textbox"
@@ -23,10 +23,10 @@ st_as_grob.sfc_LINESTRING_labelled <- function (
   label <- attr(x, "label")
   class(x)[class(x) == "sfc_LINESTRING_labelled"] <- "sfc_LINESTRING"
 
-  if(is.null(label)) return(sf::st_as_grob(x))
+  if (is.null(label)) return(sf::st_as_grob(x))
   label <- as.character(label)[1]
 
-  if(!nzchar(label)) return(sf::st_as_grob(x))
+  if (!nzchar(label)) return(sf::st_as_grob(x))
 
   is_e <- vapply(unclass(x), nrow, integer(1)) == 0
   if (any(is_e)) {
@@ -59,10 +59,10 @@ st_as_grob.sfc_LINESTRING_textbox <- function (
   label <- attr(x, "label")
   class(x)[class(x) == "sfc_LINESTRING_textbox"] <- "sfc_LINESTRING"
 
-  if(is.null(label)) return(sf::st_as_grob(x))
+  if (is.null(label)) return(sf::st_as_grob(x))
   label <- as.character(label)[1]
 
-  if(!nzchar(label)) return(sf::st_as_grob(x))
+  if (!nzchar(label)) return(sf::st_as_grob(x))
 
   is_e <- vapply(unclass(x), nrow, integer(1)) == 0
   if (any(is_e)) {

@@ -6,8 +6,8 @@ test_that("Text angles are correct", {
   xy <- data.frame(x = 1:5 * sqrt(2), y = c(1,2,3,2,1) * sqrt(2),
                    size = 5)
 
-  angles    <- .angle_from_xy(xy$x, xy$y, degrees = TRUE)
-  arclength <- .arclength_from_xy(xy$x, xy$y)
+  angles    <- angle_from_xy(xy$x, xy$y, degrees = TRUE)
+  arclength <- arclength_from_xy(xy$x, xy$y)
 
   # Test angles and lenghts of .add_path_data
   expect_equal(angles[1:2], c( 45,  45))
@@ -41,8 +41,8 @@ test_that("Appropriate warning with excess curvature", {
   t <- seq(0, 2 * pi, len = 100)
   xy <- data.frame(x = 0.01 * cos(t), y = 0.01 * sin(t), size = 5)
 
-  angles    <- .angle_from_xy(xy$x, xy$y, degrees = TRUE)
-  arclength <- .arclength_from_xy(xy$x, xy$y)
+  angles    <- angle_from_xy(xy$x, xy$y, degrees = TRUE)
+  arclength <- arclength_from_xy(xy$x, xy$y)
 
   labels <- measure_label("O", vjust = -4)[[1]]
 
@@ -84,7 +84,7 @@ test_that("Path trimming is correct", {
   xy$group <- xy$id
   xy <- split(xy, xy$id)
   xy <- lapply(xy, function(x) {
-    x$length <- .arclength_from_xy(x$x, x$y); x;})
+    x$length <- arclength_from_xy(x$x, x$y); x;})
   label  <- measure_label(c("A", "B", "C"))
   glyphs <- Map(place_text, path = xy, label = label)
   glyphs <- rbind_dfs(glyphs)
@@ -206,7 +206,7 @@ test_that("Flipping logic is correct", {
 
   label <- measure_label("ABC")[[1]]
   xy <- data_frame(x = 2:1, y = 1:2)
-  angle <- .angle_from_xy(xy$x, xy$y, norm = TRUE, degrees = TRUE)
+  angle <- angle_from_xy(xy$x, xy$y, norm = TRUE, degrees = TRUE)
   angle <- rep(angle, nrow(label))
 
   # Should return NULL if we're not interested in flipping
@@ -219,7 +219,7 @@ test_that("Flipping logic is correct", {
 
   # Angles should not be amenable to flip
   xy <- data_frame(x = 2:1, y = 2:1)
-  angle <- .angle_from_xy(xy$x, xy$y, norm = TRUE, degrees = TRUE)
+  angle <- angle_from_xy(xy$x, xy$y, norm = TRUE, degrees = TRUE)
   angle <- rep(angle, nrow(label))
 
   test <- attempt_flip(xy, label, angle = angle, upright = TRUE)
@@ -255,7 +255,7 @@ test_that("Flipping leads to correctly clipped path", {
   attr(label, "offset") <- c(0, 1)
 
   xy <- data_frame(x = c(2, 0), y = 2)
-  xy$length <- .arclength_from_xy(xy$x, xy$y)
+  xy$length <- arclength_from_xy(xy$x, xy$y)
   xy$id <- 1
 
   ctrl <- place_text(xy, label, hjust = 0, upright = FALSE)
@@ -306,7 +306,7 @@ test_that("We can get the correct values for hjust passed as characters.", {
   x <- seq(0, 2 * pi, len = 100)
   offset <- list(x = matrix(x, ncol = 1),
                  y = matrix(cos(x), ncol = 1),
-                 arc_length = matrix(.arclength_from_xy(x, cos(x)), ncol = 1))
+                 arc_length = matrix(arclength_from_xy(x, cos(x)), ncol = 1))
 
   expect_lt(abs(interpret_hjust("auto", offset, 0.1) - 0.75), 0.01)
   expect_lt(abs(interpret_hjust("xmin", offset, 0.1) - 0.00), 0.01)
@@ -320,7 +320,7 @@ test_that("We can get the correct values for hjust passed as characters.", {
   expect_warning(interpret_hjust("blah", offset, 0.1))
 
   # Check tiny paths
-  offset <- .get_offset(x = c(0, 1), y = c(0, 1), 0)
+  offset <- get_offset(x = c(0, 1), y = c(0, 1), 0)
   test <- interpret_hjust("auto", offset, 0.1)
   expect_equal(test, 0)
 

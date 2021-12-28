@@ -130,12 +130,12 @@ test_that("approx_multiple works", {
 })
 
 
-# .interp_na
+# interp_na
 
 test_that("We can interpolate NA correctly", {
 
-  expect_equal(.interp_na(c(1, 3, NA, 7)), c(1, 3, 5, 7))
-  expect_error(.interp_na(c(NA, NA)))
+  expect_equal(interp_na(c(1, 3, NA, 7)), c(1, 3, 5, 7))
+  expect_error(interp_na(c(NA, NA)))
 
 })
 
