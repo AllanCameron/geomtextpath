@@ -21,6 +21,14 @@
 #'   specifies the central point and radius of a circle around which
 #'   single-point labels will be wrapped.
 #' @param arrow Arrow specification, as created by [`arrow()`][grid::arrow].
+#' @param gp_box (Optional) an object of class `"gpar"`, typically the output
+#'   from a call to the [`gpar()`][grid::gpar] function. If this is an empty
+#'   list, no text box will be drawn.
+#' @param label.padding Amount of padding around label. Defaults to 0.25 lines.
+#' @param label.r Radius of rounded corners. Defaults to 0.15 lines.
+#' @param as_label a `logical` TRUE or FALSE indicating whether the text should
+#'   be drawn inside a text box. If FALSE, the parameters `label.padding`,
+#'   `label.r` and `gp_box` will be ignored.
 #' @inheritParams grid::textGrob
 #' @inheritParams grid::polylineGrob
 #' @inheritParams static_text_params
@@ -72,29 +80,18 @@ textpathGrob <- function(
   arrow = NULL,
   default.units = "npc",
   name = NULL,
-  vp = NULL
+  vp = NULL,
+  as_label = FALSE
 ) {
 
-  if (missing(label)) return(gTree(name = name, vp = vp, cl = "textpath"))
+  cl <- if (as_label) "labelpath" else "textpath"
+
+  if (missing(label)) return(gTree(name = name, vp = vp, cl = cl))
 
   n_label <- length(label)
   id_lens <- run_len(id)
 
-  # Verify that:
-  #  1) There are as many labels as there are paths
-  #  2) There are as many x's as y's (or one is of length 1)
-  #  3) There are as many x's as id's (or one is of length 1)
-
-  stopifnot(
-    "`x` is not of the same length as `id`" =
-      length(x) == length(id),
-    "`y` is not the same length as `x`" =
-      length(x) == length(y),
-    "Cannot match labels to paths." =
-      n_label == length(id_lens),
-    "`angle` must be length 1 or the same length as `x`." =
-      (length(x) == length(angle)) || length(angle) == 1
-  )
+  check_grob_input(x, y, id, id_lens, n_label, angle)
 
   # Match justification to labels length
   hjust  <- rep_len(resolveHJust(just, hjust), n_label)
@@ -147,7 +144,7 @@ textpathGrob <- function(
     ),
     name = name,
     vp = vp,
-    cl = "textpath"
+    cl = cl
   )
 }
 
@@ -177,4 +174,24 @@ makeContent.textpath <- function(x) {
   x <- .add_path_grob(x, line, text, attr(line, "gp"), params, v$arrow)
   x <- .add_text_grob(x, text, v$gp_text)
   x
+}
+
+
+check_grob_input <- function(x, y, id, id_lens, n_label, angle) {
+
+  # Verify that:
+  #  1) There are as many labels as there are paths
+  #  2) There are as many x's as y's (or one is of length 1)
+  #  3) There are as many x's as id's (or one is of length 1)
+
+  stopifnot(
+    "`x` is not of the same length as `id`" =
+      length(x) == length(id),
+    "`y` is not the same length as `x`" =
+      length(x) == length(y),
+    "Cannot match labels to paths." =
+      n_label == length(id_lens),
+    "`angle` must be length 1 or the same length as `x`." =
+      (length(x) == length(angle)) || length(angle) == 1
+  )
 }

@@ -1,7 +1,8 @@
 test_that("label can be missing", {
 
-  case <- labelpathGrob(x = c(0, 1), y = c(0, 1), id = c(1, 1))
-  ctrl <- labelpathGrob(x = c(0, 1), y = c(0, 1), id = c(1, 1), label = "ABC")
+  case <- textpathGrob(x = c(0, 1), y = c(0, 1), id = c(1, 1), as_label = TRUE)
+  ctrl <- textpathGrob(x = c(0, 1), y = c(0, 1), id = c(1, 1), label = "ABC",
+                        as_label = TRUE)
 
   expect_null(case$textpath)
   expect_type(ctrl$textpath, "list")
@@ -13,9 +14,9 @@ test_that("label can be missing", {
   expect_s3_class(ctrl, "gTree")
 
   # Test that polar parameters are converted
-  test <- labelpathGrob(
+  test <- textpathGrob(
     x = c(0, 1), y = c(0, 1), id = c(1, 1), label = "ABC",
-    polar_params = list(x = 0.5, y = 0.5)
+    polar_params = list(x = 0.5, y = 0.5), as_label = TRUE
   )
   ppar <- test$textpath$params$polar_params
   expect_equal(convertUnit(ppar$x, "npc", valueOnly = TRUE), 0.5)
@@ -26,24 +27,26 @@ test_that("label can be missing", {
 
 test_that("straight and curved setting produce similar boxes", {
 
-  pth <- labelpathGrob(
-    "ABC",
-    x = c(0, 1),
-    y = c(0, 1),
-    id = c(1, 1),
-    gp_box = gpar(fill = "white")
-  )
-  pth <- makeContent(pth)
-
-  box1 <- pth$children[[2]]
-
-  pth <- labelpathGrob(
+  pth <- textpathGrob(
     "ABC",
     x = c(0, 1),
     y = c(0, 1),
     id = c(1, 1),
     gp_box = gpar(fill = "white"),
-    straight = TRUE
+    as_label = TRUE
+  )
+  pth <- makeContent(pth)
+
+  box1 <- pth$children[[2]]
+
+  pth <- textpathGrob(
+    "ABC",
+    x = c(0, 1),
+    y = c(0, 1),
+    id = c(1, 1),
+    gp_box = gpar(fill = "white"),
+    straight = TRUE,
+    as_label = TRUE
   )
   pth <- makeContent(pth)
 
@@ -61,7 +64,7 @@ test_that("straight and curved setting produce similar boxes", {
 })
 
 test_that("radius is shrunk when needed", {
-  pth <- labelpathGrob(
+  pth <- textpathGrob(
     "ABC",
     x = c(2.5, 7.5),
     y = c(5, 5),
@@ -69,13 +72,14 @@ test_that("radius is shrunk when needed", {
     gp_box = gpar(fill = "white"),
     default.units = "in",
     label.r = unit(0.1, "inch"),
-    label.padding = unit(0, "inch")
+    label.padding = unit(0, "inch"),
+    as_label = TRUE
   )
   attr(pth$textpath$label[[1]], "metrics")$height <- 0.2
   pth <- makeContent(pth)
   box1 <- pth$children[[2]]
 
-  pth <- labelpathGrob(
+  pth <- textpathGrob(
     "ABC",
     x = c(2.5, 7.5),
     y = c(5, 5),
@@ -83,7 +87,8 @@ test_that("radius is shrunk when needed", {
     gp_box = gpar(fill = "white"),
     default.units = "in",
     label.r = unit(1, "inch"),
-    label.padding = unit(0, "inch")
+    label.padding = unit(0, "inch"),
+    as_label = TRUE
   )
   attr(pth$textpath$label[[1]], "metrics")$height <- 0.2
   pth <- makeContent(pth)
@@ -104,12 +109,12 @@ test_that("straight richtext is similar to 'curved' richtext on straight path", 
   id <- c(1, 1, 2, 2)
 
 
-  ctrl <- labelpathGrob(x = x, y = y, id = id,
+  ctrl <- textpathGrob(x = x, y = y, id = id,
                        label = labels, rich = TRUE,
-                       default.units = "inch")
-  case <- labelpathGrob(x = x, y = y, id = id,
+                       default.units = "inch", as_label = TRUE)
+  case <- textpathGrob(x = x, y = y, id = id,
                         label = labels, rich = TRUE, straight = TRUE,
-                        default.units = "inch")
+                        default.units = "inch", as_label = TRUE)
   ctrl <- makeContent(ctrl)$children[[2]]
   case <- makeContent(case)$children[[2]]
 

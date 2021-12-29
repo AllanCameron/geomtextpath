@@ -77,12 +77,12 @@ st_as_grob.sfc_LINESTRING_textbox <- function (
         n_points <- vapply(x, nrow, integer(1))
         id <- rep(seq_along(n_points), n_points)
         x <- do.call(rbind, x)
-        labelpathGrob(label = label[1], x = x[, 1], y = x[, 2],
+        textpathGrob(label = label[1], x = x[, 1], y = x[, 2],
                      id = id, arrow = arrow, hjust = hjust, vjust = vjust,
             default.units = default.units, name = name, gp_path = gp,
             gp_text = textpath_vars$gp_text,
             gp_box = textpath_vars$gp_box,
-            vp = vp)
+            vp = vp, as_label = TRUE)
     }
     else nullGrob()
 }

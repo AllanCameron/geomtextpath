@@ -13,7 +13,7 @@
 
 #' @export
 #' @rdname geom_textpath
-#' @inheritParams labelpathGrob
+#' @inheritParams textpathGrob
 #' @section Aesthetics:
 #' In addition to aforementioned aesthetics, \code{geom_labelpath()} also
 #' understands the following aesthetics related to the textbox:
@@ -179,7 +179,7 @@ GeomLabelpath <- ggproto(
 
     #---- Dispatch data to grob -----------------------------#
 
-    labelpathGrob(
+    textpathGrob(
       label = safe_labels,
       x = data$x,
       y = data$y,
@@ -202,14 +202,15 @@ GeomLabelpath <- ggproto(
       rich    = text_params$rich,
       label.padding = label.padding,
       label.r = label.r,
-      arrow = arrow
+      arrow = arrow,
+      as_label = TRUE
     )
   }
 )
 
 #' @rdname geom_textpath
 #' @inheritParams ggplot2::geom_line
-#' @inheritParams labelpathGrob
+#' @inheritParams textpathGrob
 #' @export
 geom_labelline <- function(
   mapping = NULL, data = NULL, stat = "identity",
