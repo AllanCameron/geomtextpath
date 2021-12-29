@@ -38,14 +38,10 @@ geom_labeldensity(
   lineend = "butt",
   linejoin = "round",
   linemitre = 10,
-  text_only = FALSE,
-  gap = FALSE,
-  upright = TRUE,
-  halign = "center",
-  offset = NULL,
-  parse = FALSE,
-  straight = FALSE,
-  padding = unit(0.15, "inch"),
+  bw = "nrd0",
+  adjust = 1,
+  kernel = "gaussian",
+  n = 512,
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
   arrow = NULL
@@ -115,40 +111,6 @@ rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 
-\item{text_only}{A \code{logical(1)} indicating whether the path part should be
-plotted along with the text (\code{FALSE}, the default). If \code{TRUE}, any
-parameters or aesthetics relating to the drawing of the path will be
-ignored.}
-
-\item{gap}{A \code{logical(1)} which if \code{TRUE}, breaks the path into two sections
-with a gap on either side of the label. If \code{FALSE}, the path is plotted
-as a whole. Alternatively, if \code{NA}, the path will be broken if the string
-has a \code{vjust} between 0 and 1, and not otherwise. The default for the label
-variant is \code{FALSE} and for the text variant is \code{NA}.}
-
-\item{upright}{A \code{logical(1)} which if \code{TRUE} (default), inverts any text
-where the majority of letters would upside down along the path, to improve
-legibility. If \code{FALSE}, the path decides the orientation of text.}
-
-\item{halign}{A \code{character(1)} describing how multi-line text should be
-justified. Can either be \code{"center"} (default), \code{"left"} or \code{"right"}.}
-
-\item{offset}{A \code{\link[grid:unit]{unit}} object of length 1 to determine the
-offset of the text from the path. If this is \code{NULL} (default), the \code{vjust}
-parameter decides the offset. If not \code{NULL}, the \code{offset} argument
-overrules the \code{vjust} setting.}
-
-\item{parse}{A \code{logical(1)} which if \code{TRUE}, will coerce the labels into
-expressions, allowing for plotmath syntax to be used.}
-
-\item{straight}{A \code{logical(1)} which if \code{TRUE}, keeps the letters of a label
-on a straight baseline and if \code{FALSE} (default), lets individual letters
-follow the curve. This might be helpful for noisy paths.}
-
-\item{padding}{A \code{\link[grid:unit]{unit}} object of length 1 to determine the
-padding between the text and the path when the \code{gap} parameter trims the
-path.}
-
 \item{label.padding}{Amount of padding around label. Defaults to 0.25 lines.}
 
 \item{label.r}{Radius of rounded corners. Defaults to 0.15 lines.}
@@ -181,6 +143,7 @@ the density line when used as a drop-in replacement for
   \item \code{linewidth}
   \item \code{size}
   \item \code{spacing}
+  \item \code{textcolour}
   \item \code{vjust}
 }
 The `spacing` aesthetic allows fine control of spacing of text,

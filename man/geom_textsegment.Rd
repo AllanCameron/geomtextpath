@@ -124,6 +124,7 @@ equivalent of \code{\link[ggplot2:geom_segment]{geom_segment()}}.
   \item \code{linewidth}
   \item \code{size}
   \item \code{spacing}
+  \item \code{textcolour}
   \item \code{vjust}
 }
 The `spacing` aesthetic allows fine control of spacing of text,

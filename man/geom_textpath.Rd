@@ -280,6 +280,7 @@ MIT licence. Currently, the supported HTML tags are \verb{<p>}, \verb{<span>}, \
   \item \code{linewidth}
   \item \code{size}
   \item \code{spacing}
+  \item \code{textcolour}
   \item \code{vjust}
 }
 The `spacing` aesthetic allows fine control of spacing of text,

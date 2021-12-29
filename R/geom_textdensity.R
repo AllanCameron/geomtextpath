@@ -31,7 +31,6 @@
 #' ggplot(iris, aes(Sepal.Length, label = Species, color = Species)) +
 #'   geom_textdensity()
 
-
 geom_textdensity    <- function(mapping = NULL,
                                 data = NULL,
                                 stat = "density",
@@ -79,10 +78,10 @@ geom_labeldensity <- function(mapping = NULL, data = NULL,
   inherit.aes = TRUE,
   ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
-  text_only = FALSE, gap = FALSE, upright = TRUE,
-  halign = "center", offset = NULL, parse = FALSE,
-  straight = FALSE,
-  padding = unit(0.15, "inch"),
+  bw = "nrd0",
+  adjust = 1,
+  kernel = "gaussian",
+  n = 512,
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
   arrow = NULL
@@ -96,18 +95,14 @@ geom_labeldensity <- function(mapping = NULL, data = NULL,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
     params = set_params(
+      bw            = bw,
+      adjust        = adjust,
+      kernel        = kernel,
+      n             = n,
       na.rm         = na.rm,
       lineend       = lineend,
       linejoin      = linejoin,
       linemitre     = linemitre,
-      text_only     = text_only,
-      gap           = gap,
-      upright       = upright,
-      halign        = halign,
-      offset        = offset,
-      parse         = parse,
-      straight      = straight,
-      padding       = padding,
       label.padding = label.padding,
       label.r       = label.r,
       arrow         = arrow,
@@ -125,20 +120,7 @@ geom_labeldensity <- function(mapping = NULL, data = NULL,
 GeomTextDensity <- ggproto(
   "GeomTextDensity",
   GeomTextpath,
-  required_aes = c("x", "label"),
-  default_aes  = aes(colour     = "black",
-                     size       = 3.88,
-                     hjust      = 0.5,
-                     vjust      = 0.5,
-                     family     = "",
-                     fontface   = 1,
-                     lineheight = 1.2,
-                     alpha      = 1,
-                     linewidth  = 0.5,
-                     linetype   = 1,
-                     spacing    = 0,
-                     linecolour = "_copy_text_colour_",
-                     angle      = 0)
+  required_aes = c("x", "label")
 )
 
 
@@ -150,24 +132,5 @@ GeomTextDensity <- ggproto(
 GeomLabelDensity <- ggproto(
   "GeomLabelDensity",
   GeomLabelpath,
-  required_aes = c("x", "label"),
-  default_aes = aes(
-    colour       = "black",
-    alpha        = 1,
-    size         = 3.88,
-    hjust        = 0.5,
-    vjust        = 0.5,
-    family       = "",
-    fontface     = 1,
-    lineheight   = 1.2,
-    linewidth    = 0.5,
-    linetype     = 1,
-    spacing      = 0,
-    linecolour   = "_copy_text_colour_",
-    angle        = 0,
-    fill         = "white",
-    boxcolour    = "_copy_text_colour_",
-    boxlinetype  = 1,
-    boxlinewidth = NULL
-  )
+  required_aes = c("x", "label")
 )

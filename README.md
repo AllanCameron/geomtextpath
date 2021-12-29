@@ -129,8 +129,7 @@ separately.
 ggplot(pressure, aes(temperature, pressure)) +
   geom_textline(label = "Mercury vapor pressure", size = 8, vjust = -0.5,
                 linewidth = 1, linecolor = "red4", linetype = 2, 
-                color = "deepskyblue4") + 
-  theme_bw()
+                color = "deepskyblue4")
 ```
 
 <img src="man/figures/README-textline_demo-1.png" width="100%" style="display: block; margin: auto;" />
@@ -162,7 +161,6 @@ ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
                 method = "loess", formula = y ~ x,
                 size = 7, linetype = 3, fontface = 2, linewidth = 1) +
   scale_colour_manual(values = c("forestgreen", "deepskyblue4", "tomato4")) +
-  theme_bw() + 
   theme(legend.position = "none")
 ```
 
@@ -196,7 +194,6 @@ ggplot(df, aes(x, y, z = z)) +
   geom_contour_filled(bins = 6, alpha = 0.6) + 
   geom_textcontour(bins = 6, size = 2.5, padding = unit(0.05, "in")) + 
   scale_fill_manual(values = terrain.colors(11)) + 
-  theme_classic() +
   theme(legend.position = "none")
 ```
 
@@ -211,8 +208,7 @@ set.seed(1)
 df  <- data.frame(x = rnorm(100), y = rnorm(100))
 
 ggplot(df, aes(x, y)) + 
-  geom_textdensity2d() +
-  theme_classic()
+  geom_textdensity2d()
 ```
 
 <img src="man/figures/README-density2d-1.png" width="100%" style="display: block; margin: auto;" />
@@ -258,8 +254,7 @@ ggplot() +
   stat_function(geom = "textpath",
                 fun = dgamma, color = "green4",
                 label = "gamma distribution with shape = 3",
-                size = 5, vjust = -0.2, hjust = 0.1, args = list(shape = 3)) +
-  theme_bw() 
+                size = 5, vjust = -0.2, hjust = 0.1, args = list(shape = 3))
 ```
 
 <img src="man/figures/README-stat_function-1.png" width="100%" style="display: block; margin: auto;" />
@@ -352,8 +347,7 @@ df <- data.frame(x = 1:4, y = c(4, 7, 6, 3),
 p <- ggplot(df, aes(x, y, color = color, label = color)) +
        geom_point(size = 1.5) +
        scale_color_identity() +
-       lims(x = c(0, 6), y = c(0, 8)) +
-       theme_bw()
+       lims(x = c(0, 6), y = c(0, 8))
 
 p_text     <- p + geom_text(size = 8, hjust = -0.1)
 p_textpath <- p + geom_textpath(size = 8, hjust = -0.1)
@@ -492,7 +486,6 @@ df <- data.frame(x = c("A long axis label", "Another long label",
 p <- ggplot(df, aes(x, y, fill = x)) + 
       geom_col(width = 0.5) +
       scale_fill_brewer(type = "qual") +
-      theme_bw() +
       theme(axis.text.x = element_text(size = 15),
             legend.position = "none")
 

@@ -71,10 +71,7 @@ geom_labelcontour <- function(
   position = "identity", na.rm = FALSE, show.legend = NA,
   inherit.aes = TRUE, ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
-  text_only = FALSE, gap = FALSE, upright = TRUE,
-  halign = "center", offset = NULL, parse = FALSE,
-  straight = FALSE,
-  padding = unit(0.15, "inch"),
+  bins = NULL, binwidth = NULL, breaks = NULL,
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
   arrow = NULL
@@ -92,14 +89,9 @@ geom_labelcontour <- function(
       lineend       = lineend,
       linejoin      = linejoin,
       linemitre     = linemitre,
-      text_only     = text_only,
-      gap           = gap,
-      upright       = upright,
-      halign        = halign,
-      offset        = offset,
-      parse         = parse,
-      straight      = straight,
-      padding       = padding,
+      bins          = bins,
+      binwidth      = binwidth,
+      breaks        = breaks,
       label.padding = label.padding,
       label.r       = label.r,
       arrow         = arrow,
@@ -158,11 +150,7 @@ stat_textcontour <- function(mapping = NULL, data = NULL,
 #' @export
 #' @include geom_textpath.R
 GeomTextContour <- ggproto("GeomTextContour", GeomTextpath,
-  required_aes = c("x", "y"),
-  default_aes = aes(colour = "black", size = 3.88, hjust = 0.5, vjust = 0.5,
-                    family = "", fontface = 1, lineheight = 1.2, alpha = 1,
-                    linewidth = 0.5, linetype = 1, spacing = 0,
-                    linecolour = "_copy_text_colour_", angle = 0)
+  required_aes = c("x", "y")
 )
 
 #' @rdname geom_textcontour
@@ -171,26 +159,7 @@ GeomTextContour <- ggproto("GeomTextContour", GeomTextpath,
 #' @export
 #' @include geom_textpath.R
 GeomLabelContour <- ggproto("GeomLabelContour", GeomLabelpath,
-  required_aes = c("x", "y"),
-    default_aes = aes(
-    colour       = "black",
-    alpha        = 1,
-    size         = 3.88,
-    hjust        = 0.5,
-    vjust        = 0.5,
-    family       = "",
-    fontface     = 1,
-    lineheight   = 1.2,
-    linewidth    = 0.5,
-    linetype     = 1,
-    spacing      = 0,
-    linecolour   = "_copy_text_colour_",
-    angle        = 0,
-    fill         = "white",
-    boxcolour    = "_copy_text_colour_",
-    boxlinetype  = 1,
-    boxlinewidth = NULL
-  )
+  required_aes = c("x", "y")
 )
 
 #' @rdname geom_textcontour

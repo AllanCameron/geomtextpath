@@ -104,13 +104,11 @@ sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
   labels <- x$label %||% ""
   labels <- match_labels(x, labels)
 
-  if ("linecolour" %in% names(x)) {
-    copy_me <- x$linecolour == "_copy_text_colour_"
-    x$linecolour[copy_me]   <- x$colour[copy_me]
+  if("linecolour" %in% names(x)) {
+    x$linecolour <- x$linecolour %||% x$colour
   }
-  if ("boxcolour" %in% names(x)){
-    copy_me <- x$boxcolour  == "_copy_text_colour_"
-    x$boxcolour[copy_me]    <- x$colour[copy_me]
+  if("boxcolour" %in% names(x)){
+    x$boxcolour <- x$boxcolour %||% x$colour
   }
 
   # Get sf types
@@ -169,7 +167,7 @@ sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
   fill <- x$fill %||% defaults$fill[type_ind]
   fill <- alpha(fill, alpha)
 
-  boxcolour    <- x$boxcolour %||% defaults$linecolour[type_ind]
+  boxcolour    <- x$boxcolour %||% defaults$colour[type_ind]
   boxlinetype  <- x$boxlinetype %||% defaults$linetype[type_ind]
   boxlinewidth <- (x$boxlinewidth %||% defaults$linewidth[type_ind]) * 3.779528
   boxfill      <- x$boxfill %||% defaults$fill[type_ind]

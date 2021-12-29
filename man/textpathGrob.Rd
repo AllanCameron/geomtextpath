@@ -168,5 +168,4 @@ grob <- textpathGrob(
 )
 
 grid.newpage(); grid.draw(grob)
-
 }

@@ -106,7 +106,12 @@ geom_labeldensity2d <- function(mapping = NULL, data = NULL,
       lineend       = lineend,
       linejoin      = linejoin,
       linemitre     = linemitre,
-      contour       = TRUE,
+      contour     = TRUE,
+      contour_var = contour_var,
+      na.rm       = na.rm,
+      n           = n,
+      h           = h,
+      adjust      = adjust,
       label.padding = label.padding,
       label.r       = label.r,
       arrow         = arrow,
@@ -122,22 +127,8 @@ geom_labeldensity2d <- function(mapping = NULL, data = NULL,
 #' @include geom_textpath.R
 GeomTextDensity2d <- ggproto("GeomTextDensity2d", GeomTextpath,
   required_aes = c("x", "y"),
-  default_aes = aes(colour = "black",
-                    size = 3.88,
-                    hjust = 0.5,
-                    vjust = 0.5,
-                    family = "",
-                    fontface = 1,
-                    lineheight = 1.2,
-                    alpha = 1,
-                    linewidth = 0.5,
-                    linetype = 1,
-                    spacing = 0,
-                    linecolour = "_copy_text_colour_",
-                    angle = 0),
 
   setup_data = function(data, params) {
-
     data$label <- as.character(data$level)
     data
   }
@@ -150,28 +141,8 @@ GeomTextDensity2d <- ggproto("GeomTextDensity2d", GeomTextpath,
 #' @include geom_textpath.R
 GeomLabelDensity2d <- ggproto("GeomLabelDensity2d", GeomLabelpath,
   required_aes = c("x", "y"),
-  default_aes = aes(
-    colour       = "black",
-    alpha        = 1,
-    size         = 3.88,
-    hjust        = 0.5,
-    vjust        = 0.5,
-    family       = "",
-    fontface     = 1,
-    lineheight   = 1.2,
-    linewidth    = 0.5,
-    linetype     = 1,
-    spacing      = 0,
-    linecolour   = "_copy_text_colour_",
-    angle        = 0,
-    fill         = "white",
-    boxcolour    = "_copy_text_colour_",
-    boxlinetype  = 1,
-    boxlinewidth = NULL
-  ),
 
   setup_data = function(data, params) {
-
     data$label <- as.character(data$level)
     data
   }
