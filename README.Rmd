@@ -249,6 +249,21 @@ ggplot(df, aes(x, y)) +
 
 Note that, due to the way the `grid` package draws plotmath expressions, all plotmath labels will be straight rather than curved. However, as in the example above, they will still be angled according to the gradient of the curve.
 
+### Rich text support
+
+The geoms here also feature richtext support. If you want your text labels to be interpreted as rich text, simply pass `rich = TRUE` as a parameter in the call to the geom layer
+
+```{r richtext}
+
+lab <- "Plasma Indometacin Concentration <i style='color:gray50'>(\u03BCg/l)</i>"
+
+ggplot(Indometh, aes(time, conc, group = 1)) + 
+  geom_textsmooth(formula = y ~ x, method = loess, 
+                  label = lab, rich = TRUE, vjust = -0.5, size = 5, 
+                  text_smoothing = 99, linecolor = "red4") + 
+  xlim(c(0, 4))
+
+```
 
 ### Text paths in polar coordinates
 
