@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
   dpi = 176
 )
 
-ggplot2::theme_set(ggplot2::theme_minimal())
+
 ```
 
 # geomtextpath <img src='man/figures/logo.png' align="right" height="137" />
@@ -51,6 +51,10 @@ library(geomtextpath)
 The core functions in this package, `geom_textpath` and `geom_labelpath`, work like any other `geom` in `ggplot2`. They take their co-ordinates, their y co-ordinates and their text label from an aesthetic mapping. At its most basic, this allows the `label` to be plotted on an arbitrary path, as shown in the following example:
 
 ```{r spiral}
+# Set a consistent theme for the plots here
+theme_set(theme_minimal() + 
+          theme(axis.line = element_line(size = 0.25, colour = "gray75")))
+
 t <- seq(5, -1, length.out = 1000) * pi
 
 spiral <- data.frame(x    = sin(t) * 1:1000, 
@@ -76,7 +80,7 @@ df <- data.frame(x = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
                  y = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
                  z = "A curved textbox on an arbitrary path")
 
-ggplot(df, aes(x, y, label = z)) + geom_labelpath(size = 5)
+ggplot(df, aes(x, y, label = z)) + geom_labelpath(size = 5, fill = "#F6F6FF")
 
 ```
 
@@ -254,7 +258,7 @@ Straight text paths in Cartesian coordinates become curved in polar coordinates.
 df <- data.frame(x = c(1, 1000), y = 1, text = "This is a perfectly flat label")
 
 p <- ggplot(df, aes(x, y, label = text)) +
-  geom_labelpath(size = 6, text_only = TRUE) +
+  geom_labelpath(size = 6, text_only = TRUE, fill = "#F6F6FF") +
   ylim(c(0.9, 1.1))
 
 p
