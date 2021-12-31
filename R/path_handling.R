@@ -7,7 +7,9 @@ prepare_path <- function(data, label, gp, params) {
   path <- dedup_path(
     x = as_inch(data$x, "x"),
     y = as_inch(data$y, "y"),
-    id = data$id
+    id = data$id,
+    line_x = as_inch(data$line_x, "x"),
+    line_y = as_inch(data$line_y, "y")
   )
   path <- split(path, path$id)
 
@@ -83,10 +85,18 @@ make_gap <- function(path, letters, gap = NA,
   # Simplify if text isn't exactly on path
   if (!any(trim)) {
     path$section <- "all"
+    path$x <- path$line_x
+    path$y <- path$line_y
+    path$length <- arclength_from_xy(path$x, path$y, path$id)
   } else {
+
+    # Find length along (smoothed) text path
     path$length <- path$length %||% arclength_from_xy(path$x, path$y, path$id)
 
-    # Get locations where strings start and end
+    # Find equivalent length along actual line path
+    path$line_length <- arclength_from_xy(path$line_x, path$line_y, path$id)
+
+    # Get locations where strings start and end on (smoothed text) path
     lefts  <- gapply(letters$left,  letters$id, min, numeric(1))
     rights <- gapply(letters$right, letters$id, max, numeric(1))
     ranges <- rbind(lefts, rights)
@@ -94,11 +104,13 @@ make_gap <- function(path, letters, gap = NA,
     # Create breathing space around letters
     path_max <- gapply(path$length, path$id, max, numeric(1))
     trim <- rep_len(trim, length(path_max))
+    linepath_max <- gapply(path$line_length, path$id, max, numeric(1))
 
     mins <- pmax(0,        ranges[1, ] - padding)
     maxs <- pmin(path_max, ranges[2, ] + padding)
 
-    # Consider path length as following one another to avoid a loop
+
+    # Consider path lengths as following one another to avoid a loop
     sumlen <- c(0, path_max[-length(path_max)])
     sumlen <- cumsum(sumlen + seq_along(path_max) - 1)
     mins <- mins + sumlen
@@ -113,16 +125,18 @@ make_gap <- function(path, letters, gap = NA,
 
     # Interpolate trimming points
     ipol <- c(mins[trim], maxs[trim])
-    trim_xy <- approx_multiple(path$length, ipol, path[c("x", "y")])
+    trim_xy <- approx_multiple(path$length, ipol,
+                               path[c("line_x", "line_y", "line_length")])
 
     # Add trimming points to paths
     path <- data_frame(
-      x  = c(path$x, trim_xy$x),
-      y  = c(path$y, trim_xy$y),
+      x  = c(path$line_x, trim_xy$line_x),
+      y  = c(path$line_y, trim_xy$line_y),
       id = c(path$id, rep(which(trim), 2L)),
-      length = c(path$length, ipol),
+      length = c(path$line_length, trim_xy$line_length),
       section = c(section, rep(c("pre", "post"), each = sum(trim)))
-    )[order(c(path$length, ipol)), , drop = FALSE]
+    )[order(c(path$line_length, trim_xy$line_length)), , drop = FALSE]
+    path <- path[order(path$id),,drop = FALSE]
 
     # Filter empty sections (i.e., the part where the string is)
     path <- path[path$section != "", , drop = FALSE]
@@ -136,6 +150,7 @@ make_gap <- function(path, letters, gap = NA,
     sect <- ave(path$section, path$id, FUN = function(x) length(unique(x)))
     path$section[sect == "1"] <- "all"
   }
+
   if (!nrow(path)) {
     path$new_id <- integer()
     path$start <- logical()
@@ -154,15 +169,20 @@ make_gap <- function(path, letters, gap = NA,
 # the x, y values to avoid broken paths, and removes any points that have an
 # NA id.
 
-dedup_path <- function(x, y, id, tolerance = 1000 * .Machine$double.eps) {
+dedup_path <- function(x, y, id, line_x, line_y,
+                       tolerance = 1000 * .Machine$double.eps) {
 
-  vecs <- data_frame(x = interp_na(x), y = interp_na(y), id = id)
+  vecs <- data_frame(x = interp_na(x), y = interp_na(y), id = id,
+                     line_x = line_x, line_y = line_y)
   lens <- lengths(vecs)
   n    <- max(lengths(vecs))
   vecs[lens != n] <- lapply(vecs[lens != n], rep_len, length.out = n)
 
   dups <- vapply(vecs, function(x){abs(x[-1] - x[-length(x)]) < tolerance},
                  logical(n - 1))
+
+  dups <- if(is.null(dim(dups))) dups[1:3] else dups[,1:3]
+
   if (n > 2) {
     keep <- c(TRUE, rowSums(dups) < 3L)
   } else {

@@ -77,6 +77,7 @@ test_that("Path trimming is correct", {
   xy <- data.frame(
     x = c(1:6), y = 1,
     id = c(1,1,2,2,3,3),
+    line_x = 1:6, line_y = 1,
     size = 5,
     label = "a label"
   )
@@ -98,6 +99,8 @@ test_that("Path trimming is correct", {
   # TRUE gap
   test <- make_gap(xy, glyphs, gap = TRUE,
                    padding = br, vjust = vjust)
+  test <- test[order(test$id, test$x),]
+
   expect_length(test$x, nrow(xy) * 2)
   expect_equal(
     test$x,
@@ -116,6 +119,7 @@ test_that("Path trimming is correct", {
   # FALSE gap
   test <- make_gap(xy, glyphs, gap = FALSE,
                    padding = br[2], vjust = vjust)
+  test <- test[order(test$id, test$x),]
   expect_length(test$x, nrow(xy))
   expect_equal(
     test$x,
@@ -128,6 +132,7 @@ test_that("Path trimming is correct", {
   # Variable gap
   test <- make_gap(xy, glyphs, gap = NA,
                    padding = br, vjust = vjust)
+  test <- test[order(test$id, test$x),]
   expect_length(test$x, nrow(xy) + 2)
   expect_equal(
     test$x,
@@ -141,6 +146,7 @@ test_that("Path trimming is correct", {
   # Test variable vjust is respected
   test <- make_gap(xy, glyphs, gap = NA, vjust = vjust,
                    padding = br, vjust_lim = c(0, 3))
+  test <- test[order(test$id, test$x),]
   expect_length(test$x, nrow(xy) + 4)
   expect_equal(
     test$x,
@@ -156,6 +162,7 @@ test_that("Path trimming is correct", {
   glyphs$right <- 1
   test <- make_gap(xy, glyphs, gap = TRUE, vjust = vjust,
                    padding = br, vjust_lim = c(0, 3))
+  test <- test[order(test$id, test$x),]
   expect_equal(nrow(test), 0)
 })
 
@@ -254,7 +261,7 @@ test_that("Flipping leads to correctly clipped path", {
   label <- measure_label(c("ABCD"))[[1]]
   attr(label, "offset") <- c(0, 1)
 
-  xy <- data_frame(x = c(2, 0), y = 2)
+  xy <- data_frame(x = c(2, 0), y = 2, line_x = c(2, 0), line_y = 2)
   xy$length <- arclength_from_xy(xy$x, xy$y)
   xy$id <- 1
 

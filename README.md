@@ -83,7 +83,6 @@ If we want our text in a box, even when the text is curved, we can use
 `geom_labelpath` instead:
 
 ``` r
-
 set.seed(5)
 
 df <- data.frame(x = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
@@ -102,14 +101,14 @@ in `ggplot2`, so too are `geom_textpath` and `geom_labelpath` the
 foundation of the other geoms in this package. The line-based geoms in
 `ggplot` all have two equivalents in this package:
 
-  - `geom_path` → `geom_textpath` and `geom_labelpath`
-  - `geom_line` → `geom_textline` and `geom_labelline`
-  - `geom_segment` → `geom_textsegment` and `geom_labelsegment`
-  - `geom_density` → `geom_textdensity` and `geom_labeldensity`
-  - `geom_smooth` → `geom_textsmooth` and `geom_labelsmooth`
-  - `geom_contour` → `geom_textcontour`and `geom_labelcontour`
-  - `geom_density2d` → `geom_textdensity2d` and `geom_labeldensity2d`
-  - `geom_sf` → `geom_textsf` and `geom_labelsf`
+-   `geom_path` → `geom_textpath` and `geom_labelpath`
+-   `geom_line` → `geom_textline` and `geom_labelline`
+-   `geom_segment` → `geom_textsegment` and `geom_labelsegment`
+-   `geom_density` → `geom_textdensity` and `geom_labeldensity`
+-   `geom_smooth` → `geom_textsmooth` and `geom_labelsmooth`
+-   `geom_contour` → `geom_textcontour`and `geom_labelcontour`
+-   `geom_density2d` → `geom_textdensity2d` and `geom_labeldensity2d`
+-   `geom_sf` → `geom_textsf` and `geom_labelsf`
 
 Each of these aims to replicate all the functionality of the equivalent
 `ggplot2` function, but with direct text labels that follow the shape of
@@ -170,19 +169,6 @@ ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
 
 <img src="man/figures/README-smooth-1.png" width="100%" style="display: block; margin: auto;" />
 
-Another use might be to label lines that are too “noisy” for direct
-labels to remain legible if they adhere too closely to the line.
-
-``` r
-ggplot(economics, aes(date, unemploy)) +
-  geom_line(colour = "grey") +
-  geom_textsmooth(aes(label = "Decline"), method = loess, formula = y ~ x,
-                  hjust = 0.48, size = 5, method.args = list(span = 0.2),
-                  text_only = TRUE, vjust = -0.5)
-```
-
-<img src="man/figures/README-smooth2-1.png" width="100%" style="display: block; margin: auto;" />
-
 ### Labelled contour lines
 
 Adding labels to the level of your contour lines is now as simple as
@@ -190,7 +176,6 @@ calling `geom_textcontour` or `geom_labelcontour` instead of
 `geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -223,7 +208,6 @@ These geoms behave much the same way as `geom_sf`, except linestrings
 such as rivers and roads can be given (curved) text labels:
 
 ``` r
-
 crop_box <- sf::st_bbox(c(xmin = -4.2, xmax = -3.9, ymin = 55.9, ymax = 56))
 df <- sf::st_crop(waterways, crop_box)
 #> Warning: attribute variables are assumed to be spatially constant throughout all
@@ -231,8 +215,9 @@ df <- sf::st_crop(waterways, crop_box)
 
 ggplot(df) +
   geom_textsf(aes(label = name), text_smoothing = 95, linecolour = "blue4", 
-              color = "gray50", hjust = 0.25, vjust = -0.5, fill = "#E6F0B3", 
-              fontface = 3) + 
+              color = "gray30", hjust = 0.25, vjust = -0.5, fill = "#E6F0B3", 
+              alpha = 0.5, fontface = 3) + 
+  theme(panel.grid = element_line()) +
   lims(x = c(-4.18, -3.92), y = c(55.92, 55.995))
 ```
 
@@ -290,6 +275,22 @@ p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = 0.2)
 You can read more about text positioning in the [aesthetics
 vignette](https://allancameron.github.io/geomtextpath/articles/aesthetics.html).
 
+### Smoothing text while preserving path details
+
+Some lines may be too “noisy” or too angular for direct labels to remain
+legible if they adhere too closely to the line. We have therefore added
+the ability to smooth the text label while keeping the path unaltered,
+using a `text_smoothing` parameter, which can be set from 0 (none) to
+100 (maximum).
+
+``` r
+ggplot(economics, aes(date, unemploy)) +
+  geom_textline(linecolour = "grey", size = 6, vjust = -0.5, hjust = 0.45,
+                label = "Decline", text_smoothing = 95)
+```
+
+<img src="man/figures/README-smooth2-1.png" width="100%" style="display: block; margin: auto;" />
+
 ### `Plotmath` support
 
 If you want to use plotmath expressions you can do so much as you would
@@ -322,13 +323,12 @@ labels to be interpreted as rich text, simply pass `rich = TRUE` as a
 parameter in the call to the geom layer
 
 ``` r
-
 lab <- "Plasma Indometacin Concentration <i style='color:gray50'>(\u03BCg/l)</i>"
 
 ggplot(Indometh, aes(time, conc, group = 1)) + 
   geom_textsmooth(formula = y ~ x, method = loess, 
                   label = lab, rich = TRUE, vjust = -0.5, size = 5, 
-                  text_smoothing = 99, linecolor = "red4") + 
+                  text_smoothing = 98, linecolor = "red4") + 
   xlim(c(0, 4))
 #> Warning: Removed 18 rows containing non-finite values (stat_smooth).
 ```
@@ -457,7 +457,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 
@@ -545,11 +544,11 @@ problems than it would solve.
 
 Many paths will be too noisy or too angular to directly label in a
 visually appealing fashion if the text adheres too closely to the
-intricacies of the line. Often, a `geom_textsmooth` with `text_only =
-TRUE` is the best option in such cases, as in the examples above. There
-is also a `straight` parameter so that a label is still applied at an
-appropriate point and angle on the line, but the text will not attempt
-to follow every bump on the path.
+intricacies of the line. Often, a `geom_textsmooth` with
+`text_only = TRUE` is the best option in such cases, as in the examples
+above. There is also a `straight` parameter so that a label is still
+applied at an appropriate point and angle on the line, but the text will
+not attempt to follow every bump on the path.
 
 Other paths may have points of tight curvature, and setting an offset /
 vjust for the text that is larger than the distance to the focus point

@@ -309,31 +309,37 @@ spline_smooth <- function(x, n = 4) {
 }
 
 # Chunk the path into n parts and get the centroid of each chunk
-sample_path <- function(x, y, n = 50) {
+sample_path <- function(data, n = 50) {
 
-  path <- arclength_from_xy(x, y)
+  samp_rows <- seq(1, nrow(data), round(nrow(data)/n))
+  if(tail(samp_rows, 1) != nrow(data)) samp_rows <- c(samp_rows, nrow(data))
 
-  breaks <- seq(1e-6, max(path) + 1e-6, len = n)
-  path_parts <- findInterval(path, breaks)
-  cbind(tapply(x, path_parts, mean),
-        tapply(y, path_parts, mean))
+  x <- spline_smooth(data$x[samp_rows], n = nrow(data) / n)
+  y <- spline_smooth(data$y[samp_rows], n = nrow(data) / n)
+
+  data$x <- approx(seq_along(x), x, seq(1, length(x), len = 1000))$y
+  data$y <- approx(seq_along(y), y, seq(1, length(y), len = 1000))$y
+
+  data$length <- arclength_from_xy(data$x, data$y, data$id)
+
+  data
 
 }
 
 # Spline smooth the centroids of a path split into n chunks
 smooth_noisy <- function(data, samples = 50) {
 
-  x <- approx(seq_along(data$x), data$x, seq(1, length(data$x), len = 250))$y
-  y <- approx(seq_along(data$x), data$y, seq(1, length(data$x), len = 250))$y
+  # data is a data frame with an accurate x, y, length and mapped values,
+  # representing a *single* corner-smoothed path and the original path
+  # We will munch the path into 1000 pieces to start with
 
-  path <- sample_path(x, y, n = samples)
-  x <- spline_smooth(path[,1])
-  y <- spline_smooth(path[,2])
-  id <- rep(data$id[1], length(x))
-  id_lens <- rep(data$id_lens[1], length(x))
-  out <- data.frame(x = x, y = y, id = id)
+  n <- seq(nrow(data))
+  t <- seq(1, length(data$x), len = 1000)
+  data <- as.data.frame(lapply(data, function(x) approx(n, x, t)$y))
 
-  out
+  # Now we sample the path regularly along its length
+  sample_path(data, n = samples)
+
 }
 
 
@@ -347,26 +353,52 @@ quad_bezier <- function(p0, p1, p2, t) {
   (1 - t)^2 * p0 + 2 * t * (1 - t) * p1 + t^2 * p2
 }
 
+linear_smooth <- function(p1, p2, n) {
+
+  x <- seq(p1[1], p2[1], len = n)
+  y <- seq(p1[2], p2[2], len = n)
+  len <- cumsum(c(0, sqrt(diff(x)^2 + diff(y)^2)))
+  data.frame(x = x, y = y, length = len, line_x = x, line_y = y,
+             line_length = len)
+}
+
 # Produces p points around a corner given the vertex (x1, y1) and two points
 # on the adjacent segment : (x0, y0) and (x2, y2)
-corner_smoother <- function(x0, y0, x1, y1, x2, y2, l1, l2, p = 20) {
+corner_smoother <- function(p0, p1, p2, p = 20) {
+
+  if(all(p0 == p1) && all(p1 == p2)) {
+    return(data.frame(x = rep(p0[1], p), y = rep(p0[2], p),
+                      length = rep(0, p), line_x = rep(p0[1], p),
+                      line_y = rep(p0[2], p), line_length = rep(0, p)))
+  }
+
+  if(all(p0 == p1)) return(linear_smooth(p1, p2, p))
+  if(all(p1 == p2)) return(linear_smooth(p0, p1, p))
+
+  lens <- cumsum(c(0, sqrt((p1[1] - p0[1])^2 + (p1[2] - p0[2])^2),
+                   sqrt((p2[1] - p1[1])^2 + (p2[2] - p1[2])^2)))
+
+  old_x <- approx(lens, c(p0[1], p1[1], p2[1]), seq(0, max(lens), len = p))$y
+  old_y <- approx(lens, c(p0[2], p1[2], p2[2]), seq(0, max(lens), len = p))$y
+  old_d <- cumsum(c(0, sqrt(diff(old_x)^2 + diff(old_y)^2)))
 
   t <- seq(0, 1, len = p)
-  cbind(quad_bezier(x0, x1, x2, t),
-        quad_bezier(y0, y1, y2, t),
-        seq(l1, l2, len = p))
+  new_x <- quad_bezier(p0[1], p1[1], p2[1], t)
+  new_y <- quad_bezier(p0[2], p1[2], p2[2], t)
+  new_d <- cumsum(c(0, sqrt(diff(new_x)^2 + diff(new_y)^2)))
+
+  data.frame(x = new_x, y = new_y, length = new_d,
+             line_x = old_x, line_y = old_y, line_length = old_d)
 }
 
 segment_control_points <- function(x, y, len, ang, n, radius) {
 
     if (len < 2 * radius) {
       cbind(c(x, x + 0.5 * cos(ang) * len),
-            c(y, y + 0.5 * sin(ang) * len),
-            c(n, n + 0.5))
+            c(y, y + 0.5 * sin(ang) * len))
     } else {
       cbind(x + cos(ang) * c(0, radius, 0.5 * len, len - radius),
-            y + sin(ang) * c(0, radius, 0.5 * len, len - radius),
-            c(n, n + radius / len, n + 0.5, n + 1 - radius / len))
+            y + sin(ang) * c(0, radius, 0.5 * len, len - radius))
     }
 }
 
@@ -382,19 +414,16 @@ find_control_points <- function(data, radius = 0.1) {
               y   = head(data$y, -1),
               len = lens,
               ang = angs,
-              n   = seq_along(angs),
               radius = radius)
 
   segs <- do.call(rbind, segs)
 
-  segs[, 3] <- approx(seq(nrow(data)), cumsum(c(0, lens)), segs[, 3])$y
-
   rbind(segs[1, ],
         segs,
         cbind(c(tail(data$x, 1), tail(data$x, 1)),
-              c(tail(data$y, 1), tail(data$y, 1)),
-              c(sum(lens), sum(lens))
-              ))
+              c(tail(data$y, 1), tail(data$y, 1))
+              )
+        )
 }
 
 # Co-ordinates the above functions to generate a Bezier-smoothed curve
@@ -402,15 +431,22 @@ smooth_corners <- function(data, n = 20, radius = 0.1) {
 
   cps <- find_control_points(data, radius = radius)
   sections <- lapply(seq(1, nrow(cps) - 2, 2), function(x) cps[x + 0:2,])
-  out <- lapply(sections, function(x) corner_smoother(x[1, 1], x[1, 2],
-                                                      x[2, 1], x[2, 2],
-                                                      x[3, 1], x[3, 2],
-                                                      x[1, 3], x[3, 3],
+  out <- lapply(sections, function(x) corner_smoother(c(x[1, 1], x[1, 2]),
+                                                      c(x[2, 1], x[2, 2]),
+                                                      c(x[3, 1], x[3, 2]),
                                                       p = n))
 
+  out <- lapply(seq_along(out), function(x) {out[[x]]$segment <- x; out[[x]]})
+  old_lens <- vapply(out, FUN = function(x) max(x$line_length),
+                     FUN.VALUE = numeric(1))
+  out <- Map(function(x, y) {x$line_length <- x$line_length + y; x},
+             x = out, y = cumsum(c(0, head(old_lens, -1))))
+  new_lens <- vapply(out, FUN = function(x) max(x$length),
+                     FUN.VALUE = numeric(1))
+  out <- Map(function(x, y) {x$length <- x$length + y; x},
+             x = out, y = cumsum(c(0, head(new_lens, -1))))
+
   out <- do.call(rbind, out)
-  out <- as.data.frame(out)
-  out <- setNames(out, c("x", "y", "map"))
 
   out$id <- data$id[1]
   out
@@ -432,7 +468,7 @@ path_smoother <- function(path, text_smoothing) {
   path  <- split(path, path$id)
   lens  <- vapply(path, FUN = nrow, FUN.VALUE = numeric(1))
   radii <- 0.1 * text_smoothing / 100
-  samps <- round(500 * (100 - text_smoothing) / 100)
+  samps <- round(400 * (100 - text_smoothing) / 100)
   samps[samps < 3] <- 3
   path <- Map(smooth_corners, data = path, radius = radii)
   path <- Map(smooth_noisy, data = path, samples = samps)
@@ -440,6 +476,8 @@ path_smoother <- function(path, text_smoothing) {
 
   path$x <- grid::unit(path$x, "npc")
   path$y <- grid::unit(path$y, "npc")
+  path$line_x <- grid::unit(path$line_x, "npc")
+  path$line_y <- grid::unit(path$line_y, "npc")
 
   path
 

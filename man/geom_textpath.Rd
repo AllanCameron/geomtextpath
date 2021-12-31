@@ -70,6 +70,7 @@ geom_labelpath(
   parse = FALSE,
   straight = FALSE,
   padding = unit(0.15, "inch"),
+  text_smoothing = 0,
   rich = FALSE,
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),

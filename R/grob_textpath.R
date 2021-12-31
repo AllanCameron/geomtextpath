@@ -110,20 +110,15 @@ textpathGrob <- function(
     polar_params$y <- unit(polar_params$y, default.units)
   }
 
-  path <- data_frame(x = x, y = y, id = rep(seq_along(id_lens), id_lens))
+  path <- data_frame(x = x, y = y, id = rep(seq_along(id_lens), id_lens),
+                     line_x = x, line_y = y)
 
-  path$map <- arclength_from_xy(x, y, path$id)
 
-  text_path <- if (text_smoothing != 0) {
-    path_smoother(path, text_smoothing)
-  } else {
-    path
-  }
+  if (text_smoothing != 0) path <- path_smoother(path, text_smoothing)
 
   gTree(
     textpath = list(
       data          = path,
-      text_path     = text_path,
       label         = label,
       gp_text       = attr(label, "gp"),
       gp_path       = gp_path,
@@ -158,20 +153,19 @@ makeContent.textpath <- function(x) {
   x$textpath <- NULL
   params <- v$params
 
-  line <- prepare_path(v$data, v$label, v$gp_path, params)
-  text_path <- prepare_path(v$text_path, v$label, v$gp_path, params)
+  path <- prepare_path(v$data, v$label, v$gp_path, params)
 
   # Get the actual text string positions and angles for each group
   text <- Map(
       place_text,
-      path = text_path, label = v$label,
+      path = path, label = v$label,
       hjust = params$hjust, halign = params$halign,
       upright = params$upright
     )
 
   text <- rbind_dfs(text)
 
-  x <- .add_path_grob(x, line, text, attr(line, "gp"), params, v$arrow)
+  x <- .add_path_grob(x, path, text, attr(path, "gp"), params, v$arrow)
   x <- .add_text_grob(x, text, v$gp_text)
   x
 }

@@ -9,23 +9,22 @@ makeContent.labelpath <- function(x) {
 
 
   ## ---- Data manipulation -------------------------------------------- #
-  line <- prepare_path(v$data, v$label, v$gp_path, params)
-  text_path <- prepare_path(v$text_path, v$label, v$gp_path, params)
+  path <- prepare_path(v$data, v$label, v$gp_path, params)
 
   # Get the actual text string positions and angles for each group
   text <- Map(
-    place_text,
-    path = text_path, label = v$label,
-    hjust = params$hjust, halign = params$halign,
-    upright = params$upright
-  )
+      place_text,
+      path = path, label = v$label,
+      hjust = params$hjust, halign = params$halign,
+      upright = params$upright
+    )
   ntext <- length(text)
 
   # Get points on the box
   if ({make_box <- sum(lengths(v$gp_box))}) {
     box <- Map(
       curved_textbox,
-      path = text_path, label = v$label, text = text,
+      path = path, label = v$label, text = text,
       padding = params$label.padding, radius = params$label.r
     )
     box <- rbind_dfs(box)
@@ -33,7 +32,7 @@ makeContent.labelpath <- function(x) {
 
   text <- rbind_dfs(text)
 
-  x <- .add_path_grob(x, line, text, attr(line, "gp"), params, v$arrow)
+  x <- .add_path_grob(x, path, text, attr(path, "gp"), params, v$arrow)
 
   # Construct textbox grobs as list
   if (make_box) {
