@@ -17,7 +17,24 @@
 #' @param ... Other arguments passed on to [continuous_scale()], [binned_scale],
 #'   or [discrete_scale()] as appropriate, to control name, limits,
 #'   breaks, labels and so forth.
-#' @param range Output range of hjust values. Must lie between 0 and 1.
+#' @param range Output range of hjust and vjust. Must lie between 0 and 1 for
+#'   hjust.
+#' @param guide A function used to create a guide or its name. See
+#'   [guides()] for more information.
+#' @param na.value Missing values will be replaced with this value.
+#' @param values a set of aesthetic values to map data values to. The values
+#'   will be matched in order (usually alphabetical) with the limits of the
+#'   scale, or with breaks if provided. If this is a named vector, then the
+#'   values will be matched based on the names instead. Data values that
+#'   don't match will be given na.value.
+#' @param breaks One of:
+#'   - `NULL` for no breaks
+#'   - `waiver()` for the default breaks computed by the
+#'     [transformation object][scales::trans_new()]
+#'   - A numeric vector of positions
+#'   - A function that takes the limits as input and returns breaks
+#'     as output (e.g., a function returned by [scales::extended_breaks()]).
+#'     Also accepts rlang [lambda][rlang::as_function()] function notation.
 #' @export
 #' @examples
 #' ggplot(iris, aes(Sepal.Length, color = Species)) +
@@ -136,4 +153,12 @@ manual_scale <- function (aesthetic, values = NULL,
     }
     discrete_scale(aesthetic, "manual", pal, breaks = breaks,
         limits = limits, ...)
+}
+
+identity_pal <- function () function(x) x
+
+rescale_pal <- function (range = c(0.1, 1))
+{
+    force(range)
+    return(function(x) rescale(x, range, c(0, 1)))
 }

@@ -32,7 +32,28 @@ scale_vjust_identity(..., guide = "none")
 or [discrete_scale()] as appropriate, to control name, limits,
 breaks, labels and so forth.}
 
-\item{range}{Output range of hjust values. Must lie between 0 and 1.}
+\item{range}{Output range of hjust and vjust. Must lie between 0 and 1 for
+hjust.}
+
+\item{values}{a set of aesthetic values to map data values to. The values
+will be matched in order (usually alphabetical) with the limits of the
+scale, or with breaks if provided. If this is a named vector, then the
+values will be matched based on the names instead. Data values that
+don't match will be given na.value.}
+
+\item{breaks}{One of:
+- `NULL` for no breaks
+- `waiver()` for the default breaks computed by the
+  [transformation object][scales::trans_new()]
+- A numeric vector of positions
+- A function that takes the limits as input and returns breaks
+  as output (e.g., a function returned by [scales::extended_breaks()]).
+  Also accepts rlang [lambda][rlang::as_function()] function notation.}
+
+\item{na.value}{Missing values will be replaced with this value.}
+
+\item{guide}{A function used to create a guide or its name. See
+[guides()] for more information.}
 }
 \description{
 Sometimes text labels on adjacent lines can clash if the lines are not well
