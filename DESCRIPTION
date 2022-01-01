@@ -60,6 +60,7 @@ Collate:
     'grob_labelpath.R'
     'grob_textpath.R'
     'path_handling.R'
+    'scales.R'
     'sf_helpers.R'
     'text_helpers.R'
     'text_placement.R'
