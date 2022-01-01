@@ -102,14 +102,16 @@ in `ggplot2`, so too are `geom_textpath` and `geom_labelpath` the
 foundation of the other geoms in this package. The line-based geoms in
 `ggplot` all have two equivalents in this package:
 
-  - `geom_path` → `geom_textpath` and `geom_labelpath`
-  - `geom_line` → `geom_textline` and `geom_labelline`
-  - `geom_segment` → `geom_textsegment` and `geom_labelsegment`
-  - `geom_density` → `geom_textdensity` and `geom_labeldensity`
-  - `geom_smooth` → `geom_textsmooth` and `geom_labelsmooth`
-  - `geom_contour` → `geom_textcontour`and `geom_labelcontour`
-  - `geom_density2d` → `geom_textdensity2d` and `geom_labeldensity2d`
-  - `geom_sf` → `geom_textsf` and `geom_labelsf`
+| **ggplot geom**  | **Text equivalent**  | **Label equivalent**  |
+| :--------------- | :------------------- | :-------------------- |
+| `geom_path`      | `geom_textpath`      | `geom_labelpath`      |
+| `geom_segment`   | `geom_textsegment`   | `geom_labelsegment`   |
+| `geom_line`      | `geom_textline`      | `geom_labelline`      |
+| `geom_density`   | `geom_textdensity`   | `geom_labeldensity`   |
+| `geom_smooth`    | `geom_textsmooth`    | `geom_labelsmooth`    |
+| `geom_contour`   | `geom_textcontour`   | `geom_labelcontour`   |
+| `geom_density2d` | `geom_textdensity2d` | `geom_labeldensity2d` |
+| `geom_sf`        | `geom_textsf`        | `geom_labelsf`        |
 
 Each of these aims to replicate all the functionality of the equivalent
 `ggplot2` function, but with direct text labels that follow the shape of
