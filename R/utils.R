@@ -349,6 +349,13 @@ gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {
   defaults
 }
 
+gp_subset <- function(gp, ss) {
+  subset_these <- lengths(gp) > 1
+  gp[subset_these] <- lapply(unclass(gp)[subset_these], function(x) x[ss])
+  gp[lengths(gp) == 0] <- list(NULL)
+  return(gp)
+}
+
 
 as_inch <- function(value, from = "x") {
   if (is.unit(value)) {

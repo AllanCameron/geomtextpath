@@ -15,7 +15,9 @@ prepare_path <- function(data, label, gp, params) {
 
   # Convert point-like paths to proper paths
   if (any({singletons <- vapply(path, nrow, integer(1)) == 1})) {
-    width <- vapply(label, function(x) max(x$xmax, na.rm = TRUE), numeric(1))
+    width <- vapply(label, function(x) 1.2 * max(x$xmax, na.rm = TRUE),
+                    numeric(1))
+
     path[singletons] <- Map(pathify,
                             data    = path[singletons],
                             hjust   = params$hjust[singletons],
@@ -234,6 +236,8 @@ pathify <- function(data, hjust, angle, width,
   data <- data[rep(seq(nrow(data)), each = 100),]
   data$x <- x
   data$y <- y
+  data$line_x <- x
+  data$line_y <- y
   data
 }
 

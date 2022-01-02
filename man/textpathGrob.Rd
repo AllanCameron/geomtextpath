@@ -26,6 +26,7 @@ textpathGrob(
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
+  remove_long = FALSE,
   arrow = NULL,
   default.units = "npc",
   name = NULL,
@@ -106,6 +107,9 @@ path.}
 \item{label.padding}{Amount of padding around label. Defaults to 0.25 lines.}
 
 \item{label.r}{Radius of rounded corners. Defaults to 0.15 lines.}
+
+\item{remove_long}{if TRUE, labels that are longer than their associated
+path will be removed.}
 
 \item{arrow}{Arrow specification, as created by \code{\link[grid:arrow]{arrow()}}.}
 

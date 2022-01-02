@@ -45,7 +45,7 @@ st_as_grob.sfc_LINESTRING_labelled <- function (
                      id = id, arrow = arrow, hjust = hjust, vjust = vjust,
             default.units = default.units, name = name, gp_path = gp,
             gp_text = textpath_vars$gp_text,
-            text_smoothing = text_smoothing,
+            text_smoothing = text_smoothing, remove_long = TRUE,
             vp = vp)
     }
     else nullGrob()

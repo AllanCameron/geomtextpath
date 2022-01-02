@@ -29,6 +29,8 @@
 #' @param as_label a `logical` TRUE or FALSE indicating whether the text should
 #'   be drawn inside a text box. If FALSE, the parameters `label.padding`,
 #'   `label.r` and `gp_box` will be ignored.
+#' @param remove_long if TRUE, labels that are longer than their associated
+#'   path will be removed.
 #' @inheritParams grid::textGrob
 #' @inheritParams grid::polylineGrob
 #' @inheritParams static_text_params
@@ -77,6 +79,7 @@ textpathGrob <- function(
   padding = unit(0.15, "inch"),
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
+  remove_long = FALSE,
   arrow = NULL,
   default.units = "npc",
   name = NULL,
@@ -89,6 +92,7 @@ textpathGrob <- function(
   if (missing(label)) return(gTree(name = name, vp = vp, cl = cl))
 
   n_label <- length(label)
+  id <- match(id, unique(id))
   id_lens <- run_len(id)
 
   check_grob_input(x, y, id, id_lens, n_label, angle)
@@ -133,7 +137,8 @@ textpathGrob <- function(
         hjust         = hjust,
         vjust         = vjust,
         halign        = halign,
-        gap           = gap
+        gap           = gap,
+        remove_long   = remove_long
       ),
       arrow = arrow
     ),
@@ -155,18 +160,45 @@ makeContent.textpath <- function(x) {
 
   path <- prepare_path(v$data, v$label, v$gp_path, params)
 
+  too_long <- if(params$remove_long) {
+    # Identify text that is too long for its path
+    text_lens <- vapply(v$label, function(x) max(x$xmax), numeric(1))
+    path_lens <- vapply(path,
+                        function(d) max(arclength_from_xy(d$line_x, d$line_y)),
+                        numeric(1))
+    text_lens > path_lens
+  } else {
+    rep(FALSE, length(v$label))
+  }
+
+  ss <- v$data$id %in% which(too_long)
+
+  if(any(too_long)) {
+
+    x <- grid::addGrob(x, grid::polylineGrob(
+        v$data$x[ss], v$data$y[ss], id = v$data$id[ss],
+        gp = gp_subset(v$gp_path, too_long)
+      ))
+  }
+
+  if(!all(too_long))
+  {
+
   # Get the actual text string positions and angles for each group
   text <- Map(
       place_text,
-      path = path, label = v$label,
-      hjust = params$hjust, halign = params$halign,
+      path = path[!too_long], label = v$label[!too_long],
+      hjust = params$hjust[!too_long], halign = params$halign[!too_long],
       upright = params$upright
     )
 
   text <- rbind_dfs(text)
 
-  x <- .add_path_grob(x, path, text, attr(path, "gp"), params, v$arrow)
-  x <- .add_text_grob(x, text, v$gp_text)
+  x <- .add_path_grob(x, path[!too_long], text,
+                      gp_subset(attr(path, "gp"), !too_long),
+                      params, v$arrow)
+  x <- .add_text_grob(x, text, gp_subset(v$gp_text, !too_long))
+  }
   x
 }
 
