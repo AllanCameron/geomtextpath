@@ -9,10 +9,6 @@
 #' or `scale_vjust_discrete()` to your plot, but you can get more control with
 #' `scale_hjust_manual` and `scale_vjust_manual`.
 #'
-#' Because textpaths are constructed from several rows of input data, the
-#' continuous variants `scale_hjust_continuous` and `scale_hjust_identity` are
-#' less useful, but are included for completeness; they may offer more control
-#' if the data is prepared beforehand with these uses in mind.
 #'
 #' @param ... Other arguments passed on to [continuous_scale()], [binned_scale],
 #'   or [discrete_scale()] as appropriate, to control name, limits,
@@ -47,6 +43,7 @@ scale_hjust_discrete <- function(..., range = c(0, 1), guide = "none") {
     "hjust",
     "hjust_d",
     function(n) seq(range[1], range[2], length.out = n),
+    guide = guide,
     ...
   )
 }
@@ -57,7 +54,12 @@ scale_hjust_discrete <- function(..., range = c(0, 1), guide = "none") {
 scale_hjust_manual <- function (..., values, breaks = waiver(),
                                 guide = "none", na.value = NA)
 {
-    manual_scale("hjust", values, breaks, ..., na.value = na.value)
+    manual_scale("hjust",
+                 values,
+                 breaks,
+                 guide = guide,
+                 ...,
+                 na.value = na.value)
 }
 
 #' @rdname scale_hjust_discrete
@@ -65,9 +67,12 @@ scale_hjust_manual <- function (..., values, breaks = waiver(),
 
 scale_hjust_identity <- function (..., guide = "none")
 {
-    sc <- continuous_scale("hjust", "identity", identity_pal(),
-        ..., guide = guide, super = ScaleContinuousIdentity)
-    sc
+    continuous_scale("hjust",
+                     "identity",
+                     identity_pal(),
+                     ...,
+                     guide = guide,
+                     super = ScaleContinuousIdentity)
 }
 
 #' @rdname scale_hjust_discrete
@@ -78,6 +83,7 @@ scale_vjust_discrete <- function(..., guide = "none", range = c(-0.5, 1.5)) {
     "vjust",
     "vjust_d",
     function(n) seq(range[1], range[2], length.out = n),
+    guide = guide,
     ...
   )
 }
@@ -88,7 +94,12 @@ scale_vjust_discrete <- function(..., guide = "none", range = c(-0.5, 1.5)) {
 scale_vjust_manual <- function (..., values, breaks = waiver(),
                                 guide = "none", na.value = NA)
 {
-    manual_scale("vjust", values, breaks, ..., na.value = na.value)
+    manual_scale("vjust",
+                 values,
+                 breaks,
+                 guide = guide,
+                 ...,
+                 na.value = na.value)
 }
 
 
@@ -97,9 +108,12 @@ scale_vjust_manual <- function (..., values, breaks = waiver(),
 
 scale_vjust_identity <- function (..., guide = "none")
 {
-    sc <- continuous_scale("vjust", "identity", identity_pal(),
-        ..., guide = guide, super = ScaleContinuousIdentity)
-    sc
+    continuous_scale("vjust",
+                     "identity",
+                     identity_pal(),
+                     ...,
+                     guide = guide,
+                     super = ScaleContinuousIdentity)
 }
 
 
@@ -108,12 +122,8 @@ scale_vjust_identity <- function (..., guide = "none")
 manual_scale <- function (aesthetic, values = NULL,
                           breaks = waiver(), ..., limits = NULL)
 {
-    if (rlang::is_missing(values)) {
-        values <- NULL
-    }
-    else {
-        force(values)
-    }
+    force(values)
+
     if (is.null(limits)) {
         limits <- names(values)
     }
@@ -141,8 +151,4 @@ manual_scale <- function (aesthetic, values = NULL,
 
 identity_pal <- function () function(x) x
 
-rescale_pal <- function (range = c(0.1, 1))
-{
-    force(range)
-    return(function(x) rescale(x, range, c(0, 1)))
-}
+

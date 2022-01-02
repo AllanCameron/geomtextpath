@@ -71,11 +71,6 @@ either vertically (vjust) or horizontally (hjust).
 The simplest way to separate labels is by  adding `scale_hjust_discrete()`
 or `scale_vjust_discrete()` to your plot, but you can get more control with
 `scale_hjust_manual` and `scale_vjust_manual`.
-
-Because textpaths are constructed from several rows of input data, the
-continuous variants `scale_hjust_continuous` and `scale_hjust_identity` are
-less useful, but are included for completeness; they may offer more control
-if the data is prepared beforehand with these uses in mind.
 }
 \examples{
 ggplot(iris, aes(Sepal.Length, color = Species)) +
