@@ -83,6 +83,7 @@ If we want our text in a box, even when the text is curved, we can use
 `geom_labelpath` instead:
 
 ``` r
+
 set.seed(5)
 
 df <- data.frame(x = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
@@ -102,7 +103,7 @@ foundation of the other geoms in this package. The line-based geoms in
 `ggplot` all have two equivalents in this package:
 
 | **ggplot geom**  | **Text equivalent**  | **Label equivalent**  |
-|:-----------------|:---------------------|:----------------------|
+| :--------------- | :------------------- | :-------------------- |
 | `geom_path`      | `geom_textpath`      | `geom_labelpath`      |
 | `geom_segment`   | `geom_textsegment`   | `geom_labelsegment`   |
 | `geom_line`      | `geom_textline`      | `geom_labelline`      |
@@ -178,6 +179,7 @@ calling `geom_textcontour` or `geom_labelcontour` instead of
 `geom_contour`:
 
 ``` r
+
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -210,6 +212,7 @@ These geoms behave much the same way as `geom_sf`, except linestrings
 such as rivers and roads can be given (curved) text labels:
 
 ``` r
+
 df <- data.frame(x = c(-4.2518, -3.1883), 
                  y = c(55.8642, 55.9533),
                  label = c("Glasgow", "Edinburgh"))
@@ -289,6 +292,7 @@ using a `text_smoothing` parameter, which can be set from 0 (none) to
 100 (maximum).
 
 ``` r
+
 ggplot(economics, aes(date, unemploy)) +
   geom_textline(linecolour = "grey", size = 6, vjust = -0.5, hjust = 0.45,
                 label = "Decline", text_smoothing = 95)
@@ -328,6 +332,7 @@ labels to be interpreted as rich text, simply pass `rich = TRUE` as a
 parameter in the call to the geom layer
 
 ``` r
+
 lab <- "Plasma Indometacin Concentration <i style='color:gray50'>(\u03BCg/l)</i>"
 
 ggplot(Indometh, aes(time, conc, group = 1)) + 
@@ -462,6 +467,7 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
+
 p + coord_polar()
 ```
 
@@ -549,11 +555,11 @@ problems than it would solve.
 
 Many paths will be too noisy or too angular to directly label in a
 visually appealing fashion if the text adheres too closely to the
-intricacies of the line. Often, a `geom_textsmooth` with
-`text_only = TRUE` is the best option in such cases, as in the examples
-above. There is also a `straight` parameter so that a label is still
-applied at an appropriate point and angle on the line, but the text will
-not attempt to follow every bump on the path.
+intricacies of the line. Often, a `geom_textsmooth` with `text_only =
+TRUE` is the best option in such cases, as in the examples above. There
+is also a `straight` parameter so that a label is still applied at an
+appropriate point and angle on the line, but the text will not attempt
+to follow every bump on the path.
 
 Other paths may have points of tight curvature, and setting an offset /
 vjust for the text that is larger than the distance to the focus point
