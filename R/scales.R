@@ -41,7 +41,8 @@
 #'   geom_textdensity(aes(label = Species, hjust = Species), size = 6) +
 #'   scale_hjust_discrete()
 
-scale_hjust_discrete <- function(..., range = c(0, 1)) {
+scale_hjust_discrete <- function(..., range = c(0, 1), guide = "none") {
+
   discrete_scale(
     "hjust",
     "hjust_d",
@@ -53,19 +54,10 @@ scale_hjust_discrete <- function(..., range = c(0, 1)) {
 #' @rdname scale_hjust_discrete
 #' @export
 #'
-scale_hjust_manual <- function (..., values, breaks = waiver(), na.value = NA)
+scale_hjust_manual <- function (..., values, breaks = waiver(),
+                                guide = "none", na.value = NA)
 {
     manual_scale("hjust", values, breaks, ..., na.value = na.value)
-}
-
-
-#' @rdname scale_hjust_discrete
-#' @export
-
-scale_hjust_continuous <- function (..., range = c(0, 1))
-{
-    continuous_scale("hjust", "hjust_c", rescale_pal(range),
-        ...)
 }
 
 #' @rdname scale_hjust_discrete
@@ -81,7 +73,7 @@ scale_hjust_identity <- function (..., guide = "none")
 #' @rdname scale_hjust_discrete
 #' @export
 
-scale_vjust_discrete <- function(..., range = c(-0.5, 1.5)) {
+scale_vjust_discrete <- function(..., guide = "none", range = c(-0.5, 1.5)) {
   discrete_scale(
     "vjust",
     "vjust_d",
@@ -93,20 +85,12 @@ scale_vjust_discrete <- function(..., range = c(-0.5, 1.5)) {
 #' @rdname scale_hjust_discrete
 #' @export
 #'
-scale_vjust_manual <- function (..., values, breaks = waiver(), na.value = NA)
+scale_vjust_manual <- function (..., values, breaks = waiver(),
+                                guide = "none", na.value = NA)
 {
     manual_scale("vjust", values, breaks, ..., na.value = na.value)
 }
 
-
-#' @rdname scale_hjust_discrete
-#' @export
-
-scale_vjust_continuous <- function (..., range = c(0, 1))
-{
-    continuous_scale("hjust", "hjust_c", rescale_pal(range),
-        ...)
-}
 
 #' @rdname scale_hjust_discrete
 #' @export

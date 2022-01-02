@@ -3,27 +3,33 @@
 \name{scale_hjust_discrete}
 \alias{scale_hjust_discrete}
 \alias{scale_hjust_manual}
-\alias{scale_hjust_continuous}
 \alias{scale_hjust_identity}
 \alias{scale_vjust_discrete}
 \alias{scale_vjust_manual}
-\alias{scale_vjust_continuous}
 \alias{scale_vjust_identity}
 \title{justification scales}
 \usage{
-scale_hjust_discrete(..., range = c(0, 1))
+scale_hjust_discrete(..., range = c(0, 1), guide = "none")
 
-scale_hjust_manual(..., values, breaks = waiver(), na.value = NA)
-
-scale_hjust_continuous(..., range = c(0, 1))
+scale_hjust_manual(
+  ...,
+  values,
+  breaks = waiver(),
+  guide = "none",
+  na.value = NA
+)
 
 scale_hjust_identity(..., guide = "none")
 
-scale_vjust_discrete(..., range = c(-0.5, 1.5))
+scale_vjust_discrete(..., guide = "none", range = c(-0.5, 1.5))
 
-scale_vjust_manual(..., values, breaks = waiver(), na.value = NA)
-
-scale_vjust_continuous(..., range = c(0, 1))
+scale_vjust_manual(
+  ...,
+  values,
+  breaks = waiver(),
+  guide = "none",
+  na.value = NA
+)
 
 scale_vjust_identity(..., guide = "none")
 }
@@ -34,6 +40,9 @@ breaks, labels and so forth.}
 
 \item{range}{Output range of hjust and vjust. Must lie between 0 and 1 for
 hjust.}
+
+\item{guide}{A function used to create a guide or its name. See
+[guides()] for more information.}
 
 \item{values}{a set of aesthetic values to map data values to. The values
 will be matched in order (usually alphabetical) with the limits of the
@@ -51,9 +60,6 @@ don't match will be given na.value.}
   Also accepts rlang [lambda][rlang::as_function()] function notation.}
 
 \item{na.value}{Missing values will be replaced with this value.}
-
-\item{guide}{A function used to create a guide or its name. See
-[guides()] for more information.}
 }
 \description{
 Sometimes text labels on adjacent lines can clash if the lines are not well
