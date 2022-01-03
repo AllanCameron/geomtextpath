@@ -93,3 +93,12 @@ test_that("We can make grobs from sf features", {
 
   expect_silent(sf_textgrob(df, as_textbox = TRUE))
 })
+
+test_that("geom_labelsf constructor wotks", {
+
+  x <- geom_labelsf()
+
+  expect_s3_class(x[[1]], "LayerInstance")
+  expect_s3_class(x[[1]]$geom, "GeomLabelSf")
+  expect_s3_class(x[[1]]$stat, "StatSf")
+})
