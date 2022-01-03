@@ -158,7 +158,7 @@ sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
   # Set variables to build grobs
   alpha <- x$alpha %||% defaults$alpha[type_ind]
 
-  col   <- x$linecolour %||% defaults$linecolour[type_ind]
+  col   <- x$linecolour %||% defaults$colour[type_ind]
   col[is_point | is_line] <- alpha(col[is_point | is_line],
                                    alpha[is_point | is_line])
 
