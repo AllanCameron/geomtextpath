@@ -144,12 +144,9 @@ attempt_flip <- function(
   offset <- attr(label, "offset")
   offlim <- range(offset[yids])
   offnew <- (offset - offlim[1]) - offlim[2]
-  if (any(yids == 1) && offnew[1] != 0) {
-    attr(label, "offset") <- c(0, offnew)
-    label$y_id <- label$y_id + 1
-  } else {
-    attr(label, "offset") <- c(0, offnew[-1])
-  }
+  off_fix <- as.numeric(any(yids == 1) && offnew[1] != 0)
+  label$y_id <- label$y_id + off_fix
+  attr(label, "offset") <- c(0, offnew[seq_along(offnew) >= (2 - off_fix)])
 
   if (is.numeric(hjust)) hjust <- 1 - hjust
 

@@ -99,6 +99,21 @@ test_that("We can correctly pathify points", {
 
 })
 
+test_that("We can remove strings the path is too short to support", {
+
+  x <- unit(c(1, 1.5), "in")
+  y <- unit(c(1, 1), "in")
+  z <- "There is no way this label should fit in half an inch"
+  g1 <- textpathGrob(z, x, y, id = c(1, 1), remove_long = TRUE)
+  p1 <- makeContent(g1)
+
+  g2 <- textpathGrob(z, x, y, id = c(1, 1), remove_long = FALSE)
+  p2 <- makeContent(g2)
+  expect_equal(class(p1$children[[1]])[1], "polyline")
+  expect_equal(class(p2$children[[1]])[1], "text")
+
+})
+
 
 test_that("We can add to default gpar", {
 
