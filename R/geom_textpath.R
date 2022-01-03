@@ -114,7 +114,7 @@ geom_textpath <- function(
   lineend = "butt", linejoin = "round", linemitre = 10,
   text_only = FALSE, gap = NA, upright = TRUE,
   halign = "center", offset = NULL, parse = FALSE, straight = FALSE,
-  padding = unit(0.15, "inch"), text_smoothing = 0, rich = FALSE, arrow = NULL
+  padding = unit(0.05, "inch"), text_smoothing = 0, rich = FALSE, arrow = NULL
   )
 {
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,

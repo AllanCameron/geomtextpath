@@ -76,7 +76,7 @@ textpathGrob <- function(
   upright = TRUE,
   text_smoothing = 0,
   polar_params = NULL,
-  padding = unit(0.15, "inch"),
+  padding = unit(0.05, "inch"),
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
   remove_long = FALSE,

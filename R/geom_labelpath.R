@@ -53,7 +53,7 @@ geom_labelpath <- function(
   text_only = FALSE, gap = FALSE, upright = TRUE,
   halign = "center", offset = NULL, parse = FALSE,
   straight = FALSE,
-  padding = unit(0.15, "inch"),
+  padding = unit(0.05, "inch"),
   text_smoothing = 0,
   rich = FALSE,
   label.padding = unit(0.25, "lines"),
@@ -223,7 +223,7 @@ geom_labelline <- function(
   text_only = FALSE, gap = FALSE, upright = TRUE,
   halign = "center", offset = NULL, parse = FALSE,
   straight = FALSE,
-  padding = unit(0.15, "inch"),
+  padding = unit(0.05, "inch"),
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
   arrow = NULL

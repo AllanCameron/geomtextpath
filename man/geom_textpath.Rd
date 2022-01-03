@@ -28,7 +28,7 @@ geom_textpath(
   offset = NULL,
   parse = FALSE,
   straight = FALSE,
-  padding = unit(0.15, "inch"),
+  padding = unit(0.05, "inch"),
   text_smoothing = 0,
   rich = FALSE,
   arrow = NULL
@@ -69,7 +69,7 @@ geom_labelpath(
   offset = NULL,
   parse = FALSE,
   straight = FALSE,
-  padding = unit(0.15, "inch"),
+  padding = unit(0.05, "inch"),
   text_smoothing = 0,
   rich = FALSE,
   label.padding = unit(0.25, "lines"),
@@ -96,7 +96,7 @@ geom_labelline(
   offset = NULL,
   parse = FALSE,
   straight = FALSE,
-  padding = unit(0.15, "inch"),
+  padding = unit(0.05, "inch"),
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
   arrow = NULL

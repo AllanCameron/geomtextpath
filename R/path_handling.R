@@ -74,7 +74,7 @@ prepare_path <- function(data, label, gp, params) {
 #' glyphs <- .get_path_points(xy)
 #' make_gap(xy, glyphs)
 make_gap <- function(path, letters, gap = NA,
-                     padding = 0.15, vjust = 0.5,
+                     padding = 0.05, vjust = 0.5,
                      vjust_lim = c(0, 1)) {
   padding <- as_inch(padding)
   if (is.unit(vjust)) {
@@ -283,7 +283,7 @@ tailor_arrow <- function(data, arrow) {
       data, text,
       vjust   = params$vjust    %||% 0.5,
       gap     = params$gap      %||% NA,
-      padding = params$padding  %||% 0.15
+      padding = params$padding  %||% 0.05
     )
     arrow <- tailor_arrow(data, arrow)
 

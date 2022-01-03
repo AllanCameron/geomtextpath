@@ -52,7 +52,7 @@ static_text_params <- function(
   offset         = NULL,
   parse          = FALSE,
   straight       = FALSE,
-  padding        = unit(0.15, "inch"),
+  padding        = unit(0.05, "inch"),
   text_smoothing = 0,
   rich           = FALSE
 ) {
