@@ -391,7 +391,7 @@ corner_smoother <- function(p0, p1, p2, p = 20) {
              line_x = old_x, line_y = old_y, line_length = old_d)
 }
 
-segment_control_points <- function(x, y, len, ang, n, radius) {
+segment_control_points <- function(x, y, len, ang, radius) {
 
     if (len < 2 * radius) {
       cbind(c(x, x + 0.5 * cos(ang) * len),

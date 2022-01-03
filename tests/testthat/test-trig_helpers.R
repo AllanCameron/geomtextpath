@@ -37,6 +37,10 @@ test_that("angle_from_xy gives correct results", {
   # Should be able to handle length-2 vectors
   ang_test <- angle_from_xy(x[1:2], y[1:2], degrees = TRUE)
   expect_equal(ang_test, 30)
+
+  x <- unit(c(0, 1), "in")
+  y <- unit(c(0, 1), "in")
+  expect_equal(angle_from_xy(x, y, degrees = TRUE), 45)
 })
 
 test_that("arclength_from_xy gives correct results", {
@@ -57,6 +61,15 @@ test_that("arclength_from_xy gives correct results", {
 
   arclen <- arclength_from_xy(x, y)
   expect_equal(arclen[25,], c(sum(lens[2:25]), sum(lens[27:50])))
+
+  x <- unit(c(0, 3), "npc")
+  y <- unit(c(0, 4), "npc")
+
+  expect_equal(arclength_from_xy(x, y), c(0, 5))
+
+  expect_equal(arclength_from_xy(0, 0), 0)
+  expect_equal(arclength_from_xy(0, NA), as.numeric(NA))
+  expect_equal(arclength_from_xy(NA, 0), as.numeric(NA))
 
 })
 
@@ -185,6 +198,69 @@ test_that("Corners are smoothed appropriately", {
                         class = "data.frame", row.names = c(NA, -5L))
   actual   <- corner_smoother(c(0, 0), c(0, 1), c(1, 1), p = 5)
   expect_equal(actual[-3], expected / 16)
+
+  p1 <- p2 <- p3 <- c(0, 1)
+  nms <- c("x", "y", "length", "line_x", "line_y", "line_length")
+
+  expect <- matrix(rep(c(0, 1, 0, 0, 1, 0), each = 20), nrow = 20)
+  expect <- setNames(as.data.frame(expect), nms)
+  expect_equal(corner_smoother(p1, p2, p3), expect)
+
+  df <- data.frame(x = rep(0, 11), y = 0:10, length = 0:10, line_x = 0,
+                   line_y = 0:10, line_length = 0:10)
+
+  expect_equal(corner_smoother(c(0, 0), c(0, 10), c(0, 10), 11), df)
+  expect_equal(corner_smoother(c(0, 0), c(0, 0), c(0, 10), 11), df)
 })
 
+test_that("We can make a data frame of points between two given points", {
 
+  actual <- linear_smooth(p1 = c(0, 0), p2 = c(0, 10), n = 11)
+
+  df <- data.frame(x = rep(0, 11), y = 0:10, length = 0:10, line_x = 0,
+                   line_y = 0:10, line_length = 0:10)
+
+  expect_equal(actual, df)
+})
+
+test_that("We can get Bezier control points from segments and paths", {
+
+  x <- 0
+  y <- 0
+  ang <- pi/4
+  len <- sqrt(2)
+  radius <- 0.1
+  d <-  sqrt(0.02)/2
+
+  expect <- matrix(rep(c(0, d, 0.5, 1 - d), 2), ncol = 2)
+
+  expect_equal(segment_control_points(x, y, len, ang, radius), expect)
+
+  expect_equal(segment_control_points(x, y, len, ang, 1),
+               matrix(c(0, 1, 0, 1), 2)/2)
+
+  actual <- find_control_points(data.frame(x = 0:2, y = c(0, 1, 0)), 0.1)
+
+  expect <- c(c(0, 0, d, 0.5, 1 - d, 1, 1 + d, 1.5, 2 - d, 2, 2),
+              c(0, 0, d, 0.5, 1 - d, 1, 1 - d, 0.5, d, 0, 0))
+  expect <- matrix(expect, ncol = 2)
+
+  expect_equal(actual, expect)
+
+  sc <- smooth_corners(data.frame(x = 0:2, y = c(0, 1, 0)), n = 3, radius = 0.1)
+
+  vec <- c(0, d/2, d, d, 0.5, 1 - d, 1 - d)
+  x <-  c(vec, 1, 2 - rev(vec))
+  y <- c(vec, 1 - d / 2, rev(vec))
+  len <- cumsum(c(0, sqrt(diff(x)^2 + diff(y)^2)))
+  line_len <- c(0, 0.05, 0.1, 0.1, sqrt(2)/2, sqrt(2) - 0.1, sqrt(2) - 0.1,
+                sqrt(2), sqrt(2) + 0.1, sqrt(2) + 0.1, sqrt(2) * 3/2,
+                2 * sqrt(2) - 0.1, 2 * sqrt(2) - 0.1,
+                2*sqrt(2) - 0.05, 2 * sqrt(2))
+  df <- data.frame(x = x, y = y, length = len,
+                   line_x = x, line_y = y, line_length = line_len,
+                   segment = rep(1:5, each = 3))
+  df$line_y[8] <- 1
+
+  expect_equal(sc, df)
+})
