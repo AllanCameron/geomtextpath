@@ -162,10 +162,9 @@ makeContent.textpath <- function(x) {
 
   too_long <- if(params$remove_long) {
     # Identify text that is too long for its path
-    text_lens <- vapply(v$label, function(x) max(x$xmax), numeric(1))
-    path_lens <- vapply(path,
-                        function(d) max(arclength_from_xy(d$line_x, d$line_y)),
-                        numeric(1))
+    text_lens <- numapply(v$label, function(x) max(x$xmax))
+    path_lens <- numapply(path, function(d) {
+                   max(arclength_from_xy(d$line_x, d$line_y))})
     text_lens > path_lens
   } else {
     rep(FALSE, length(v$label))

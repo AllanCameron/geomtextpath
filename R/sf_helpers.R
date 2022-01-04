@@ -28,7 +28,7 @@ st_as_grob.sfc_LINESTRING_labelled <- function (
 
   if (!nzchar(label)) return(sf::st_as_grob(x))
 
-  is_e <- vapply(unclass(x), nrow, integer(1)) == 0
+  is_e <- nrow_multi(unclass(x)) == 0
   if (any(is_e)) {
       gp = gp[!is_e]
       x = x[!is_e]
@@ -38,7 +38,7 @@ st_as_grob.sfc_LINESTRING_labelled <- function (
   text_smoothing <- textpath_vars$text_smoothing %||% 0
     if (length(x)) {
         x <- unclass(x)
-        n_points <- vapply(x, nrow, integer(1))
+        n_points <- nrow_multi(x)
         id <- rep(seq_along(n_points), n_points)
         x <- do.call(rbind, x)
         textpathGrob(label = label[1], x = x[, 1], y = x[, 2],
@@ -64,7 +64,7 @@ st_as_grob.sfc_LINESTRING_textbox <- function (
 
   if (!nzchar(label)) return(sf::st_as_grob(x))
 
-  is_e <- vapply(unclass(x), nrow, integer(1)) == 0
+  is_e <- nrow_multi(unclass(x)) == 0
   if (any(is_e)) {
       gp = gp[!is_e]
       x = x[!is_e]
@@ -74,7 +74,7 @@ st_as_grob.sfc_LINESTRING_textbox <- function (
 
     if (length(x)) {
         x <- unclass(x)
-        n_points <- vapply(x, nrow, integer(1))
+        n_points <- nrow_multi(x)
         id <- rep(seq_along(n_points), n_points)
         x <- do.call(rbind, x)
         textpathGrob(label = label[1], x = x[, 1], y = x[, 2],

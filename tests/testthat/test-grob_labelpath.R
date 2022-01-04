@@ -123,3 +123,9 @@ test_that("straight richtext is similar to 'curved' richtext on straight path", 
   expect_equal(ctrl$y, case$y, tolerance = 0.05)
   expect_equal(ctrl$label, case$label)
 })
+
+test_that("We can set blank lines", {
+
+  gp <- data_to_path_gp(data.frame(linetype = NA))
+  expect_equal(gp$lty, 0)
+})

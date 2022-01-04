@@ -49,5 +49,29 @@ test_that("Warn/error upon font fallback issues", {
 
 })
 
+test_that("richtext and parse are not set together", {
+
+  expect_warning(static_text_params(rich = TRUE, parse = TRUE))
+})
+
+test_that("arbitrary parameters can be added to text params", {
+
+  blah <- update_params(params = list(blah = "blah"))
+  expect_equal(blah$blah, "blah")
+
+  offset <- update_params(list(offset = 1))
+  expect_equal(offset$text_params$offset, 1)
+})
+
+test_that("css parsing can take either type of quote", {
+
+  expect_equal(parse_css_line("color:'blue'"), parse_css_line('color:"blue"'))
+})
+
+test_that("css units default to points if value of 0 given", {
+
+  expect_equal(parse_css_unit("0"), list(value = 0, unit = "pt"))
+})
+
 dev.off()
 unlink(tmp)

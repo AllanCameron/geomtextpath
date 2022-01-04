@@ -1,3 +1,16 @@
+
+# simplify calls to vapoly with numeric vapply and integer vapply
+
+numapply <- function(data, fun) {
+
+  vapply(data, FUN = fun, FUN.VALUE = numeric(1))
+}
+
+nrow_multi <- function(data) {
+
+  vapply(data, FUN = nrow, FUN.VALUE = integer(1), USE.NAMES = FALSE)
+}
+
 # Run length utilities ----------------------------------------------------
 
 # Simplified `rle(x)$lengths`
@@ -63,7 +76,7 @@ rbind_dfs <- function(df_list, idcol = NULL) {
   # Ideally, we'd use vctrs::vec_c(!!!df_list) which is 10x faster
   ans <- do.call(rbind.data.frame, c(df_list, make.row.names = FALSE))
   if (!is.null(idcol)) {
-    n <- vapply(df_list, nrow, integer(1), USE.NAMES = FALSE)
+    n <- nrow_multi(df_list)
     ans[[idcol]] <- rep(names(df_list) %||% seq_along(n), times = n)
   }
   ans
@@ -496,7 +509,7 @@ rd_dots <- function(fun, exclude = character()) {
   }
 
   # Use roxygen2 to parse this very file
-  file <- system.file("R", "text_params.R", package = "geomtextpath")
+  file <- path.expand("~/geomtextpath/R/text_params.R")
   doc  <- roxygen2::parse_file(file)
 
   # Look for the doc with the "rd_dots" keyword, this should be in the

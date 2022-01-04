@@ -437,12 +437,10 @@ smooth_corners <- function(data, n = 20, radius = 0.1) {
                                                       p = n))
 
   out <- lapply(seq_along(out), function(x) {out[[x]]$segment <- x; out[[x]]})
-  old_lens <- vapply(out, FUN = function(x) max(x$line_length),
-                     FUN.VALUE = numeric(1))
+  old_lens <- numapply(out, function(x) max(x$line_length))
   out <- Map(function(x, y) {x$line_length <- x$line_length + y; x},
              x = out, y = cumsum(c(0, head(old_lens, -1))))
-  new_lens <- vapply(out, FUN = function(x) max(x$length),
-                     FUN.VALUE = numeric(1))
+  new_lens <- numapply(out, function(x) max(x$length))
   out <- Map(function(x, y) {x$length <- x$length + y; x},
              x = out, y = cumsum(c(0, head(new_lens, -1))))
 
@@ -466,7 +464,7 @@ path_smoother <- function(path, text_smoothing) {
   text_smoothing[text_smoothing > 100] <- 100
   text_smoothing[text_smoothing < 0]   <- 0
   path  <- split(path, path$id)
-  lens  <- vapply(path, FUN = nrow, FUN.VALUE = numeric(1))
+  lens  <- nrow_multi(path)
   radii <- 0.1 * text_smoothing / 100
   samps <- round(400 * (100 - text_smoothing) / 100)
   samps[samps < 3] <- 3

@@ -264,3 +264,22 @@ test_that("We can get Bezier control points from segments and paths", {
 
   expect_equal(sc, df)
 })
+
+test_that("We can apply both smoothing types", {
+
+  x <- unit((0:2)/2, "npc")
+  y <- unit(c(0, 1, 0), "npc")
+  label <- "X"
+  id <- c(1, 1, 1)
+
+  png("Rplot_test.png", width = 7, height = 7, units = "in", res = 100)
+  grob <- textpathGrob(label, x, y, id, text_smoothing = 100)
+  grob <- makeContent(grob)
+  x <- convertUnit(grob$children[[2]]$x, "npc", valueOnly = TRUE)
+  y <- convertUnit(grob$children[[2]]$y, "npc", valueOnly = TRUE)
+  dev.off()
+  unlink("Rplot_test.png")
+
+  expect_lt(abs(x - 0.5), 0.001)
+  expect_lt(abs(y - 0.7326), 0.001)
+})
