@@ -508,10 +508,10 @@ rd_dots <- function(fun, exclude = character()) {
     return(txt)
   }
 
-  prefix <- c("", "../.")[as.numeric(any(grepl("test-utils", dir()))) + 1]
+  file <- system.file("R", "text_params.R", package = "geomtextpath")
 
   # Use roxygen2 to parse text params
-  doc  <- roxygen2::parse_file(paste0(prefix, "./R/text_params.R"))
+  doc  <- roxygen2::parse_file(file)
 
   # Look for the doc with the "rd_dots" keyword, this should be in the
   # `static_text_params()` function above.

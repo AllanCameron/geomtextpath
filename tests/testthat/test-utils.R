@@ -364,7 +364,6 @@ test_that("Objects are renamed correctly", {
 test_that("rd_dots can evaluate a function's dots", {
 
   expect_equal(substr(rd_dots("geom_textpath"), 1, 10), "@param ...")
-  expect_true(grepl("rich text", rd_dots(geom_textsf)))
 })
 
 test_that("resolution_to_unit works", {
