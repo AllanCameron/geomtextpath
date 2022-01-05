@@ -7,76 +7,101 @@ makeContent.labelpath <- function(x) {
   x$textpath <- NULL
   params <- v$params
 
-
-  ## ---- Data manipulation -------------------------------------------- #
   path <- prepare_path(v$data, v$label, v$gp_path, params)
 
-  # Get the actual text string positions and angles for each group
-  text <- Map(
-      place_text,
-      path = path, label = v$label,
-      hjust = params$hjust, halign = params$halign,
-      upright = params$upright
-    )
-  ntext <- length(text)
-
-  # Get points on the box
-  if (sum(lengths(v$gp_box))) {
-    box <- Map(
-      curved_textbox,
-      path = path, label = v$label, text = text,
-      padding = params$label.padding, radius = params$label.r
-    )
-    box <- rbind_dfs(box)
-  }
-
-  text <- rbind_dfs(text)
-
-  x <- .add_path_grob(x, path, text, attr(path, "gp"), params, v$arrow)
-
-  # Construct textbox grobs as list
-  if (sum(lengths(v$gp_box))) {
-    boxgrob <- lapply(seq_len(ntext), function(i) {
-      gp  <- recycle_gp(v$gp_box, function(x) x[pmin(i, length(x))])
-      dat <- box[box$id == i, , drop = FALSE]
-      polygonGrob(x = dat$x, y = dat$y, default.units = "inches", gp = gp)
-    })
+  too_long <- if (params$remove_long) {
+    # Identify text that is too long for its path
+    text_lens <- numapply(v$label, function(x) max(x$xmax))
+    path_lens <- numapply(path, function(d) {
+                   max(arclength_from_xy(d$line_x, d$line_y))})
+    text_lens > path_lens
   } else {
-    boxgrob <- NULL
+    rep(FALSE, length(v$label))
   }
 
-  # Construct text grobs as list
-  textgrob <- lapply(seq_len(ntext), function(i) {
-    dat <- text[text$id == i, , drop = FALSE]
-    sub <- unlist(dat$substring, FALSE, FALSE) %||% dat$id
-    gp  <- recycle_gp(v$gp_text, function(x) x[pmin(sub, length(x))])
+  ss <- v$data$id %in% which(too_long)
 
-    if (is.list(dat$xoffset)) {
-      xx <- unlist(dat$xoffset, FALSE, FALSE)
-      yy <- unlist(dat$yoffset, FALSE, FALSE)
-      angle <- dat$angle * .deg2rad
-      x <- xx * cos(angle) - yy * sin(angle) + dat$x
-      y <- xx * sin(angle) + yy * cos(angle) + dat$y
-    } else {
-      x <- dat$x
-      y <- dat$y
+  if (any(too_long)) {
+
+    x <- grid::addGrob(x, grid::polylineGrob(
+        v$data$x[ss], v$data$y[ss], id = v$data$id[ss],
+        gp = gp_subset(v$gp_path, too_long)
+      ))
+  }
+
+  if (!all(too_long)) {
+
+    # Get the actual text string positions and angles for each group
+    text <- Map(
+        place_text,
+        path = path[!too_long], label = v$label[!too_long],
+        hjust = params$hjust[!too_long], halign = params$halign[!too_long],
+        upright = params$upright
+      )
+
+    ntext <- which(!too_long)
+
+    # Get points on the box
+    if (sum(lengths(v$gp_box))) {
+      box <- Map(
+        curved_textbox,
+        path = path[!too_long], label = v$label[!too_long], text = text,
+        padding = params$label.padding, radius = params$label.r
+      )
+      box <- rbind_dfs(box)
     }
 
-    textGrob(
-      label = make_label(dat$label),
-      x = x,
-      y = y,
-      rot = dat$angle,
-      vjust = 0.5, hjust = 0.5, gp = gp,
-      default.units = "inches"
-    )
-  })
+    text <- rbind_dfs(text)
 
-  # Alternate box and textgrobs
-  grobs <- rbind(boxgrob, textgrob)
-  # Add box and textgrobs
-  grobs <- do.call(gList, c(x$children[1], grobs))
-  x <- setChildren(x, grobs)
+    x <- .add_path_grob(x, path[!too_long], text,
+                        gp_subset(attr(path, "gp"), !too_long), params, v$arrow)
+
+    # Construct textbox grobs as list
+    if (sum(lengths(subset(v$gp_box, !too_long)))) {
+      boxgrob <- lapply(ntext, function(i) {
+        gp  <- recycle_gp(gp_subset(v$gp_box, !too_long),
+                          function(x) x[pmin(i, length(x))])
+        dat <- box[box$id == i, , drop = FALSE]
+        polygonGrob(x = dat$x, y = dat$y, default.units = "inches", gp = gp)
+      })
+    } else {
+      boxgrob <- NULL
+    }
+
+    # Construct text grobs as list
+    textgrob <- lapply(ntext, function(i) {
+      dat <- text[text$id == i, , drop = FALSE]
+      sub <- unlist(dat$substring, FALSE, FALSE) %||% dat$id
+      gp  <- recycle_gp(subset(v$gp_text, !too_long),
+                        function(x) x[pmin(sub, length(x))])
+
+      if (is.list(dat$xoffset)) {
+        xx <- unlist(dat$xoffset, FALSE, FALSE)
+        yy <- unlist(dat$yoffset, FALSE, FALSE)
+        angle <- dat$angle * .deg2rad
+        x <- xx * cos(angle) - yy * sin(angle) + dat$x
+        y <- xx * sin(angle) + yy * cos(angle) + dat$y
+      } else {
+        x <- dat$x
+        y <- dat$y
+      }
+
+      textGrob(
+        label = make_label(dat$label),
+        x = x,
+        y = y,
+        rot = dat$angle,
+        vjust = 0.5, hjust = 0.5, gp = gp,
+        default.units = "inches"
+      )
+    })
+
+    # Alternate box and textgrobs
+    grobs <- rbind(boxgrob, textgrob)
+    # Add box and textgrobs
+    grobs <- do.call(gList, c(x$children[1], grobs))
+    x <- setChildren(x, grobs)
+  }
   x
 }
 

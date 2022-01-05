@@ -3,7 +3,7 @@
 test_that("Text angles are correct", {
 
   # Triangle
-  xy <- data.frame(x = 1:5 * sqrt(2), y = c(1,2,3,2,1) * sqrt(2),
+  xy <- data.frame(x = 1:5 * sqrt(2), y = c(1,2, 3, 2, 1) * sqrt(2),
                    size = 5)
 
   angles    <- angle_from_xy(xy$x, xy$y, degrees = TRUE)
@@ -54,7 +54,7 @@ test_that("Appropriate warning with excess curvature", {
 test_that("We can have flat labels when requested", {
 
   df <- data.frame(x = seq(0, 2 * pi, length = 1000) / (2 * pi),
-                   y = (sin(seq(0, 2 * pi, length = 1000)) + 1)/2,
+                   y = (sin(seq(0, 2 * pi, length = 1000)) + 1) / 2,
                    z = rep(as.character(expression(sin(x))), 1000))
 
   grob <- textpathGrob(label = parse(text = df$z[1]),
@@ -76,7 +76,7 @@ test_that("Path trimming is correct", {
   # Prep data
   xy <- data.frame(
     x = c(1:6), y = 1,
-    id = c(1,1,2,2,3,3),
+    id = c(1, 1, 2, 2, 3, 3),
     line_x = 1:6, line_y = 1,
     size = 5,
     label = "a label"
@@ -99,7 +99,7 @@ test_that("Path trimming is correct", {
   # TRUE gap
   test <- make_gap(xy, glyphs, gap = TRUE,
                    padding = br, vjust = vjust)
-  test <- test[order(test$id, test$x),]
+  test <- test[order(test$id, test$x), ]
 
   expect_length(test$x, nrow(xy) * 2)
   expect_equal(
@@ -119,7 +119,7 @@ test_that("Path trimming is correct", {
   # FALSE gap
   test <- make_gap(xy, glyphs, gap = FALSE,
                    padding = br[2], vjust = vjust)
-  test <- test[order(test$id, test$x),]
+  test <- test[order(test$id, test$x), ]
   expect_length(test$x, nrow(xy))
   expect_equal(
     test$x,
@@ -132,7 +132,7 @@ test_that("Path trimming is correct", {
   # Variable gap
   test <- make_gap(xy, glyphs, gap = NA,
                    padding = br, vjust = vjust)
-  test <- test[order(test$id, test$x),]
+  test <- test[order(test$id, test$x), ]
   expect_length(test$x, nrow(xy) + 2)
   expect_equal(
     test$x,

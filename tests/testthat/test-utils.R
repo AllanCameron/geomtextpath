@@ -70,7 +70,7 @@ test_that("dedup_path works", {
   # Should remove 2nd row but not 4th row
   y[2] <- 1
   test <- dedup_path(x, y, id, x, y)
-  expect_equal(test, ctrl[c(1, 3:4),])
+  expect_equal(test, ctrl[c(1, 3:4), ])
 
   # Check tolerance is respected
   y[2] <- 1.1
@@ -95,7 +95,7 @@ test_that("approx_multiple works", {
   # Single vector modus
   y <- (x - 5.5)^2
   test <- approx_multiple(x, xout, y)
-  expect_equal(test, c(y[2] + y[3], 2*y[5], y[7] + y[8])/2)
+  expect_equal(test, c(y[2] + y[3], 2 * y[5], y[7] + y[8]) / 2)
   expect_type(test, "double")
 
   # Matrix modus

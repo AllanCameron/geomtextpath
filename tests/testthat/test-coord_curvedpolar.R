@@ -43,13 +43,13 @@ test_that("element_blank case is handled correctly", {
     geom_point() +
     coord_curvedpolar()
 
-  out <- ggplot_gtable( ggplot_build(p))
+  out <- ggplot_gtable(ggplot_build(p))
   panel <- out$grobs[[which(out$layout$name == "panel")]]
   axis_labels <- panel$children[[5]]$children[[1]]
 
   expect_equal(class(axis_labels)[1], "textpath")
 
-  out <- ggplot_gtable( ggplot_build(p + theme(axis.text.x = element_blank())))
+  out <- ggplot_gtable(ggplot_build(p + theme(axis.text.x = element_blank())))
   panel <- out$grobs[[which(out$layout$name == "panel")]]
   axis_labels <- panel$children[[5]]$children[[1]]
 

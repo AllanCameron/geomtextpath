@@ -406,7 +406,7 @@ gp_subset <- function(gp, ss) {
 }
 
 
-as_inch <- function(value, from = "x") {
+as_grid_unit <- function(value, from = "x", unit = "native") {
 
   if (!is.unit(value)) return(value)
 
@@ -414,9 +414,21 @@ as_inch <- function(value, from = "x") {
   type <- list(x = "location", y = "location",
                width = "dimension", height = "dimension")
 
-  convertUnit(x = value, unitTo = "inch",
+  convertUnit(x = value, unitTo = unit,
               axisFrom = axis[[from]], typeFrom = type[[from]],
               valueOnly = TRUE)
+}
+
+
+as_inch <- function(x, from = "x") {
+
+  as_grid_unit(x, from, "inch")
+}
+
+
+as_npc <- function(x, from = "x") {
+
+  as_grid_unit(x, from, "npc")
 }
 
 

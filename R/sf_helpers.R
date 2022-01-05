@@ -69,6 +69,7 @@ st_as_grob.sfc_LINESTRING_textbox <- function(
   }
   hjust <- textpath_vars$hjust %||% 0.5
   vjust <- textpath_vars$vjust %||% 0.5
+  text_smoothing <- textpath_vars$text_smoothing %||% 0
 
     if (length(x)) {
         x <- unclass(x)
@@ -80,6 +81,7 @@ st_as_grob.sfc_LINESTRING_textbox <- function(
             default.units = default.units, name = name, gp_path = gp,
             gp_text = textpath_vars$gp_text,
             gp_box = textpath_vars$gp_box,
+            text_smoothing = text_smoothing, remove_long = TRUE,
             vp = vp, as_label = TRUE)
     }
     else nullGrob()

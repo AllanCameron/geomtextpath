@@ -99,6 +99,7 @@ before <- function(x) {
   if (length(x) == 0) x else x[c(1, seq_along(x))]
 }
 
+
 after <- function(x) {
 
   if (length(x) == 0) x else x[c(seq_along(x), length(x))]
@@ -196,6 +197,7 @@ get_curvature <- function(x, y) {
   before(after(curv))
 }
 
+
 exceeds_curvature <- function(x, y, d, tolerance = 0.1) {
 
   curve_radius <- 1 / get_curvature(x, y)
@@ -204,6 +206,7 @@ exceeds_curvature <- function(x, y, d, tolerance = 0.1) {
           (abs(a) < abs(b)) & (sign(a) == sign(b))
         }), 1, any))
 }
+
 
 safe_rollmean <- function(vec, k = 10) {
 
@@ -220,6 +223,7 @@ safe_rollmean <- function(vec, k = 10) {
 
 
 which.min_curvature <- function(x, y, k = 10) {
+
   len <- arclength_from_xy(x, y)
   len <- len / max(len)
   curv <- abs(get_curvature(x, y))
@@ -323,7 +327,6 @@ sample_path <- function(data, n = 50) {
   data$length <- arclength_from_xy(data$x, data$y, data$id)
 
   data
-
 }
 
 # Spline smooth the centroids of a path split into n chunks
@@ -339,7 +342,6 @@ smooth_noisy <- function(data, samples = 50) {
 
   # Now we sample the path regularly along its length
   sample_path(data, n = samples)
-
 }
 
 
@@ -352,6 +354,7 @@ quad_bezier <- function(p0, p1, p2, t) {
 
   (1 - t)^2 * p0 + 2 * t * (1 - t) * p1 + t^2 * p2
 }
+
 
 linear_smooth <- function(p1, p2, n) {
 
@@ -391,6 +394,7 @@ corner_smoother <- function(p0, p1, p2, p = 20) {
              line_x = old_x, line_y = old_y, line_length = old_d)
 }
 
+
 segment_control_points <- function(x, y, len, ang, radius) {
 
     if (len < 2 * radius) {
@@ -429,44 +433,45 @@ find_control_points <- function(data, radius = 0.1) {
 # Co-ordinates the above functions to generate a Bezier-smoothed curve
 smooth_corners <- function(data, n = 20, radius = 0.1) {
 
-  cps <- find_control_points(data, radius = radius)
+  cps      <- find_control_points(data, radius = radius)
   sections <- lapply(seq(1, nrow(cps) - 2, 2), function(x) cps[x + 0:2, ])
-  out <- lapply(sections, function(x) corner_smoother(c(x[1, 1], x[1, 2]),
-                                                      c(x[2, 1], x[2, 2]),
-                                                      c(x[3, 1], x[3, 2]),
-                                                      p = n))
+  out      <- lapply(sections, function(x) corner_smoother(c(x[1, 1], x[1, 2]),
+                                                           c(x[2, 1], x[2, 2]),
+                                                           c(x[3, 1], x[3, 2]),
+                                                           p = n))
 
-  out <- lapply(seq_along(out), function(x) {
-    out[[x]]$segment <- x; out[[x]]
+  out       <- lapply(seq_along(out), function(x) {
+    out[[x]]$segment <- x
+    out[[x]]
   })
 
   old_lens <- numapply(out, function(x) max(x$line_length))
-  out <- Map(function(x, y) {
+  out      <- Map(function(x, y) {
     x$line_length <- x$line_length + y
     return(x)
     }, x = out, y = cumsum(c(0, head(old_lens, -1))))
+
   new_lens <- numapply(out, function(x) max(x$length))
-  out <- Map(function(x, y) {
+  out      <- Map(function(x, y) {
     x$length <- x$length + y
     return(x)
     }, x = out, y = cumsum(c(0, head(new_lens, -1))))
 
-  out <- rbind_dfs(out)
+  out      <- rbind_dfs(out)
 
-  out$id <- data$id[1]
+  out$id   <- data$id[1]
   out
 }
 
+#-------------------------------------------------------------------------------
+# Co-ordinate rounding and smoothing functions
+#-------------------------------------------------------------------------------
 
 # Applies the smoothing functions to a data frame consisting of x, y and id
 path_smoother <- function(path, text_smoothing) {
 
-  if (grid::is.unit(path$x)) {
-    path$x <- grid::convertUnit(path$x, "npc", valueOnly = TRUE)
-  }
-  if (grid::is.unit(path$y)) {
-    path$y <- grid::convertUnit(path$y, "npc", valueOnly = TRUE)
-  }
+  path$x <- as_npc(path$x, "x")
+  path$y <- as_npc(path$y, "y")
 
   text_smoothing[text_smoothing > 100] <- 100
   text_smoothing[text_smoothing < 0]   <- 0
@@ -474,15 +479,12 @@ path_smoother <- function(path, text_smoothing) {
   radii <- 0.1 * text_smoothing / 100
   samps <- round(400 * (100 - text_smoothing) / 100)
   samps[samps < 3] <- 3
-  path <- Map(smooth_corners, data = path, radius = radii)
-  path <- Map(smooth_noisy, data = path, samples = samps)
+  path <- Map(smooth_corners, data = path, radius  = radii)
+  path <- Map(smooth_noisy,   data = path, samples = samps)
   path <- rbind_dfs(path)
 
-  path$x <- grid::unit(path$x, "npc")
-  path$y <- grid::unit(path$y, "npc")
-  path$line_x <- grid::unit(path$line_x, "npc")
-  path$line_y <- grid::unit(path$line_y, "npc")
+  cols <- c("x", "y", "line_x", "line_y")
+  path[cols] <- lapply(path[cols], unit, unit = "npc")
 
   path
-
 }

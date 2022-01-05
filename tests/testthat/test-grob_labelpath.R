@@ -99,7 +99,7 @@ test_that("radius is shrunk when needed", {
 })
 
 
-test_that("straight richtext is similar to 'curved' richtext on straight path", {
+test_that("straight richtext is similar to richtext on straight path", {
   labels <- c(
     "A<span style='color:blue'>B</span>C",
     "D\nE<br>F"

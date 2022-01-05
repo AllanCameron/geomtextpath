@@ -81,7 +81,7 @@ test_that("We can make grobs from sf features", {
   df_missing$size[2] <- NA
 
 
-  river <- sf::st_cast(waterways[2,], "LINESTRING")
+  river <- sf::st_cast(waterways[2, ], "LINESTRING")
   river$boxcolour <- "green"
   river$alpha <- 1
   river$label <- "A"

@@ -3,7 +3,7 @@ test_that("hjust scales have correct guides and palettes", {
   shd <- scale_hjust_discrete(range = c(0, 0.5))
   expect_equal(shd$guide, "none")
   expect_equal(shd$aesthetics, "hjust")
-  expect_equal(shd$palette(3), (0:2)/4)
+  expect_equal(shd$palette(3), (0:2) / 4)
 
   shi <- scale_hjust_identity()
   expect_equal(shi$guide, "none")
@@ -26,7 +26,7 @@ test_that("vjust scales have correct guides and palettes", {
   svd <- scale_vjust_discrete(range = c(0, 0.5))
   expect_equal(svd$guide, "none")
   expect_equal(svd$aesthetics, "vjust")
-  expect_equal(svd$palette(3), (0:2)/4)
+  expect_equal(svd$palette(3), (0:2) / 4)
 
   svi <- scale_vjust_identity()
   expect_equal(svi$guide, "none")

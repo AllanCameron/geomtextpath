@@ -60,7 +60,7 @@ test_that("arclength_from_xy gives correct results", {
   y <- cbind(y[1:25], y[26:50])
 
   arclen <- arclength_from_xy(x, y)
-  expect_equal(arclen[25,], c(sum(lens[2:25]), sum(lens[27:50])))
+  expect_equal(arclen[25, ], c(sum(lens[2:25]), sum(lens[27:50])))
 
   x <- unit(c(0, 3), "npc")
   y <- unit(c(0, 4), "npc")
@@ -76,7 +76,7 @@ test_that("arclength_from_xy gives correct results", {
 test_that("get_offset offsets correctly", {
 
   x <- c(1:5)
-  y <- c(1,2,3,2,1)
+  y <- c(1, 2, 3, 2, 1)
 
   offset <- get_offset(x, y, d = 1:2 / sqrt(2))
 
@@ -116,7 +116,7 @@ test_that("We can measure curvature accurately", {
   curv_2 <- get_curvature(2 * x, 2 * y)
 
   expect_true(
-    all( abs((curv_1 / curv_2) - 2) < 0.001)
+    all(abs((curv_1 / curv_2) - 2) < 0.001)
   )
 })
 
@@ -227,17 +227,17 @@ test_that("We can get Bezier control points from segments and paths", {
 
   x <- 0
   y <- 0
-  ang <- pi/4
+  ang <- pi / 4
   len <- sqrt(2)
   radius <- 0.1
-  d <-  sqrt(0.02)/2
+  d <-  sqrt(0.02) / 2
 
   expect <- matrix(rep(c(0, d, 0.5, 1 - d), 2), ncol = 2)
 
   expect_equal(segment_control_points(x, y, len, ang, radius), expect)
 
   expect_equal(segment_control_points(x, y, len, ang, 1),
-               matrix(c(0, 1, 0, 1), 2)/2)
+               matrix(c(0, 1, 0, 1), 2) / 2)
 
   actual <- find_control_points(data.frame(x = 0:2, y = c(0, 1, 0)), 0.1)
 
@@ -249,12 +249,12 @@ test_that("We can get Bezier control points from segments and paths", {
 
   sc <- smooth_corners(data.frame(x = 0:2, y = c(0, 1, 0)), n = 3, radius = 0.1)
 
-  vec <- c(0, d/2, d, d, 0.5, 1 - d, 1 - d)
+  vec <- c(0, d / 2, d, d, 0.5, 1 - d, 1 - d)
   x <-  c(vec, 1, 2 - rev(vec))
   y <- c(vec, 1 - d / 2, rev(vec))
   len <- cumsum(c(0, sqrt(diff(x)^2 + diff(y)^2)))
-  line_len <- c(0, 0.05, 0.1, 0.1, sqrt(2)/2, sqrt(2) - 0.1, sqrt(2) - 0.1,
-                sqrt(2), sqrt(2) + 0.1, sqrt(2) + 0.1, sqrt(2) * 3/2,
+  line_len <- c(0, 0.05, 0.1, 0.1, sqrt(2) / 2, sqrt(2) - 0.1, sqrt(2) - 0.1,
+                sqrt(2), sqrt(2) + 0.1, sqrt(2) + 0.1, sqrt(2) * 3 / 2,
                 2 * sqrt(2) - 0.1, 2 * sqrt(2) - 0.1,
                 2*sqrt(2) - 0.05, 2 * sqrt(2))
   df <- data.frame(x = x, y = y, length = len,
@@ -267,7 +267,7 @@ test_that("We can get Bezier control points from segments and paths", {
 
 test_that("We can apply both smoothing types", {
 
-  x <- unit((0:2)/2, "npc")
+  x <- unit((0:2) / 2, "npc")
   y <- unit(c(0, 1, 0), "npc")
   label <- "X"
   id <- c(1, 1, 1)

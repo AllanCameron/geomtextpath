@@ -187,6 +187,8 @@ makeContent.textpath <- function(x) {
         upright = params$upright
       )
 
+    ntext <- length(text)
+
     text <- rbind_dfs(text)
 
     x <- .add_path_grob(x, path[!too_long], text,

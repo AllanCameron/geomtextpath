@@ -41,16 +41,18 @@ test_that("textpathGrobs can be created", {
                              polar_params = list(x = .5, y = .5, theta = "x"))))
 
   # Mixed points and paths with angles and unit polar parameters
-  expect_silent({a <- textpathGrob(label = c("Hello", "World", "lorem", "ipsu"),
-                             x = c(0, 1, 1.5, 2, 3, 4),
-                             y = c(0, 1, 2, 1, 3, 4),
-                             id = c(1, 1, 2, 2, 3, 4),
-                             gp_path = gpar(lty = 1),
-                             angle = 0,
-                             polar_params = list(x = unit(.5, "in"),
-                                                 y = unit(.5, "in"),
-                                                 theta = "x"));
-                  makeContent(a)})
+  expect_silent({
+    a <- textpathGrob(label = c("Hello", "World", "lorem", "ipsu"),
+                       x = c(0, 1, 1.5, 2, 3, 4),
+                       y = c(0, 1, 2, 1, 3, 4),
+                       id = c(1, 1, 2, 2, 3, 4),
+                       gp_path = gpar(lty = 1),
+                       angle = 0,
+                       polar_params = list(x = unit(.5, "in"),
+                                           y = unit(.5, "in"),
+                                           theta = "x"));
+    makeContent(a)
+  })
 
   # Plotmath expression with point-like path
   expect_silent(textpathGrob(label = expression(paste("y = ", x^2))))
@@ -156,15 +158,15 @@ test_that("richt text parsing works as expected", {
 
   label <- "<em>italic</em><strong>bold</strong>"
   test <- parse_richtext(label, gpar())
-  expect_equal(test$text, c("italic", 'bold'))
+  expect_equal(test$text, c("italic", "bold"))
   expect_equal(test$font, c(3, 2))
 
   label <- "<notimplemented>my text here</notimplemented>"
   test <- substitute(parse_richtext(label, gpar()))
   expect_error(eval(test), "limited number of tags")
 
-  label <- "<span style='color:blue;font-size:15pt;font-family:mono'>Test</span>"
-  test <- parse_richtext(label, gp)
+  lab <- "<span style='color:blue;font-size:15pt;font-family:mono'>Test</span>"
+  test <- parse_richtext(lab, gp)
   expect_equal(test$fontfamily, "mono")
   expect_equal(test$fontsize, 15)
   expect_equal(test$col, "blue")
@@ -222,7 +224,7 @@ test_that("css is parsed", {
   expect_equal(test, list(color = "blue", `font-family` = "mono"))
 
   u <- c("1px", "1in", "1cm", "1mm")
-  u <- lapply(u, function(i){convert_css_unit_pt(i)})
+  u <- lapply(u, function(i) convert_css_unit_pt(i))
   expect_equal(u, list(0.75, 72, 28.3, 2.8), tolerance = 0.1)
 
   err <- substitute(convert_css_unit_pt("1nonsense"))
