@@ -69,11 +69,12 @@ measure_curved <- function(
 ) {
   label$text <- as.character(label$text)
 
-  halign <- match(halign, c("center", "left", "right"), nomatch = 2L)
-  halign <- c("center", "left", "right")[halign]
-  nlabel <- length(unique(label$id))
+  halign     <- match(halign, c("center", "left", "right"), nomatch = 2L)
+  halign     <- c("center", "left", "right")[halign]
+  nlabel     <- length(unique(label$id))
+  unit_vjust <- is.unit(vjust)
 
-  if ({unit_vjust <- is.unit(vjust)}) {
+  if (unit_vjust) {
     offset_unit <- rep(vjust, length.out = nlabel)
     vjust <- 0
   }
@@ -98,8 +99,8 @@ measure_curved <- function(
   txt$y_offset   <- txt$y_offset - adjust[txt$metric_id] +
     label$yoff[txt$substring]
 
-  height <- gapply(txt$y_offset, txt$metric_id,
-                   function(x){diff(range(x))}, numeric(1))
+  height <- gapply(txt$y_offset, txt$metric_id, function(x) diff(range(x)),
+                   numeric(1))
   metrics$height <- height + info$max_ascend - info$max_descend
   metrics$lineheight <- info$lineheight
 
@@ -306,7 +307,7 @@ parse_richtext <- function(text, gp, md = TRUE, id = seq_along(text),
   yoff      <- unlist(processed[, 3])
 
   gp <- lapply(gp, function(x) do.call(data_frame, unclass(x)))
-  gp <- do.call(rbind, gp)
+  gp <- rbind_dfs(gp)
 
   data_frame(
     text       = strings,

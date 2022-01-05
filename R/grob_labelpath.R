@@ -21,7 +21,7 @@ makeContent.labelpath <- function(x) {
   ntext <- length(text)
 
   # Get points on the box
-  if ({make_box <- sum(lengths(v$gp_box))}) {
+  if (sum(lengths(v$gp_box))) {
     box <- Map(
       curved_textbox,
       path = path, label = v$label, text = text,
@@ -35,14 +35,11 @@ makeContent.labelpath <- function(x) {
   x <- .add_path_grob(x, path, text, attr(path, "gp"), params, v$arrow)
 
   # Construct textbox grobs as list
-  if (make_box) {
+  if (sum(lengths(v$gp_box))) {
     boxgrob <- lapply(seq_len(ntext), function(i) {
       gp  <- recycle_gp(v$gp_box, function(x) x[pmin(i, length(x))])
       dat <- box[box$id == i, , drop = FALSE]
-      polygonGrob(
-        x = dat$x, y = dat$y,
-        default.units = "inches", gp = gp
-      )
+      polygonGrob(x = dat$x, y = dat$y, default.units = "inches", gp = gp)
     })
   } else {
     boxgrob <- NULL
@@ -85,7 +82,7 @@ makeContent.labelpath <- function(x) {
 
 #' Making a curved textbox
 #'
-#' @param path A `data.frame` containing `x` and `y` columns with numeric values.
+#' @param path A `data.frame` containing `x` and `y` columns with numeric values
 #' @param text A `data.frame` containing `left` and `right` vectors with values
 #'   along the arc-length of a path where text appears, and an `id` column.
 #' @param label A `data.frame` as produced by `measure_text()`.
@@ -124,7 +121,8 @@ curved_textbox <- function(
 
     # Set start / end at 0-offset, then translate to mid-height offset
     lims <- range(text$left, text$right)
-    lims <- approx_multiple(offset$arc_length[, 1], lims, offset$arc_length[, 3])
+    lims <- approx_multiple(offset$arc_length[, 1], lims,
+                            offset$arc_length[, 3])
     lims <- lims + c(-1, 1) * padding
 
     # Translate mid-height offset to min / max height offsets to get corners
@@ -172,4 +170,3 @@ curved_textbox <- function(
   }
   return(data_frame(x = x, y = y, id = text$id[1]))
 }
-

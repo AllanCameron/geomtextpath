@@ -71,7 +71,7 @@ coord_curvedpolar <- function(theta = "x", start = 0,
     clip = clip,
     halign = halign,
 
-    render_fg = function (self, panel_params, theme) {
+    render_fg = function(self, panel_params, theme) {
 
     if (is.null(panel_params$theta.major)) {
         return(element_render(theme, "panel.border"))
@@ -88,7 +88,7 @@ coord_curvedpolar <- function(theta = "x", start = 0,
     theta <- .theta_rescale(self, panel_params$theta.major, panel_params)
     labels <- panel_params$theta.labels
     theta <- theta[!is.na(theta)]
-    ends_apart <- (theta[length(theta)] - theta[1])%%(2 * pi)
+    ends_apart <- (theta[length(theta)] - theta[1]) %% (2 * pi)
 
     if (length(theta) > 0 && ends_apart < 0.05) {
         n <- length(labels)
@@ -113,12 +113,10 @@ coord_curvedpolar <- function(theta = "x", start = 0,
                        fontface = txt_el$face,
                        lineheight = txt_el$lineheight)
 
-    path_gp <- gpar(col = "black", fill = "black", lwd = 1, lty  = 0)
-
     # This constructs a circular path for the labels to sit on.
     wid <- mean(diff(theta))
 
-    path_t <- seq(-wid/2, wid/2, len = 1000)
+    path_t <- seq(-wid / 2, wid / 2, len = 1000)
 
     id <- rep(seq_along(labels), each = length(path_t))
 
@@ -150,9 +148,9 @@ coord_curvedpolar <- function(theta = "x", start = 0,
 # A straight reimplementation of ggplot2:::theta_rescale to avoid using
 # non-exported functions
 
-.theta_rescale <- function (coord, x, panel_params)
-{
+.theta_rescale <- function(coord, x, panel_params) {
+
     x <- scales::squish_infinite(x, panel_params$theta.range)
-    rotate <- function(x) (x + coord$start)%%(2 * pi) * coord$direction
+    rotate <- function(x) (x + coord$start) %% (2 * pi) * coord$direction
     rotate(scales::rescale(x, c(0, 2 * pi), panel_params$theta.range))
 }

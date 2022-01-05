@@ -144,8 +144,7 @@ GeomLabelpath <- ggproto(
     # If there is more than one text string associated with any of the groups,
     # we warn that only the first is used
     if (!all(gapply(data$label, data$group,
-                   function(x) all(x == x[1]), logical(1))))
-    {
+                   function(x) all(x == x[1]), logical(1)))) {
       warn(paste("geom_labelpath: Multiple strings found in at",
                  "least one group. Only the first will be used."))
     }
@@ -197,7 +196,7 @@ GeomLabelpath <- ggproto(
       upright  = text_params$upright,
       default.units = "npc",
       angle = data$angle,
-      polar_params = if (inherits(coord, "CoordPolar")){
+      polar_params = if (inherits(coord, "CoordPolar")) {
         list(x = 0.5, y = 0.5, theta = coord$theta)
       } else NULL,
       padding = text_params$padding,

@@ -141,7 +141,7 @@ GeomLabelsegment <- ggproto(
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
     text_params = static_text_params("label"), arrow = NULL,
-    label.padding = unit(0.25, 'lines'),
+    label.padding = unit(0.25, "lines"),
     label.r = unit(0.15, "lines")
   ) {
     segment2path(

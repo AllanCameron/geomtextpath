@@ -26,8 +26,9 @@ process_tags <- function(node, drawing_context) {
       dispatch_tag(node[[i]], tags[i], drawing_context)
     }
   )
-  do.call(rbind, new)
+  rbind_dfs(new)
 }
+
 
 dispatch_tag <- function(node, tag, drawing_context) {
   if (is.null(tag) || tag == "") {
@@ -51,8 +52,10 @@ dispatch_tag <- function(node, tag, drawing_context) {
   }
 }
 
+
 # Departs from gridtext:::process_text in that it returns a list-matrix
 process_text <- function(node, drawing_context) {
+
   cbind(list(unlist(node)), list(drawing_context$gp),
         list(drawing_context$yoff))
 }
@@ -129,7 +132,7 @@ set_context_gp <- function(drawing_context, gp = NULL) {
   )
 }
 
-set_context_font<- function(drawing_context, font = 1,
+set_context_font <- function(drawing_context, font = 1,
                                  overwrite = FALSE) {
   font_old <- drawing_context$gp$font
   old_bold <- font_old %in% c(2, 4)
@@ -162,9 +165,9 @@ set_style <- function(drawing_context, style = NULL) {
   css <- parse_css(style)
 
   if (!is.null(css$`font-size`)) {
-    font_size = convert_css_unit_pt(css$`font-size`)
+    font_size <- convert_css_unit_pt(css$`font-size`)
   } else {
-    font_size = NULL
+    font_size <- NULL
   }
 
   drawing_context <- set_context_gp(
@@ -230,10 +233,10 @@ convert_css_unit_pt <- function(x) {
   switch(
     u$unit,
     pt   = u$value,
-    px   = (72/96)   * u$value,
-    `in` =  72       * u$value,
-    cm   = (72/2.54) * u$value,
-    mm   = (72/25.4) * u$value,
+    px   = (72 / 96)   * u$value,
+    `in` =  72         * u$value,
+    cm   = (72 / 2.54) * u$value,
+    mm   = (72 / 25.4) * u$value,
     abort(paste0("Cannot convert ", u$value, u$unit, " to pt."))
   )
 }

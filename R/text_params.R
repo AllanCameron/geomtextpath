@@ -3,9 +3,9 @@
 #' This sets parameters for text on a path that aren't expected to change
 #' during the construction of a grob.
 #'
-#' @param .type A `character(1)` with either `"text"` or `"label"`, which decides
-#'   what the default is going to be for the `gap` argument. If `"text"` the
-#'   default is `NA`, which means to dynamically decide. If `"label"`, the
+#' @param .type A `character(1)` with either `"text"` or `"label"`, which
+#'   decides what the default is going to be for the `gap` argument. If `"text"`
+#'   the default is `NA`, which means to dynamically decide. If `"label"`, the
 #'   `"gap"` argument should default to `FALSE`.
 #' @param text_only A `logical(1)` indicating whether the path part should be
 #'   plotted along with the text (`FALSE`, the default). If `TRUE`, any

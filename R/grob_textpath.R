@@ -92,10 +92,9 @@ textpathGrob <- function(
   if (missing(label)) return(gTree(name = name, vp = vp, cl = cl))
 
   n_label <- length(label)
-  id <- match(id, unique(id))
-  id_lens <- run_len(id)
+  id      <- discretise(id)
 
-  check_grob_input(x, y, id, id_lens, n_label, angle)
+  check_grob_input(x, y, id, n_label, angle)
 
   # Match justification to labels length
   hjust  <- rep_len(resolveHJust(just, hjust), n_label)
@@ -114,9 +113,7 @@ textpathGrob <- function(
     polar_params$y <- unit(polar_params$y, default.units)
   }
 
-  path <- data_frame(x = x, y = y, id = rep(seq_along(id_lens), id_lens),
-                     line_x = x, line_y = y)
-
+  path <- data_frame(x = x, y = y, id = id, line_x = x, line_y = y)
 
   if (text_smoothing != 0) path <- path_smoother(path, text_smoothing)
 
@@ -160,7 +157,7 @@ makeContent.textpath <- function(x) {
 
   path <- prepare_path(v$data, v$label, v$gp_path, params)
 
-  too_long <- if(params$remove_long) {
+  too_long <- if (params$remove_long) {
     # Identify text that is too long for its path
     text_lens <- numapply(v$label, function(x) max(x$xmax))
     path_lens <- numapply(path, function(d) {
@@ -172,7 +169,7 @@ makeContent.textpath <- function(x) {
 
   ss <- v$data$id %in% which(too_long)
 
-  if(any(too_long)) {
+  if (any(too_long)) {
 
     x <- grid::addGrob(x, grid::polylineGrob(
         v$data$x[ss], v$data$y[ss], id = v$data$id[ss],
@@ -180,29 +177,28 @@ makeContent.textpath <- function(x) {
       ))
   }
 
-  if(!all(too_long))
-  {
+  if (!all(too_long)) {
 
-  # Get the actual text string positions and angles for each group
-  text <- Map(
-      place_text,
-      path = path[!too_long], label = v$label[!too_long],
-      hjust = params$hjust[!too_long], halign = params$halign[!too_long],
-      upright = params$upright
-    )
+    # Get the actual text string positions and angles for each group
+    text <- Map(
+        place_text,
+        path = path[!too_long], label = v$label[!too_long],
+        hjust = params$hjust[!too_long], halign = params$halign[!too_long],
+        upright = params$upright
+      )
 
-  text <- rbind_dfs(text)
+    text <- rbind_dfs(text)
 
-  x <- .add_path_grob(x, path[!too_long], text,
-                      gp_subset(attr(path, "gp"), !too_long),
-                      params, v$arrow)
-  x <- .add_text_grob(x, text, gp_subset(v$gp_text, !too_long))
+    x <- .add_path_grob(x, path[!too_long], text,
+                        gp_subset(attr(path, "gp"), !too_long),
+                        params, v$arrow)
+    x <- .add_text_grob(x, text, gp_subset(v$gp_text, !too_long))
   }
   x
 }
 
 
-check_grob_input <- function(x, y, id, id_lens, n_label, angle) {
+check_grob_input <- function(x, y, id, n_label, angle) {
 
   # Verify that:
   #  1) There are as many labels as there are paths
@@ -215,7 +211,7 @@ check_grob_input <- function(x, y, id, id_lens, n_label, angle) {
     "`y` is not the same length as `x`" =
       length(x) == length(y),
     "Cannot match labels to paths." =
-      n_label == length(id_lens),
+      n_label == max(id),
     "`angle` must be length 1 or the same length as `x`." =
       (length(x) == length(angle)) || length(angle) == 1
   )

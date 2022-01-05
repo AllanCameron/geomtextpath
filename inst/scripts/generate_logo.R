@@ -75,7 +75,8 @@ p <- ggplot(mapping = aes(x, y)) +
              colour = "#ffffff22") +
   geom_path(data = path, aes(x * 0.9 + 0.6, y * 0.9 + 0.6),
             colour = "white", size = 0,
-            arrow = arrow(type = "closed", angle = 15, length = unit(0.5, "in"))) +
+            arrow = arrow(type = "closed", angle = 15,
+                          length = unit(0.5, "in"))) +
   geom_path(data = head(path, -5), aes(x * 0.9 + 0.6,  y * 0.9 + 0.6),
             colour = "white", size = 2) +
   geom_textpath(data = path, aes(x = x + 0.6, y + 0.6),
@@ -90,7 +91,7 @@ p <- ggplot(mapping = aes(x, y)) +
 gt  <- ggplotGrob(p)
 row <- panel_rows(gt)
 col <- panel_cols(gt)
-gt  <- gt[row[1,1], col[1,1]]
+gt  <- gt[row[1, 1], col[1, 1]]
 
 # Find border polygon
 nms  <- names(gt$grobs[[1]]$children)
@@ -114,4 +115,3 @@ dev.off()
 # Set as logo -------------------------------------------------------------
 
 usethis::use_logo(logo_file)
-

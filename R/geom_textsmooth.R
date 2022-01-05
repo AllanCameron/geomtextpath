@@ -97,4 +97,3 @@ geom_labelsmooth <- function(mapping = NULL, data = NULL,
     params      = params
   )
 }
-

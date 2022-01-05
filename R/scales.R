@@ -51,9 +51,9 @@ scale_hjust_discrete <- function(..., range = c(0, 1), guide = "none") {
 #' @rdname scale_hjust_discrete
 #' @export
 #'
-scale_hjust_manual <- function (..., values, breaks = waiver(),
-                                guide = "none", na.value = NA)
-{
+scale_hjust_manual <- function(..., values, breaks = waiver(),
+                               guide = "none", na.value = NA) {
+
     manual_scale("hjust",
                  values,
                  breaks,
@@ -65,8 +65,7 @@ scale_hjust_manual <- function (..., values, breaks = waiver(),
 #' @rdname scale_hjust_discrete
 #' @export
 
-scale_hjust_identity <- function (..., guide = "none")
-{
+scale_hjust_identity <- function(..., guide = "none") {
     continuous_scale("hjust",
                      "identity",
                      identity_pal(),
@@ -91,9 +90,9 @@ scale_vjust_discrete <- function(..., guide = "none", range = c(-0.5, 1.5)) {
 #' @rdname scale_hjust_discrete
 #' @export
 #'
-scale_vjust_manual <- function (..., values, breaks = waiver(),
-                                guide = "none", na.value = NA)
-{
+scale_vjust_manual <- function(..., values, breaks = waiver(),
+                              guide = "none", na.value = NA) {
+
     manual_scale("vjust",
                  values,
                  breaks,
@@ -106,8 +105,8 @@ scale_vjust_manual <- function (..., values, breaks = waiver(),
 #' @rdname scale_hjust_discrete
 #' @export
 
-scale_vjust_identity <- function (..., guide = "none")
-{
+scale_vjust_identity <- function(..., guide = "none") {
+
     continuous_scale("vjust",
                      "identity",
                      identity_pal(),
@@ -119,9 +118,9 @@ scale_vjust_identity <- function (..., guide = "none")
 
 # Non-exported ggplot2 function
 
-manual_scale <- function (aesthetic, values = NULL,
-                          breaks = waiver(), ..., limits = NULL)
-{
+manual_scale <- function(aesthetic, values = NULL,
+                         breaks = waiver(), ..., limits = NULL) {
+
     force(values)
 
     if (is.null(limits)) {
@@ -134,7 +133,7 @@ manual_scale <- function (aesthetic, values = NULL,
             names(values) <- breaks
         }
         else {
-            names(values) <- breaks[1:length(values)]
+            names(values) <- breaks[seq_along(values)]
         }
     }
     pal <- function(n) {
@@ -149,6 +148,8 @@ manual_scale <- function (aesthetic, values = NULL,
         limits = limits, ...)
 }
 
-identity_pal <- function () function(x) x
 
+identity_pal <- function() {
 
+  function(x) x
+}

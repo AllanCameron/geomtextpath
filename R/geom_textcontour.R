@@ -44,8 +44,8 @@ geom_textcontour <- function(
   lineend = "butt", linejoin = "round", linemitre = 10,
   bins = NULL, binwidth = NULL, breaks = NULL,
   ...
-  )
-{
+  ) {
+
   layer(geom = GeomTextContour, mapping = mapping, data = data,
         stat = stat,
         position = position, show.legend = show.legend,
@@ -187,4 +187,3 @@ StatTextContour <- ggproto("StatTextContour", StatContour,
      data
   }
 )
-

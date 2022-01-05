@@ -2,7 +2,7 @@
 
 .rad2deg <- 180 / pi
 .deg2rad <- pi / 180
-.halfpi  <- pi /2
+.halfpi  <- pi / 2
 
 
 # Checkers ----------------------------------------------------------------
@@ -139,7 +139,7 @@ get_offset <- function(x, y, d = 0) {
   # Find the distances to these intersecting points when the offset is d.
   # Since d can be a vector of distances, we need a matrix result, where
   # each column is the distance to intersections at different values of d
-  offset <- outer(1/cos(theta_bisect - after(theta)), d)
+  offset <- outer(1 / cos(theta_bisect - after(theta)), d)
 
   # Calculate the actual positions of the intersection points - these are
   # our new offset paths - one matrix for x positions and one for y
@@ -162,12 +162,12 @@ get_smooth_offset <- function(x, y, d, width = 0.02) {
 
   x <- sapply(dist, function(i) {
     dn <- dnorm(dist, mean = i, sd = sd)
-    sum(x * dn/sum(dn))
+    sum(x * dn / sum(dn))
   })
 
   y <- sapply(dist, function(i) {
     dn <- dnorm(dist, mean = i, sd = sd)
-    sum(y * dn/sum(dn))
+    sum(y * dn / sum(dn))
   })
 
   get_offset(x, y, d)
@@ -178,8 +178,8 @@ get_smooth_offset <- function(x, y, d, width = 0.02) {
 # Finds the curvature (change in angle per change in arc length)
 # This in effect finds 1/R, where R is the radius of the curve
 
-get_curvature <- function(x, y)
-{
+get_curvature <- function(x, y) {
+
   if (length(x) < 3) return(rep(0, length(x)))
 
   dx  <- diff(x)
@@ -189,15 +189,15 @@ get_curvature <- function(x, y)
   dx  <- head(dx, -1)
   dy  <- head(dy, -1)
 
-  curv <- (dx * ddy - ddx * dy) / (dx^2 + dy^2)^(3/2)
+  curv <- (dx * ddy - ddx * dy) / (dx^2 + dy^2)^1.5
 
   # Duplicate first and last entries, since these are the best estimates
   # of the curvature at these points, which is otherwise undefined.
   before(after(curv))
 }
 
-exceeds_curvature <- function(x, y, d, tolerance = 0.1)
-{
+exceeds_curvature <- function(x, y, d, tolerance = 0.1) {
+
   curve_radius <- 1 / get_curvature(x, y)
   as.numeric(apply(outer(curve_radius, d,
         FUN = function(a, b) {
@@ -209,7 +209,7 @@ safe_rollmean <- function(vec, k = 10) {
 
   if (k < 2) return(vec)
 
-  mat <- sapply(-(k/2 - 1):(length(vec) - k/2), function(x) x + 0:(k - 1))
+  mat <- sapply(-(k / 2 - 1):(length(vec) - k / 2), function(x) x + 0:(k - 1))
   mat[mat < 1] <- 1
   mat[mat > length(vec)] <- length(vec)
   mat <- round(mat)
@@ -311,8 +311,8 @@ spline_smooth <- function(x, n = 4) {
 # Chunk the path into n parts and get the centroid of each chunk
 sample_path <- function(data, n = 50) {
 
-  samp_rows <- seq(1, nrow(data), round(nrow(data)/n))
-  if(tail(samp_rows, 1) != nrow(data)) samp_rows <- c(samp_rows, nrow(data))
+  samp_rows <- seq(1, nrow(data), round(nrow(data) / n))
+  if (tail(samp_rows, 1) != nrow(data)) samp_rows <- c(samp_rows, nrow(data))
 
   x <- spline_smooth(data$x[samp_rows], n = nrow(data) / n)
   y <- spline_smooth(data$y[samp_rows], n = nrow(data) / n)
@@ -366,14 +366,14 @@ linear_smooth <- function(p1, p2, n) {
 # on the adjacent segment : (x0, y0) and (x2, y2)
 corner_smoother <- function(p0, p1, p2, p = 20) {
 
-  if(all(p0 == p1) && all(p1 == p2)) {
+  if (all(p0 == p1) && all(p1 == p2)) {
     return(data.frame(x = rep(p0[1], p), y = rep(p0[2], p),
                       length = rep(0, p), line_x = rep(p0[1], p),
                       line_y = rep(p0[2], p), line_length = rep(0, p)))
   }
 
-  if(all(p0 == p1)) return(linear_smooth(p1, p2, p))
-  if(all(p1 == p2)) return(linear_smooth(p0, p1, p))
+  if (all(p0 == p1)) return(linear_smooth(p1, p2, p))
+  if (all(p1 == p2)) return(linear_smooth(p0, p1, p))
 
   lens <- cumsum(c(0, sqrt((p1[1] - p0[1])^2 + (p1[2] - p0[2])^2),
                    sqrt((p2[1] - p1[1])^2 + (p2[2] - p1[2])^2)))
@@ -430,21 +430,28 @@ find_control_points <- function(data, radius = 0.1) {
 smooth_corners <- function(data, n = 20, radius = 0.1) {
 
   cps <- find_control_points(data, radius = radius)
-  sections <- lapply(seq(1, nrow(cps) - 2, 2), function(x) cps[x + 0:2,])
+  sections <- lapply(seq(1, nrow(cps) - 2, 2), function(x) cps[x + 0:2, ])
   out <- lapply(sections, function(x) corner_smoother(c(x[1, 1], x[1, 2]),
                                                       c(x[2, 1], x[2, 2]),
                                                       c(x[3, 1], x[3, 2]),
                                                       p = n))
 
-  out <- lapply(seq_along(out), function(x) {out[[x]]$segment <- x; out[[x]]})
-  old_lens <- numapply(out, function(x) max(x$line_length))
-  out <- Map(function(x, y) {x$line_length <- x$line_length + y; x},
-             x = out, y = cumsum(c(0, head(old_lens, -1))))
-  new_lens <- numapply(out, function(x) max(x$length))
-  out <- Map(function(x, y) {x$length <- x$length + y; x},
-             x = out, y = cumsum(c(0, head(new_lens, -1))))
+  out <- lapply(seq_along(out), function(x) {
+    out[[x]]$segment <- x; out[[x]]
+  })
 
-  out <- do.call(rbind, out)
+  old_lens <- numapply(out, function(x) max(x$line_length))
+  out <- Map(function(x, y) {
+    x$line_length <- x$line_length + y
+    return(x)
+    }, x = out, y = cumsum(c(0, head(old_lens, -1))))
+  new_lens <- numapply(out, function(x) max(x$length))
+  out <- Map(function(x, y) {
+    x$length <- x$length + y
+    return(x)
+    }, x = out, y = cumsum(c(0, head(new_lens, -1))))
+
+  out <- rbind_dfs(out)
 
   out$id <- data$id[1]
   out
@@ -464,13 +471,12 @@ path_smoother <- function(path, text_smoothing) {
   text_smoothing[text_smoothing > 100] <- 100
   text_smoothing[text_smoothing < 0]   <- 0
   path  <- split(path, path$id)
-  lens  <- nrow_multi(path)
   radii <- 0.1 * text_smoothing / 100
   samps <- round(400 * (100 - text_smoothing) / 100)
   samps[samps < 3] <- 3
   path <- Map(smooth_corners, data = path, radius = radii)
   path <- Map(smooth_noisy, data = path, samples = samps)
-  path <- do.call(rbind, path)
+  path <- rbind_dfs(path)
 
   path$x <- grid::unit(path$x, "npc")
   path$y <- grid::unit(path$y, "npc")

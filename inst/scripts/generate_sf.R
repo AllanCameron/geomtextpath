@@ -12,7 +12,7 @@ UK <- geojson_sf(paste0("http://geoportal1-ons.opendata.arcgis.com",
                         "geojson?outSR={%22latestWkid%22:27700,",
                         "%22wkid%22:27700}"))
 
-Scotland <- UK[grep("(Scotland)|(Highlands)", UK$nuts218nm),]
+Scotland <- UK[grep("(Scotland)|(Highlands)", UK$nuts218nm), ]
 
 Scotland <- st_union(Scotland)
 

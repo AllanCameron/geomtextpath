@@ -14,7 +14,10 @@ prepare_path <- function(data, label, gp, params) {
   path <- split(path, path$id)
 
   # Convert point-like paths to proper paths
-  if (any({singletons <- nrow_multi(path) == 1})) {
+
+  singletons <- nrow_multi(path) == 1
+
+  if (any(singletons)) {
     width <- numapply(label, function(x) 1.2 * max(x$xmax, na.rm = TRUE))
 
     path[singletons] <- Map(pathify,
@@ -105,7 +108,6 @@ make_gap <- function(path, letters, gap = NA,
     # Create breathing space around letters
     path_max <- gapply(path$length, path$id, max, numeric(1))
     trim <- rep_len(trim, length(path_max))
-    linepath_max <- gapply(path$line_length, path$id, max, numeric(1))
 
     mins <- pmax(0,        ranges[1, ] - padding)
     maxs <- pmin(path_max, ranges[2, ] + padding)
@@ -137,14 +139,14 @@ make_gap <- function(path, letters, gap = NA,
       length = c(path$line_length, trim_xy$line_length),
       section = c(section, rep(c("pre", "post"), each = sum(trim)))
     )[order(c(path$line_length, trim_xy$line_length)), , drop = FALSE]
-    path <- path[order(path$id),,drop = FALSE]
+    path <- path[order(path$id), , drop = FALSE]
 
     # Filter empty sections (i.e., the part where the string is)
     path <- path[path$section != "", , drop = FALSE]
 
     # Filter empty paths
     group <- paste0(path$id, path$section)
-    len <- ave(path$length, group, FUN = function(x) {diff(range(x))})
+    len <- ave(path$length, group, FUN = function(x) diff(range(x)))
     path <- path[len > 1e-3, ]
 
     # Recategorise
@@ -179,10 +181,10 @@ dedup_path <- function(x, y, id, line_x, line_y,
   n    <- max(lengths(vecs))
   vecs[lens != n] <- lapply(vecs[lens != n], rep_len, length.out = n)
 
-  dups <- vapply(vecs, function(x){abs(x[-1] - x[-length(x)]) < tolerance},
+  dups <- vapply(vecs, function(x) abs(x[-1] - x[-length(x)]) < tolerance,
                  logical(n - 1))
 
-  dups <- if(is.null(dim(dups))) dups[1:3] else dups[,1:3]
+  dups <- if (is.null(dim(dups))) dups[1:3] else dups[, 1:3]
 
   if (n > 2) {
     keep <- c(TRUE, rowSums(dups) < 3L)
@@ -191,7 +193,7 @@ dedup_path <- function(x, y, id, line_x, line_y,
   }
   vecs <- vecs[keep, , drop = FALSE]
 
-  vecs[complete.cases(vecs),]
+  vecs[complete.cases(vecs), ]
 }
 
 
@@ -208,7 +210,7 @@ pathify <- function(data, hjust, angle, width,
     polar_x <- as_inch(polar_x, "x")
     polar_y <- as_inch(polar_y, "y")
 
-    if (thet == "y") angle <- angle - pi/2
+    if (thet == "y") angle <- angle - pi / 2
     r <- sqrt((data$x - polar_x)^2 + (data$y - polar_y)^2)
     width <- width / r
     theta <- atan2(data$y - polar_y, data$x - polar_x)
@@ -221,9 +223,7 @@ pathify <- function(data, hjust, angle, width,
     r <- c(multi_seq(r_min, r_max, length.out = 100))
     x <- polar_x + r * cos(theta)
     y <- polar_y + r * sin(theta)
-  }
-  else
-  {
+  } else {
     xmin  <- data$x + cos(angle + pi) * width * hjust
     xmax  <- data$x + cos(angle) * width * (1 - hjust)
     ymin  <- data$y + sin(angle + pi) * width * hjust
@@ -232,7 +232,7 @@ pathify <- function(data, hjust, angle, width,
     y <- c(multi_seq(ymin, ymax, length.out = 100))
   }
 
-  data <- data[rep(seq(nrow(data)), each = 100),]
+  data <- data[rep(seq(nrow(data)), each = 100), ]
   data$x <- x
   data$y <- y
   data$line_x <- x
@@ -249,7 +249,6 @@ tailor_arrow <- function(data, arrow) {
   keep  <- !duplicated(data$new_id)
   sides <- data$section[keep]
   id    <- data$id[keep]
-  path  <- data
 
   # Have arrow match the length of the groups
   arrow[] <- lapply(arrow, function(x) {
@@ -273,7 +272,7 @@ tailor_arrow <- function(data, arrow) {
 
 .add_path_grob <- function(grob, data, text, gp, params, arrow = NULL) {
   has_line <- !all((gp$lty %||% 1)  %in% c("0", "blank", NA))
-  is_opaque <-!all((gp$col %||% 1) %in% c(NA, "transparent"))
+  is_opaque <- !all((gp$col %||% 1) %in% c(NA, "transparent"))
   if (has_line && is_opaque) {
     data <- rbind_dfs(data)
 

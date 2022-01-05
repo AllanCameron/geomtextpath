@@ -7,7 +7,7 @@ test_that("We can rescale x values to polar co-ordinates", {
   x <- c(0, 0.25, 0.75, 1, -Inf, Inf)
   theta <- .theta_rescale(coord, x, panel_params)
 
-  expect_equal(theta, c(0, pi/4, 3*pi/4, pi, 0, 0))
+  expect_equal(theta, c(0, pi / 4, 3 * pi / 4, pi, 0, 0))
 
 })
 

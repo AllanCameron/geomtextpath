@@ -115,8 +115,8 @@ geom_textpath <- function(
   text_only = FALSE, gap = NA, upright = TRUE,
   halign = "center", offset = NULL, parse = FALSE, straight = FALSE,
   padding = unit(0.05, "inch"), text_smoothing = 0, rich = FALSE, arrow = NULL
-  )
-{
+  ) {
+
   layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
         position = position, show.legend = show.legend,
         inherit.aes = inherit.aes,
@@ -207,8 +207,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     # If there is more than one text string associated with any of the groups,
     # we warn that only the first is used
     if (!all(gapply(data$label, data$group,
-                   function(x) all(x == x[1]), logical(1))))
-    {
+                   function(x) all(x == x[1]), logical(1)))) {
          warn(paste("geom_textpath: Multiple strings found in at",
          "least one group. Only the first will be used."))
     }
@@ -232,7 +231,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       lineend = lineend, linejoin = linejoin, linemitre = linemitre
     )
 
-    safe_labels <- if(text_params$parse) {
+    safe_labels <- if (text_params$parse) {
         safe_parse(as.character(data$label[first]))
       } else {
         data$label[first]
@@ -256,7 +255,7 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
       text_smoothing = text_params$text_smoothing,
       default.units = "npc",
       angle = data$angle,
-      polar_params = if (inherits(coord, "CoordPolar")){
+      polar_params = if (inherits(coord, "CoordPolar")) {
                        list(x = 0.5, y = 0.5, theta = coord$theta)
                      } else NULL,
       padding = text_params$padding,
@@ -316,5 +315,3 @@ GeomTextLine <- ggproto("GeomTextLine", GeomTextpath,
     flip_data(data, params$flipped_aes)
   }
 )
-
-

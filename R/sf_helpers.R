@@ -15,10 +15,9 @@ label_sf.sfc_LINESTRING <- function(x, label, as_textbox = FALSE) {
   x
 }
 
-st_as_grob.sfc_LINESTRING_labelled <- function (
+st_as_grob.sfc_LINESTRING_labelled <- function(
   x, arrow = NULL, default.units = "npc", name = NULL,
-  gp = grid::gpar(), vp = NULL, textpath_vars = list(), ...)
-{
+  gp = grid::gpar(), vp = NULL, textpath_vars = list(), ...) {
 
   label <- attr(x, "label")
   class(x)[class(x) == "sfc_LINESTRING_labelled"] <- "sfc_LINESTRING"
@@ -30,8 +29,8 @@ st_as_grob.sfc_LINESTRING_labelled <- function (
 
   is_e <- nrow_multi(unclass(x)) == 0
   if (any(is_e)) {
-      gp = gp[!is_e]
-      x = x[!is_e]
+      gp <- gp[!is_e]
+      x <- x[!is_e]
   }
   hjust <- textpath_vars$hjust %||% 0.5
   vjust <- textpath_vars$vjust %||% 0.5
@@ -51,10 +50,9 @@ st_as_grob.sfc_LINESTRING_labelled <- function (
     else nullGrob()
 }
 
-st_as_grob.sfc_LINESTRING_textbox <- function (
+st_as_grob.sfc_LINESTRING_textbox <- function(
   x, arrow = NULL, default.units = "npc", name = NULL,
-  gp = grid::gpar(), vp = NULL, textpath_vars = list(), ...)
-{
+  gp = grid::gpar(), vp = NULL, textpath_vars = list(), ...) {
 
   label <- attr(x, "label")
   class(x)[class(x) == "sfc_LINESTRING_textbox"] <- "sfc_LINESTRING"
@@ -66,8 +64,8 @@ st_as_grob.sfc_LINESTRING_textbox <- function (
 
   is_e <- nrow_multi(unclass(x)) == 0
   if (any(is_e)) {
-      gp = gp[!is_e]
-      x = x[!is_e]
+      gp <- gp[!is_e]
+      x <- x[!is_e]
   }
   hjust <- textpath_vars$hjust %||% 0.5
   vjust <- textpath_vars$vjust %||% 0.5
@@ -104,10 +102,10 @@ sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
   labels <- x$label %||% ""
   labels <- match_labels(x, labels)
 
-  if("linecolour" %in% names(x)) {
+  if ("linecolour" %in% names(x)) {
     x$linecolour <- x$linecolour %||% x$colour
   }
-  if("boxcolour" %in% names(x)){
+  if ("boxcolour" %in% names(x)) {
     x$boxcolour <- x$boxcolour %||% x$colour
   }
 
@@ -146,7 +144,8 @@ sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
 
   defaults[[4]] <- modify_list(
     defaults[[3]],
-    rename(GeomTextpath$default_aes, c(size = "point_size", fill = "point_fill"))
+    rename(GeomTextpath$default_aes,
+           c(size = "point_size", fill = "point_fill"))
   )
 
   default_names <- unique(unlist(lapply(defaults, names)))
@@ -205,8 +204,7 @@ sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
   # Build grobs
   out <- grid::gTree()
 
-  for(i in seq_along(x$geometry))
-  {
+  for (i in seq_along(x$geometry)) {
     g <- label_sf(x$geometry[i], labels[i], as_textbox = as_textbox)
     out <- addGrob(out, sf::st_as_grob(g, pch = pch, gp = gp, arrow = arrow,
                                        textpath_vars = tp_vars))

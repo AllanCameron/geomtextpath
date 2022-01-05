@@ -192,7 +192,9 @@ anchor_points <- function(
 
   text_hjust <- if (is.numeric(hjust)) hjust[1] else 0.5
 
-  if (is.character(hjust)) hjust <- interpret_hjust(hjust[1], offset, text_width)
+  if (is.character(hjust)) {
+    hjust <- interpret_hjust(hjust[1], offset, text_width)
+  }
 
   anchor <- hjust * offset$arc_length[nrow(offset$arc_length), 1]
   # Get left and right positions
@@ -230,8 +232,7 @@ interpret_hjust <- function(hjust, offset, width) {
     ymax = path[subset][which.max(y[subset])],
     ymid = path[subset][which.min(abs(mean(y) - y[subset]))],
     start = 0 - half_width / path_max,
-    end   = 1 + half_width / path_max,
-    {
+    end   = 1 + half_width / path_max, {
       warn(paste0("hjust value '", hjust, "' not recognised. ",
                   "Defaulting to hjust = 0.5"));
       return(0.5)
@@ -301,7 +302,7 @@ project_text <- function(text, offset, xpos = c("xmin", "xmid", "xmax")) {
   data_frame(
     label  = text$glyph,
     length = lengs[, 2],
-    base_length = old_len[,1],
+    base_length = old_len[, 1],
     angle  = angle,
     x = new_x[, 2],
     y = new_y[, 2],

@@ -19,9 +19,9 @@ static_text_params(
 )
 }
 \arguments{
-\item{.type}{A \code{character(1)} with either \code{"text"} or \code{"label"}, which decides
-what the default is going to be for the \code{gap} argument. If \code{"text"} the
-default is \code{NA}, which means to dynamically decide. If \code{"label"}, the
+\item{.type}{A \code{character(1)} with either \code{"text"} or \code{"label"}, which
+decides what the default is going to be for the \code{gap} argument. If \code{"text"}
+the default is \code{NA}, which means to dynamically decide. If \code{"label"}, the
 \code{"gap"} argument should default to \code{FALSE}.}
 
 \item{text_only}{A \code{logical(1)} indicating whether the path part should be
