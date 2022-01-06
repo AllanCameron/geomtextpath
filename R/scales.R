@@ -1,3 +1,15 @@
+##---------------------------------------------------------------------------##
+##                                                                           ##
+##  scales.R                                                                 ##
+##  Part of the geomtextpath R package                                       ##
+##                                                                           ##
+##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##                                                                           ##
+##  Licensed under the MIT license - see https://mit-license.org             ##
+##  or the LICENSE file in the project root directory                        ##
+##                                                                           ##
+##---------------------------------------------------------------------------##
+
 #' justification scales
 #'
 #' Sometimes text labels on adjacent lines can clash if the lines are not well

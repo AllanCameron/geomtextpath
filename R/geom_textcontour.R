@@ -1,6 +1,7 @@
 ##---------------------------------------------------------------------------##
 ##                                                                           ##
-##  geom_textcontour main                                                   ##
+##  geom_textcontour.R                                                       ##
+##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
 ##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
 ##                                                                           ##

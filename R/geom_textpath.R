@@ -1,6 +1,7 @@
 ##---------------------------------------------------------------------------##
 ##                                                                           ##
-##  geom_textpath main                                                       ##
+##  geom_textpath.R                                                          ##
+##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
 ##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
 ##                                                                           ##

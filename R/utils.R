@@ -1,14 +1,23 @@
+##---------------------------------------------------------------------------##
+##                                                                           ##
+##  utils.R                                                                  ##
+##  Part of the geomtextpath R package                                       ##
+##                                                                           ##
+##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##                                                                           ##
+##  Licensed under the MIT license - see https://mit-license.org             ##
+##  or the LICENSE file in the project root directory                        ##
+##                                                                           ##
+##---------------------------------------------------------------------------##
 
 # simplify calls to vapoly -----------------------------------------------------
 
 numapply <- function(data, fun) {
-
   vapply(data, FUN = fun, FUN.VALUE = numeric(1))
 }
 
 
 nrow_multi <- function(data) {
-
   vapply(data, FUN = nrow, FUN.VALUE = integer(1), USE.NAMES = FALSE)
 }
 
@@ -16,10 +25,8 @@ nrow_multi <- function(data) {
 
 # Simplified rle(x)$lengths
 run_len <- function(x) {
-
   n <- length(x)
   if (n < 2) return(n)
-
   x[is.na(x)] <- "NA"
   x <- c(which(x[-1] != x[-n]), n)
   diff(c(0L, x))
@@ -27,7 +34,6 @@ run_len <- function(x) {
 
 
 run_start <- function(x, is_lengths = FALSE) {
-
   if (!is_lengths) {
     x <- run_len(x)
   }
@@ -36,9 +42,7 @@ run_start <- function(x, is_lengths = FALSE) {
 
 
 run_end <- function(x, is_lengths = FALSE) {
-
   if (is_lengths) return(cumsum(x))
-
   cumsum(run_len(x))
 }
 
@@ -47,16 +51,14 @@ run_end <- function(x, is_lengths = FALSE) {
 # Cheaper data.frame constructor for internal use.
 # Only use when `...` has valid names and content are valid data.frame columns
 data_frame <- function(...) {
-
   list_to_df(x = list(...))
 }
 
 
-# Similar in scope to base::list2DF or ggplot2:::new_data_frame  or
+# Similar in scope to base::list2DF or ggplot2:::new_data_frame or
 # vctrs::df_list
 # without bothering with 'n'/'size'
 list_to_df <- function(x = list()) {
-
   if (length(x) != 0 && is.null(names(x))) {
     stop("Elements must be named", call. = FALSE)
   }
@@ -79,9 +81,7 @@ list_to_df <- function(x = list()) {
 # Row-bind a list of data.frames
 # `df_list` is a list of data.frames
 # `idcol` is a name for an id column, or NULL if it is to be omitted
-
 rbind_dfs <- function(df_list, idcol = NULL) {
-
   # Ideally, we'd use vctrs::vec_c(!!!df_list) which is 10x faster
   ans <- do.call(rbind.data.frame, c(df_list, make.row.names = FALSE))
   if (!is.null(idcol)) {
@@ -94,13 +94,11 @@ rbind_dfs <- function(df_list, idcol = NULL) {
 # Grouping utilities -----------------------------------------------------------
 
 discretise <- function(x) {
-
   match(x, unique(x))
 }
 
 
 group_id <- function(data, vars) {
-
   id <- lapply(data[vars], discretise)
   id <- do.call(paste, c(list(sep = "&"), id))
   discretise(id)
@@ -109,7 +107,6 @@ group_id <- function(data, vars) {
 
 # Shorthand for `vapply(split(x, group), ...)`
 gapply <- function(x, group, FUN, FUN.VALUE, ..., USE.NAMES = FALSE) {
-
   vapply(
     split(x, group),
     FUN = FUN, FUN.VALUE = FUN.VALUE,
@@ -126,7 +123,6 @@ gapply <- function(x, group, FUN, FUN.VALUE, ..., USE.NAMES = FALSE) {
 # Note: This also extrapolates based on the four extreme points.
 
 approx_multiple <- function(x, xout, y = matrix()) {
-
   if (length(y) == 0) return(y)
 
   # Coerce lists and data.frames to matrices
@@ -179,62 +175,51 @@ approx_multiple <- function(x, xout, y = matrix()) {
 # Missingness utilities --------------------------------------------------------
 
 interp_na <- function(x) {
-
   if (!anyNA(x)) return(x)
-
   stopifnot("Cannot interpolate NA in non-numeric vectors" = is.numeric(x))
-
   x[] <- approx(seq_along(x), x, seq_along(x))$y
   x
 }
 
 
 cases <- function(x, fun) {
-
-    ok <- vapply(x, fun, logical(nrow(x)))
-    if (is.vector(ok)) {
-        all(ok)
-    }
-    else {
-        rowSums(as.matrix(ok)) == ncol(x)
-    }
+  ok <- vapply(x, fun, logical(nrow(x)))
+  if (is.vector(ok)) {
+    all(ok)
+  } else {
+    rowSums(as.matrix(ok)) == ncol(x)
+  }
 }
 
 
 is_missing <- function(x) {
-
   if (typeof(x) == "list") !vapply(x, is.null, logical(1)) else !is.na(x)
 }
 
 
 is_finite <- function(x) {
-
   if (typeof(x) == "list") !vapply(x, is.null, logical(1)) else is.finite(x)
 }
 
 
 detect_missing <- function(df, vars, finite = FALSE) {
-
     vars <- intersect(vars, names(df))
     !cases(df[, vars, drop = FALSE], if (finite) is_finite else is_missing)
 }
 
 
 find_missing <- function(x, layer) {
-
   detect_missing(x, c(layer$required_aes, layer$non_missing_aes))
 }
 
 # Label utilities --------------------------------------------------------------
 
 match_labels <- function(x, ...) {
-
   UseMethod("match_labels")
 }
 
 
 match_labels.data.frame <- function(x, labels) {
-
   if (length(labels) == 1) labels <- rep(labels, nrow(x))
   if (nrow(x) != length(labels)) {
     stop("Could not match labels to object ", deparse(substitute(x)))
@@ -244,7 +229,6 @@ match_labels.data.frame <- function(x, labels) {
 
 
 match_labels.default <- function(x, labels) {
-
   if (length(labels) == 1) labels <- rep(labels, length(x))
   if (length(x) != length(labels)) {
     stop("Could not match labels to object ", deparse(substitute(x)))
@@ -254,15 +238,12 @@ match_labels.default <- function(x, labels) {
 
 
 modify_list <- function(old, new) {
-
   for (i in names(new)) old[[i]] <- new[[i]]
-
   old
 }
 
 
 rename <- function(x, replace) {
-
   current_names <- names(x)
   old_names     <- names(replace)
   missing_names <- setdiff(old_names, current_names)
@@ -280,9 +261,7 @@ rename <- function(x, replace) {
 # Text utilities ---------------------------------------------------------------
 
 safe_parse <- function(text) {
-
   if (!is.character(text)) stop("`text` must be a character vector")
-
   out <- vector("expression", length(text))
   for (i in seq_along(text)) {
       expr <- parse(text = text[[i]])
@@ -293,7 +272,6 @@ safe_parse <- function(text) {
 
 
 is.multichar <- function(x) {
-
   if (is.list(x)) return(any(vapply(x, is.multichar, logical(1))))
   if (is.factor(x)) x <- as.character(x)
   if (is.character(x)) return(any(nchar(x) > 1))
@@ -302,9 +280,7 @@ is.multichar <- function(x) {
 
 # Based on ggplot2:::draw_axis handling of labels
 make_label <- function(x) {
-
   if (!is.list(x)) return(x)
-
   if (any(vapply(x, is.language, logical(1)))) {
     do.call(expression, x)
   } else {
@@ -315,7 +291,6 @@ make_label <- function(x) {
 # Grid utilities ---------------------------------------------------------------
 
 data_to_text_gp <- function(data) {
-
   gpar(
     col        = alpha(data$textcolour %||% data$colour, data$alpha),
     fontsize   = data$size * .pt,
@@ -329,7 +304,6 @@ data_to_text_gp <- function(data) {
 
 data_to_path_gp <- function(data, lineend = "butt", linejoin = "round",
                             linemitre = 10) {
-
   if (all(data$linetype %in% c("0", "blank", NA))) {
     gpar(lty = 0)
   } else {
@@ -372,14 +346,12 @@ recycle_gp <- function(gp, fun, ...) {
 
 
 rep_gp <- function(gp, length.out = max(lengths(gp))) {
-
   gp[] <- lapply(gp, rep, length.out = length.out)
   gp
 }
 
 
 split_gp <- function(gp, i = seq_len(max(lengths(gp)))) {
-
   gp <- rep_gp(gp, max(i))
   lapply(i, function(j) {
     recycle_gp(gp, `[`, j)
@@ -389,7 +361,6 @@ split_gp <- function(gp, i = seq_len(max(lengths(gp)))) {
 # Helper function to fill in missing parameters by defaults
 # Based on ggplot2:::modify_list
 gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {
-
   extra <- list(...)
   for (i in names(extra)) defaults[[i]] <- extra[[i]]
   for (i in names(gp))    defaults[[i]] <- gp[[i]]
@@ -398,7 +369,6 @@ gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {
 
 
 gp_subset <- function(gp, ss) {
-
   subset_these <- lengths(gp) > 1
   gp[subset_these] <- lapply(unclass(gp)[subset_these], function(x) x[ss])
   gp[lengths(gp) == 0] <- list(NULL)
@@ -407,7 +377,6 @@ gp_subset <- function(gp, ss) {
 
 
 as_grid_unit <- function(value, from = "x", unit = "native") {
-
   if (!is.unit(value)) return(value)
 
   axis <- list(x = "x", y = "y", width = "x", height = "y")
@@ -421,19 +390,16 @@ as_grid_unit <- function(value, from = "x", unit = "native") {
 
 
 as_inch <- function(x, from = "x") {
-
   as_grid_unit(x, from, "inch")
 }
 
 
 as_npc <- function(x, from = "x") {
-
   as_grid_unit(x, from, "npc")
 }
 
 
 as_unit <- function(x, units = NULL, ...) {
-
   if (!is.unit(x) && !is.null(units)) {
     x <- unit(x, units, ...)
   }
@@ -443,19 +409,16 @@ as_unit <- function(x, units = NULL, ...) {
 # Documentation helpers --------------------------------------------------------
 
 as_lower <- function(x) {
-
   chartr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", x)
 }
 
 
 as_upper <- function(x) {
-
   chartr("abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", x)
 }
 
 
 camelize <- function(x, first = FALSE) {
-
     x <- gsub("_(.)", "\\U\\1", x, perl = TRUE)
     if (first) {
         x <- paste0(as_upper(substring(x, 1, 1)), substring(x, 2))
@@ -465,7 +428,6 @@ camelize <- function(x, first = FALSE) {
 
 
 find_global <- function(name, env, mode = "any") {
-
     if (exists(name, envir = env, mode = mode)) {
         return(get(name, envir = env, mode = mode))
     }
@@ -479,30 +441,28 @@ find_global <- function(name, env, mode = "any") {
 
 check_subclass <- function(x, subclass, argname = as_lower(subclass),
                            env = parent.frame()) {
+  if (inherits(x, subclass)) {
+    x
+  }
+  else if (is.character(x) && length(x) == 1) {
 
-    if (inherits(x, subclass)) {
-        x
+    name <- paste0(subclass, camelize(x, first = TRUE))
+    obj <- find_global(name, env = env)
+    if (is.null(obj) || !inherits(obj, subclass)) {
+        abort(paste0("Can't find `", argname, "` called '", x, "'"))
+    } else {
+      obj
     }
-    else if (is.character(x) && length(x) == 1) {
-
-        name <- paste0(subclass, camelize(x, first = TRUE))
-        obj <- find_global(name, env = env)
-        if (is.null(obj) || !inherits(obj, subclass)) {
-            abort(paste0("Can't find `", argname, "` called '", x, "'"))
-        }
-        else {
-            obj
-        }
-    }
-    else {
-        abort(paste0("`", argname, "` must be either a string or a ",
-                     subclass, " object"))
-    }
+  }
+  else {
+    abort(paste0("`", argname, "` must be either a string or a ",
+                 subclass, " object"))
+  }
 }
 
+# Documentation functions adapted from ggplot2 ---------------------------------
 
 rd_aesthetics_item <- function(x) {
-
     req <- x$required_aes
     req <- sub("|", "} \\emph{or} \\code{", req,
         fixed = TRUE)
@@ -513,10 +473,8 @@ rd_aesthetics_item <- function(x) {
         "}}"), paste0("\\code{", all, "}"))
 }
 
-# Documentation adapted from ggplot2
 
 rd_aesthetics <- function(type, name) {
-
     obj <- switch(type, geom = check_subclass(name, "Geom",
         env = globalenv()), stat = check_subclass(name, "Stat",
         env = globalenv()))
@@ -545,7 +503,6 @@ rd_aesthetics <- function(type, name) {
 # a parameter from documentation, e.g. if "gap" most definitely does not apply
 # to some geom or that kind of situation.
 rd_dots <- function(fun, exclude = character()) {
-
   exclude <- c(exclude, ".type")
   params  <- names(formals(static_text_params))
   forms   <- names(formals(fun))

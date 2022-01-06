@@ -23,3 +23,4 @@ waterways <- rbind(land, rivers)
 
 waterways <- st_crop(waterways, xmin = -7, xmax = -2,
                      ymin = 54.5, ymax = 56.5)
+

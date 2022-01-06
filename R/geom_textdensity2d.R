@@ -1,6 +1,6 @@
 ##---------------------------------------------------------------------------##
 ##                                                                           ##
-##  geom_textdensity2d main                                                  ##
+##  geom_textdensity2d                                                       ##
 ##                                                                           ##
 ##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
 ##                                                                           ##

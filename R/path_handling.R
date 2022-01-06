@@ -1,3 +1,14 @@
+##---------------------------------------------------------------------------##
+##                                                                           ##
+##  path_handling.R                                                          ##
+##  Part of the geomtextpath R package                                       ##
+##                                                                           ##
+##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##                                                                           ##
+##  Licensed under the MIT license - see https://mit-license.org             ##
+##  or the LICENSE file in the project root directory                        ##
+##                                                                           ##
+##---------------------------------------------------------------------------##
 
 # Preprocessing -----------------------------------------------------------
 

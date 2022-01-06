@@ -1,6 +1,7 @@
 ##---------------------------------------------------------------------------##
 ##                                                                           ##
-##  geom_textdensity main                                                    ##
+##  geom_textdensity.R                                                       ##
+##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
 ##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
 ##                                                                           ##
