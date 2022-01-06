@@ -21,7 +21,6 @@
 #' or `scale_vjust_discrete()` to your plot, but you can get more control with
 #' `scale_hjust_manual` and `scale_vjust_manual`.
 #'
-#'
 #' @param ... Other arguments passed on to [continuous_scale()], [binned_scale],
 #'   or [discrete_scale()] as appropriate, to control name, limits,
 #'   breaks, labels and so forth.
@@ -48,9 +47,7 @@
 #' ggplot(iris, aes(Sepal.Length, color = Species)) +
 #'   geom_textdensity(aes(label = Species, hjust = Species), size = 6) +
 #'   scale_hjust_discrete()
-
 scale_hjust_discrete <- function(..., range = c(0, 1), guide = "none") {
-
   discrete_scale(
     "hjust",
     "hjust_d",
@@ -60,12 +57,11 @@ scale_hjust_discrete <- function(..., range = c(0, 1), guide = "none") {
   )
 }
 
+
 #' @rdname scale_hjust_discrete
 #' @export
-#'
 scale_hjust_manual <- function(..., values, breaks = waiver(),
                                guide = "none", na.value = NA) {
-
     manual_scale("hjust",
                  values,
                  breaks,
@@ -74,9 +70,9 @@ scale_hjust_manual <- function(..., values, breaks = waiver(),
                  na.value = na.value)
 }
 
+
 #' @rdname scale_hjust_discrete
 #' @export
-
 scale_hjust_identity <- function(..., guide = "none") {
     continuous_scale("hjust",
                      "identity",
@@ -86,9 +82,9 @@ scale_hjust_identity <- function(..., guide = "none") {
                      super = ScaleContinuousIdentity)
 }
 
+
 #' @rdname scale_hjust_discrete
 #' @export
-
 scale_vjust_discrete <- function(..., guide = "none", range = c(-0.5, 1.5)) {
   discrete_scale(
     "vjust",
@@ -99,12 +95,11 @@ scale_vjust_discrete <- function(..., guide = "none", range = c(-0.5, 1.5)) {
   )
 }
 
+
 #' @rdname scale_hjust_discrete
 #' @export
-#'
 scale_vjust_manual <- function(..., values, breaks = waiver(),
                               guide = "none", na.value = NA) {
-
     manual_scale("vjust",
                  values,
                  breaks,
@@ -116,7 +111,6 @@ scale_vjust_manual <- function(..., values, breaks = waiver(),
 
 #' @rdname scale_hjust_discrete
 #' @export
-
 scale_vjust_identity <- function(..., guide = "none") {
 
     continuous_scale("vjust",
@@ -129,10 +123,8 @@ scale_vjust_identity <- function(..., guide = "none") {
 
 
 # Non-exported ggplot2 function
-
 manual_scale <- function(aesthetic, values = NULL,
                          breaks = waiver(), ..., limits = NULL) {
-
     force(values)
 
     if (is.null(limits)) {
@@ -162,6 +154,5 @@ manual_scale <- function(aesthetic, values = NULL,
 
 
 identity_pal <- function() {
-
   function(x) x
 }

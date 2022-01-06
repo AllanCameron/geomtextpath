@@ -4,6 +4,7 @@
 \name{geom_textpath}
 \alias{geom_textpath}
 \alias{geom_textline}
+\alias{GeomTextLine}
 \alias{geom_labelpath}
 \alias{geom_labelline}
 \alias{GeomLabelLine}

@@ -290,14 +290,11 @@ geom_textline <- function(mapping = NULL, data = NULL, stat = "identity",
   )
 }
 
-#' The Geom object for a textpath
-#'
-#' This is the \code{ggproto} class that creates the textline layer. It is not
-#' intended to be used directly by the end user.
-#'
+
 #' @format NULL
 #' @usage NULL
 #' @export
+#' @rdname geom_textpath
 
 GeomTextLine <- ggproto("GeomTextLine", GeomTextpath,
   setup_params = function(data, params) {
