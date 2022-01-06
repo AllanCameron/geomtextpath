@@ -17,6 +17,9 @@ waterways
 }
 \description{
 An `sf` object showing the River Clyde, the River Forth, and the canal
-joining the two
+joining the two.
+}
+\details{
+Contains Ordnance Survey data © Crown copyright and database right 2010-19
 }
 \keyword{datasets}
