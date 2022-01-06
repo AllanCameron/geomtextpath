@@ -35,7 +35,7 @@ sf_types <- c(GEOMETRY           = "other",
 sf_defaults <- function() {
   defaults <- list(
     GeomPoint$default_aes,
-    GeomLine$default_aes,
+    GeomTextpath$default_aes,
     modify_list(GeomPolygon$default_aes,
                 list(fill = "grey90", colour = "grey35"))
   )
@@ -266,9 +266,12 @@ sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
 
   for (i in seq_along(x$geometry)) {
     g   <- label_sf(x$geometry[i], labels[i], as_textbox = as_textbox)
+    tp_i <- tp_vars
+    tp_i$gp_text <- tp_i$gp_text[i]
+    tp_i$gp_box  <- tp_i$gp_box[i]
     out <- addGrob(out,
-                   st_as_grob(g, pch = pch, gp = gp_line, arrow = arrow,
-                              textpath_vars = tp_vars))
+                   st_as_grob(g, pch = pch, gp = gp_line[i], arrow = arrow,
+                              textpath_vars = tp_i))
   }
   out
 }
