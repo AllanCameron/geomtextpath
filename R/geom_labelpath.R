@@ -59,7 +59,7 @@ geom_labelpath <- function(
   rich = FALSE,
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
-  arrow = NULL
+  arrow = NULL, remove_long = FALSE
 ) {
   layer(
     geom        = GeomLabelpath,
@@ -69,25 +69,26 @@ geom_labelpath <- function(
     position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = set_params(
-      na.rm          = na.rm,
-      lineend        = lineend,
-      linejoin       = linejoin,
-      linemitre      = linemitre,
-      text_only      = text_only,
-      gap            = gap,
-      upright        = upright,
-      halign         = halign,
-      offset         = offset,
-      parse          = parse,
-      straight       = straight,
-      padding        = padding,
-      text_smoothing = text_smoothing,
-      rich           = rich,
-      label.padding  = label.padding,
-      label.r        = label.r,
-      arrow          = arrow,
-      ...
+    params      = set_params(
+                    na.rm          = na.rm,
+                    lineend        = lineend,
+                    linejoin       = linejoin,
+                    linemitre      = linemitre,
+                    text_only      = text_only,
+                    gap            = gap,
+                    upright        = upright,
+                    halign         = halign,
+                    offset         = offset,
+                    parse          = parse,
+                    straight       = straight,
+                    padding        = padding,
+                    text_smoothing = text_smoothing,
+                    rich           = rich,
+                    label.padding  = label.padding,
+                    label.r        = label.r,
+                    arrow          = arrow,
+                    remove_long    = remove_long,
+                    ...
     )
   )
 }
@@ -136,9 +137,6 @@ GeomLabelpath <- ggproto(
     label.r = unit(0.15, "lines"), arrow = NULL,
     text_params = static_text_params("label")
   ) {
-
-    #---- type conversion, checks & warnings ---------------------------#
-
     # We need to change groups to numeric to order them appropriately
     data$group <- discretise(data$group)
 
@@ -150,28 +148,24 @@ GeomLabelpath <- ggproto(
                  "least one group. Only the first will be used."))
     }
 
-    #---- Data manipulation ---------------------------------#
-
     # Now we can sort the data by group
     data <- data[order(data$group), , drop = FALSE]
 
     # All our transformations occur after the coord transform:
     data <- coord_munch(coord, data, panel_params)
 
-    #---- Set graphical parameters --------------------------#
-
     # Get first observation of each group
     first <- run_start(data$group)
 
     text_gp <- data_to_text_gp(data[first, , drop = FALSE])
-    path_gp <- data_to_path_gp(
-      data[first, , drop = FALSE],
-      lineend = lineend, linejoin = linejoin, linemitre = linemitre
-    )
-    box_gp <- data_to_box_gp(
-      data[first, , drop = FALSE],
-      lineend = lineend, linejoin = linejoin, linemitre = linemitre
-    )
+    path_gp <- data_to_path_gp(data[first, , drop = FALSE],
+                               lineend   = lineend,
+                               linejoin  = linejoin,
+                               linemitre = linemitre)
+    box_gp  <- data_to_box_gp(data[first, , drop = FALSE],
+                               lineend   = lineend,
+                               linejoin  = linejoin,
+                               linemitre = linemitre)
 
     safe_labels <- if (text_params$parse) {
       safe_parse(as.character(data$label[first]))
@@ -179,34 +173,31 @@ GeomLabelpath <- ggproto(
       data$label[first]
     }
 
-    #---- Dispatch data to grob -----------------------------#
-
     textpathGrob(
-      label = safe_labels,
-      x = data$x,
-      y = data$y,
-      id = data$group,
-      hjust  = data$hjust[first],
-      vjust  = text_params$offset %||% data$vjust[first],
-      halign = text_params$halign,
-      gap    = text_params$gap,
-      gp_text  = text_gp,
-      gp_path  = path_gp,
-      gp_box   = box_gp,
-      straight = text_params$straight,
-      upright  = text_params$upright,
-      default.units = "npc",
-      angle = data$angle,
-      polar_params = if (inherits(coord, "CoordPolar")) {
-        list(x = 0.5, y = 0.5, theta = coord$theta)
-      } else NULL,
-      padding = text_params$padding,
+      label          = safe_labels,
+      x              = data$x,
+      y              = data$y,
+      id             = data$group,
+      hjust          = data$hjust[first],
+      vjust          = text_params$offset %||% data$vjust[first],
+      halign         = text_params$halign,
+      gap            = text_params$gap,
+      gp_text        = text_gp,
+      gp_path        = path_gp,
+      gp_box         = box_gp,
+      straight       = text_params$straight,
+      upright        = text_params$upright,
+      default.units  = "npc",
+      angle          = data$angle,
+      polar_params   = get_polar_params(coord),
+      padding        = text_params$padding,
       text_smoothing = text_params$text_smoothing,
-      rich    = text_params$rich,
-      label.padding = label.padding,
-      label.r = label.r,
-      arrow = arrow,
-      as_label = TRUE
+      rich           = text_params$rich,
+      label.padding  = label.padding,
+      label.r        = label.r,
+      arrow          = arrow,
+      remove_long    = text_params$remove_long,
+      as_label       = TRUE
     )
   }
 )
@@ -226,7 +217,7 @@ geom_labelline <- function(
   padding = unit(0.05, "inch"),
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
-  arrow = NULL
+  arrow = NULL, remove_long = TRUE
 ) {
   layer(
     geom        = GeomLabelpath,
@@ -252,6 +243,7 @@ geom_labelline <- function(
       label.padding = label.padding,
       label.r       = label.r,
       arrow         = arrow,
+      remove_long   = remove_long,
       ...
     )
   )
@@ -273,6 +265,7 @@ GeomLabelLine <- ggproto("GeomLabelLine", GeomLabelpath,
     data$flipped_aes <- params$flipped_aes
     data <- flip_data(data, params$flipped_aes)
     data <- data[order(data$PANEL, data$group, data$x), ]
+
     flip_data(data, params$flipped_aes)
   }
 )

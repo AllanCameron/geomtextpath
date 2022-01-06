@@ -86,18 +86,18 @@ geom_labelcontour <- function(
     show.legend = show.legend,
     inherit.aes = inherit.aes,
     params = set_params(
-      na.rm         = na.rm,
-      lineend       = lineend,
-      linejoin      = linejoin,
-      linemitre     = linemitre,
-      bins          = bins,
-      binwidth      = binwidth,
-      breaks        = breaks,
-      label.padding = label.padding,
-      label.r       = label.r,
-      arrow         = arrow,
-      ...
-    )
+                na.rm         = na.rm,
+                lineend       = lineend,
+                linejoin      = linejoin,
+                linemitre     = linemitre,
+                bins          = bins,
+                binwidth      = binwidth,
+                breaks        = breaks,
+                label.padding = label.padding,
+                label.r       = label.r,
+                arrow         = arrow,
+                ...
+              )
   )
 }
 
@@ -128,20 +128,20 @@ stat_textcontour <- function(mapping = NULL, data = NULL,
                              show.legend = NA,
                              inherit.aes = TRUE) {
   layer(
-    data = data,
-    mapping = mapping,
-    stat = StatTextContour,
-    geom = geom,
-    position = position,
+    data        = data,
+    mapping     = mapping,
+    stat        = StatTextContour,
+    geom        = geom,
+    position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = set_params(
-      bins = bins,
-      binwidth = binwidth,
-      breaks = breaks,
-      na.rm = na.rm,
-      ...
-    )
+    params      = set_params(
+                    bins     = bins,
+                    binwidth = binwidth,
+                    breaks   = breaks,
+                    na.rm    = na.rm,
+                    ...
+                  )
   )
 }
 
@@ -171,8 +171,9 @@ GeomLabelContour <- ggproto("GeomLabelContour", GeomLabelpath,
 StatTextContour <- ggproto("StatTextContour", StatContour,
 
   required_aes = c("x", "y", "z"),
-  default_aes = aes(order = after_stat(level),
-                    label = round(after_stat(level), 1)),
+
+  default_aes  = aes(order = after_stat(level),
+                     label = round(after_stat(level), 1)),
 
   setup_params = function(data, params) {
     params$z.range <- range(data$z, na.rm = TRUE, finite = TRUE)
@@ -181,10 +182,8 @@ StatTextContour <- ggproto("StatTextContour", StatContour,
 
   compute_group = function(self, data, scales, z.range, bins = NULL,
                            binwidth = NULL, breaks = NULL, na.rm = FALSE) {
-
-
-     data <- ggproto_parent(StatContour, self)$compute_group(data, scales,
-                            z.range, bins, binwidth, breaks, na.rm)
-     data
+   data <- ggproto_parent(StatContour, self)$compute_group(data, scales,
+                          z.range, bins, binwidth, breaks, na.rm)
+   data
   }
 )

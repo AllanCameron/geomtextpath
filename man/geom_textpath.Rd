@@ -31,7 +31,8 @@ geom_textpath(
   padding = unit(0.05, "inch"),
   text_smoothing = 0,
   rich = FALSE,
-  arrow = NULL
+  arrow = NULL,
+  remove_long = FALSE
 )
 
 geom_textline(
@@ -74,7 +75,8 @@ geom_labelpath(
   rich = FALSE,
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
-  arrow = NULL
+  arrow = NULL,
+  remove_long = FALSE
 )
 
 geom_labelline(
@@ -99,7 +101,8 @@ geom_labelline(
   padding = unit(0.05, "inch"),
   label.padding = unit(0.25, "lines"),
   label.r = unit(0.15, "lines"),
-  arrow = NULL
+  arrow = NULL,
+  remove_long = TRUE
 )
 }
 \arguments{
@@ -197,6 +200,9 @@ formatted rich text. Default: \code{FALSE}. See also the rich text section of
 the details in \code{\link[=geom_textpath]{geom_textpath()}}.}
 
 \item{arrow}{Arrow specification, as created by \code{\link[grid:arrow]{grid::arrow()}}.}
+
+\item{remove_long}{if TRUE, labels that are longer than their associated
+path will be removed.}
 
 \item{orientation}{The orientation of the layer. The default (NA)
 automatically determines the orientation from the aesthetic mapping.

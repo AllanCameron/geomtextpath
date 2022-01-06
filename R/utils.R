@@ -288,6 +288,14 @@ make_label <- function(x) {
   }
 }
 
+get_polar_params <- function(coord) {
+  if (inherits(coord, "CoordPolar")) {
+      list(x = 0.5, y = 0.5, theta = coord$theta)
+    } else  {
+      NULL
+    }
+}
+
 # Grid utilities ---------------------------------------------------------------
 
 data_to_text_gp <- function(data) {

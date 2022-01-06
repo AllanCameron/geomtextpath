@@ -115,30 +115,37 @@ geom_textpath <- function(
   lineend = "butt", linejoin = "round", linemitre = 10,
   text_only = FALSE, gap = NA, upright = TRUE,
   halign = "center", offset = NULL, parse = FALSE, straight = FALSE,
-  padding = unit(0.05, "inch"), text_smoothing = 0, rich = FALSE, arrow = NULL
+  padding = unit(0.05, "inch"), text_smoothing = 0, rich = FALSE, arrow = NULL,
+  remove_long = FALSE
   ) {
 
-  layer(geom = GeomTextpath, mapping = mapping, data = data, stat = stat,
-        position = position, show.legend = show.legend,
+  layer(geom        = GeomTextpath,
+        mapping     = mapping,
+        data        = data,
+        stat        = stat,
+        position    = position,
+        show.legend = show.legend,
         inherit.aes = inherit.aes,
-        params = set_params(
-          na.rm          = na.rm,
-          lineend        = lineend,
-          linejoin       = linejoin,
-          linemitre      = linemitre,
-          text_only      = text_only,
-          gap            = gap,
-          upright        = upright,
-          halign         = halign,
-          offset         = offset,
-          parse          = parse,
-          straight       = straight,
-          padding        = padding,
-          text_smoothing = text_smoothing,
-          rich           = rich,
-          arrow          = arrow,
-          ...
-        ))
+        params      = set_params(
+                        na.rm          = na.rm,
+                        lineend        = lineend,
+                        linejoin       = linejoin,
+                        linemitre      = linemitre,
+                        text_only      = text_only,
+                        gap            = gap,
+                        upright        = upright,
+                        halign         = halign,
+                        offset         = offset,
+                        parse          = parse,
+                        straight       = straight,
+                        padding        = padding,
+                        text_smoothing = text_smoothing,
+                        rich           = rich,
+                        arrow          = arrow,
+                        remove_long    = remove_long,
+                        ...
+                      )
+  )
 }
 
 # ggproto class -----------------------------------------------------------
@@ -153,24 +160,25 @@ geom_textpath <- function(
 #' @export
 
 GeomTextpath <- ggproto("GeomTextpath", Geom,
+
   required_aes = c("x", "y", "label"),
 
   # These aesthetics will all be available to the draw_panel function
   default_aes = aes(
-    colour = "black",
-    size = 3.88,
-    hjust = 0.5,
-    vjust = 0.5,
-    family = "",
-    fontface = 1,
+    colour     = "black",
+    size       = 3.88,
+    hjust      = 0.5,
+    vjust      = 0.5,
+    family     = "",
+    fontface   = 1,
     lineheight = 1.2,
-    alpha = 1,
-    linewidth = 0.5,
-    linetype = 1,
-    spacing = 0,
+    alpha      = 1,
+    linewidth  = 0.5,
+    linetype   = 1,
+    spacing    = 0,
     linecolour = NULL,
     textcolour = NULL,
-    angle = 0
+    angle      = 0
   ),
 
   extra_params = c("na.rm", names(formals(static_text_params))[-1]),
@@ -199,9 +207,6 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     lineend = "butt", linejoin = "round", linemitre = 10,
     text_params = static_text_params("text"), arrow = NULL
   ) {
-
-    #---- type conversion, checks & warnings ---------------------------#
-
     # We need to change groups to numeric to order them appropriately
     data$group <- discretise(data$group)
 
@@ -213,15 +218,11 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
          "least one group. Only the first will be used."))
     }
 
-    #---- Data manipulation ---------------------------------#
-
     # Now we can sort the data by group
     data <- data[order(data$group), , drop = FALSE]
 
     # All our transformations occur after the coord transform:
     data <- coord_munch(coord, data, panel_params)
-
-    #---- Set graphical parameters --------------------------#
 
     # Get first observation of each group
     first <- run_start(data$group)
@@ -233,35 +234,32 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     )
 
     safe_labels <- if (text_params$parse) {
-        safe_parse(as.character(data$label[first]))
-      } else {
-        data$label[first]
-      }
-
-    #---- Dispatch data to grob -----------------------------#
+      safe_parse(as.character(data$label[first]))
+    } else {
+      data$label[first]
+    }
 
     textpathGrob(
-      label = safe_labels,
-      x = data$x,
-      y = data$y,
-      id = data$group,
-      hjust  = data$hjust[first],
-      vjust  = text_params$offset %||% data$vjust[first],
-      halign = text_params$halign,
-      gap    = text_params$gap,
-      gp_text  = text_gp,
-      gp_path  = path_gp,
-      straight = text_params$straight,
-      upright  = text_params$upright,
+      label          = safe_labels,
+      x              = data$x,
+      y              = data$y,
+      id             = data$group,
+      hjust          = data$hjust[first],
+      vjust          = text_params$offset %||% data$vjust[first],
+      halign         = text_params$halign,
+      gap            = text_params$gap,
+      gp_text        = text_gp,
+      gp_path        = path_gp,
+      straight       = text_params$straight,
+      upright        = text_params$upright,
       text_smoothing = text_params$text_smoothing,
-      default.units = "npc",
-      angle = data$angle,
-      polar_params = if (inherits(coord, "CoordPolar")) {
-                       list(x = 0.5, y = 0.5, theta = coord$theta)
-                     } else NULL,
-      padding = text_params$padding,
-      rich    = text_params$rich,
-      arrow = arrow
+      default.units  = "npc",
+      angle          = data$angle,
+      polar_params   = get_polar_params(coord),
+      padding        = text_params$padding,
+      rich           = text_params$rich,
+      arrow          = arrow,
+      remove_long    = text_params$remove_long
     )
   }
 )
@@ -274,21 +272,21 @@ geom_textline <- function(mapping = NULL, data = NULL, stat = "identity",
                       lineend = "butt", linejoin = "round", linemitre = 10,
                       arrow = NULL) {
   layer(
-    data = data,
-    mapping = mapping,
-    stat = stat,
-    geom = GeomTextLine,
-    position = position,
+    data        = data,
+    mapping     = mapping,
+    stat        = stat,
+    geom        = GeomTextLine,
+    position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = set_params(
-      na.rm     = na.rm,
-      lineend   = lineend,
-      linejoin  = linejoin,
-      linemitre = linemitre,
-      arrow     = arrow,
-      ...
-    )
+    params      = set_params(
+                    na.rm     = na.rm,
+                    lineend   = lineend,
+                    linejoin  = linejoin,
+                    linemitre = linemitre,
+                    arrow     = arrow,
+                    ...
+                  )
   )
 }
 
@@ -311,8 +309,9 @@ GeomTextLine <- ggproto("GeomTextLine", GeomTextpath,
 
   setup_data = function(data, params) {
     data$flipped_aes <- params$flipped_aes
-    data <- flip_data(data, params$flipped_aes)
-    data <- data[order(data$PANEL, data$group, data$x), ]
+    data             <- flip_data(data, params$flipped_aes)
+    data             <- data[order(data$PANEL, data$group, data$x), ]
+
     flip_data(data, params$flipped_aes)
   }
 )

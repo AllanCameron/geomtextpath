@@ -41,8 +41,6 @@
 #' @param as_label a `logical` TRUE or FALSE indicating whether the text should
 #'   be drawn inside a text box. If FALSE, the parameters `label.padding`,
 #'   `label.r` and `gp_box` will be ignored.
-#' @param remove_long if TRUE, labels that are longer than their associated
-#'   path will be removed.
 #' @inheritParams grid::textGrob
 #' @inheritParams grid::polylineGrob
 #' @inheritParams static_text_params

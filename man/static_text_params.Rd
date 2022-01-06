@@ -15,7 +15,8 @@ static_text_params(
   straight = FALSE,
   padding = unit(0.05, "inch"),
   text_smoothing = 0,
-  rich = FALSE
+  rich = FALSE,
+  remove_long = FALSE
 )
 }
 \arguments{
@@ -65,6 +66,9 @@ of \code{0} means no smoothing is applied.}
 \item{rich}{A \code{logical(1)} whether to interpret the text as html/markdown
 formatted rich text. Default: \code{FALSE}. See also the rich text section of
 the details in \code{\link[=geom_textpath]{geom_textpath()}}.}
+
+\item{remove_long}{if TRUE, labels that are longer than their associated
+path will be removed.}
 }
 \value{
 A \code{list} with the parameters.

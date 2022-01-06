@@ -12,16 +12,15 @@
 
 #' @export
 makeContent.labelpath <- function(x) {
-
   if (is.null(x$textpath)) return(zeroGrob())
-  v <- x$textpath
+
+  v          <- x$textpath
   x$textpath <- NULL
-  params <- v$params
+  params     <- v$params
+  path       <- prepare_path(v$data, v$label, v$gp_path, params)
 
-  path <- prepare_path(v$data, v$label, v$gp_path, params)
-
+  # Identify text that is too long for its path
   too_long <- if (params$remove_long) {
-    # Identify text that is too long for its path
     text_lens <- numapply(v$label, function(x) max(x$xmax))
     path_lens <- numapply(path, function(d) {
                    max(arclength_from_xy(d$line_x, d$line_y))})
@@ -33,15 +32,14 @@ makeContent.labelpath <- function(x) {
   ss <- v$data$id %in% which(too_long)
 
   if (any(too_long)) {
-
-    x <- grid::addGrob(x, grid::polylineGrob(
-        v$data$x[ss], v$data$y[ss], id = v$data$id[ss],
-        gp = gp_subset(v$gp_path, too_long)
-      ))
+    x <- addGrob(x, polylineGrob(x  = v$data$x[ss],
+                                 y  = v$data$y[ss],
+                                 id = v$data$id[ss],
+                                 gp = gp_subset(v$gp_path, too_long))
+                 )
   }
 
   if (!all(too_long)) {
-
     # Get the actual text string positions and angles for each group
     text <- Map(
         place_text,
@@ -85,24 +83,22 @@ makeContent.labelpath <- function(x) {
       sub <- unlist(dat$substring, FALSE, FALSE) %||% dat$id
       gp  <- recycle_gp(subset(v$gp_text, !too_long),
                         function(x) x[pmin(sub, length(x))])
-
       if (is.list(dat$xoffset)) {
-        xx <- unlist(dat$xoffset, FALSE, FALSE)
-        yy <- unlist(dat$yoffset, FALSE, FALSE)
+        xx    <- unlist(dat$xoffset, FALSE, FALSE)
+        yy    <- unlist(dat$yoffset, FALSE, FALSE)
         angle <- dat$angle * .deg2rad
-        x <- xx * cos(angle) - yy * sin(angle) + dat$x
-        y <- xx * sin(angle) + yy * cos(angle) + dat$y
+        x     <- xx * cos(angle) - yy * sin(angle) + dat$x
+        y     <- xx * sin(angle) + yy * cos(angle) + dat$y
       } else {
-        x <- dat$x
-        y <- dat$y
+        x     <- dat$x
+        y     <- dat$y
       }
-
       textGrob(
-        label = make_label(dat$label),
-        x = x,
-        y = y,
-        rot = dat$angle,
-        vjust = 0.5, hjust = 0.5, gp = gp,
+        label         = make_label(dat$label),
+        x             = x,
+        y             = y,
+        rot           = dat$angle,
+        vjust         = 0.5, hjust = 0.5, gp = gp,
         default.units = "inches"
       )
     })
@@ -140,7 +136,7 @@ curved_textbox <- function(
 ) {
   padding <- as_inch(padding)
   metrics <- attr(label, "metrics")
-  height <- c(0, 1) * metrics$height + c(-1, 1) * padding
+  height  <- c(0, 1) * metrics$height + c(-1, 1) * padding
 
   if (nrow(text) > 1) {
     # Get min / mid / max height
@@ -178,11 +174,11 @@ curved_textbox <- function(
            corners[2, 4], rev(offset$y[keep, 4]), corners[1, 4])
   } else {
     # Simple rotation of a rectangle
-    xx <- (metrics$width  * c(-0.5, 0.5) + c(-padding, padding))[c(1, 2, 2, 1)]
-    yy <- (diff(height)   * c(-0.5, 0.5))[c(1, 1, 2, 2)]
+    xx  <- (metrics$width  * c(-0.5, 0.5) + c(-padding, padding))[c(1, 2, 2, 1)]
+    yy  <- (diff(height)   * c(-0.5, 0.5))[c(1, 1, 2, 2)]
     rot <- text$angle * .deg2rad
-    x <- xx * cos(rot) - yy * sin(rot) + text$x
-    y <- xx * sin(rot) + yy * cos(rot) + text$y
+    x   <- xx * cos(rot) - yy * sin(rot) + text$x
+    y   <- xx * sin(rot) + yy * cos(rot) + text$y
     nkeep <- 0
   }
 
@@ -192,17 +188,17 @@ curved_textbox <- function(
       radius  <- 0.5 * diff(range(height))
     }
     # Make closed polygon by inserting midpoint between start and end
-    n <- length(x)
+    n       <- length(x)
     x_start <- (x[1] + x[n]) / 2
     y_start <- (y[1] + y[n]) / 2
-    x <- c(x_start, x, x_start)
-    y <- c(y_start, y, y_start)
+    x       <- c(x_start, x, x_start)
+    y       <- c(y_start, y, y_start)
 
     # Round corners
     corners <- c(2, 3 + nkeep, 4 + nkeep, 5 + 2 * nkeep)
-    xy <- round_corners(x, y, radius, at = corners)
-    x <- xy$x
-    y <- xy$y
+    xy      <- round_corners(x, y, radius, at = corners)
+    x       <- xy$x
+    y       <- xy$y
   }
   return(data_frame(x = x, y = y, id = text$id[1]))
 }

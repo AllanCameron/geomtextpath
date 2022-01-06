@@ -52,6 +52,8 @@
 #' @param rich A `logical(1)` whether to interpret the text as html/markdown
 #'   formatted rich text. Default: `FALSE`. See also the rich text section of
 #'   the details in [`geom_textpath()`][geom_textpath].
+#' @param remove_long if TRUE, labels that are longer than their associated
+#'   path will be removed.
 #'
 #' @return A `list` with the parameters.
 #' @md
@@ -67,7 +69,8 @@ static_text_params <- function(
   straight       = FALSE,
   padding        = unit(0.05, "inch"),
   text_smoothing = 0,
-  rich           = FALSE
+  rich           = FALSE,
+  remove_long    = FALSE
 ) {
   if (is.null(gap)) {
     gap <- switch(.type, text = NA, FALSE)
@@ -89,6 +92,7 @@ static_text_params <- function(
     offset         = assert(offset,         "unit", allow_NULL = TRUE),
     text_smoothing = assert(text_smoothing, "numeric"),
     rich           = assert(rich,           "logical"),
+    remove_long    = assert(remove_long,    "logical"),
     halign         = halign
   )
 }

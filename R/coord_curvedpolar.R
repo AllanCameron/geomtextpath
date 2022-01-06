@@ -62,20 +62,20 @@ coord_curvedpolar <- function(theta = "x", start = 0,
                               halign = c("center")) {
 
   theta <- match.arg(theta, c("x", "y"))
-  r <- if (theta == "x") "y" else "x"
+  r     <- if (theta == "x") "y" else "x"
 
   ggproto(NULL, CoordPolar,
-    theta = theta,
-    r = r,
-    start = start,
+    theta     = theta,
+    r         = r,
+    start     = start,
     direction = sign(direction),
-    clip = clip,
-    halign = halign,
+    clip      = clip,
+    halign    = halign,
 
     render_fg = function(self, panel_params, theme) {
 
     if (is.null(panel_params$theta.major)) {
-        return(element_render(theme, "panel.border"))
+      return(element_render(theme, "panel.border"))
     }
     txt_el <- calc_element("axis.text.x", theme)
 
@@ -85,24 +85,22 @@ coord_curvedpolar <- function(theta = "x", start = 0,
       return(out)
     }
 
-
-    theta <- .theta_rescale(self, panel_params$theta.major, panel_params)
-    labels <- panel_params$theta.labels
-    theta <- theta[!is.na(theta)]
+    theta      <- theta_rescale(self, panel_params$theta.major, panel_params)
+    labels     <- panel_params$theta.labels
+    theta      <- theta[!is.na(theta)]
     ends_apart <- (theta[length(theta)] - theta[1]) %% (2 * pi)
 
     if (length(theta) > 0 && ends_apart < 0.05) {
-        n <- length(labels)
-        if (is.expression(labels)) {
-            combined <- substitute(paste(a, "/", b), list(a = labels[[1]],
-                b = labels[[n]]))
-        }
-        else {
-            combined <- paste(labels[1], labels[n], sep = "/")
-        }
+      n <- length(labels)
+      if (is.expression(labels)) {
+        combined <- substitute(paste(a, "/", b),
+                               list(a = labels[[1]], b = labels[[n]]))
+      } else {
+        combined <- paste(labels[1], labels[n], sep = "/")
+      }
         labels[[n]] <- combined
-        labels <- labels[-1]
-        theta <- theta[-1]
+        labels      <- labels[-1]
+        theta       <- theta[-1]
     }
 
     # Rather than rendering a bespoke element_textpath via element_grob,
@@ -115,43 +113,36 @@ coord_curvedpolar <- function(theta = "x", start = 0,
                        lineheight = txt_el$lineheight)
 
     # This constructs a circular path for the labels to sit on.
-    wid <- mean(diff(theta))
-
+    wid    <- mean(diff(theta))
     path_t <- seq(-wid / 2, wid / 2, len = 1000)
-
-    id <- rep(seq_along(labels), each = length(path_t))
-
-    theta <- as.vector(t(outer(theta, path_t, "+")))
-    x <- 0.45 * sin(theta) + 0.5
-    y <- 0.45 * cos(theta) + 0.5
+    id     <- rep(seq_along(labels), each = length(path_t))
+    theta  <- as.vector(t(outer(theta, path_t, "+")))
+    x      <- 0.45 * sin(theta) + 0.5
+    y      <- 0.45 * cos(theta) + 0.5
 
     # We now have enough data to make our grob
     grid::grobTree(if (length(labels) > 0)
       textpathGrob(labels,
-                    x = x,
-                    y = y,
-                    id = id,
-                    hjust = txt_el$hjust,
-                    vjust = txt_el$vjust,
-                    halign = halign,
-                    gp_text = element_gp,
-                    gp_path = gpar(linetype = 0, lty = 0),
-                    upright = TRUE,
+                    x             = x,
+                    y             = y,
+                    id            = id,
+                    hjust         = txt_el$hjust,
+                    vjust         = txt_el$vjust,
+                    halign        = halign,
+                    gp_text       = element_gp,
+                    gp_path       = gpar(linetype = 0, lty = 0),
+                    upright       = TRUE,
                     default.units = "native"
-                  ),
-      element_render(theme, "panel.border")
-       )
+                  ), element_render(theme, "panel.border"))
     }
   )
 }
 
 
-# A straight reimplementation of ggplot2:::theta_rescale to avoid using
+# A reimplementation of ggplot2:::theta_rescale to avoid using
 # non-exported functions
-
-.theta_rescale <- function(coord, x, panel_params) {
-
-    x <- scales::squish_infinite(x, panel_params$theta.range)
+theta_rescale <- function(coord, x, panel_params) {
+    x      <- scales::squish_infinite(x, panel_params$theta.range)
     rotate <- function(x) (x + coord$start) %% (2 * pi) * coord$direction
     rotate(scales::rescale(x, c(0, 2 * pi), panel_params$theta.range))
 }

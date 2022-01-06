@@ -61,17 +61,17 @@ geom_textdensity2d <- function(mapping = NULL,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
     params      = set_params(
-      lineend     = lineend,
-      linejoin    = linejoin,
-      linemitre   = linemitre,
-      contour     = TRUE,
-      contour_var = contour_var,
-      na.rm       = na.rm,
-      n           = n,
-      h           = h,
-      adjust      = adjust,
-      ...
-    )
+                    lineend     = lineend,
+                    linejoin    = linejoin,
+                    linemitre   = linemitre,
+                    contour     = TRUE,
+                    contour_var = contour_var,
+                    na.rm       = na.rm,
+                    n           = n,
+                    h           = h,
+                    adjust      = adjust,
+                    ...
+                  )
   )
 }
 
@@ -101,22 +101,22 @@ geom_labeldensity2d <- function(mapping = NULL, data = NULL,
     position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = set_params(
-      na.rm         = na.rm,
-      lineend       = lineend,
-      linejoin      = linejoin,
-      linemitre     = linemitre,
-      contour     = TRUE,
-      contour_var = contour_var,
-      na.rm       = na.rm,
-      n           = n,
-      h           = h,
-      adjust      = adjust,
-      label.padding = label.padding,
-      label.r       = label.r,
-      arrow         = arrow,
-      ...
-    )
+    params      = set_params(
+                    na.rm         = na.rm,
+                    lineend       = lineend,
+                    linejoin      = linejoin,
+                    linemitre     = linemitre,
+                    contour       = TRUE,
+                    contour_var   = contour_var,
+                    na.rm         = na.rm,
+                    n             = n,
+                    h             = h,
+                    adjust        = adjust,
+                    label.padding = label.padding,
+                    label.r       = label.r,
+                    arrow         = arrow,
+                    ...
+                  )
   )
 }
 
@@ -126,9 +126,10 @@ geom_labeldensity2d <- function(mapping = NULL, data = NULL,
 #' @export
 #' @include geom_textpath.R
 GeomTextDensity2d <- ggproto("GeomTextDensity2d", GeomTextpath,
+
   required_aes = c("x", "y"),
 
-  setup_data = function(data, params) {
+  setup_data   = function(data, params) {
     data$label <- as.character(data$level)
     data
   }
@@ -140,9 +141,10 @@ GeomTextDensity2d <- ggproto("GeomTextDensity2d", GeomTextpath,
 #' @export
 #' @include geom_textpath.R
 GeomLabelDensity2d <- ggproto("GeomLabelDensity2d", GeomLabelpath,
+
   required_aes = c("x", "y"),
 
-  setup_data = function(data, params) {
+  setup_data   = function(data, params) {
     data$label <- as.character(data$level)
     data
   }
