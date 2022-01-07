@@ -137,8 +137,9 @@ make_gap <- function(path, letters, gap = NA,
 
     # Interpolate trimming points
     ipol    <- c(mins[trim], maxs[trim])
-    trim_xy <- approx_multiple(path$length, ipol,
-                               path[c("line_x", "line_y", "line_length")])
+    trim_xy <- approx_multi(x    = path$length,
+                            y    = path[c("line_x", "line_y", "line_length")],
+                            xout = ipol)
 
     # Add trimming points to paths
     path <- data_frame(

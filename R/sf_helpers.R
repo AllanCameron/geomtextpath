@@ -33,18 +33,18 @@ sf_types <- c(GEOMETRY           = "other",
 # Gets default graphics parameters for sf objects. This could be a static object
 # but writing it as a function allows for changes in ggplot defaults over time
 sf_defaults <- function() {
-  defaults <- list(
-    GeomPoint$default_aes,
-    GeomTextpath$default_aes,
-    modify_list(GeomPolygon$default_aes,
-                list(fill = "grey90", colour = "grey35"))
-  )
+  point_aes          <- GeomPoint$default_aes
+  textpath_aes       <- GeomTextpath$default_aes
+  polygon_aes        <- GeomPolygon$default_aes
+  polygon_aes$fill   <- "grey90"
+  polygon_aes$colour <- "grey35"
+  collection_aes     <- rename(textpath_aes,
+                               c(size = "point_size", fill = "point_fill"))
+  for (i in names(polygon_aes)) {
+    collection_aes[[i]] <- polygon_aes[[i]]
+  }
 
-  defaults[[4]] <- modify_list(
-    defaults[[3]],
-    rename(GeomTextpath$default_aes,
-           c(size = "point_size", fill = "point_fill"))
-  )
+  defaults <- list(point_aes, textpath_aes, polygon_aes, collection_aes)
 
   default_names <- unique(unlist(lapply(defaults, names)))
 

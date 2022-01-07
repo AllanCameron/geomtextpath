@@ -12,11 +12,14 @@
 
 # simplify calls to vapoly -----------------------------------------------------
 
+# Many vapply calls in the code base have a FUN.VALUE of numeric(1). This
+# wrapper simply helps keep the code more legible / maintainable.
 numapply <- function(data, fun) {
   vapply(data, FUN = fun, FUN.VALUE = numeric(1))
 }
 
-
+# Wrapper for the frequent use case of getting a vector of the number of rows
+# of several data frames in a list.
 nrow_multi <- function(data) {
   vapply(data, FUN = nrow, FUN.VALUE = integer(1), USE.NAMES = FALSE)
 }
@@ -25,25 +28,15 @@ nrow_multi <- function(data) {
 
 # Simplified rle(x)$lengths
 run_len <- function(x) {
-  n <- length(x)
-  if (n < 2) return(n)
-  x[is.na(x)] <- "NA"
-  x <- c(which(x[-1] != x[-n]), n)
-  diff(c(0L, x))
+  x       <- discretise(x)
+  changes <- which(diff(x) != 0)
+  diff(c(0, changes, length(x)))
 }
 
 
-run_start <- function(x, is_lengths = FALSE) {
-  if (!is_lengths) {
-    x <- run_len(x)
-  }
+run_start <- function(x) {
+  x <- run_len(x)
   cumsum(x) - x + 1L
-}
-
-
-run_end <- function(x, is_lengths = FALSE) {
-  if (is_lengths) return(cumsum(x))
-  cumsum(run_len(x))
 }
 
 # Utilities for data.frames ----------------------------------------------------
@@ -64,7 +57,8 @@ list_to_df <- function(x = list()) {
   }
 
   lengths <- lengths(x)
-  n <- max(lengths)
+  n       <- max(lengths)
+
   for (i in seq_along(x)) {
     if (lengths[i] == n)
       next
@@ -81,14 +75,8 @@ list_to_df <- function(x = list()) {
 # Row-bind a list of data.frames
 # `df_list` is a list of data.frames
 # `idcol` is a name for an id column, or NULL if it is to be omitted
-rbind_dfs <- function(df_list, idcol = NULL) {
-  # Ideally, we'd use vctrs::vec_c(!!!df_list) which is 10x faster
-  ans <- do.call(rbind.data.frame, c(df_list, make.row.names = FALSE))
-  if (!is.null(idcol)) {
-    n <- nrow_multi(df_list)
-    ans[[idcol]] <- rep(names(df_list) %||% seq_along(n), times = n)
-  }
-  ans
+rbind_dfs <- function(df_list) {
+  do.call(rbind.data.frame, c(df_list, make.row.names = FALSE))
 }
 
 # Grouping utilities -----------------------------------------------------------
@@ -122,7 +110,7 @@ gapply <- function(x, group, FUN, FUN.VALUE, ..., USE.NAMES = FALSE) {
 # iteration. For non-numeric values, repeats first entry to match length.
 # Note: This also extrapolates based on the four extreme points.
 
-approx_multiple <- function(x, xout, y = matrix()) {
+approx_multi <- function(x, y = matrix(), xout) {
   if (length(y) == 0) return(y)
 
   # Coerce lists and data.frames to matrices
@@ -134,11 +122,11 @@ approx_multiple <- function(x, xout, y = matrix()) {
       "All elements in `y` must have the same length as `x`" =
         all(lens == length(x))
     )
-    orig     <- unclass(y)
-    is_num   <- vapply(orig, is.numeric, logical(1))
+    orig          <- unclass(y)
+    is_num        <- vapply(orig, is.numeric, logical(1))
     orig[!is_num] <- lapply(lapply(orig[!is_num], `[`, 1),
                             rep, length.out = length(xout))
-    y <- do.call(cbind, y[is_num])
+    y             <- do.call(cbind, y[is_num])
   }
   # Assign a dimension if there is none
   dimless <- is.null(dim(y))
@@ -237,12 +225,6 @@ match_labels.default <- function(x, labels) {
 }
 
 
-modify_list <- function(old, new) {
-  for (i in names(new)) old[[i]] <- new[[i]]
-  old
-}
-
-
 rename <- function(x, replace) {
   current_names <- names(x)
   old_names     <- names(replace)
@@ -316,10 +298,10 @@ data_to_path_gp <- function(data, lineend = "butt", linejoin = "round",
     gpar(lty = 0)
   } else {
     gpar(
-      col  = alpha(data$linecolour %||% data$colour, data$alpha),
-      fill = alpha(data$linecolour %||% data$colour, data$alpha),
-      lwd  = data$linewidth * .pt,
-      lty  = data$linetype,
+      col       = alpha(data$linecolour %||% data$colour, data$alpha),
+      fill      = alpha(data$linecolour %||% data$colour, data$alpha),
+      lwd       = data$linewidth * .pt,
+      lty       = data$linetype,
       lineend   = lineend,
       linejoin  = linejoin,
       linemitre = linemitre
@@ -331,11 +313,11 @@ data_to_path_gp <- function(data, lineend = "butt", linejoin = "round",
 data_to_box_gp <- function(data, lineend = "butt", linejoin = "round",
                            linemitre = 10) {
   gpar(
-    col  = alpha(data$boxcolour %||% data$linecolour %||% data$colour,
-                 data$alpha),
-    fill = alpha(data$fill, data$alpha),
-    lwd  = data$boxlinewidth %||% data$linewidth * .pt,
-    lty  = data$boxlinetype  %||% data$linetype,
+    col       = alpha(data$boxcolour %||% data$linecolour %||% data$colour,
+                      data$alpha),
+    fill      = alpha(data$fill, data$alpha),
+    lwd       = data$boxlinewidth %||% data$linewidth * .pt,
+    lty       = data$boxlinetype  %||% data$linetype,
     lineend   = lineend,
     linejoin  = linejoin,
     linemitre = linemitre
@@ -361,9 +343,7 @@ rep_gp <- function(gp, length.out = max(lengths(gp))) {
 
 split_gp <- function(gp, i = seq_len(max(lengths(gp)))) {
   gp <- rep_gp(gp, max(i))
-  lapply(i, function(j) {
-    recycle_gp(gp, `[`, j)
-  })
+  lapply(i, function(j) recycle_gp(gp, `[`, j))
 }
 
 # Helper function to fill in missing parameters by defaults
@@ -377,8 +357,8 @@ gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {
 
 
 gp_subset <- function(gp, ss) {
-  subset_these <- lengths(gp) > 1
-  gp[subset_these] <- lapply(unclass(gp)[subset_these], function(x) x[ss])
+  subset_these         <- lengths(gp) > 1
+  gp[subset_these]     <- lapply(unclass(gp)[subset_these], function(x) x[ss])
   gp[lengths(gp) == 0] <- list(NULL)
   return(gp)
 }

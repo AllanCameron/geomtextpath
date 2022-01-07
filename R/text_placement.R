@@ -90,7 +90,7 @@ place_text <- function(
 
   protect_column <- c("x", "y", "angle", "length", "id", "left", "right")
   df             <- as.list(path[setdiff(names(path), protect_column)])
-  df             <- approx_multiple(path$length, letters$base_length, df)
+  df             <- approx_multi(path$length, df, xout = letters$base_length)
   df             <- cbind(df, letters, id = path$id[1] %||% 1L)
   df$substring   <- label$substring %||% df$id
   df$xoffset     <- label$xoff
@@ -198,7 +198,7 @@ anchor_points <- function(
   anchor <- anchor - (text_hjust + c(0, -1)) * text_width
 
   # Interpolate for offset paths
-  anchor <- approx_multiple(offset$arc_length[, 1], anchor, offset$arc_length)
+  anchor <- approx_multi(offset$arc_length[, 1], offset$arc_length, anchor)
 
   # Weigh left and right anchors according to halign
   anchor[1, ] * halign + (1 - halign) * (anchor[2, ] - text_width)

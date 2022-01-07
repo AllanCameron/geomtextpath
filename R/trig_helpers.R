@@ -267,7 +267,7 @@ round_corners <- function(x, y, radius, at, n = 10) {
   drop <- which(rowSums(drop) != nrow(pts))
 
   # Find appropriate x/y for surrounding points
-  proj <- approx_multiple(len, as.vector(pts), cbind(x, y))
+  proj <- approx_multi(x = len, y = cbind(x, y), xout = as.vector(pts))
   xx <- `dim<-`(proj[, 1], dim(pts))
   yy <- `dim<-`(proj[, 2], dim(pts))
 

@@ -9,13 +9,6 @@ test_that("rbind_dfs works", {
   expect_equal(dim(test), c(10, 2))
   expect_s3_class(test, "data.frame")
 
-  test <- rbind_dfs(df, idcol = "id")
-  expect_equal(test$id, rep(1:2, each = 5))
-
-  names(df) <- c("A", "B")
-  test <- rbind_dfs(df, idcol = "id")
-  expect_equal(test$id, rep(c("A", "B"), each = 5))
-
 })
 
 # run_len -----------------------------------------------------------------
@@ -82,25 +75,25 @@ test_that("dedup_path works", {
                                line_y = c(y[1], 1.1, y[3:4])))
 })
 
-# approx_multiple ---------------------------------------------------------
+# approx_multi -----------------------------------------------------------------
 
-test_that("approx_multiple works", {
+test_that("approx_multi works", {
   x <- 1:10
   xout <- c(2.5, 5, 7.5)
 
   # Zero-length input gives zero-length output
   y <- numeric()
-  expect_equal(length(approx_multiple(x, xout, y)), 0L)
+  expect_equal(length(approx_multi(x, y, xout)), 0L)
 
   # Single vector modus
   y <- (x - 5.5)^2
-  test <- approx_multiple(x, xout, y)
+  test <- approx_multi(x, y, xout)
   expect_equal(test, c(y[2] + y[3], 2 * y[5], y[7] + y[8]) / 2)
   expect_type(test, "double")
 
   # Matrix modus
   y <- cbind(y1 = y, y2 = (x - 5.5)^3)
-  test <- approx_multiple(x, xout, y)
+  test <- approx_multi(x, y, xout)
   expect_equal(
     test,
     rbind(y[2, ] + y[3, ], 2 * y[5, ], y[7, ] + y[8, ]) / 2
@@ -109,7 +102,7 @@ test_that("approx_multiple works", {
 
   # Data frame modus
   y <- cbind(as.data.frame(y), dummy = "A")
-  test <- approx_multiple(x, xout, y)
+  test <- approx_multi(x, y, xout)
   expect_equal(
     test[1:2],
     rbind(y[2, 1:2] + y[3, 1:2], 2 * y[5, 1:2], y[7, 1:2] + y[8, 1:2]) / 2,
@@ -120,7 +113,7 @@ test_that("approx_multiple works", {
 
   # List modus
   ylist <- as.list(y)
-  test  <- approx_multiple(x, xout, ylist)
+  test  <- approx_multi(x, ylist, xout)
   expect_equal(
     test[1:2],
     rbind(y[2, 1:2] + y[3, 1:2], 2 * y[5, 1:2], y[7, 1:2] + y[8, 1:2]) / 2,
@@ -180,15 +173,6 @@ test_that("Labels can be created from expressions", {
   expect_equal(make_label(chars), chars)
   expect_identical(make_label(exp_list), exp_vec)
   expect_equal(make_label(list(1, 2)), 1:2)
-})
-
-test_that("run_end behaves as expected", {
-
-  x <- 5:10
-
-  expect_equal(run_end(x, is_lengths = TRUE), cumsum(x))
-  expect_equal(run_end(x, is_lengths = FALSE), cumsum(run_len(x)))
-
 })
 
 # Tailor arrow ------------------------------------------------------------
@@ -341,14 +325,6 @@ test_that("We can find missing cases", {
   expect_equal(res2, !detect_missing(df, c("x", "y")))
   expect_equal(res, !detect_missing(df, c("x", "z"), TRUE))
   expect_equal(!res2, find_missing(df, ggplot2::GeomPoint))
-})
-
-
-test_that("We can modify a list", {
-  x <- list(a = 1, b = 2)
-  y <- list(a = 3, c = 4)
-  z <- list(a = 3, b = 2, c = 4)
-  expect_equal(z, modify_list(x, y))
 })
 
 

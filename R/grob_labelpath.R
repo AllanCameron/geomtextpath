@@ -153,15 +153,13 @@ curved_textbox <- function(
 
     # Set start / end at 0-offset, then translate to mid-height offset
     lims <- range(text$left, text$right)
-    lims <- approx_multiple(offset$arc_length[, 1], lims,
-                            offset$arc_length[, 3])
+    lims <- approx_multi(offset$arc_length[, 1], offset$arc_length[, 3], lims)
     lims <- lims + c(-1, 1) * padding
 
     # Translate mid-height offset to min / max height offsets to get corners
-    corners <- approx_multiple(
-      offset$arc_length[, 3], lims,
-      y = cbind(offset$x[, c(2, 4)], offset$y[, c(2, 4)])
-    )
+    corners <- approx_multi(x = offset$arc_length[, 3],
+                            y = cbind(offset$x[, c(2, 4)], offset$y[, c(2, 4)]),
+                            xout = lims)
 
     # Check which points fall between corners
     keep  <- offset$arc_length[, 3] > lims[1] & offset$arc_length[, 3] < lims[2]
