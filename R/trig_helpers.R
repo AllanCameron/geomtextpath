@@ -17,30 +17,20 @@
 .halfpi  <- pi / 2
 
 
-# Checkers ----------------------------------------------------------------
+# Checker ----------------------------------------------------------------------
 
 # We can only define paths if they have two or more valid numeric points, and no
 # path can contain any infinite values
-
 check_xy <- function(x, y) {
-
   stopifnot(
-
-    "x and y must be the same length" = {
-      (n <- length(x)) == length(y)
-    },
-
-    "x and y must both be numeric" = {
-      (is.numeric(x) & is.numeric(y))
-    },
-
-    "x and y must be length 2 or more" = {
-      n > 1
-    },
-
-    "x and y must not contain infinite points" = {
+    "x and y must be the same length" =
+      (n <- length(x)) == length(y),
+    "x and y must both be numeric" =
+      (is.numeric(x) & is.numeric(y)),
+    "x and y must be length 2 or more" =
+      n > 1,
+    "x and y must not contain infinite points" =
       all(is.finite(x[!is.na(x)]) & is.finite(y[!is.na(y)]))
-    }
   )
 }
 
@@ -50,8 +40,6 @@ check_xy <- function(x, y) {
 # in radians or degrees, whether in grid units or bare numbers.
 
 angle_from_xy <- function(x, y, degrees = FALSE, norm = FALSE) {
-
-  # Allow x and y to be grid units
   x <- as_npc(x, "x")
   y <- as_npc(y, "y")
 
@@ -61,21 +49,19 @@ angle_from_xy <- function(x, y, degrees = FALSE, norm = FALSE) {
   y <- interp_na(y)
 
   rads <- atan2(diff(y), diff(x))
+  rads <- rads + .halfpi * as.numeric(norm)
+  rads <- rads * .rad2deg^(as.numeric(degrees))
 
-  if (norm) rads <- rads + .halfpi
-  if (degrees) rads * .rad2deg else rads
+  rads
 }
 
 # Arclength ---------------------------------------------------------------
 
-# Get the cumulative length of an x, y path safely
-
+# Get the cumulative length of an x, y path safely, by group (id) if needed
 arclength_from_xy <- function(x, y, id = NULL) {
+  # Handle length-1 paths (including NAs) correctly
+  if (length(x) == 1 || length(y) == 1) return(0 * x[1] + 0 * y[1])
 
-  # Handle length-1 paths correctly
-  if (length(x) == 1) return(0 * x + 0 * y[1])
-
-  # Allow x and y to be grid units
   x <- as_npc(x, "x")
   y <- as_npc(y, "y")
 
@@ -115,35 +101,18 @@ after <- function(x) {
   if (length(x) == 0) x else x[c(seq_along(x), length(x))]
 }
 
-# Some features of a path are associated with its points, such as its x and y
-# coordinates, whereas others are associated with the *segments* joining the
-# points, such as the slope or angle. Still others can only really be
-# defined by a change in two adjacent segments, such as curvature. For a path
-# with n points, there will therefore be some features that have length n,
-# some that have length n - 1, and some that have length n - 2. This is a
-# problem if we want to have these features all defined at the same points, as
-# would be possible with a truly differentiable curve. One way to get round this
-# for n - 1 features is to associate the two end points with the two end
-# segments, and all intervening points with the mean of their two adjacent
-# segments.
-
-average_segments_at_points <- function(x) {
-  (before(x) + after(x)) / 2
-}
-
 # Bisect offset -----------------------------------------------------------
 
 # Finds the offset path at distance d. This method effectively looks at each
 # segment of the path and finds the line at distance d that runs parallel to
 # it. The offset path is the set of points where adjacent offset lines meet.
-
 get_offset <- function(x, y, d = 0) {
   # Get angle normal to each segment of the path
   theta <- angle_from_xy(x, y, norm = TRUE)
 
   # Find the angle of the lines which, when drawn at each point on the path
   # will project onto the intersections between adjacent offset segments
-  theta_bisect <- average_segments_at_points(theta)
+  theta_bisect <- (before(theta) + after(theta)) / 2
 
   # Find the distances to these intersecting points when the offset is d.
   # Since d can be a vector of distances, we need a matrix result, where
@@ -162,7 +131,7 @@ get_offset <- function(x, y, d = 0) {
   return(list(x = xout, y = yout, arc_length = arc_length))
 }
 
-
+# Produces kernel-based smoothing of paths for use with straight labels
 get_smooth_offset <- function(x, y, d, width = 0.02) {
   dist <- arclength_from_xy(x, y)
   sd   <- max(dist) * width
@@ -233,6 +202,8 @@ which.min_curvature <- function(x, y, k = 10) {
 
 # Rounding corners --------------------------------------------------------
 
+# Checks whether path contains any angles greater than 12 degrees, which is an
+# approximate value beyond which paths appear cornered or angular.
 has_corners <- function(x, y) {
   angles <- angle_from_xy(x, y, degrees = TRUE)
   any(abs(diff(angles)) > 12)
@@ -310,7 +281,10 @@ spline_smooth <- function(x, n = 4) {
 # Chunk the path into n parts and get the centroid of each chunk
 sample_path <- function(data, n = 50) {
   samp_rows <- seq(1, nrow(data), round(nrow(data) / n))
-  if (tail(samp_rows, 1) != nrow(data)) samp_rows <- c(samp_rows, nrow(data))
+
+  if (tail(samp_rows, 1) != nrow(data)) {
+    samp_rows <- c(samp_rows, nrow(data))
+  }
 
   x           <- spline_smooth(data$x[samp_rows], n = nrow(data) / n)
   y           <- spline_smooth(data$y[samp_rows], n = nrow(data) / n)
@@ -344,7 +318,8 @@ quad_bezier <- function(p0, p1, p2, t) {
   (1 - t)^2 * p0 + 2 * t * (1 - t) * p1 + t^2 * p2
 }
 
-
+# Return a data frame of evenly interpolated points between p1 and p2, where
+# p1 and p2 are length-2 vectors representing x1, y1 and x2, y2
 linear_smooth <- function(p1, p2, n) {
   x   <- seq(p1[1], p2[1], len = n)
   y   <- seq(p1[2], p2[2], len = n)
@@ -357,24 +332,19 @@ linear_smooth <- function(p1, p2, n) {
              line_length = len)
 }
 
-# Produces p points around a corner given the vertex (x1, y1) and two points
-# on the adjacent segment : (x0, y0) and (x2, y2)
-corner_smoother <- function(p0, p1, p2, p = 20) {
-  if (all(p0 == p1) && all(p1 == p2)) {
-    return(data.frame(x           = rep(p0[1], p),
-                      y           = rep(p0[2], p),
-                      length      = rep(0, p),
-                      line_x      = rep(p0[1], p),
-                      line_y      = rep(p0[2], p),
-                      line_length = rep(0, p)))
-  }
+# Pythagorean distance between two x-y pairs given as length-2 vectors
+point_dist <- function(p0, p1) {
+  sqrt((p1[1] - p0[1])^2 + (p1[2] - p0[2])^2)
+}
 
+# Produces p points around a corner given the vertex (x1, y1) and two points
+# on the adjacent segments : (x0, y0) and (x2, y2)
+corner_smoother <- function(p0, p1, p2, p = 20) {
+  if (all(p0 == p1) && all(p1 == p2)) return(linear_smooth(p1, p1, p))
   if (all(p0 == p1)) return(linear_smooth(p1, p2, p))
   if (all(p1 == p2)) return(linear_smooth(p0, p1, p))
 
-  lens <- cumsum(c(0, sqrt((p1[1] - p0[1])^2 + (p1[2] - p0[2])^2),
-                   sqrt((p2[1] - p1[1])^2 + (p2[2] - p1[2])^2)))
-
+  lens  <- cumsum(c(0, point_dist(p0, p1), point_dist(p1, p2)))
   old_x <- approx(lens, c(p0[1], p1[1], p2[1]), seq(0, max(lens), len = p))$y
   old_y <- approx(lens, c(p0[2], p1[2], p2[2]), seq(0, max(lens), len = p))$y
   old_d <- cumsum(c(0, sqrt(diff(old_x)^2 + diff(old_y)^2)))
@@ -392,7 +362,12 @@ corner_smoother <- function(p0, p1, p2, p = 20) {
              line_length = old_d)
 }
 
-
+# Finds the Bezier control points for corner smoothing. These are simply the
+# point at the start of each segment, the point that is {radius} distance along
+# the segment, the midpoint of the segment and the point that is {radius}
+# distance from the other end of the segment. If the segment is shorter
+# than 2 * radius, then only the end-points and midpoint are used. The points
+# have to be given in the order they appear along the path.
 segment_control_points <- function(x, y, len, ang, radius) {
     if (len < 2 * radius) {
       cbind(c(x, x + 0.5 * cos(ang) * len),
@@ -462,7 +437,6 @@ path_smoother <- function(path, text_smoothing) {
 
   path$x <- as_npc(path$x, "x")
   path$y <- as_npc(path$y, "y")
-
   text_smoothing[text_smoothing > 100] <- 100
   text_smoothing[text_smoothing < 0]   <- 0
   path  <- split(path, path$id)
