@@ -111,9 +111,8 @@ textpathGrob <- function(
   vjust  <- rep_len(resolveVJust(just, vjust), n_label)
   halign <- rep_len(halign, n_label)
 
-  label <- measure_label(label, gp = gp_text, vjust = vjust,
-                         halign = halign, straight = straight,
-                         rich = rich)
+  label  <- measure_label(label, gp = gp_text, vjust = vjust,
+                          halign = halign, straight = straight, rich = rich)
 
   x <- as_unit(x, default.units)
   y <- as_unit(y, default.units)
@@ -134,20 +133,19 @@ textpathGrob <- function(
       gp_text       = attr(label, "gp"),
       gp_path       = gp_path,
       gp_box        = gp_box,
-      params = list(
-        upright       = upright,
-        polar_params  = polar_params,
-        angle         = angle,
-        padding       = padding,
-        label.padding = label.padding,
-        label.r       = label.r,
-        hjust         = hjust,
-        vjust         = vjust,
-        halign        = halign,
-        gap           = gap,
-        remove_long   = remove_long
-      ),
-      arrow = arrow
+      arrow         = arrow,
+      params        = list(
+                        upright       = upright,
+                        polar_params  = polar_params,
+                        angle         = angle,
+                        padding       = padding,
+                        label.padding = label.padding,
+                        label.r       = label.r,
+                        hjust         = hjust,
+                        vjust         = vjust,
+                        halign        = halign,
+                        gap           = gap,
+                        remove_long   = remove_long)
     ),
     name = name,
     vp = vp,
@@ -161,43 +159,45 @@ textpathGrob <- function(
 makeContent.textpath <- function(x) {
 
   if (is.null(x$textpath)) return(zeroGrob())
-  v <- x$textpath
+
+  v          <- x$textpath
   x$textpath <- NULL
-  params <- v$params
+  params     <- v$params
 
   path <- prepare_path(v$data, v$label, v$gp_path, params)
 
-  too_long <- if (params$remove_long) {
-    # Identify text that is too long for its path
+  # Identify text that is too long for its path
+  if (params$remove_long) {
     text_lens <- numapply(v$label, function(x) max(x$xmax))
     path_lens <- numapply(path, function(d) {
-                   max(arclength_from_xy(d$line_x, d$line_y))})
-    text_lens > path_lens
+                   max(arclength_from_xy(d$line_x, d$line_y))
+                 })
+    too_long  <- text_lens > path_lens
   } else {
-    rep(FALSE, length(v$label))
+    too_long  <- rep(FALSE, length(v$label))
   }
 
-  ss <- v$data$id %in% which(too_long)
+  remove <- v$data$id %in% which(too_long)
 
   if (any(too_long)) {
-
-    x <- grid::addGrob(x, grid::polylineGrob(
-        v$data$x[ss], v$data$y[ss], id = v$data$id[ss],
-        gp = gp_subset(v$gp_path, too_long)
+    # Use simple polyline grobs for paths with text removed
+    x <- addGrob(x,
+           polylineGrob(
+             x  = v$data$x[remove],
+             y  = v$data$y[remove],
+             id = v$data$id[remove],
+             gp = gp_subset(v$gp_path, remove)
       ))
   }
 
   if (!all(too_long)) {
-
-    # Get the actual text string positions and angles for each group
-    text <- Map(
-        place_text,
-        path = path[!too_long], label = v$label[!too_long],
-        hjust = params$hjust[!too_long], halign = params$halign[!too_long],
-        upright = params$upright
-      )
-
-    ntext <- length(text)
+   # Get the actual text string positions and angles for each group
+    text <- Map(f       = place_text,
+                path    = path[!too_long],
+                label   = v$label[!too_long],
+                hjust   = params$hjust[!too_long],
+                halign  = params$halign[!too_long],
+                upright = params$upright)
 
     text <- rbind_dfs(text)
 
@@ -211,12 +211,6 @@ makeContent.textpath <- function(x) {
 
 
 check_grob_input <- function(x, y, id, n_label, angle) {
-
-  # Verify that:
-  #  1) There are as many labels as there are paths
-  #  2) There are as many x's as y's (or one is of length 1)
-  #  3) There are as many x's as id's (or one is of length 1)
-
   stopifnot(
     "`x` is not of the same length as `id`" =
       length(x) == length(id),

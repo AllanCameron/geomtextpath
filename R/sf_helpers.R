@@ -74,7 +74,7 @@ label_sf.sfc_LINESTRING <- function(x, label, as_textbox = FALSE) {
 
 st_as_grob.sfc_LINESTRING_labelled <- function(
   x, arrow = NULL, default.units = "npc", name = NULL,
-  gp = grid::gpar(), vp = NULL, textpath_vars = list(), ...) {
+  gp = gpar(), vp = NULL, textpath_vars = list(), ...) {
 
   label <- attr(x, "label")
   class(x)[class(x) == "sfc_LINESTRING_labelled"] <- "sfc_LINESTRING"
@@ -122,7 +122,7 @@ st_as_grob.sfc_LINESTRING_labelled <- function(
 # Draws the textbox grobs
 st_as_grob.sfc_LINESTRING_textbox <- function(
   x, arrow = NULL, default.units = "npc", name = NULL,
-  gp = grid::gpar(), vp = NULL, textpath_vars = list(), ...) {
+  gp = gpar(), vp = NULL, textpath_vars = list(), ...) {
 
   label <- attr(x, "label")
   class(x)[class(x) == "sfc_LINESTRING_textbox"] <- "sfc_LINESTRING"

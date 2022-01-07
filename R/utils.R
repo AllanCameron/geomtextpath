@@ -26,18 +26,17 @@ nrow_multi <- function(data) {
 
 # Run length utilities ---------------------------------------------------------
 
+# Gives the indices of a vector where a run length starts
+run_start <- function(x) {
+  x <- discretise(x)
+  c(0, which(diff(x) != 0)) + 1
+}
+
 # Simplified rle(x)$lengths
 run_len <- function(x) {
-  x       <- discretise(x)
-  changes <- which(diff(x) != 0)
-  diff(c(0, changes, length(x)))
+  diff(c(run_start(x), length(x) + 1))
 }
 
-
-run_start <- function(x) {
-  x <- run_len(x)
-  cumsum(x) - x + 1L
-}
 
 # Utilities for data.frames ----------------------------------------------------
 
@@ -130,16 +129,12 @@ approx_multi <- function(x, y = matrix(), xout) {
   }
   # Assign a dimension if there is none
   dimless <- is.null(dim(y))
-  if (dimless) {
-    dim(y) <- c(length(y), 1L)
-  }
+  if (dimless) dim(y) <- c(length(y), 1L)
+
   # Checks
   stopifnot(
-    "`y` must be numeric." =
-      is.numeric(y),
-    "`y` must have a compatible length with `x`" =
-      nrow(y) == length(x)
-  )
+    "`y` must be numeric." = is.numeric(y),
+    "`y` must have a compatible length with `x`" = nrow(y) == length(x))
 
   # Find indices
   i <- findInterval(xout, x, all.inside = TRUE)
@@ -154,10 +149,9 @@ approx_multi <- function(x, y = matrix(), xout) {
     out <- list_to_df(orig)
   }
   # Drop dimensions if `y` didn't have dimensions at the beginning
-  if (dimless) {
-    out <- drop(out)
-  }
-  return(out)
+  if (dimless) out <- drop(out)
+
+  out
 }
 
 # Missingness utilities --------------------------------------------------------
@@ -234,7 +228,6 @@ rename <- function(x, replace) {
     replace   <- replace[!old_names %in% missing_names]
     old_names <- names(replace)
   }
-
   names(x)[match(old_names, current_names)] <- as.vector(replace)
 
   x
@@ -327,7 +320,7 @@ data_to_box_gp <- function(data, lineend = "butt", linejoin = "round",
 # Helper function to do safe(r) recycling on "gpar" class objects.
 recycle_gp <- function(gp, fun, ...) {
   # Recycling rules only apply to non-unique parameters
-  do_recycle <- lengths(gp) > 1
+  do_recycle     <- lengths(gp) > 1
   gp[do_recycle] <- lapply(unclass(gp)[do_recycle], fun, ...)
   # Never ever have zero-length objects in the gpar
   gp[lengths(gp) == 0] <- list(NULL)

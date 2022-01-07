@@ -52,8 +52,8 @@ check_xy <- function(x, y) {
 angle_from_xy <- function(x, y, degrees = FALSE, norm = FALSE) {
 
   # Allow x and y to be grid units
-  if (grid::is.unit(x)) x <- grid::convertUnit(x, "npc", valueOnly = TRUE)
-  if (grid::is.unit(y)) y <- grid::convertUnit(y, "npc", valueOnly = TRUE)
+  x <- as_npc(x, "x")
+  y <- as_npc(y, "y")
 
   check_xy(x, y)
 
@@ -76,8 +76,8 @@ arclength_from_xy <- function(x, y, id = NULL) {
   if (length(x) == 1) return(0 * x + 0 * y[1])
 
   # Allow x and y to be grid units
-  if (grid::is.unit(x)) x <- grid::convertUnit(x, "npc", valueOnly = TRUE)
-  if (grid::is.unit(y)) y <- grid::convertUnit(y, "npc", valueOnly = TRUE)
+  x <- as_npc(x, "x")
+  y <- as_npc(y, "y")
 
   check_xy(x, y)
 
@@ -107,13 +107,11 @@ arclength_from_xy <- function(x, y, id = NULL) {
 # allow a shorthand method of doing this.
 
 before <- function(x) {
-
   if (length(x) == 0) x else x[c(1, seq_along(x))]
 }
 
 
 after <- function(x) {
-
   if (length(x) == 0) x else x[c(seq_along(x), length(x))]
 }
 
@@ -130,7 +128,6 @@ after <- function(x) {
 # segments.
 
 average_segments_at_points <- function(x) {
-
   (before(x) + after(x)) / 2
 }
 
@@ -141,7 +138,6 @@ average_segments_at_points <- function(x) {
 # it. The offset path is the set of points where adjacent offset lines meet.
 
 get_offset <- function(x, y, d = 0) {
-
   # Get angle normal to each segment of the path
   theta <- angle_from_xy(x, y, norm = TRUE)
 
@@ -166,10 +162,8 @@ get_offset <- function(x, y, d = 0) {
   return(list(x = xout, y = yout, arc_length = arc_length))
 }
 
-# Smooth offset -----------------------------------------------------------
 
 get_smooth_offset <- function(x, y, d, width = 0.02) {
-
   dist <- arclength_from_xy(x, y)
   sd   <- max(dist) * width
 
@@ -190,18 +184,15 @@ get_smooth_offset <- function(x, y, d, width = 0.02) {
 
 # Finds the curvature (change in angle per change in arc length)
 # This in effect finds 1/R, where R is the radius of the curve
-
 get_curvature <- function(x, y) {
-
   if (length(x) < 3) return(rep(0, length(x)))
 
-  dx  <- diff(x)
-  ddx <- diff(dx)
-  dy  <- diff(y)
-  ddy <- diff(dy)
-  dx  <- head(dx, -1)
-  dy  <- head(dy, -1)
-
+  dx   <- diff(x)
+  ddx  <- diff(dx)
+  dy   <- diff(y)
+  ddy  <- diff(dy)
+  dx   <- head(dx, -1)
+  dy   <- head(dy, -1)
   curv <- (dx * ddy - ddx * dy) / (dx^2 + dy^2)^1.5
 
   # Duplicate first and last entries, since these are the best estimates
@@ -209,9 +200,8 @@ get_curvature <- function(x, y) {
   before(after(curv))
 }
 
-
+# Detects whether the distance d ever exceeds curvature of an [x, y] path
 exceeds_curvature <- function(x, y, d, tolerance = 0.1) {
-
   curve_radius <- 1 / get_curvature(x, y)
   as.numeric(apply(outer(curve_radius, d,
         FUN = function(a, b) {
@@ -219,31 +209,34 @@ exceeds_curvature <- function(x, y, d, tolerance = 0.1) {
         }), 1, any))
 }
 
-
+# A rollmean that returns the same length vector as was input
 safe_rollmean <- function(vec, k = 10) {
-
   if (k < 2) return(vec)
-
   mat <- sapply(-(k / 2 - 1):(length(vec) - k / 2), function(x) x + 0:(k - 1))
   mat[mat < 1] <- 1
   mat[mat > length(vec)] <- length(vec)
   mat <- round(mat)
-  dm <- dim(mat)
+  dm  <- dim(mat)
   mat <- vec[mat]
   return(colMeans(`dim<-`(mat, dm)))
 }
 
-
+# Returns the index of the flattest point of an x, y path.
 which.min_curvature <- function(x, y, k = 10) {
-
-  len <- arclength_from_xy(x, y)
-  len <- len / max(len)
-  curv <- abs(get_curvature(x, y))
+  len       <- arclength_from_xy(x, y)
+  len       <- len / max(len)
+  curv      <- abs(get_curvature(x, y))
   mean_curv <- safe_rollmean(curv, k)
+
   which.min(abs(mean_curv) - min(abs(mean_curv)))
 }
 
 # Rounding corners --------------------------------------------------------
+
+has_corners <- function(x, y) {
+  angles <- angle_from_xy(x, y, degrees = TRUE)
+  any(abs(diff(angles)) > 12)
+}
 
 # Rounds corners of a closed x,y polygon with some radius at positions marked
 # by the 'at' variable by making 'n' new points on a circle. Doesn't round first
@@ -254,7 +247,6 @@ which.min_curvature <- function(x, y, k = 10) {
 # y <- c(0, 0, 1, 1, 0)
 # plot(round_corners(x, y, 0.2, c(2, 4)), type = 'l')
 round_corners <- function(x, y, radius, at, n = 10) {
-
   len  <- arclength_from_xy(x, y)
 
   # Find surrounding points around corners at radius distance
@@ -268,11 +260,11 @@ round_corners <- function(x, y, radius, at, n = 10) {
 
   # Find appropriate x/y for surrounding points
   proj <- approx_multi(x = len, y = cbind(x, y), xout = as.vector(pts))
-  xx <- `dim<-`(proj[, 1], dim(pts))
-  yy <- `dim<-`(proj[, 2], dim(pts))
+  xx   <- `dim<-`(proj[, 1], dim(pts))
+  yy   <- `dim<-`(proj[, 2], dim(pts))
 
   # Find center-points of circles at corners
-  ang <- atan2(yy[, 2] - yy[, 1], xx[, 2] - xx[, 1])
+  ang   <- atan2(yy[, 2] - yy[, 1], xx[, 2] - xx[, 1])
   cen_x <- cos(ang - .halfpi) * radius + xx[, 1]
   cen_y <- sin(ang - .halfpi) * radius + yy[, 1]
 
@@ -285,7 +277,7 @@ round_corners <- function(x, y, radius, at, n = 10) {
   ang_delta <- ang_delta - (2 * pi) * sign(ang_delta) * (abs(ang_delta) > pi)
 
   # Sequence from ang_start to ang_end (but vectorised)
-  weight <- seq(0, 1, length.out = n)
+  weight  <- seq(0, 1, length.out = n)
   ang_seq <- outer(ang_delta, weight) + ang_start
 
   # Find points on circle pieces
@@ -304,21 +296,12 @@ round_corners <- function(x, y, radius, at, n = 10) {
 }
 
 
-# Simple test for whether a path has "corners"
-has_corners <- function(x, y) {
-
-  angles <- angle_from_xy(x, y, degrees = TRUE)
-  any(abs(diff(angles)) > 12)
-}
-
-
 #-------------------------------------------------------------------------------
 # Spline-based smoothing for noisy paths
 #-------------------------------------------------------------------------------
 
 # Simple single-variable spline interpolation
 spline_smooth <- function(x, n = 4) {
-
   stopifnot("length must be 2 or more for smoothing" = length(x[!is.na(x)]) > 1)
   t <- seq_along(x)
   spline(t, x, n = n * length(x))$y
@@ -326,16 +309,13 @@ spline_smooth <- function(x, n = 4) {
 
 # Chunk the path into n parts and get the centroid of each chunk
 sample_path <- function(data, n = 50) {
-
   samp_rows <- seq(1, nrow(data), round(nrow(data) / n))
   if (tail(samp_rows, 1) != nrow(data)) samp_rows <- c(samp_rows, nrow(data))
 
-  x <- spline_smooth(data$x[samp_rows], n = nrow(data) / n)
-  y <- spline_smooth(data$y[samp_rows], n = nrow(data) / n)
-
-  data$x <- approx(seq_along(x), x, seq(1, length(x), len = 1000))$y
-  data$y <- approx(seq_along(y), y, seq(1, length(y), len = 1000))$y
-
+  x           <- spline_smooth(data$x[samp_rows], n = nrow(data) / n)
+  y           <- spline_smooth(data$y[samp_rows], n = nrow(data) / n)
+  data$x      <- approx(seq_along(x), x, seq(1, length(x), len = 1000))$y
+  data$y      <- approx(seq_along(y), y, seq(1, length(y), len = 1000))$y
   data$length <- arclength_from_xy(data$x, data$y, data$id)
 
   data
@@ -343,11 +323,9 @@ sample_path <- function(data, n = 50) {
 
 # Spline smooth the centroids of a path split into n chunks
 smooth_noisy <- function(data, samples = 50) {
-
   # data is a data frame with an accurate x, y, length and mapped values,
   # representing a *single* corner-smoothed path and the original path
   # We will munch the path into 1000 pieces to start with
-
   n <- seq(nrow(data))
   t <- seq(1, length(data$x), len = 1000)
   data <- as.data.frame(lapply(data, function(x) approx(n, x, t)$y))
@@ -363,28 +341,32 @@ smooth_noisy <- function(data, samples = 50) {
 
 # Quadratic Bezier function
 quad_bezier <- function(p0, p1, p2, t) {
-
   (1 - t)^2 * p0 + 2 * t * (1 - t) * p1 + t^2 * p2
 }
 
 
 linear_smooth <- function(p1, p2, n) {
-
-  x <- seq(p1[1], p2[1], len = n)
-  y <- seq(p1[2], p2[2], len = n)
+  x   <- seq(p1[1], p2[1], len = n)
+  y   <- seq(p1[2], p2[2], len = n)
   len <- cumsum(c(0, sqrt(diff(x)^2 + diff(y)^2)))
-  data.frame(x = x, y = y, length = len, line_x = x, line_y = y,
+  data.frame(x           = x,
+             y           = y,
+             length      = len,
+             line_x      = x,
+             line_y      = y,
              line_length = len)
 }
 
 # Produces p points around a corner given the vertex (x1, y1) and two points
 # on the adjacent segment : (x0, y0) and (x2, y2)
 corner_smoother <- function(p0, p1, p2, p = 20) {
-
   if (all(p0 == p1) && all(p1 == p2)) {
-    return(data.frame(x = rep(p0[1], p), y = rep(p0[2], p),
-                      length = rep(0, p), line_x = rep(p0[1], p),
-                      line_y = rep(p0[2], p), line_length = rep(0, p)))
+    return(data.frame(x           = rep(p0[1], p),
+                      y           = rep(p0[2], p),
+                      length      = rep(0, p),
+                      line_x      = rep(p0[1], p),
+                      line_y      = rep(p0[2], p),
+                      line_length = rep(0, p)))
   }
 
   if (all(p0 == p1)) return(linear_smooth(p1, p2, p))
@@ -397,18 +379,21 @@ corner_smoother <- function(p0, p1, p2, p = 20) {
   old_y <- approx(lens, c(p0[2], p1[2], p2[2]), seq(0, max(lens), len = p))$y
   old_d <- cumsum(c(0, sqrt(diff(old_x)^2 + diff(old_y)^2)))
 
-  t <- seq(0, 1, len = p)
+  t     <- seq(0, 1, len = p)
   new_x <- quad_bezier(p0[1], p1[1], p2[1], t)
   new_y <- quad_bezier(p0[2], p1[2], p2[2], t)
   new_d <- cumsum(c(0, sqrt(diff(new_x)^2 + diff(new_y)^2)))
 
-  data.frame(x = new_x, y = new_y, length = new_d,
-             line_x = old_x, line_y = old_y, line_length = old_d)
+  data.frame(x           = new_x,
+             y           = new_y,
+             length      = new_d,
+             line_x      = old_x,
+             line_y      = old_y,
+             line_length = old_d)
 }
 
 
 segment_control_points <- function(x, y, len, ang, radius) {
-
     if (len < 2 * radius) {
       cbind(c(x, x + 0.5 * cos(ang) * len),
             c(y, y + 0.5 * sin(ang) * len))
@@ -421,17 +406,14 @@ segment_control_points <- function(x, y, len, ang, radius) {
 # Takes a path and a corner radius to find the control points on the path
 # that will give Bezier curves with the given radius
 find_control_points <- function(data, radius = 0.1) {
-
   lens <- diff(arclength_from_xy(data$x, data$y))
   angs <- angle_from_xy(data$x, data$y)
-
-  segs <- Map(segment_control_points,
-              x   = head(data$x, -1),
-              y   = head(data$y, -1),
-              len = lens,
-              ang = angs,
+  segs <- Map(f      = segment_control_points,
+              x      = head(data$x, -1),
+              y      = head(data$y, -1),
+              len    = lens,
+              ang    = angs,
               radius = radius)
-
   segs <- do.call(rbind, segs)
 
   rbind(segs[1, ],
@@ -444,7 +426,6 @@ find_control_points <- function(data, radius = 0.1) {
 
 # Co-ordinates the above functions to generate a Bezier-smoothed curve
 smooth_corners <- function(data, n = 20, radius = 0.1) {
-
   cps      <- find_control_points(data, radius = radius)
   sections <- lapply(seq(1, nrow(cps) - 2, 2), function(x) cps[x + 0:2, ])
   out      <- lapply(sections, function(x) corner_smoother(c(x[1, 1], x[1, 2]),
@@ -468,9 +449,7 @@ smooth_corners <- function(data, n = 20, radius = 0.1) {
     x$length <- x$length + y
     return(x)
     }, x = out, y = cumsum(c(0, head(new_lens, -1))))
-
   out      <- rbind_dfs(out)
-
   out$id   <- data$id[1]
   out
 }
@@ -479,7 +458,6 @@ smooth_corners <- function(data, n = 20, radius = 0.1) {
 # Co-ordinate rounding and smoothing functions
 #-------------------------------------------------------------------------------
 
-# Applies the smoothing functions to a data frame consisting of x, y and id
 path_smoother <- function(path, text_smoothing) {
 
   path$x <- as_npc(path$x, "x")
@@ -494,7 +472,6 @@ path_smoother <- function(path, text_smoothing) {
   path <- Map(smooth_corners, data = path, radius  = radii)
   path <- Map(smooth_noisy,   data = path, samples = samps)
   path <- rbind_dfs(path)
-
   cols <- c("x", "y", "line_x", "line_y")
   path[cols] <- lapply(path[cols], unit, unit = "npc")
 

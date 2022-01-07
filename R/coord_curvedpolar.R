@@ -121,7 +121,7 @@ coord_curvedpolar <- function(theta = "x", start = 0,
     y      <- 0.45 * cos(theta) + 0.5
 
     # We now have enough data to make our grob
-    grid::grobTree(if (length(labels) > 0)
+    grobTree(if (length(labels) > 0)
       textpathGrob(labels,
                     x             = x,
                     y             = y,
