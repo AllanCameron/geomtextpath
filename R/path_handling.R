@@ -16,9 +16,9 @@ prepare_path <- function(data, label, gp, params) {
 
   # Deduplicate path for the safety of angle / curvature calculations
   path <- dedup_path(
-    x = as_inch(data$x, "x"),
-    y = as_inch(data$y, "y"),
-    id = data$id,
+    x      = as_inch(data$x, "x"),
+    y      = as_inch(data$y, "y"),
+    id     = data$id,
     line_x = as_inch(data$line_x, "x"),
     line_y = as_inch(data$line_y, "y")
   )
@@ -100,9 +100,9 @@ make_gap <- function(path, letters, gap = NA,
   # Simplify if text isn't exactly on path
   if (!any(trim)) {
     path$section <- "all"
-    path$x <- path$line_x
-    path$y <- path$line_y
-    path$length <- arclength_from_xy(path$x, path$y, path$id)
+    path$x       <- path$line_x
+    path$y       <- path$line_y
+    path$length  <- arclength_from_xy(path$x, path$y, path$id)
   } else {
 
     # Find length along (smoothed) text path
@@ -118,17 +118,15 @@ make_gap <- function(path, letters, gap = NA,
 
     # Create breathing space around letters
     path_max <- gapply(path$length, path$id, max, numeric(1))
-    trim <- rep_len(trim, length(path_max))
-
-    mins <- pmax(0,        ranges[1, ] - padding)
-    maxs <- pmin(path_max, ranges[2, ] + padding)
-
+    trim     <- rep_len(trim, length(path_max))
+    mins     <- pmax(0,        ranges[1, ] - padding)
+    maxs     <- pmin(path_max, ranges[2, ] + padding)
 
     # Consider path lengths as following one another to avoid a loop
-    sumlen <- c(0, path_max[-length(path_max)])
-    sumlen <- cumsum(sumlen + seq_along(path_max) - 1)
-    mins <- mins + sumlen
-    maxs <- maxs + sumlen
+    sumlen      <- c(0, path_max[-length(path_max)])
+    sumlen      <- cumsum(sumlen + seq_along(path_max) - 1)
+    mins        <- mins + sumlen
+    maxs        <- maxs + sumlen
     path$length <- path$length + sumlen[path$id]
 
     # Assign sections based on trimming
@@ -138,36 +136,36 @@ make_gap <- function(path, letters, gap = NA,
     section[!trim[path$id]] <- "all"
 
     # Interpolate trimming points
-    ipol <- c(mins[trim], maxs[trim])
+    ipol    <- c(mins[trim], maxs[trim])
     trim_xy <- approx_multiple(path$length, ipol,
                                path[c("line_x", "line_y", "line_length")])
 
     # Add trimming points to paths
     path <- data_frame(
-      x  = c(path$line_x, trim_xy$line_x),
-      y  = c(path$line_y, trim_xy$line_y),
-      id = c(path$id, rep(which(trim), 2L)),
-      length = c(path$line_length, trim_xy$line_length),
+      x       = c(path$line_x, trim_xy$line_x),
+      y       = c(path$line_y, trim_xy$line_y),
+      id      = c(path$id, rep(which(trim), 2L)),
+      length  = c(path$line_length, trim_xy$line_length),
       section = c(section, rep(c("pre", "post"), each = sum(trim)))
     )[order(c(path$line_length, trim_xy$line_length)), , drop = FALSE]
-    path <- path[order(path$id), , drop = FALSE]
+    path  <- path[order(path$id), , drop = FALSE]
 
     # Filter empty sections (i.e., the part where the string is)
-    path <- path[path$section != "", , drop = FALSE]
+    path  <- path[path$section != "", , drop = FALSE]
 
     # Filter empty paths
     group <- paste0(path$id, path$section)
-    len <- ave(path$length, group, FUN = function(x) diff(range(x)))
-    path <- path[len > 1e-3, ]
+    len   <- ave(path$length, group, FUN = function(x) diff(range(x)))
+    path  <- path[len > 1e-3, ]
 
     # Recategorise
-    sect <- ave(path$section, path$id, FUN = function(x) length(unique(x)))
+    sect  <- ave(path$section, path$id, FUN = function(x) length(unique(x)))
     path$section[sect == "1"] <- "all"
   }
 
   if (!nrow(path)) {
     path$new_id <- integer()
-    path$start <- logical()
+    path$start  <- logical()
     return(path)
   }
 
@@ -182,7 +180,6 @@ make_gap <- function(path, letters, gap = NA,
 # problems for gradient/offset calculations. Also interpolates any NA values in
 # the x, y values to avoid broken paths, and removes any points that have an
 # NA id.
-
 dedup_path <- function(x, y, id, line_x, line_y,
                        tolerance = 1000 * .Machine$double.eps) {
 
@@ -208,46 +205,45 @@ dedup_path <- function(x, y, id, line_x, line_y,
 }
 
 
-# Convert point-like textpaths into proper text paths.
-
+# Converts point-like textpaths into proper text paths.
 pathify <- function(data, hjust, angle, width,
                      polar_x = NULL, polar_y = NULL, thet = NULL) {
 
-  angle <- pi * angle / 180
+  angle     <- pi * angle / 180
   multi_seq <- Vectorize(seq.default)
 
   if (!is.null(polar_x) & !is.null(polar_y) & !is.null(thet)) {
 
-    polar_x <- as_inch(polar_x, "x")
-    polar_y <- as_inch(polar_y, "y")
-
-    if (thet == "y") angle <- angle - pi / 2
-    r <- sqrt((data$x - polar_x)^2 + (data$y - polar_y)^2)
-    width <- width / r
-    theta <- atan2(data$y - polar_y, data$x - polar_x)
+    polar_x    <- as_inch(polar_x, "x")
+    polar_y    <- as_inch(polar_y, "y")
+    angle      <- angle - (as.numeric(thet == "y") * pi / 2)
+    r          <- sqrt((data$x - polar_x)^2 + (data$y - polar_y)^2)
+    width      <- width / r
+    theta      <- atan2(data$y - polar_y, data$x - polar_x)
     theta_min  <- theta + cos(angle + pi) * width * hjust
     theta_max  <- theta + cos(angle) * width * (1 - hjust)
-    r_min   <- r + sin(angle + pi) * width * hjust
-    r_max   <- r + sin(angle) * width * (1 - hjust)
-
-    theta <- c(multi_seq(theta_min, theta_max, length.out = 100))
-    r <- c(multi_seq(r_min, r_max, length.out = 100))
-    x <- polar_x + r * cos(theta)
-    y <- polar_y + r * sin(theta)
+    r_min      <- r + sin(angle + pi) * width * hjust
+    r_max      <- r + sin(angle) * width * (1 - hjust)
+    theta      <- c(multi_seq(theta_min, theta_max, length.out = 100))
+    r          <- c(multi_seq(r_min, r_max, length.out = 100))
+    x          <- polar_x + r * cos(theta)
+    y          <- polar_y + r * sin(theta)
   } else {
-    xmin  <- data$x + cos(angle + pi) * width * hjust
-    xmax  <- data$x + cos(angle) * width * (1 - hjust)
-    ymin  <- data$y + sin(angle + pi) * width * hjust
-    ymax  <- data$y + sin(angle) * width * (1 - hjust)
-    x <- c(multi_seq(xmin, xmax, length.out = 100))
-    y <- c(multi_seq(ymin, ymax, length.out = 100))
+
+    xmin       <- data$x + cos(angle + pi) * width * hjust
+    xmax       <- data$x + cos(angle) * width * (1 - hjust)
+    ymin       <- data$y + sin(angle + pi) * width * hjust
+    ymax       <- data$y + sin(angle) * width * (1 - hjust)
+    x          <- c(multi_seq(xmin, xmax, length.out = 100))
+    y          <- c(multi_seq(ymin, ymax, length.out = 100))
   }
 
-  data <- data[rep(seq(nrow(data)), each = 100), ]
-  data$x <- x
-  data$y <- y
+  data        <- data[rep(seq(nrow(data)), each = 100), ]
+  data$x      <- x
+  data$y      <- y
   data$line_x <- x
   data$line_y <- y
+
   data
 }
 
@@ -281,8 +277,8 @@ tailor_arrow <- function(data, arrow) {
 
 # Grob constructor --------------------------------------------------------
 
-.add_path_grob <- function(grob, data, text, gp, params, arrow = NULL) {
-  has_line <- !all((gp$lty %||% 1)  %in% c("0", "blank", NA))
+add_path_grob <- function(grob, data, text, gp, params, arrow = NULL) {
+  has_line  <- !all((gp$lty %||% 1)  %in% c("0", "blank", NA))
   is_opaque <- !all((gp$col %||% 1) %in% c(NA, "transparent"))
   if (has_line && is_opaque) {
     data <- rbind_dfs(data)

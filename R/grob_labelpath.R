@@ -62,7 +62,7 @@ makeContent.labelpath <- function(x) {
 
     text <- rbind_dfs(text)
 
-    x <- .add_path_grob(x, path[!too_long], text,
+    x <- add_path_grob(x, path[!too_long], text,
                         gp_subset(attr(path, "gp"), !too_long), params, v$arrow)
 
     # Construct textbox grobs as list

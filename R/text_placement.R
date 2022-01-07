@@ -82,20 +82,19 @@ place_text <- function(
 
   # Consider flipping the text
   df <- attempt_flip(path, label, letters$angle, hjust, halign, upright)
-  if (!is.null(df)) {
-    return(df)
-  }
+
+  if (!is.null(df)) return(df)
 
   # Interpolate whatever else is in `path` at text positions
   path$length <- arclength_from_xy(path$x, path$y)
 
   protect_column <- c("x", "y", "angle", "length", "id", "left", "right")
-  df <- as.list(path[setdiff(names(path), protect_column)])
-  df <- approx_multiple(path$length, letters$base_length, df)
-  df <- cbind(df, letters, id = path$id[1] %||% 1L)
-  df$substring <- label$substring %||% df$id
-  df$xoffset <- label$xoff
-  df$yoffset <- label$yoff
+  df             <- as.list(path[setdiff(names(path), protect_column)])
+  df             <- approx_multiple(path$length, letters$base_length, df)
+  df             <- cbind(df, letters, id = path$id[1] %||% 1L)
+  df$substring   <- label$substring %||% df$id
+  df$xoffset     <- label$xoff
+  df$yoffset     <- label$yoff
 
   if (any(df$exceed != 0) & !is.multichar(label$glyph)) {
 
@@ -130,34 +129,31 @@ attempt_flip <- function(
   path, label = "placeholder", angle = 0,
   hjust = 0, halign = "left", upright = FALSE
 ) {
-  if (!upright) {
-    return(NULL)
-  }
-  angle <- angle %% 360
-  upside_down <- mean(angle > 100 & angle < 260) > 0.5
-  if (!upside_down) {
-    return(NULL)
-  }
-  # Invert path and hjust
-  path  <- path[rev(seq_len(nrow(path))), ]
+  if (!upright)  return(NULL)
 
-  yids   <- unique(label$y_id)
-  offset <- attr(label, "offset")
-  offlim <- range(offset[yids])
-  offnew <- (offset - offlim[1]) - offlim[2]
-  off_fix <- as.numeric(any(yids == 1) && offnew[1] != 0)
+  angle       <- angle %% 360
+  upside_down <- mean(angle > 100 & angle < 260) > 0.5
+
+  if (!upside_down)  return(NULL)
+
+  # Invert path and hjust
+  path       <- path[rev(seq_len(nrow(path))), ]
+  yids       <- unique(label$y_id)
+  offset     <- attr(label, "offset")
+  offlim     <- range(offset[yids])
+  offnew     <- (offset - offlim[1]) - offlim[2]
+  off_fix    <- as.numeric(any(yids == 1) && offnew[1] != 0)
   label$y_id <- label$y_id + off_fix
+
   attr(label, "offset") <- c(0, offnew[seq_along(offnew) >= (2 - off_fix)])
 
   if (is.numeric(hjust)) hjust <- 1 - hjust
 
-  out <- place_text(
-    path, label, hjust, halign,
-    upright = FALSE
-  )
+  out <- place_text(path, label, hjust, halign, upright = FALSE)
+
   # Invert length so path is trimmed correctly
-  length <- path$length %||% arclength_from_xy(path$x, path$y)
-  maxlen <- max(length)
+  length     <- path$length %||% arclength_from_xy(path$x, path$y)
+  maxlen     <- max(length)
   out$length <- maxlen - out$length
   rights     <- maxlen - out$right
   out$right  <- maxlen - out$left
@@ -208,18 +204,16 @@ anchor_points <- function(
   anchor[1, ] * halign + (1 - halign) * (anchor[2, ] - text_width)
 }
 
-interpret_hjust <- function(hjust, offset, width) {
 
-  x <- offset$x[, 1]
-  y <- offset$y[, 1]
-  path <- offset$arc_length[, 1]
-  path_max <- max(path)
+interpret_hjust <- function(hjust, offset, width) {
+  x          <- offset$x[, 1]
+  y          <- offset$y[, 1]
+  path       <- offset$arc_length[, 1]
+  path_max   <- max(path)
   half_width <- 0.5 * width
 
   subset <- path > half_width & path < (path_max - half_width)
-  if (sum(subset) < 2) {
-    subset <- rep(TRUE, length(path))
-  }
+  if (sum(subset) < 2) subset[] <- TRUE
 
   path <- path / path_max
 
@@ -264,7 +258,7 @@ interpret_hjust <- function(hjust, offset, width) {
 #' @examples
 #' NULL
 project_text <- function(text, offset, xpos = c("xmin", "xmid", "xmax")) {
-  arclength <- offset$arc_length
+  arclength  <- offset$arc_length
   index <- x <- unlist(text[, xpos], FALSE, FALSE)
   membr <- rep(text$y_id, 3)
 
@@ -284,10 +278,10 @@ project_text <- function(text, offset, xpos = c("xmin", "xmid", "xmax")) {
   d  <- (x - arclength[i0]) / (arclength[i1] - arclength[i0])
 
   # Interpolate
-  new_x <- offset$x[i0] * (1 - d) + offset$x[i1] * d
-  new_y <- offset$y[i0] * (1 - d) + offset$y[i1] * d
+  new_x   <- offset$x[i0] * (1 - d) + offset$x[i1] * d
+  new_y   <- offset$y[i0] * (1 - d) + offset$y[i1] * d
   old_len <- arclength[i0[, 1], 1]
-  lengs <- old_len * (1 - d) + arclength[i1[, 1], 1] * d
+  lengs   <- old_len * (1 - d) + arclength[i1[, 1], 1] * d
 
   # Restore dimensions
   # Column 1 comes from `xmin`, 2 from `xmid` and 3 from `xmax`
@@ -295,27 +289,27 @@ project_text <- function(text, offset, xpos = c("xmin", "xmid", "xmax")) {
     c(nrow(text), length(xpos))
 
   # Calculate text angles
-  dx <- new_x[, 3] - new_x[, 1]
-  dy <- new_y[, 3] - new_y[, 1]
+  dx    <- new_x[, 3] - new_x[, 1]
+  dy    <- new_y[, 3] - new_y[, 1]
   angle <- atan2(dy, dx) * .rad2deg
 
   # Format output
   data_frame(
-    label  = text$glyph,
-    length = lengs[, 2],
+    label       = text$glyph,
+    length      = lengs[, 2],
     base_length = old_len[, 1],
-    angle  = angle,
-    x = new_x[, 2],
-    y = new_y[, 2],
-    left  = lengs[, 1],
-    right = lengs[, 3]
+    angle       = angle,
+    x           = new_x[, 2],
+    y           = new_y[, 2],
+    left        = lengs[, 1],
+    right       = lengs[, 3]
   )
 }
 
 # Grob constructor --------------------------------------------------------
 
-.add_text_grob <- function(grob, text, gp) {
-  sub <- unlist(text$substring, FALSE, FALSE) %||% text$id
+add_text_grob <- function(grob, text, gp) {
+  sub       <- unlist(text$substring, FALSE, FALSE) %||% text$id
   text_lens <- run_len(sub)
 
   # Recycle graphical parameters to match lengths of letters
@@ -323,16 +317,16 @@ project_text <- function(text, offset, xpos = c("xmin", "xmid", "xmax")) {
 
   if (is.list(text$xoffset)) {
     # This is a rich straight label
-    xx <- unlist(text$xoffset, FALSE, FALSE)
-    yy <- unlist(text$yoffset, FALSE, FALSE)
-    nsub <- lengths(text$xoffset)
+    xx    <- unlist(text$xoffset, FALSE, FALSE)
+    yy    <- unlist(text$yoffset, FALSE, FALSE)
+    nsub  <- lengths(text$xoffset)
     angle <- rep(text$angle, nsub) * .deg2rad
-    x <- xx * cos(angle) - yy * sin(angle) + rep(text$x, nsub)
-    y <- xx * sin(angle) + yy * cos(angle) + rep(text$y, nsub)
+    x     <- xx * cos(angle) - yy * sin(angle) + rep(text$x, nsub)
+    y     <- xx * sin(angle) + yy * cos(angle) + rep(text$y, nsub)
   } else {
     # This is a regular label
-    x <- text$x
-    y <- text$y
+    x    <- text$x
+    y    <- text$y
     nsub <- 1
   }
 

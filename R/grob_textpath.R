@@ -201,10 +201,10 @@ makeContent.textpath <- function(x) {
 
     text <- rbind_dfs(text)
 
-    x <- .add_path_grob(x, path[!too_long], text,
+    x <- add_path_grob(x, path[!too_long], text,
                         gp_subset(attr(path, "gp"), !too_long),
                         params, v$arrow)
-    x <- .add_text_grob(x, text, gp_subset(v$gp_text, !too_long))
+    x <- add_text_grob(x, text, gp_subset(v$gp_text, !too_long))
   }
   x
 }
