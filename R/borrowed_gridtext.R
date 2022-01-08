@@ -19,28 +19,29 @@
 # Tag processing ----------------------------------------------------------
 
 process_tags <- function(node, drawing_context) {
-  tags <- names(node)
   new  <- lapply(seq_along(node), function(i) {
-    dispatch_tag(node[[i]], tags[i], drawing_context)
+    dispatch_tag(node[[i]], names(node)[i], drawing_context)
   })
   rbind_dfs(new)
 }
 
 
+# Will process any tag as long as it has a function to handle it with the
+# prefix 'process_tag_' . This allows for easier handling of additional tags
+# simply by writing an appropriately named method
+
 dispatch_tag <- function(node, tag, drawing_context) {
-  if (is.null(tag) || tag == "") {
-    process_text(node, drawing_context)
-  } else {
-    call_name <- paste("process_tag", tag, sep = "_")
-    if(!exists(call_name)) {
-        abort(paste0(
-        "The rich-text has a tag that isn't supported (yet): <", tag, ">\n",
-        "Only a very limited number of tags are currently supported."
-      ))
-    }
-    dc <- set_style(drawing_context, attr(node, "style"))
-    drawing_context <- call(call_name, node = node, drawing_context = dc)
+  if (is.null(tag) || tag == "") return(process_text(node, drawing_context))
+
+  call_name <- paste("process_tag", tag, sep = "_")
+  if(!exists(call_name)) {
+      abort(paste0(
+      "The rich-text has a tag that isn't supported (yet): <", tag, ">\n",
+      "Only a very limited number of tags are currently supported."
+    ))
   }
+  dc <- set_style(drawing_context, attr(node, "style"))
+  call(call_name, node = node, drawing_context = dc)
 }
 
 
@@ -193,6 +194,8 @@ parse_css_line <- function(line) {
   end     <- start + m$capture.length - 1
   if (start[1] > 0) {
     key <- substr(line, start[1], end[1])
+    # Ensure capitalized tags are handled
+    key <- as_lower(key)
   } else {
     key <- NULL
   }
