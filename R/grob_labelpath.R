@@ -20,13 +20,13 @@ makeContent.labelpath <- function(x) {
   path       <- prepare_path(v$data, v$label, v$gp_path, params)
 
   # Identify text that is too long for its path
-  too_long <- if (params$remove_long) {
+  if (params$remove_long) {
     text_lens <- numapply(v$label, function(x) max(x$xmax))
     path_lens <- numapply(path, function(d) {
                    max(arclength_from_xy(d$line_x, d$line_y))})
-    text_lens > path_lens
+    too_long  <- text_lens > path_lens
   } else {
-    rep(FALSE, length(v$label))
+    too_long  <- rep(FALSE, length(v$label))
   }
 
   ss <- v$data$id %in% which(too_long)
@@ -42,9 +42,9 @@ makeContent.labelpath <- function(x) {
   if (!all(too_long)) {
     # Get the actual text string positions and angles for each group
     text <- Map(
-        place_text,
-        path = path[!too_long], label = v$label[!too_long],
-        hjust = params$hjust[!too_long], halign = params$halign[!too_long],
+        f       = place_text,
+        path    = path[!too_long], label = v$label[!too_long],
+        hjust   = params$hjust[!too_long], halign = params$halign[!too_long],
         upright = params$upright
       )
 
@@ -53,9 +53,12 @@ makeContent.labelpath <- function(x) {
     # Get points on the box
     if (sum(lengths(v$gp_box))) {
       box <- Map(
-        curved_textbox,
-        path = path[!too_long], label = v$label[!too_long], text = text,
-        padding = params$label.padding, radius = params$label.r
+        f       = curved_textbox,
+        path    = path[!too_long],
+        label   = v$label[!too_long],
+        text    = text,
+        padding = params$label.padding,
+        radius  = params$label.r
       )
       box <- rbind_dfs(box)
     }

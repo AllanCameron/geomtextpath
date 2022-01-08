@@ -8,7 +8,7 @@
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
 ##                                                                           ##
-##---------------------------------------------------------------------------##                                     ##
+##---------------------------------------------------------------------------##
 
 # Constants ---------------------------------------------------------------
 
@@ -50,7 +50,7 @@ angle_from_xy <- function(x, y, degrees = FALSE, norm = FALSE) {
 
   rads <- atan2(diff(y), diff(x))
   rads <- rads + .halfpi * as.numeric(norm)
-  rads <- rads * .rad2deg^(as.numeric(degrees))
+  rads <- rads * .rad2deg ^ (as.numeric(degrees))
 
   rads
 }
@@ -181,7 +181,7 @@ exceeds_curvature <- function(x, y, d, tolerance = 0.1) {
 # A rollmean that returns the same length vector as was input
 safe_rollmean <- function(vec, k = 10) {
   if (k < 2) return(vec)
-  mat <- sapply(-(k / 2 - 1):(length(vec) - k / 2), function(x) x + 0:(k - 1))
+  mat <- sapply(seq_along(vec) - k / 2, function(x) x + 0:(k - 1))
   mat[mat < 1] <- 1
   mat[mat > length(vec)] <- length(vec)
   mat <- round(mat)

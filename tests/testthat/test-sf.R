@@ -13,9 +13,9 @@ test_that("We can label an sfc_LINESTRING", {
 
   # Multipolygon should be unaltered, linestring should change
   expect_equal(class(multipolygon), c("sfc_MULTIPOLYGON", "sfc"))
-  expect_equal(class(linestring1), c("sfc_LINESTRING_labelled", "sfc"))
+  expect_equal(class(linestring1), c("sfc_labelled", "sfc"))
 
-  expect_equal(class(linestring2), c("sfc_LINESTRING_textbox", "sfc"))
+  expect_equal(class(linestring2), c("sfc_textbox", "sfc"))
   expect_equal(attr(linestring1, "label"), "test")
 })
 

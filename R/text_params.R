@@ -99,7 +99,7 @@ static_text_params <- function(
 
 # Automatically capture static text parameters
 set_params <- function(...) {
-  params <- list(...)
+  params      <- list(...)
   text_names  <- names(formals(static_text_params))
   text_names  <- intersect(text_names, names(params))
   text_params <- do.call(static_text_params, params[text_names])

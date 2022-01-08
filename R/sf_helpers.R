@@ -63,21 +63,21 @@ label_sf.sfc_LINESTRING <- function(x, label, as_textbox = FALSE) {
   attr(x, "label") <- match_labels(x, label)
   cl <- which(class(x) == "sfc_LINESTRING")
   if (!as_textbox) {
-    class(x)[cl] <- "sfc_LINESTRING_labelled"
+    class(x)[cl] <- "sfc_labelled"
   } else {
-    class(x)[cl] <- "sfc_LINESTRING_textbox"
+    class(x)[cl] <- "sfc_textbox"
   }
   x
 }
 
 # Does the job of actually drawing the textpaths -------------------------------
 
-st_as_grob.sfc_LINESTRING_labelled <- function(
+st_as_grob.sfc_labelled <- function(
   x, arrow = NULL, default.units = "npc", name = NULL,
   gp = gpar(), vp = NULL, textpath_vars = list(), ...) {
 
   label <- attr(x, "label")
-  class(x)[class(x) == "sfc_LINESTRING_labelled"] <- "sfc_LINESTRING"
+  class(x)[class(x) == "sfc_labelled"] <- "sfc_LINESTRING"
 
   if (is.null(label)) return(st_as_grob(x))
   label <- as.character(label)[1]
@@ -120,12 +120,12 @@ st_as_grob.sfc_LINESTRING_labelled <- function(
 }
 
 # Draws the textbox grobs
-st_as_grob.sfc_LINESTRING_textbox <- function(
+st_as_grob.sfc_textbox <- function(
   x, arrow = NULL, default.units = "npc", name = NULL,
   gp = gpar(), vp = NULL, textpath_vars = list(), ...) {
 
   label <- attr(x, "label")
-  class(x)[class(x) == "sfc_LINESTRING_textbox"] <- "sfc_LINESTRING"
+  class(x)[class(x) == "sfc_textbox"] <- "sfc_LINESTRING"
 
   if (is.null(label)) return(st_as_grob(x))
 
