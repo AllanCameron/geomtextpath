@@ -36,7 +36,6 @@ Suggests:
     knitr,
     rmarkdown,
     ragg,
-    qpdf,
     roxygen2,
     xml2,
     markdown
