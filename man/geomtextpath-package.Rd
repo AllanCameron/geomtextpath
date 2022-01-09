@@ -4,7 +4,7 @@
 \name{geomtextpath-package}
 \alias{geomtextpath}
 \alias{geomtextpath-package}
-\title{geomtextpath: Use Curved Text In Ggplot2}
+\title{geomtextpath: Use Curved Text in Ggplot2}
 \description{
 \if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
 
@@ -13,7 +13,7 @@ Allows text to follow curved paths in ggplot2. This allows for neat labelling of
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://allancameron.github.io/geomtextpath}
+  \item \url{https://allancameron.github.io/geomtextpath/}
   \item Report bugs at \url{https://github.com/AllanCameron/geomtextpath/issues}
 }
 

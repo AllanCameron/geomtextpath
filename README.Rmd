@@ -91,6 +91,8 @@ Of course, the point of this package is not to produce such graphical novelties,
 | `geom_path`      | `geom_textpath`      | `geom_labelpath`       |
 | `geom_segment`   | `geom_textsegment`   | `geom_labelsegment`    |
 | `geom_line`      | `geom_textline`      | `geom_labelline`       |
+| `geom_hline`     | `geom_texthline`     | `geom_labelhline`      |
+| `geom_vline`     | `geom_textvline`     | `geom_labelvline`      |
 | `geom_density`   | `geom_textdensity`   | `geom_labeldensity`    |
 | `geom_smooth`    | `geom_textsmooth`    | `geom_labelsmooth`     |
 | `geom_contour`   | `geom_textcontour`   | `geom_labelcontour`    |
@@ -110,6 +112,19 @@ ggplot(pressure, aes(temperature, pressure)) +
   geom_textline(label = "Mercury vapor pressure", size = 8, vjust = -0.5,
                 linewidth = 1, linecolor = "red4", linetype = 2, 
                 color = "deepskyblue4")
+```
+
+### Vertical and horizontal lines
+
+Often, a vertical or horizontal line added to a plot requires a text annotation. We can do this directly with `geom_textvline` and `geom_texthline`, or their text-box equivalents `geom_labelvline` and `geom_labelhline`. Although such lines aren't curved, there are some benefits to using the `geomtextpath` functions if a labelled hline or vline is required: only a single call is needed, co-ordinates are not required for the text label, the text can be put in-line with an appropriate break in the line automatically, and the label will orientate and curve appropriately in polar co-ordinates.
+
+```{r vline}
+ggplot(mtcars, aes(mpg, disp)) + 
+  geom_point() + 
+  geom_texthline(yintercept = 200, label = "displacement threshold", 
+                 hjust = 0.8, color = "red4") +
+  geom_textvline(xintercept = 20, label = "consumption threshold", hjust = 0.8,
+                 linetype = 2, vjust = 1.3, color = "blue4")
 ```
 
 

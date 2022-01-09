@@ -109,7 +109,7 @@ at the desired \code{xintercept} value, with a direct label as specified by the
 
 \code{geom_textvline()} understands the following aesthetics (required aesthetics are in bold):
 \itemize{
-  \item \strong{\code{yintercept}}
+  \item \strong{\code{xintercept}}
   \item \strong{\code{label}}
   \item \code{alpha}
   \item \code{angle}
