@@ -78,7 +78,7 @@ GeomTextvline <- ggproto("GeomTextvline", GeomTextpath,
                                coord, lineend = lineend)
   },
 
-  required_aes = c("yintercept", "label")
+  required_aes = c("xintercept", "label")
 )
 
 #' @rdname geom_textvline
