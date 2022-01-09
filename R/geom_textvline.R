@@ -1,21 +1,21 @@
-#' Add text to horizontal lines
+#' Add text to vertical lines
 #'
-#' `geom_texthline` and `geom_labelhline` draw a line across the plotting panel
-#' at the desired `yintercept` value, with a direct label as specified by the
+#' `geom_textvline` and `geom_labelvline` draw a vertical line on the plot
+#' at the desired `xintercept` value, with a direct label as specified by the
 #' `label` aesthetic. They are the textpath equivalents of
-#' [`geom_hline()`][ggplot2::geom_hline].
+#' [`geom_vline()`][ggplot2::geom_vline].
 #'
-#' @eval rd_dots(geom_texthline)
-#' @param yintercept The value at which the line should intercept the y axis
+#' @eval rd_dots(geom_textvline)
+#' @param xintercept The value at which the line should intercept the y axis
 #' @inheritParams geom_textpath
 #' @return A `Layer` ggproto object that can be added to a plot.
 #' @export
 #' @md
-#' @eval rd_aesthetics("geom", "texthline")
+#' @eval rd_aesthetics("geom", "textvline")
 
-geom_texthline <- function(mapping = NULL,
+geom_textvline <- function(mapping = NULL,
                            data = NULL,
-                           yintercept,
+                           xintercept,
                            stat = "identity",
                            position = "identity",
                            ...,
@@ -25,20 +25,20 @@ geom_texthline <- function(mapping = NULL,
                            show.legend = NA,
                            inherit.aes = TRUE) {
   # Act like an annotation
-  if (!missing(yintercept)) {
+  if (!missing(xintercept)) {
     # Warn if supplied mapping and/or data is going to be overwritten
     if (!is.null(mapping)) {
-      warn_overwritten_args("geom_texthline()", "mapping", "yintercept")
+      warn_overwritten_args("geom_textvline()", "mapping", "xintercept")
     }
     if (!is.null(data)) {
-      warn_overwritten_args("geom_texthline()", "data", "yintercept")
-      data$yintercept <- yintercept
+      warn_overwritten_args("geom_textvline()", "data", "xintercept")
+      data$xintercept <- xintercept
     }
     mapping <- unclass(mapping)
-    mapping[["yintercept"]] <- yintercept
+    mapping[["xintercept"]] <- xintercept
     class(mapping) <- "uneval"
 
-    mapping <- aes(yintercept = yintercept)
+    mapping <- aes(xintercept = xintercept)
     show.legend <- FALSE
   }
 
@@ -46,7 +46,7 @@ geom_texthline <- function(mapping = NULL,
     data        = data,
     mapping     = mapping,
     stat        = StatIdentity,
-    geom        = GeomTexthline,
+    geom        = GeomTextvline,
     position    = PositionIdentity,
     show.legend = show.legend,
     inherit.aes = FALSE,
@@ -59,20 +59,20 @@ geom_texthline <- function(mapping = NULL,
   )
 }
 
-#' @rdname geom_texthline
+#' @rdname geom_textvline
 #' @format NULL
 #' @usage NULL
 #' @export
-GeomTexthline <- ggproto("GeomTexthline", GeomTextpath,
+GeomTextvline <- ggproto("GeomTextvline", GeomTextpath,
   draw_panel = function(data, panel_params, coord, lineend = "butt",
                         arrow = arrow,
                         text_params = static_text_params("label")) {
     ranges <- coord$backtransform_range(panel_params)
 
-    data$x    <- ranges$x[1]
-    data$xend <- ranges$x[2]
-    data$y    <- data$yintercept
-    data$yend <- data$yintercept
+    data$x    <- data$xintercept
+    data$xend <- data$xintercept
+    data$y    <- ranges$y[1]
+    data$yend <- ranges$y[2]
 
     GeomTextsegment$draw_panel(unique(data), panel_params,
                                coord, lineend = lineend)
@@ -81,11 +81,11 @@ GeomTexthline <- ggproto("GeomTexthline", GeomTextpath,
   required_aes = c("yintercept", "label")
 )
 
-#' @rdname geom_texthline
+#' @rdname geom_textvline
 #' @export
-geom_labelhline <- function(mapping = NULL,
+geom_labelvline <- function(mapping = NULL,
                             data = NULL,
-                            yintercept,
+                            xintercept,
                             stat = "identity",
                             position = "identity",
                             ...,
@@ -99,20 +99,20 @@ geom_labelhline <- function(mapping = NULL,
                             label.padding = unit(0.25, "lines")
                           ) {
   # Act like an annotation
-  if (!missing(yintercept)) {
+  if (!missing(xintercept)) {
     # Warn if supplied mapping and/or data is going to be overwritten
     if (!is.null(mapping)) {
-      warn_overwritten_args("geom_labelhline()", "mapping", "yintercept")
+      warn_overwritten_args("geom_labelvline()", "mapping", "xintercept")
     }
     if (!is.null(data)) {
-      warn_overwritten_args("geom_labelhline()", "data", "yintercept")
-      data$yintercept <- yintercept
+      warn_overwritten_args("geom_labelvline()", "data", "xintercept")
+      data$xintercept <- xintercept
     }
     mapping <- unclass(mapping)
-    mapping[["yintercept"]] <- yintercept
+    mapping[["xintercept"]] <- xintercept
     class(mapping) <- "uneval"
 
-    mapping <- aes(yintercept = yintercept)
+    mapping <- aes(xintercept = xintercept)
     show.legend <- FALSE
   }
 
@@ -120,7 +120,7 @@ geom_labelhline <- function(mapping = NULL,
     data        = data,
     mapping     = mapping,
     stat        = StatIdentity,
-    geom        = GeomLabelhline,
+    geom        = GeomLabelvline,
     position    = PositionIdentity,
     show.legend = show.legend,
     inherit.aes = FALSE,
@@ -136,11 +136,11 @@ geom_labelhline <- function(mapping = NULL,
   )
 }
 
-#' @rdname geom_texthline
+#' @rdname geom_textvline
 #' @format NULL
 #' @usage NULL
 #' @export
-GeomLabelhline <- ggproto("GeomLabelhline", GeomLabelpath,
+GeomLabelvline <- ggproto("GeomLabelvline", GeomLabelpath,
   draw_panel = function(data, panel_params, coord, lineend = "butt",
                         text_params = static_text_params("label"), arrow = NULL,
                         label.padding = unit(0.25, "lines"),
@@ -148,14 +148,14 @@ GeomLabelhline <- ggproto("GeomLabelhline", GeomLabelpath,
   ) {
     ranges <- coord$backtransform_range(panel_params)
 
-    data$x    <- ranges$x[1]
-    data$xend <- ranges$x[2]
-    data$y    <- data$yintercept
-    data$yend <- data$yintercept
+    data$x    <- data$xintercept
+    data$xend <- data$xintercept
+    data$y    <- ranges$y[1]
+    data$yend <- ranges$y[2]
 
     GeomLabelsegment$draw_panel(unique(data), panel_params,
                                coord, lineend = lineend)
   },
 
-  required_aes = c("yintercept", "label")
+  required_aes = c("xintercept", "label")
 )
