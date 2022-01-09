@@ -31,7 +31,6 @@ geom_labelhline(
   ...,
   arrow = NULL,
   lineend = "butt",
-  linejoin = "round",
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE,
@@ -61,6 +60,8 @@ the plot data. The return value must be a \code{data.frame}, and
 will be used as the layer data. A \code{function} can be created
 from a \code{formula} (e.g. \code{~ head(.x, 10)}).}
 
+\item{yintercept}{The value at which the line should intercept the y axis}
+
 \item{stat}{The statistical transformation to use on the data for this
 layer, as a string.}
 
@@ -86,8 +87,6 @@ display.}
 rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
-
-\item{linejoin}{Line join style (round, mitre, bevel).}
 
 \item{straight}{A \code{logical(1)} which if \code{TRUE}, keeps the letters of a label
 on a straight baseline and if \code{FALSE} (default), lets individual letters

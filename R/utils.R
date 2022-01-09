@@ -535,3 +535,32 @@ rd_dots <- function(fun, exclude = character()) {
     "}"
   )
 }
+
+
+warn_overwritten_args <- function (fun_name,
+                                   overwritten_arg,
+                                   provided_args,
+                                   plural_join = " and/or ")
+{
+    overwritten_arg_text <- paste0("`", overwritten_arg, "`")
+    n_provided_args <- length(provided_args)
+    if (n_provided_args == 1) {
+        provided_arg_text <- paste0("`", provided_args,
+            "`")
+        verb <- "was"
+    }
+    else if (n_provided_args == 2) {
+        provided_arg_text <- paste0("`", provided_args,
+            "`", collapse = plural_join)
+        verb <- "were"
+    }
+    else {
+        provided_arg_text <- paste0(paste0("`", provided_args[-n_provided_args],
+            "`", collapse = ", "), ",", plural_join,
+            "`", provided_args[n_provided_args], "`")
+        verb <- "were"
+    }
+    warn(paste0(fun_name,
+                ": Ignoring ", overwritten_arg_text, " because ",
+                provided_arg_text, " ", verb, " provided."))
+}
