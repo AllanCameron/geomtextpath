@@ -5,6 +5,8 @@
 \name{geom_textabline}
 \alias{geom_textabline}
 \alias{GeomTextabline}
+\alias{geom_labelabline}
+\alias{GeomLabelabline}
 \alias{geom_texthline}
 \alias{GeomTexthline}
 \alias{geom_labelhline}
@@ -25,6 +27,24 @@ geom_textabline(
   ...,
   arrow = NULL,
   lineend = "butt",
+  na.rm = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE
+)
+
+geom_labelabline(
+  mapping = NULL,
+  data = NULL,
+  slope,
+  intercept,
+  stat = "identity",
+  position = "identity",
+  ...,
+  arrow = NULL,
+  lineend = "butt",
+  straight = NULL,
+  label.r = unit(0.15, "lines"),
+  label.padding = unit(0.25, "lines"),
   na.rm = FALSE,
   show.legend = NA,
   inherit.aes = TRUE
@@ -143,8 +163,6 @@ rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 
-\item{yintercept}{The value at which the line should intercept the y axis}
-
 \item{straight}{A \code{logical(1)} which if \code{TRUE}, keeps the letters of a label
 on a straight baseline and if \code{FALSE} (default), lets individual letters
 follow the curve. This might be helpful for noisy paths.}
@@ -152,6 +170,8 @@ follow the curve. This might be helpful for noisy paths.}
 \item{label.r}{Radius of rounded corners. Defaults to 0.15 lines.}
 
 \item{label.padding}{Amount of padding around label. Defaults to 0.25 lines.}
+
+\item{yintercept}{The value at which the line should intercept the y axis}
 
 \item{xintercept}{The value at which the line should intercept the y axis}
 }
@@ -283,4 +303,14 @@ Learn more about setting these aesthetics
 in \code{vignette("ggplot2-specs")}.
 }
 
+\examples{
+ggplot(mtcars, aes(mpg, disp)) +
+geom_point() +
+geom_texthline(yintercept = 200, label = "displacement threshold",
+               hjust = 0.8, color = "red4") +
+geom_textvline(xintercept = 20, label = "consumption threshold", hjust = 0.8,
+               linetype = 2, vjust = 1.3, color = "blue4") +
+geom_textabline(slope = 15, intercept = -100, label = "partition line",
+                color = "green4", hjust = 0.6, vjust = -0.2)
+}
 \keyword{datasets}
