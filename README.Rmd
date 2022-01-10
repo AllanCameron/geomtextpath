@@ -115,24 +115,6 @@ ggplot(pressure, aes(temperature, pressure)) +
                 color = "deepskyblue4")
 ```
 
-### Reference lines
-
-Often, a reference line added to a plot requires a text annotation. We can do this directly with `geom_textabline`, `geom_textvline` and `geom_texthline`, or their text-box equivalents `geom_labelabline`, `geom_labelvline` and `geom_labelhline`. Although such lines aren't curved, there are some benefits to using the `geomtextpath` functions if a labelled reference line is required: only a single call is needed, co-ordinates are not required for the text label, the text can be put in-line with an appropriate break in the line automatically, and the label will orientate and curve appropriately in polar co-ordinates.
-
-This example shows all three text-based reference line geoms:
-
-```{r vline}
-ggplot(mtcars, aes(mpg, disp)) + 
-  geom_point() + 
-  geom_texthline(yintercept = 200, label = "displacement threshold", 
-                 hjust = 0.8, color = "red4") +
-  geom_textvline(xintercept = 20, label = "consumption threshold", hjust = 0.8,
-                 linetype = 2, vjust = 1.3, color = "blue4") +
-  geom_textabline(slope = 15, intercept = -100, label = "partition line", 
-                  color = "green4", hjust = 0.6, vjust = -0.2)
-```
-
-
 ### `geom_textdensity` and `geom_labeldensity`
 
 These are the analogues of `geom_density` that allows for smoothly curved labels on density plots
@@ -210,6 +192,23 @@ ggplot(data = df) +
 
 ```
 
+### Reference lines
+
+Often, a reference line added to a plot requires a text annotation. We can do this directly with `geom_textabline`, `geom_textvline` and `geom_texthline`, or their text-box equivalents `geom_labelabline`, `geom_labelvline` and `geom_labelhline`. Although such lines aren't curved, there are some benefits to using the `geomtextpath` functions if a labelled reference line is required: only a single call is needed, co-ordinates are not required for the text label, the text can be put in-line with an appropriate break in the line automatically, and the label will orientate and curve appropriately in polar co-ordinates.
+
+This example shows all three text-based reference line geoms:
+
+```{r vline}
+ggplot(mtcars, aes(mpg, disp)) + 
+  geom_point() + 
+  geom_texthline(yintercept = 200, label = "displacement threshold", 
+                 hjust = 0.8, color = "red4") +
+  geom_textvline(xintercept = 20, label = "consumption threshold", hjust = 0.8,
+                 linetype = 2, vjust = 1.3, color = "blue4") +
+  geom_textabline(slope = 15, intercept = -100, label = "partition line", 
+                  color = "green4", hjust = 0.6, vjust = -0.2)
+```
+
 ### Arbitrary `stat` transformations
 
 Other "stat" transformations can be used directly on `geom_textpath` and `geom_labelpath`. For example, functions can be labelled with paths created in `stat_function`:
@@ -235,15 +234,17 @@ ggplot() +
 
 Just like `geom_text`, the `vjust` parameter controls vertical justification of the text, though in `geom_textpath` and its related geoms, the text is justified relative to the path rather than a single point. If the `vjust` parameter moves the text above or below the line, the line is automatically "filled in". 
 
-For short text labels applied to long paths, we need a parameter to control how far along the path the text is placed. For this we use the horizontal justification (`hjust`) parameter.
+For short text labels applied to long paths, we need a parameter to control how far along the path the text is placed. For this we use the horizontal justification (`hjust`) parameter. This can be numeric (0 to 1), or can accept position descriptions such as "xmid", "ymax", or "auto".
 
-Here is an example of text justified above the line of the path using a small negative value of `vjust`:
+Here is an example of text justified above the line of the path using a small negative value of `vjust`, and the `hjust` set to "ymax" to place the labels over the peak of each curve:
 
 ```{r density_vjust}
 p <- ggplot(iris, aes(x = Sepal.Length, colour = Species, label = Species)) +
        theme(legend.position = "none")
 
-p + geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = 0.2)
+p + 
+  geom_textdensity(size = 6, fontface = 2, vjust = -0.2, hjust = "ymax") +
+  ylim(c(0, 1.3))
 ```
 
 You can read more about text positioning in the [aesthetics vignette](https://allancameron.github.io/geomtextpath/articles/aesthetics.html).
@@ -444,8 +445,6 @@ You can see more examples in the [gallery](https://allancameron.github.io/geomte
 There are limitations inherent in the plotting of text elements in ggplot due to the way that the underlying `grid` graphics handles text. A text string is dealt with as a zero-width object, and therefore the rotation and spacing of the letters making up the string can only be dealt with by treating each letter separately. 
 
 It is important to realise that the letters are only rotated, and do not undergo any change in shape. Thus, for example, large text appearing on convex curves will not be deformed so that individual letters are narrower at the bottom and wider at the top. Doing so would require reinterpreting the letters as polygons, which would likely cause more problems than it would solve.
-
-Many paths will be too noisy or too angular to directly label in a visually appealing fashion if the text adheres too closely to the intricacies of the line. Often, a `geom_textsmooth` with `text_only = TRUE` is the best option in such cases, as in the examples above. There is also a `straight` parameter so that a label is still applied at an appropriate point and angle on the line, but the text will not attempt to follow every bump on the path.
 
 Other paths may have points of tight curvature, and setting an offset / vjust for the text that is larger than the distance to the focus point of that curve will produce odd effects. The package tries to detect and warn the user when this happens, and will suggest remedies.
 
