@@ -129,3 +129,14 @@ test_that("We can set blank lines", {
   gp <- data_to_path_gp(data.frame(linetype = NA))
   expect_equal(gp$lty, 0)
 })
+
+
+test_that("We can remove labels too long for the path to support", {
+
+  grob <- textpathGrob(label = "A label that is too long for its path",
+                       x = c(0.45, 0.55), y = c(0.5, 0.5), id = c(1, 1),
+                       default.units = "npc", remove_long = TRUE,
+                       as_label = TRUE)
+  grob <- makeContent(grob)
+  expect_equal(class(grob$children[[1]])[1], "polyline")
+})

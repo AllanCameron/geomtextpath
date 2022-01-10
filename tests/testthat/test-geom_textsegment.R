@@ -89,6 +89,16 @@ test_that("The geom_texthline constructor works as expected", {
 
   p <- ggplot(mtcars, aes(mpg, disp)) + geom_point()
   expect_silent(p + geom_texthline(yintercept = 200, label = "test"))
+
+  expect_warning(p + geom_texthline(aes(yintercept = disp),
+                                    label = "test", yintercept = 200))
+
+  w <- capture_warnings(p + geom_texthline(aes(yintercept = disp),
+                                           label = "test",
+                                           yintercept = 200,
+                                           data = mtcars))
+  expect_true(grepl("mapping", w[1]))
+  expect_true(grepl("data", w[2]))
 })
 
 test_that("The geom_labelhline constructor works as expected", {
@@ -101,6 +111,16 @@ test_that("The geom_labelhline constructor works as expected", {
 
   p <- ggplot(mtcars, aes(mpg, disp)) + geom_point()
   expect_silent(p + geom_labelhline(yintercept = 200, label = "test"))
+
+  expect_warning(p + geom_labelhline(aes(yintercept = disp),
+                                    label = "test", yintercept = 200))
+
+  w <- capture_warnings(p + geom_labelhline(aes(yintercept = disp),
+                                           label = "test",
+                                           yintercept = 200,
+                                           data = mtcars))
+  expect_true(grepl("mapping", w[1]))
+  expect_true(grepl("data", w[2]))
 })
 
 test_that("The geom_textvline constructor works as expected", {
@@ -113,6 +133,16 @@ test_that("The geom_textvline constructor works as expected", {
 
   p <- ggplot(mtcars, aes(mpg, disp)) + geom_point()
   expect_silent(p + geom_textvline(xintercept = 20, label = "test"))
+
+  expect_warning(p + geom_textvline(aes(xintercept = mpg),
+                                    label = "test", xintercept = 20))
+
+  w <- capture_warnings(p + geom_textvline(aes(xintercept = mpg),
+                                           label = "test",
+                                           xintercept = 20,
+                                           data = mtcars))
+  expect_true(grepl("mapping", w[1]))
+  expect_true(grepl("data", w[2]))
 })
 
 test_that("The geom_labelvline constructor works as expected", {
@@ -125,6 +155,16 @@ test_that("The geom_labelvline constructor works as expected", {
 
   p <- ggplot(mtcars, aes(mpg, disp)) + geom_point()
   expect_silent(p + geom_labelvline(xintercept = 20, label = "test"))
+
+  expect_warning(p + geom_labelvline(aes(xintercept = mpg),
+                                    label = "test", xintercept = 20))
+
+  w <- capture_warnings(p + geom_labelvline(aes(xintercept = mpg),
+                                           label = "test",
+                                           xintercept = 20,
+                                           data = mtcars))
+  expect_true(grepl("mapping", w[1]))
+  expect_true(grepl("data", w[2]))
 })
 
 test_that("The geom_textabline constructor works as expected", {
@@ -138,6 +178,20 @@ test_that("The geom_textabline constructor works as expected", {
   p <- ggplot(mtcars, aes(mpg, disp)) + geom_point()
   expect_silent(p + geom_textabline(intercept = -100, slope = 15,
                                     label = "test"))
+
+  expect_warning(p + geom_textabline(aes(intercept = disp, slope = mpg),
+                                    label = "test", intercept = -100,
+                                    slope = 15))
+
+  w <- capture_warnings(p + geom_textabline(aes(intercept = disp, slope = mpg),
+                                           label = "test", intercept = -100,
+                                           slope = 15,
+                                           data = mtcars))
+  expect_true(grepl("mapping", w[1]))
+  expect_true(grepl("data", w[2]))
+
+  expect_equal(unclass(geom_textabline(slope = 1)$mapping)$intercept, 0)
+  expect_equal(unclass(geom_textabline(intercept = 1)$mapping)$slope, 1)
 })
 
 test_that("The geom_labelabline constructor works as expected", {
@@ -151,4 +205,18 @@ test_that("The geom_labelabline constructor works as expected", {
   p <- ggplot(mtcars, aes(mpg, disp)) + geom_point()
   expect_silent(p + geom_labelabline(intercept = -100, slope = 15,
                                     label = "test"))
+
+  expect_warning(p + geom_labelabline(aes(intercept = disp, slope = mpg),
+                                    label = "test", intercept = -100,
+                                    slope = 15))
+
+  w <- capture_warnings(p + geom_labelabline(aes(intercept = disp, slope = mpg),
+                                           label = "test", intercept = -100,
+                                           slope = 15,
+                                           data = mtcars))
+  expect_true(grepl("mapping", w[1]))
+  expect_true(grepl("data", w[2]))
+
+  expect_equal(unclass(geom_labelabline(slope = 1)$mapping)$intercept, 0)
+  expect_equal(unclass(geom_labelabline(intercept = 1)$mapping)$slope, 1)
 })

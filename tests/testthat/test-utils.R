@@ -347,3 +347,8 @@ test_that("resolution_to_unit works", {
   y <- resolution_to_unit()
   expect_equal(x / 2.54, y)
 })
+
+test_that("We can warn about multiple overwritten arguments", {
+  expect_warning(warn_overwritten_args("random_function", "overwritten",
+                   c("parameter1", "parameter2", "parameter3")))
+})
