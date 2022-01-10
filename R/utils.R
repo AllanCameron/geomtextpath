@@ -277,7 +277,7 @@ data_to_text_gp <- function(data) {
   gpar(
     col        = alpha(data$textcolour %||% data$colour, data$alpha),
     fontsize   = data$size * .pt,
-    fontface   = data$fonface,
+    fontface   = data$fontface %||% data$font,
     fontfamily = data$family,
     lineheight = data$lineheight,
     tracking   = data$spacing
