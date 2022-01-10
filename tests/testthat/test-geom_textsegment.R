@@ -77,3 +77,78 @@ test_that("segment2path gives zeroGrob in right circumstances", {
   test <- segment2path(data.frame(row.names = 1:10))
   expect_s3_class(test, "zeroGrob")
 })
+
+
+test_that("The geom_texthline constructor works as expected", {
+  x <- geom_texthline()
+
+  expect_s3_class(x, "LayerInstance")
+  expect_s3_class(x$geom, "GeomTextpath")
+  expect_s3_class(x$geom, "GeomTexthline")
+  expect_s3_class(x$stat, "StatIdentity")
+
+  p <- ggplot(mtcars, aes(mpg, disp)) + geom_point()
+  expect_silent(p + geom_texthline(yintercept = 200, label = "test"))
+})
+
+test_that("The geom_labelhline constructor works as expected", {
+  x <- geom_labelhline()
+
+  expect_s3_class(x, "LayerInstance")
+  expect_s3_class(x$geom, "GeomLabelpath")
+  expect_s3_class(x$geom, "GeomLabelhline")
+  expect_s3_class(x$stat, "StatIdentity")
+
+  p <- ggplot(mtcars, aes(mpg, disp)) + geom_point()
+  expect_silent(p + geom_labelhline(yintercept = 200, label = "test"))
+})
+
+test_that("The geom_textvline constructor works as expected", {
+  x <- geom_textvline()
+
+  expect_s3_class(x, "LayerInstance")
+  expect_s3_class(x$geom, "GeomTextpath")
+  expect_s3_class(x$geom, "GeomTextvline")
+  expect_s3_class(x$stat, "StatIdentity")
+
+  p <- ggplot(mtcars, aes(mpg, disp)) + geom_point()
+  expect_silent(p + geom_textvline(xintercept = 20, label = "test"))
+})
+
+test_that("The geom_labelvline constructor works as expected", {
+  x <- geom_labelvline()
+
+  expect_s3_class(x, "LayerInstance")
+  expect_s3_class(x$geom, "GeomLabelpath")
+  expect_s3_class(x$geom, "GeomLabelvline")
+  expect_s3_class(x$stat, "StatIdentity")
+
+  p <- ggplot(mtcars, aes(mpg, disp)) + geom_point()
+  expect_silent(p + geom_labelvline(xintercept = 20, label = "test"))
+})
+
+test_that("The geom_textabline constructor works as expected", {
+  x <- geom_textabline()
+
+  expect_s3_class(x, "LayerInstance")
+  expect_s3_class(x$geom, "GeomTextpath")
+  expect_s3_class(x$geom, "GeomTextabline")
+  expect_s3_class(x$stat, "StatIdentity")
+
+  p <- ggplot(mtcars, aes(mpg, disp)) + geom_point()
+  expect_silent(p + geom_textabline(intercept = -100, slope = 15,
+                                    label = "test"))
+})
+
+test_that("The geom_labelabline constructor works as expected", {
+  x <- geom_labelabline()
+
+  expect_s3_class(x, "LayerInstance")
+  expect_s3_class(x$geom, "GeomLabelpath")
+  expect_s3_class(x$geom, "GeomLabelabline")
+  expect_s3_class(x$stat, "StatIdentity")
+
+  p <- ggplot(mtcars, aes(mpg, disp)) + geom_point()
+  expect_silent(p + geom_labelabline(intercept = -100, slope = 15,
+                                    label = "test"))
+})
