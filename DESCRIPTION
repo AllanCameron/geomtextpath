@@ -64,6 +64,7 @@ Collate:
     'path_handling.R'
     'scales.R'
     'sf_helpers.R'
+    'smoothing.R'
     'text_helpers.R'
     'text_placement.R'
     'trig_helpers.R'

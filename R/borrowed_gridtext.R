@@ -71,10 +71,6 @@ process_tag_i <- process_tag_em <- function(node, drawing_context) {
 }
 
 
-# TODO: Are we handling nested <sub>/<sup> correctly in terms of y-offset?
-# Note that we departed here from {gridtext} in terms of how the y-offset is
-# handled
-
 process_tag_sub <- function(node, drawing_context) {
   drawing_context <- set_context_size(drawing_context, 0.8)
   drawing_context <- set_context_offset(drawing_context, -0.5)

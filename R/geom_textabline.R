@@ -1,3 +1,15 @@
+##---------------------------------------------------------------------------##
+##                                                                           ##
+##  geom_textabline.R                                                        ##
+##  Part of the geomtextpath R package                                       ##
+##                                                                           ##
+##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##                                                                           ##
+##  Licensed under the MIT license - see https://mit-license.org             ##
+##  or the LICENSE file in the project root directory                        ##
+##                                                                           ##
+##---------------------------------------------------------------------------##
+
 #' Labelled reference lines: horizontal, vertical, and diagonal
 #'
 #' These geoms add labelled reference lines to a plot, either
@@ -44,12 +56,12 @@ geom_textabline <- function(mapping = NULL,
                             data = NULL,
                             slope,
                             intercept,
-                            stat = "identity",
-                            position = "identity",
+                            stat        = "identity",
+                            position    = "identity",
                             ...,
-                            arrow = NULL,
-                            lineend = "butt",
-                            na.rm = FALSE,
+                            arrow       = NULL,
+                            lineend     = "butt",
+                            na.rm       = FALSE,
                             show.legend = NA,
                             inherit.aes = TRUE) {
 
@@ -93,18 +105,18 @@ geom_textabline <- function(mapping = NULL,
   }
 
   layer(
-    data = data,
-    mapping = mapping,
-    stat = StatIdentity,
-    geom = GeomTextabline,
-    position = PositionIdentity,
+    data        = data,
+    mapping     = mapping,
+    stat        = StatIdentity,
+    geom        = GeomTextabline,
+    position    = PositionIdentity,
     show.legend = show.legend,
     inherit.aes = FALSE,
-    params = list(
-      na.rm = na.rm,
-      arrow = arrow,
-      lineend = lineend,
-      ...
+    params      = list(
+            na.rm   = na.rm,
+            arrow   = arrow,
+            lineend = lineend,
+            ...
     )
   )
 }
@@ -145,17 +157,17 @@ geom_labelabline <- function(mapping = NULL,
                             data = NULL,
                             slope,
                             intercept,
-                            stat = "identity",
-                            position = "identity",
+                            stat          = "identity",
+                            position      = "identity",
                             ...,
-                            arrow = NULL,
-                            lineend = "butt",
-                            straight    = NULL,
-                            label.r     = unit(0.15, "lines"),
+                            arrow         = NULL,
+                            lineend       = "butt",
+                            straight      = NULL,
+                            label.r       = unit(0.15, "lines"),
                             label.padding = unit(0.25, "lines"),
-                            na.rm = FALSE,
-                            show.legend = NA,
-                            inherit.aes = TRUE) {
+                            na.rm         = FALSE,
+                            show.legend   = NA,
+                            inherit.aes   = TRUE) {
 
   # If nothing set, default to y = x
   if (is.null(mapping) && missing(slope) && missing(intercept)) {
@@ -205,11 +217,11 @@ geom_labelabline <- function(mapping = NULL,
     show.legend = show.legend,
     inherit.aes = FALSE,
     params = list(
-      arrow     = arrow,
-      na.rm     = na.rm,
-      lineend   = lineend,
-      straight  = straight,
-      label.r   = label.r,
+      arrow         = arrow,
+      na.rm         = na.rm,
+      lineend       = lineend,
+      straight      = straight,
+      label.r       = label.r,
       label.padding = label.padding,
       ...
     )

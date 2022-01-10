@@ -148,6 +148,7 @@ measure_curved <- function(
   ans
 }
 
+
 # TODO: Interpret unit-vjusts
 measure_language <- function(label, gp = gpar(), ppi = 72, vjust = 0.5, ...) {
   width  <- measure_text_dim(label$text, gp, "width")
@@ -177,7 +178,9 @@ measure_language <- function(label, gp = gpar(), ppi = 72, vjust = 0.5, ...) {
   )
 }
 
+
 # This first calls the curved variant, then restructures the data
+
 measure_straight <- function(...) {
   meas   <- measure_curved(...)
   meas[] <- lapply(meas, function(df) {
@@ -201,9 +204,12 @@ measure_straight <- function(...) {
   })
   meas
 }
+
+
 # Glyph utilities --------------------------------------------------------------
 
 # Here a cache that stores index lookup tables of fonts
+
 index_cache <- new.env(parent = emptyenv())
 
 # This function retrieves index lookup tables for fonts. If the font has been
@@ -233,9 +239,11 @@ glyph_index <- function(family = "") {
   ans
 }
 
+
 # This function does the translation of font indices to glyphs. Note that
 # different strings can have different fonts, which is why we need to loop
 # over the indices.
+
 translate_glyph <- function(index, id, gp = gpar()) {
   ints <- lapply(gp$fontfamily %||% "", glyph_index)
   split(index, id) <- Map(
@@ -246,6 +254,7 @@ translate_glyph <- function(index, id, gp = gpar()) {
   intToUtf8(index, multiple = TRUE)
 }
 
+
 cluster_glyphs <- function(shape, vars = c("glyph", "metric_id", "string_id")) {
   shape$clusters <- group_id(shape, vars)
   shape$letter   <- ave(
@@ -255,6 +264,7 @@ cluster_glyphs <- function(shape, vars = c("glyph", "metric_id", "string_id")) {
   shape$x_midpoint <- ave(shape$x_midpoint, shape$clusters, FUN = max)
   shape
 }
+
 
 filter_glyphs <- function(
   shape, n,
@@ -333,6 +343,7 @@ parse_richtext <- function(text, gp, md = TRUE, id = seq_along(text),
   )
 }
 
+
 # Helpers -----------------------------------------------------------------
 
 font_info_gp <- function(gp = gpar(), res = 72, unit = "inch") {
@@ -361,7 +372,9 @@ x_height <- function(gp) {
   )$ascent
 }
 
+
 # Takes care of default gpar() settings and translates units from pixels
+
 text_shape <- function(text, id, gp, res = 72, vjust = 0.5, hjust = 0.5,
                        align = "center", unit = "inch") {
   txt <- shape_text(

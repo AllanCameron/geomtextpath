@@ -141,6 +141,7 @@ coord_curvedpolar <- function(theta = "x", start = 0,
 
 # A reimplementation of ggplot2:::theta_rescale to avoid using
 # non-exported functions
+
 theta_rescale <- function(coord, x, panel_params) {
     x      <- scales::squish_infinite(x, panel_params$theta.range)
     rotate <- function(x) (x + coord$start) %% (2 * pi) * coord$direction
