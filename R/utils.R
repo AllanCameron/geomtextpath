@@ -14,25 +14,32 @@
 
 # Many vapply calls in the code base have a FUN.VALUE of numeric(1). This
 # wrapper simply helps keep the code more legible / maintainable.
+
 numapply <- function(data, fun) {
   vapply(data, FUN = fun, FUN.VALUE = numeric(1))
 }
 
+
 # Wrapper for the frequent use case of getting a vector of the number of rows
 # of several data frames in a list.
+
 nrow_multi <- function(data) {
   vapply(data, FUN = nrow, FUN.VALUE = integer(1), USE.NAMES = FALSE)
 }
 
+
 # Run length utilities ---------------------------------------------------------
 
 # Gives the indices of a vector where a run length starts
+
 run_start <- function(x) {
   x <- discretise(x)
   c(0, which(diff(x) != 0)) + 1
 }
 
+
 # Simplified rle(x)$lengths
+
 run_len <- function(x) {
   diff(c(run_start(x), length(x) + 1))
 }
@@ -42,6 +49,7 @@ run_len <- function(x) {
 
 # Cheaper data.frame constructor for internal use.
 # Only use when `...` has valid names and content are valid data.frame columns
+
 data_frame <- function(...) {
   list_to_df(x = list(...))
 }
@@ -50,6 +58,7 @@ data_frame <- function(...) {
 # Similar in scope to base::list2DF or ggplot2:::new_data_frame or
 # vctrs::df_list
 # without bothering with 'n'/'size'
+
 list_to_df <- function(x = list()) {
   if (length(x) != 0 && is.null(names(x))) {
     stop("Elements must be named", call. = FALSE)
@@ -71,19 +80,26 @@ list_to_df <- function(x = list()) {
   x
 }
 
+
 # Row-bind a list of data.frames
 # `df_list` is a list of data.frames
 # `idcol` is a name for an id column, or NULL if it is to be omitted
+
 rbind_dfs <- function(df_list) {
   do.call(rbind.data.frame, c(df_list, make.row.names = FALSE))
 }
 
+
 # Grouping utilities -----------------------------------------------------------
+
+#  Convert unique values to ordered sequence of integers
 
 discretise <- function(x) {
   match(x, unique(x))
 }
 
+
+# A multiple variable equivalent of discretise
 
 group_id <- function(data, vars) {
   id <- lapply(data[vars], discretise)
@@ -93,6 +109,7 @@ group_id <- function(data, vars) {
 
 
 # Shorthand for `vapply(split(x, group), ...)`
+
 gapply <- function(x, group, FUN, FUN.VALUE, ..., USE.NAMES = FALSE) {
   vapply(
     split(x, group),
@@ -154,7 +171,10 @@ approx_multi <- function(x, y = matrix(), xout) {
   out
 }
 
+
 # Missingness utilities --------------------------------------------------------
+
+# Simple linear interpolation for NA values
 
 interp_na <- function(x) {
   if (!anyNA(x)) return(x)
@@ -163,6 +183,8 @@ interp_na <- function(x) {
   x
 }
 
+
+# Re-implementation of unexported ggplot function
 
 cases <- function(x, fun) {
   ok <- vapply(x, fun, logical(nrow(x)))
@@ -174,15 +196,21 @@ cases <- function(x, fun) {
 }
 
 
+# Consistent missingness check for different input types
+
 is_missing <- function(x) {
   if (typeof(x) == "list") !vapply(x, is.null, logical(1)) else !is.na(x)
 }
 
 
+# Consistent infinity check for different input types
+
 is_finite <- function(x) {
   if (typeof(x) == "list") !vapply(x, is.null, logical(1)) else is.finite(x)
 }
 
+
+# Finds rows with missing data in given data frame
 
 detect_missing <- function(df, vars, finite = FALSE) {
     vars <- intersect(vars, names(df))
@@ -190,16 +218,23 @@ detect_missing <- function(df, vars, finite = FALSE) {
 }
 
 
+# Finds missing aesthetics in input data frame
+
 find_missing <- function(x, layer) {
   detect_missing(x, c(layer$required_aes, layer$non_missing_aes))
 }
 
+
 # Label utilities --------------------------------------------------------------
+
+# S3 generic to ensure label vector matches to given object
 
 match_labels <- function(x, ...) {
   UseMethod("match_labels")
 }
 
+
+#S3 method to ensure labels are same length as data frame
 
 match_labels.data.frame <- function(x, labels) {
   if (length(labels) == 1) labels <- rep(labels, nrow(x))
@@ -210,6 +245,8 @@ match_labels.data.frame <- function(x, labels) {
 }
 
 
+# match labels to vector or list
+
 match_labels.default <- function(x, labels) {
   if (length(labels) == 1) labels <- rep(labels, length(x))
   if (length(x) != length(labels)) {
@@ -218,6 +255,8 @@ match_labels.default <- function(x, labels) {
   labels
 }
 
+
+# Similar to ggplot's rename function
 
 rename <- function(x, replace) {
   current_names <- names(x)
@@ -235,6 +274,8 @@ rename <- function(x, replace) {
 
 # Text utilities ---------------------------------------------------------------
 
+# Parse characters as expressions with validity checks
+
 safe_parse <- function(text) {
   if (!is.character(text)) stop("`text` must be a character vector")
   out <- vector("expression", length(text))
@@ -246,6 +287,9 @@ safe_parse <- function(text) {
 }
 
 
+# Logical test to determine whether a label is to be considered as multiple
+# glyphs or as a single unit
+
 is.multichar <- function(x) {
   if (is.list(x)) return(any(vapply(x, is.multichar, logical(1))))
   if (is.factor(x)) x <- as.character(x)
@@ -253,7 +297,9 @@ is.multichar <- function(x) {
   is.language(x)
 }
 
+
 # Based on ggplot2:::draw_axis handling of labels
+
 make_label <- function(x) {
   if (!is.list(x)) return(x)
   if (any(vapply(x, is.language, logical(1)))) {
@@ -263,6 +309,9 @@ make_label <- function(x) {
   }
 }
 
+
+# Allows information about co-ordinate system to be passed to grob
+
 get_polar_params <- function(coord) {
   if (inherits(coord, "CoordPolar")) {
       list(x = 0.5, y = 0.5, theta = coord$theta)
@@ -271,7 +320,10 @@ get_polar_params <- function(coord) {
     }
 }
 
+
 # Grid utilities ---------------------------------------------------------------
+
+# Convert internal ggplot-type aesthetic data frame to gp object for text
 
 data_to_text_gp <- function(data) {
   gpar(
@@ -284,6 +336,8 @@ data_to_text_gp <- function(data) {
   )
 }
 
+
+# Convert internal ggplot-type aesthetic data frame to gp object for lines
 
 data_to_path_gp <- function(data, lineend = "butt", linejoin = "round",
                             linemitre = 10) {
@@ -303,6 +357,8 @@ data_to_path_gp <- function(data, lineend = "butt", linejoin = "round",
 }
 
 
+# Convert internal ggplot-type aesthetic data frame to gp object for lines
+
 data_to_box_gp <- function(data, lineend = "butt", linejoin = "round",
                            linemitre = 10) {
   gpar(
@@ -317,16 +373,18 @@ data_to_box_gp <- function(data, lineend = "butt", linejoin = "round",
   )
 }
 
+
 # Helper function to do safe(r) recycling on "gpar" class objects.
+
 recycle_gp <- function(gp, fun, ...) {
-  # Recycling rules only apply to non-unique parameters
   do_recycle     <- lengths(gp) > 1
   gp[do_recycle] <- lapply(unclass(gp)[do_recycle], fun, ...)
-  # Never ever have zero-length objects in the gpar
   gp[lengths(gp) == 0] <- list(NULL)
   return(gp)
 }
 
+
+# Safely repeat values inside a gpar object
 
 rep_gp <- function(gp, length.out = max(lengths(gp))) {
   gp[] <- lapply(gp, rep, length.out = length.out)
@@ -334,13 +392,17 @@ rep_gp <- function(gp, length.out = max(lengths(gp))) {
 }
 
 
+# Split gpar into llist of ength-1 gpars
+
 split_gp <- function(gp, i = seq_len(max(lengths(gp)))) {
   gp <- rep_gp(gp, max(i))
   lapply(i, function(j) recycle_gp(gp, `[`, j))
 }
 
+
 # Helper function to fill in missing parameters by defaults
 # Based on ggplot2:::modify_list
+
 gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {
   extra <- list(...)
   for (i in names(extra)) defaults[[i]] <- extra[[i]]
@@ -349,6 +411,8 @@ gp_fill_defaults <- function(gp, ..., defaults = get.gpar()) {
 }
 
 
+# Safely subset gpar
+
 gp_subset <- function(gp, ss) {
   subset_these         <- lengths(gp) > 1
   gp[subset_these]     <- lapply(unclass(gp)[subset_these], function(x) x[ss])
@@ -356,6 +420,8 @@ gp_subset <- function(gp, ss) {
   return(gp)
 }
 
+
+# Convert grid unit object to given unit type, then make numeric
 
 as_grid_unit <- function(value, from = "x", unit = "native") {
   if (!is.unit(value)) return(value)
@@ -370,15 +436,21 @@ as_grid_unit <- function(value, from = "x", unit = "native") {
 }
 
 
+# Convert grid units to number of inched
+
 as_inch <- function(x, from = "x") {
   as_grid_unit(x, from, "inch")
 }
 
 
+# Convert grid units to numeric npc values
+
 as_npc <- function(x, from = "x") {
   as_grid_unit(x, from, "npc")
 }
 
+
+# Same as grid::unit, but allows unit objects to safely pass through
 
 as_unit <- function(x, units = NULL, ...) {
   if (!is.unit(x) && !is.null(units)) {
@@ -387,17 +459,24 @@ as_unit <- function(x, units = NULL, ...) {
   x
 }
 
+
 # Documentation helpers --------------------------------------------------------
+
+# Simple lowercase converter
 
 as_lower <- function(x) {
   chartr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", x)
 }
 
 
+# Simple uppercase converter
+
 as_upper <- function(x) {
   chartr("abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", x)
 }
 
+
+# Convert snake_case to CamelCase
 
 camelize <- function(x, first = FALSE) {
     x <- gsub("_(.)", "\\U\\1", x, perl = TRUE)
@@ -407,6 +486,8 @@ camelize <- function(x, first = FALSE) {
     x
 }
 
+
+# Find object in given environment with fallback to package namespace
 
 find_global <- function(name, env, mode = "any") {
     if (exists(name, envir = env, mode = mode)) {
@@ -419,6 +500,7 @@ find_global <- function(name, env, mode = "any") {
     NULL
 }
 
+# Finds object of given type and class (as characters if necessary)
 
 check_subclass <- function(x, subclass, argname = as_lower(subclass),
                            env = parent.frame()) {
@@ -443,6 +525,8 @@ check_subclass <- function(x, subclass, argname = as_lower(subclass),
 
 # Documentation functions adapted from ggplot2 ---------------------------------
 
+# Adds each aesthetic to output in rd_aesthetics
+
 rd_aesthetics_item <- function(x) {
     req <- x$required_aes
     req <- sub("|", "} \\emph{or} \\code{", req,
@@ -454,6 +538,8 @@ rd_aesthetics_item <- function(x) {
         "}}"), paste0("\\code{", all, "}"))
 }
 
+
+# Calculate aesthetics and produce documentation item for given function / topic
 
 rd_aesthetics <- function(type, name) {
     obj <- switch(type, geom = check_subclass(name, "Geom",
@@ -477,12 +563,14 @@ rd_aesthetics <- function(type, name) {
       )
 }
 
+
 # Automatically put the text-path arguments under the `...` description in the
 # documentation.
 # Checks whether a parameter is formally declared in the function
 # and if it is, will not put it in the ellipsis text. You can explicitly exclude
 # a parameter from documentation, e.g. if "gap" most definitely does not apply
 # to some geom or that kind of situation.
+
 rd_dots <- function(fun, exclude = character()) {
   exclude <- c(exclude, ".type")
   params  <- names(formals(static_text_params))
@@ -537,13 +625,16 @@ rd_dots <- function(fun, exclude = character()) {
 }
 
 
-warn_overwritten_args <- function (fun_name,
-                                   overwritten_arg,
-                                   provided_args,
-                                   plural_join = " and/or ")
+# Required for reference line geoms as parameters can overwrite aesthetics
+
+warn_overwritten_args <- function (
+    fun_name,
+    overwritten_arg,
+    provided_args,
+    plural_join = " and/or ")
 {
     overwritten_arg_text <- paste0("`", overwritten_arg, "`")
-    n_provided_args <- length(provided_args)
+    n_provided_args      <- length(provided_args)
     if (n_provided_args == 1) {
         provided_arg_text <- paste0("`", provided_args,
             "`")
