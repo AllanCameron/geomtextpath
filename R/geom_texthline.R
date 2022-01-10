@@ -1,10 +1,4 @@
-#' Add text to horizontal lines
-#'
-#' `geom_texthline` and `geom_labelhline` draw a line across the plotting panel
-#' at the desired `yintercept` value, with a direct label as specified by the
-#' `label` aesthetic. They are the textpath equivalents of
-#' [`geom_hline()`][ggplot2::geom_hline].
-#'
+#' @rdname geom_textabline
 #' @eval rd_dots(geom_texthline)
 #' @param yintercept The value at which the line should intercept the y axis
 #' @inheritParams geom_textpath
@@ -59,7 +53,7 @@ geom_texthline <- function(mapping = NULL,
   )
 }
 
-#' @rdname geom_texthline
+#' @rdname geom_textabline
 #' @format NULL
 #' @usage NULL
 #' @export
@@ -75,13 +69,14 @@ GeomTexthline <- ggproto("GeomTexthline", GeomTextpath,
     data$yend <- data$yintercept
 
     GeomTextsegment$draw_panel(unique(data), panel_params,
-                               coord, lineend = lineend)
+                               coord, lineend = lineend,
+                               text_params = text_params, arrow = arrow)
   },
 
   required_aes = c("yintercept", "label")
 )
 
-#' @rdname geom_texthline
+#' @rdname geom_textabline
 #' @export
 geom_labelhline <- function(mapping = NULL,
                             data = NULL,
@@ -136,7 +131,7 @@ geom_labelhline <- function(mapping = NULL,
   )
 }
 
-#' @rdname geom_texthline
+#' @rdname geom_textabline
 #' @format NULL
 #' @usage NULL
 #' @export
@@ -154,7 +149,10 @@ GeomLabelhline <- ggproto("GeomLabelhline", GeomLabelpath,
     data$yend <- data$yintercept
 
     GeomLabelsegment$draw_panel(unique(data), panel_params,
-                               coord, lineend = lineend)
+                               coord, lineend = lineend,
+                               text_params = text_params, arrow = arrow,
+                               label.padding = label.padding,
+                               label.r = label.r)
   },
 
   required_aes = c("yintercept", "label")

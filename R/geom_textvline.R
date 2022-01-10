@@ -1,10 +1,4 @@
-#' Add text to vertical lines
-#'
-#' `geom_textvline` and `geom_labelvline` draw a vertical line on the plot
-#' at the desired `xintercept` value, with a direct label as specified by the
-#' `label` aesthetic. They are the textpath equivalents of
-#' [`geom_vline()`][ggplot2::geom_vline].
-#'
+#' @rdname geom_textabline
 #' @eval rd_dots(geom_textvline)
 #' @param xintercept The value at which the line should intercept the y axis
 #' @inheritParams geom_textpath
@@ -59,7 +53,7 @@ geom_textvline <- function(mapping = NULL,
   )
 }
 
-#' @rdname geom_textvline
+#' @rdname geom_textabline
 #' @format NULL
 #' @usage NULL
 #' @export
@@ -75,13 +69,15 @@ GeomTextvline <- ggproto("GeomTextvline", GeomTextpath,
     data$yend <- ranges$y[2]
 
     GeomTextsegment$draw_panel(unique(data), panel_params,
-                               coord, lineend = lineend)
+                               coord, lineend = lineend,
+                               arrow = arrow,
+                               text_params = text_params)
   },
 
   required_aes = c("xintercept", "label")
 )
 
-#' @rdname geom_textvline
+#' @rdname geom_textabline
 #' @export
 geom_labelvline <- function(mapping = NULL,
                             data = NULL,
@@ -136,7 +132,7 @@ geom_labelvline <- function(mapping = NULL,
   )
 }
 
-#' @rdname geom_textvline
+#' @rdname geom_textabline
 #' @format NULL
 #' @usage NULL
 #' @export
@@ -154,7 +150,10 @@ GeomLabelvline <- ggproto("GeomLabelvline", GeomLabelpath,
     data$yend <- ranges$y[2]
 
     GeomLabelsegment$draw_panel(unique(data), panel_params,
-                               coord, lineend = lineend)
+                               coord, lineend = lineend,
+                               text_params = text_params,
+                               label.padding = label.padding,
+                               label.r = label.r)
   },
 
   required_aes = c("xintercept", "label")
