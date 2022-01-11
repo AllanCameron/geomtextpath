@@ -94,7 +94,8 @@
 <div class="section level2">
 <h2 id="aesthetics">Aesthetics<a class="anchor" aria-label="anchor" href="#aesthetics"></a>
 </h2>
-<p>Like any ggplot2 layer, <code><a href="../reference/geom_textpath.html">geom_textpath()</a></code> recognises several aesthetics. Broadly, these can be divided into three categories:</p>
+<p>Like any ggplot2 layer, <code><a href="../reference/geom_textpath.html">geom_textpath()</a></code> recognises several <em>aesthetic mappings</em>. Put simply, an aesthetic mapping is just an instruction you give to ggplot about which columns in your data frame should affect which visual elements of the plot. Thus, you might make a simple scatterplot by mapping one variable to the x aesthetic and another to a y aesthetic.</p>
+<p>Broadly, the aesthetic mappings in <code>geomtextpath</code> can be divided into three categories:</p>
 <ol style="list-style-type: decimal">
 <li>Aesthetics shared with <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text()</a></code>. These include <code>label</code>, <code>alpha</code>, <code>colour</code>, <code>family</code>, <code>fontface</code> and <code>size</code>.</li>
 <li>Aesthetics shared with <code><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_path()</a></code>. These include <code>x</code>, <code>y</code>, <code>group</code> and <code>linetype</code>. Furthermore, to distinguish the text from the path, there are these additional aesthetics:
@@ -139,16 +140,14 @@
 <code class="sourceCode R"><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Sepal.Length</span>, colour <span class="op">=</span> <span class="va">Species</span>, label <span class="op">=</span> <span class="va">Species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.3</span><span class="op">)</span><span class="op">)</span>
 
-<span class="va">i</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"density"</span>, size <span class="op">=</span> <span class="fl">5</span>, fontface <span class="op">=</span> <span class="fl">2</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.2</span>,
-                  hjust <span class="op">=</span> <span class="st">"ymax"</span><span class="op">)</span> <span class="op">+</span>
+<span class="va">i</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textdensity.html">geom_textdensity</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">5</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.2</span>, hjust <span class="op">=</span> <span class="st">"ymax"</span><span class="op">)</span> <span class="op">+</span>
    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"hjust = \"ymax\""</span><span class="op">)</span></code></pre></div>
-<p><img src="aesthetics_files/figure-html/hjust_explain2-1.png" width="700"></p>
+<p><img src="aesthetics_files/figure-html/hjust_explain2-1.png" width="576"></p>
 <p>The “auto” <code>hjust</code> setting tries to find the straightest segments of the curves to apply labels:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">i</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>stat <span class="op">=</span> <span class="st">"density"</span>, size <span class="op">=</span> <span class="fl">5</span>, fontface <span class="op">=</span> <span class="fl">2</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.2</span>,
-                  hjust <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span> <span class="op">+</span>
+<code class="sourceCode R"><span class="va">i</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textdensity.html">geom_textdensity</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">5</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.2</span>, hjust <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"hjust = \"auto\""</span><span class="op">)</span></code></pre></div>
-<p><img src="aesthetics_files/figure-html/hjust_explain3-1.png" width="700"></p>
+<p><img src="aesthetics_files/figure-html/hjust_explain3-1.png" width="576"></p>
 <div class="section level4">
 <h4 id="justification-of-multi-line-text">Justification of multi-line text<a class="anchor" aria-label="anchor" href="#justification-of-multi-line-text"></a>
 </h4>
@@ -205,6 +204,27 @@
 <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span>, spacing <span class="op">=</span> <span class="op">-</span><span class="fl">100</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"spacing = -100"</span><span class="op">)</span></code></pre></div>
 <p><img src="aesthetics_files/figure-html/spacing-1.png" width="700"><img src="aesthetics_files/figure-html/spacing-2.png" width="700"></p>
+</div>
+<div class="section level3">
+<h3 id="scales-used-in-geomtextpath">Scales used in <code>geomtextpath</code><a class="anchor" aria-label="anchor" href="#scales-used-in-geomtextpath"></a>
+</h3>
+<p>In order to help avoid clashing of labels when there is more than a single labelled line on a plot, you may want to have each label given its own <code>vjust</code> or <code>hjust</code> value. To make this easier, we have included <code>scale_hjust_discrete</code> and <code>scale_vjust_discrete</code>. This means that vjust and hjust can be used as aesthetic mappings even on non-numeric data.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Sepal.Length</span>, colour <span class="op">=</span> <span class="va">Species</span>, label <span class="op">=</span> <span class="va">Species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+       <span class="fu"><a href="../reference/geom_textdensity.html">geom_textdensity</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>vjust <span class="op">=</span> <span class="va">Species</span>, hjust <span class="op">=</span> <span class="va">Species</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span>
+       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.3</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">i</span> <span class="op">+</span> <span class="fu"><a href="../reference/scale_hjust_discrete.html">scale_vjust_discrete</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu"><a href="../reference/scale_hjust_discrete.html">scale_hjust_discrete</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p><img src="aesthetics_files/figure-html/scales_discrete-1.png" width="576"></p>
+<p>If we want more control over the exact position of each label, we can use <code>scale_hjust_manual</code> and <code>scale_vjust_manual</code></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="va">i</span> <span class="op">+</span> <span class="fu"><a href="../reference/scale_hjust_discrete.html">scale_vjust_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0</span>, <span class="op">-</span><span class="fl">0.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+    <span class="fu"><a href="../reference/scale_hjust_discrete.html">scale_hjust_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.45</span>, <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="aesthetics_files/figure-html/scales_manual-1.png" width="576"></p>
+<p>There is also the option for precise control using your input data frame with <code>scale_hjust_identity</code> and <code>scale_vjust_identity</code>, where the numbers in the mapped column are read as literal values for the hjust and vjust of each label.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
