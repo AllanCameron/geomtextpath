@@ -22,7 +22,9 @@ library(geomtextpath)
 
 ## Aesthetics
 
-Like any ggplot2 layer, `geom_textpath()` recognises several aesthetics. Broadly, these can be divided into three categories:
+Like any ggplot2 layer, `geom_textpath()` recognises several _aesthetic mappings_. Put simply, an aesthetic mapping is just an instruction you give to ggplot about which columns in your data frame should affect which visual elements of the plot. Thus, you might make a simple scatterplot by mapping one variable to the x aesthetic and another to a y aesthetic.
+
+Broadly, the aesthetic mappings in `geomtextpath` can be divided into three categories:
 
 1. Aesthetics shared with `geom_text()`. These include `label`, `alpha`, `colour`, `family`, `fontface` and `size`.
 2. Aesthetics shared with `geom_path()`. These include `x`, `y`, `group` and `linetype`. Furthermore, to distinguish the text from the path, there are these additional aesthetics:
@@ -63,20 +65,18 @@ p + geom_textpath(size  = 4, hjust = 1) +
 
 In some situations you may wish to specify particular positions relative to the x and y co-ordinates of the plot. For these circumstances there are some text string aliases that can be used. These are "xmin", "xmid", "xmax", "ymin", "ymid", "ymax" and "auto". The first six are self explanatory. As an example, we can look at the effect of setting `hjust = "ymax"`. Here we use a different plot to demonstrate:
 
-```{r hjust_explain2}
+```{r hjust_explain2, fig.width=6, fig.height=4}
 i <- ggplot(iris, aes(x = Sepal.Length, colour = Species, label = Species)) +
   ylim(c(0, 1.3))
 
-i + geom_textpath(stat = "density", size = 5, fontface = 2, vjust = -0.2,
-                  hjust = "ymax") +
+i + geom_textdensity(size = 5, vjust = -0.2, hjust = "ymax") +
    labs(subtitle = "hjust = \"ymax\"")
 ```
 
 The "auto" `hjust` setting tries to find the straightest segments of the curves to apply labels:
 
-```{r hjust_explain3}
-i + geom_textpath(stat = "density", size = 5, fontface = 2, vjust = -0.2,
-                  hjust = "auto") +
+```{r hjust_explain3, fig.width=6, fig.height=4}
+i + geom_textdensity(size = 5, vjust = -0.2, hjust = "auto") +
   labs(subtitle = "hjust = \"auto\"")
 ```
 
@@ -137,3 +137,27 @@ p + geom_textpath(size = 4, spacing = 100) +
 p + geom_textpath(size = 4, spacing = -100) +
   labs(subtitle = "spacing = -100")
 ```
+
+### Scales used in `geomtextpath`
+
+In order to help avoid clashing of labels when there is more than a single labelled line on a plot, you may want to have each label given its own `vjust` or `hjust` value. To make this easier, we have included `scale_hjust_discrete` and `scale_vjust_discrete`. This means that vjust and hjust can be used as aesthetic mappings even on non-numeric data.
+
+```{r scales_discrete, fig.width=6, fig.height=4}
+
+i <- ggplot(iris, aes(x = Sepal.Length, colour = Species, label = Species)) +
+       geom_textdensity(aes(vjust = Species, hjust = Species), size = 5) +
+       ylim(c(0, 1.3))
+
+i + scale_vjust_discrete(range = c(-0.5, 0.5)) + 
+    scale_hjust_discrete()
+```
+
+If we want more control over the exact position of each label, we can use `scale_hjust_manual` and `scale_vjust_manual`
+
+```{r scales_manual, fig.width=6, fig.height=4}
+
+i + scale_vjust_manual(values = c(0.5, 0, -0.5)) + 
+    scale_hjust_manual(values = c(0.1, 0.45, 0.8))
+```
+
+There is also the option for precise control using your input data frame with `scale_hjust_identity` and `scale_vjust_identity`, where the numbers in the mapped column are read as literal values for the hjust and vjust of each label.

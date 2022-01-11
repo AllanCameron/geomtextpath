@@ -26,7 +26,7 @@ library(geomtextpath)
 
 ## Text on a path
 
-The goal of the geomtextpath package is to draw text on a curved path as an extension of the ggplot2 plotting library. Those already familiar with ggplot2 and the `geom_path()` and `geom_text()` geometries, can easily display a path or some text.
+The goal of the `geomtextpath` package is to directly label line-based plots with text that is able to follow a curved path. It is an extension of the `ggplot2` plotting library. Those already familiar with ggplot2 and the `geom_path()` and `geom_text()` geometries, can easily display a path or some text.
 
 ```{r path_and_text_spiral, fig.show = 'hold', out.width="45%"}
 t <- seq(5, -1, length.out = 1000) * pi
@@ -48,7 +48,7 @@ p + geom_text(
 ) + labs(subtitle = "geom_text()")
 ```
 
-The `geom_pathtext()` extension follows these ggplot2 conventions and displays the path and the text by projecting the text along the curve.
+The `geomtextpath` extension follows these ggplot2 conventions and displays the path and the text by projecting the text along the curve. 
 
 ```{r textpath_spiral, fig.align="center", out.width="75%"}
 p + geom_textpath(
@@ -56,9 +56,27 @@ p + geom_textpath(
 ) + labs(subtitle = "geom_textpath()")
 ```
 
+All of the line-based geom layers in `ggplot2` have their text equivalents and text-box equivalents in the `geomtextpath` package:
+
+| **ggplot geom**  | **Text equivalent**  | **Label equivalent**   |
+|:-----------------|:---------------------|:-----------------------|
+| `geom_path`      | `geom_textpath`      | `geom_labelpath`       |
+| `geom_segment`   | `geom_textsegment`   | `geom_labelsegment`    |
+| `geom_line`      | `geom_textline`      | `geom_labelline`       |
+| `geom_abline`    | `geom_textabline`    | `geom_labelabline`     |
+| `geom_hline`     | `geom_texthline`     | `geom_labelhline`      |
+| `geom_vline`     | `geom_textvline`     | `geom_labelvline`      |
+| `geom_density`   | `geom_textdensity`   | `geom_labeldensity`    |
+| `geom_smooth`    | `geom_textsmooth`    | `geom_labelsmooth`     |
+| `geom_contour`   | `geom_textcontour`   | `geom_labelcontour`    |
+| `geom_density2d` | `geom_textdensity2d` | `geom_labeldensity2d`  |
+| `geom_sf`        | `geom_textsf`        | `geom_labelsf`         |
+
+Each of these aims to provide the same functionality as the equivalent ggplot2 geom, but with the addition of a `label` aesthetic that will automatically label the line, even if it follows a curved path.
+
 ### Correction of angles across different aspect ratios
 
-The mechanism underlying the text positioning will take account of the plotting window however it is rescaled. This means text continues to stick together and follow the path at the correct angle as the plotting window changes in size or in aspect ratio. For example, here is the same plot drawn with different dimensions:
+The mechanism underlying the text positioning will take account of the plotting window however it is rescaled. This means text continues to stick together and follow the path at the correct angle as the plotting window changes in size or in aspect ratio. This is all done in the background, without the need to call your plotting code again every time the window is resized. For example, here is the same plot drawn with different dimensions:
 
 ```{r skinny, fig.width = 3, fig.height = 6, fig.align="center"}
 p + geom_textpath(
@@ -71,3 +89,16 @@ p + geom_textpath(
   size  = 4, label = rhyme
 ) + coord_cartesian() + labs(subtitle = "geom_textpath()")
 ```
+
+
+### How does it work?
+
+At the heart of `geomtextpath` is `textpathGrob`. This is a type of graphical object (known as a "grob"), which is drawn by the `grid` graphics package on which `ggplot2` is built. Everything that you see in your plotting device when you draw a `ggplot` is made up of grobs.
+
+When a `textpathGrob` is created, it measures the dimensions of the given text label letter-by-letter and stores the result along with the x, y values of the path and any graphics parameters such as color, linewidth and font. 
+
+When a plot is drawn, or the plotting window is rescaled, the `grid` package always calls `makeContent` for each grob in the current display device. This makes information about the aspect ratio and absolute size of the current viewport available for further calculations to be made on-the-fly if necessary before anything is actually drawn.
+
+The `geomtextpath` package was possible because the `makeContent` function is generic, meaning that we were able to create a `makeContent.textpath` function. This takes the letter dimensions stored in the grob, the x, y co-ordinates of the path stored in the grob, and the device dimensions, applying simple(ish) trigonometry to work out where each letter should be placed and at what angle. Once this is known, the path and its associated gap can be calculated. The actual drawing part is then done by dispatching this information to the grid functions `textGrob` and `linesGrob`, which directly draw the graphical objects on the plotting device.
+
+We have tried to make any calculations done inside the `makeContent` stage efficient, so that there is not a noticeable lag in the plot being redrawn when the window is rescaled.

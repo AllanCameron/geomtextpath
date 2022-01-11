@@ -135,7 +135,7 @@ separately.
 
 ``` r
 ggplot(pressure, aes(temperature, pressure)) +
-  geom_textline(label = "Mercury vapor pressure", size = 8, vjust = -0.5,
+  geom_textline(label = "Mercury vapor pressure", size = 6, vjust = -0.5,
                 linewidth = 1, linecolor = "red4", linetype = 2, 
                 color = "deepskyblue4")
 ```
