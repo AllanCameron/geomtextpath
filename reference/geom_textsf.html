@@ -86,6 +86,17 @@ or polygons.</p>
   show.legend <span class="op">=</span> <span class="cn">NA</span>,
   inherit.aes <span class="op">=</span> <span class="cn">TRUE</span>,
   <span class="va">...</span>
+<span class="op">)</span>
+
+<span class="fu">geom_labelsf</span><span class="op">(</span>
+  mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="op">)</span>,
+  data <span class="op">=</span> <span class="cn">NULL</span>,
+  stat <span class="op">=</span> <span class="st">"sf"</span>,
+  position <span class="op">=</span> <span class="st">"identity"</span>,
+  na.rm <span class="op">=</span> <span class="cn">FALSE</span>,
+  show.legend <span class="op">=</span> <span class="cn">NA</span>,
+  inherit.aes <span class="op">=</span> <span class="cn">TRUE</span>,
+  <span class="va">...</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -159,10 +170,10 @@ take it from the first layer that defines a CRS.</p>
     
 
 <p>Most regular geoms, such as [geom_point()], [geom_path()],
-[geom_text()], [geom_polygon()] etc. will work fine with `coord_sf()`. However
-when using these geoms, two problems arise. First, what CRS should be used
-for the x and y coordinates used by these non-sf geoms? The CRS applied to
-non-sf geoms is set by the `default_crs` parameter, and it defaults to
+[geom_text()], [geom_polygon()] etc. will work fine with `coord_sf()`.
+However when using these geoms, two problems arise. First, what CRS should be
+used for the x and y coordinates used by these non-sf geoms? The CRS applied
+to non-sf geoms is set by the `default_crs` parameter, and it defaults to
 `NULL`, which means positions for non-sf geoms are interpreted as projected
 coordinates in the coordinate system set by the `crs` parameter. This setting
 allows you complete control over where exactly items are placed on the plot
@@ -173,14 +184,14 @@ This means that x and y positions are interpreted as longitude and latitude,
 respectively. You can also specify any other valid CRS as the default CRS for
 non-sf geoms.</p>
 <p>The second problem that arises for non-sf geoms is how straight lines
-should be interpreted in projected space when `default_crs` is not set to `NULL`.
-The approach `coord_sf()` takes is to break straight lines into small pieces
-(i.e., segmentize them) and then transform the pieces into projected coordinates.
-For the default setting where x and y are interpreted as longitude and latitude,
-this approach means that horizontal lines follow the parallels and vertical lines
-follow the meridians. If you need a different approach to handling straight lines,
-then you should manually segmentize and project coordinates and generate the plot
-in projected coordinates.</p>
+should be interpreted in projected space when `default_crs` is not set to
+`NULL`. The approach `coord_sf()` takes is to break straight lines into small
+pieces (i.e., segmentize them) and then transform the pieces into projected
+coordinates. For the default setting where x and y are interpreted as
+longitude and latitude, this approach means that horizontal lines follow the
+parallels and vertical lines follow the meridians. If you need a different
+approach to handling straight lines, then you should manually segmentize and
+project coordinates and generate the plot in projected coordinates.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -193,33 +204,6 @@ in projected coordinates.</p>
 <span class="r-in"> <span class="fu">geom_textsf</span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Forth and Clyde Canal"</span>,</span>
 <span class="r-in">              hjust <span class="op">=</span> <span class="fl">0.62</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.3</span>, fill <span class="op">=</span> <span class="st">"#E4E0A3"</span><span class="op">)</span> <span class="op">+</span></span>
 <span class="r-in"> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">lims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4.2</span>, <span class="op">-</span><span class="fl">3.9</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">55.9</span>, <span class="fl">56</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The text offset exceeds the curvature in one or more paths. This will result in</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> displaced letters. Consider reducing the vjust or text size, or use the hjust</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> parameter to move the string to a different point on the path.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The text offset exceeds the curvature in one or more paths. This will result in</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> displaced letters. Consider reducing the vjust or text size, or use the hjust</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> parameter to move the string to a different point on the path.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The text offset exceeds the curvature in one or more paths. This will result in</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> displaced letters. Consider reducing the vjust or text size, or use the hjust</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> parameter to move the string to a different point on the path.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The text offset exceeds the curvature in one or more paths. This will result in</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> displaced letters. Consider reducing the vjust or text size, or use the hjust</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> parameter to move the string to a different point on the path.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The text offset exceeds the curvature in one or more paths. This will result in</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> displaced letters. Consider reducing the vjust or text size, or use the hjust</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> parameter to move the string to a different point on the path.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The text offset exceeds the curvature in one or more paths. This will result in</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> displaced letters. Consider reducing the vjust or text size, or use the hjust</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> parameter to move the string to a different point on the path.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The text offset exceeds the curvature in one or more paths. This will result in</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> displaced letters. Consider reducing the vjust or text size, or use the hjust</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> parameter to move the string to a different point on the path.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The text offset exceeds the curvature in one or more paths. This will result in</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> displaced letters. Consider reducing the vjust or text size, or use the hjust</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> parameter to move the string to a different point on the path.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The text offset exceeds the curvature in one or more paths. This will result in</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> displaced letters. Consider reducing the vjust or text size, or use the hjust</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> parameter to move the string to a different point on the path.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The text offset exceeds the curvature in one or more paths. This will result in</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> displaced letters. Consider reducing the vjust or text size, or use the hjust</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> parameter to move the string to a different point on the path.</span>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="Allows text to follow curved paths in ggplot2.
     This allows for neat labelling of curves and of plots in polar co-ordinates.">
-<title>Use Curved Text In Ggplot2 • geomtextpath</title>
+<title>Use Curved Text in Ggplot2 • geomtextpath</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
@@ -18,7 +18,7 @@
 <link href="deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Use Curved Text In Ggplot2">
+<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Use Curved Text in Ggplot2">
 <meta property="og:description" content="Allows text to follow curved paths in ggplot2.
     This allows for neat labelling of curves and of plots in polar co-ordinates.">
 <meta property="og:image" content="https://allancameron.github.io/geomtextpath/logo.png">
@@ -91,7 +91,7 @@
 <h2 id="create-curved-text-in-ggplot2">Create curved text in ggplot2<a class="anchor" aria-label="anchor" href="#create-curved-text-in-ggplot2"></a>
 </h2>
 <p>The existing text-based geom layers in ggplot2 (<code>geom_text</code> and <code>geom_label</code>) are ideal for the majority of plots, since typically textual annotations are short, straight and in line with the axes. However, there are some occasions when it is useful to have text follow a curved path. This may be to create or recreate a specific visual effect, or it may be to label a circular / polar plot in a more “natural” way. Direct and automatic text labels that adhere to their associated line can also provide a neat alternative to legends, without the need for specifying exact label positions, and with a lower risk of overplotting.</p>
-<p>The text will always stick together and follow the path, even if you change the size and aspect ratio of your plotting device. It does so without the need to redraw your plot each time, as shown in the <a href="https://allancameron.github.io/geomtextpath/articles/geomtextpath.html">introduction</a> vignette.</p>
+<p>Using geomtextpath, your text can follow any path, and will remain correctly spaced and angled, even if you change the size and aspect ratio of your plotting device. It does so without the need to redraw your plot each time, as shown in the <a href="https://allancameron.github.io/geomtextpath/articles/geomtextpath.html">introduction</a> vignette.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -107,11 +107,15 @@
 </h2>
 <p>Once installed, we simply call:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://allancameron.github.io/geomtextpath">geomtextpath</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://allancameron.github.io/geomtextpath/">geomtextpath</a></span><span class="op">)</span>
 <span class="co">#&gt; Loading required package: ggplot2</span></code></pre></div>
-<p>The core function in this package, <code>geom_textpath</code>, works like any other <code>geom</code> in <code>ggplot2</code>. It takes its x co-ordinates, its y co-ordinates and its text label from an aesthetic mapping. At its most basic, this allows the <code>label</code> to be plotted on an arbitrary path, as shown in the following example:</p>
+<p>The core functions in this package, <code>geom_textpath</code> and <code>geom_labelpath</code>, work like any other <code>geom</code> in <code>ggplot2</code>. They take their co-ordinates, their y co-ordinates and their text label from an aesthetic mapping. At its most basic, this allows the <code>label</code> to be plotted on an arbitrary path, as shown in the following example:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">5</span>, <span class="op">-</span><span class="fl">1</span>, length.out <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span> <span class="op">*</span> <span class="va">pi</span>
+<code class="sourceCode R"><span class="co"># Set a consistent theme for the plots here</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme_get.html" class="external-link">theme_set</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
+          <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.line <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_line</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">0.25</span>, colour <span class="op">=</span> <span class="st">"gray75"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">5</span>, <span class="op">-</span><span class="fl">1</span>, length.out <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span> <span class="op">*</span> <span class="va">pi</span>
 
 <span class="va">spiral</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sin</a></span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="op">*</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1000</span>, 
                      y    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="op">*</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1000</span>,
@@ -125,34 +129,104 @@
   <span class="fu"><a href="reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">7</span>, vjust <span class="op">=</span> <span class="fl">2</span>, text_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_equal</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1500</span>, <span class="fl">1500</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1500</span>, <span class="fl">1500</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-spiral-1.png" width="100%" style="display: block; margin: auto;"></p>
-<p>Just as <code>geom_path</code> is the foundation for several other geoms in <code>ggplot2</code>, so too is <code>geom_textpath</code> the foundation of the other geoms in this package, which include:</p>
-<ul>
-<li><code>geom_textline</code></li>
-<li><code>geom_textdensity</code></li>
-<li><code>geom_textsmooth</code></li>
-<li><code>geom_textcontour</code></li>
-<li><code>geom_textdensity2d</code></li>
-</ul>
-<p>Each of these aims to replicate all the functionality of the equivalent <code>ggplot2</code> function, but with direct text labels that follow the shape of the lines drawn.</p>
-<div class="section level3">
-<h3 id="geom_textline">
-<code>geom_textline</code><a class="anchor" aria-label="anchor" href="#geom_textline"></a>
-</h3>
-<p>You can use <code>geom_textline</code> as a drop in for <code>geom_line</code> if you want it directly labelled. Just pass the <code>label</code> you want as an argument to <code>geom_textline</code> (or if you have grouped data you can pass the label as an aesthetic mapping). As in the other geoms here, you can specify the line’s appearance and the text’s appearance separately.</p>
+<p>If we want our text in a box, even when the text is curved, we can use <code>geom_labelpath</code> instead:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>
+
+<span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/splinefun.html" class="external-link">spline</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>, xout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">y</span>,
+                 y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/splinefun.html" class="external-link">spline</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span>, xout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">y</span>,
+                 z <span class="op">=</span> <span class="st">"A curved textbox on an arbitrary path"</span><span class="op">)</span>
+
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, label <span class="op">=</span> <span class="va">z</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="reference/geom_textpath.html">geom_labelpath</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">5</span>, fill <span class="op">=</span> <span class="st">"#F6F6FF"</span><span class="op">)</span></code></pre></div>
+<p><img src="reference/figures/README-intro_label-1.png" width="100%" style="display: block; margin: auto;"></p>
+<p>Of course, the point of this package is not to produce such graphical novelties, but to provide an easy and visually appealing way to present your data. Just as <code>geom_path</code> is the foundation for several other geoms in <code>ggplot2</code>, so too are <code>geom_textpath</code> and <code>geom_labelpath</code> the foundation of the other geoms in this package. The line-based geoms in <code>ggplot</code> all have two equivalents in this package:</p>
+<table class="table">
+<thead><tr class="header">
+<th align="left"><strong>ggplot geom</strong></th>
+<th align="left"><strong>Text equivalent</strong></th>
+<th align="left"><strong>Label equivalent</strong></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>geom_path</code></td>
+<td align="left"><code>geom_textpath</code></td>
+<td align="left"><code>geom_labelpath</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>geom_segment</code></td>
+<td align="left"><code>geom_textsegment</code></td>
+<td align="left"><code>geom_labelsegment</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>geom_line</code></td>
+<td align="left"><code>geom_textline</code></td>
+<td align="left"><code>geom_labelline</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>geom_abline</code></td>
+<td align="left"><code>geom_textabline</code></td>
+<td align="left"><code>geom_labelabline</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>geom_hline</code></td>
+<td align="left"><code>geom_texthline</code></td>
+<td align="left"><code>geom_labelhline</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>geom_vline</code></td>
+<td align="left"><code>geom_textvline</code></td>
+<td align="left"><code>geom_labelvline</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>geom_density</code></td>
+<td align="left"><code>geom_textdensity</code></td>
+<td align="left"><code>geom_labeldensity</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>geom_smooth</code></td>
+<td align="left"><code>geom_textsmooth</code></td>
+<td align="left"><code>geom_labelsmooth</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>geom_contour</code></td>
+<td align="left"><code>geom_textcontour</code></td>
+<td align="left"><code>geom_labelcontour</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>geom_density2d</code></td>
+<td align="left"><code>geom_textdensity2d</code></td>
+<td align="left"><code>geom_labeldensity2d</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>geom_sf</code></td>
+<td align="left"><code>geom_textsf</code></td>
+<td align="left"><code>geom_labelsf</code></td>
+</tr>
+</tbody>
+</table>
+<p>Each of these aims to replicate all the functionality of the equivalent <code>ggplot2</code> function, but with direct text labels that follow the shape of the lines drawn.</p>
+<p>For the special case of <code>geom_sf</code>, which draws different shapes based on the geometry objects drawn, the equivalent <code>geom_textsf</code> and <code>geom_labelsf</code>, will identify and label the linestring components (typically rivers and roads), without attempting to label polygons.</p>
+<div class="section level3">
+<h3 id="geom_textline-and-geom_labelline">
+<code>geom_textline</code> and <code>geom_labelline</code>
+<a class="anchor" aria-label="anchor" href="#geom_textline-and-geom_labelline"></a>
+</h3>
+<p>You can use <code>geom_textline</code> and <code>geom_labelline</code> as a drop in for <code>geom_line</code> if you want it directly labelled. Just pass the <code>label</code> you want as an argument to <code>geom_textline</code> (or if you have grouped data you can pass the label as an aesthetic mapping). As in the other geoms here, you can specify the line’s appearance and the text’s appearance separately.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">pressure</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">temperature</span>, <span class="va">pressure</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="reference/geom_textpath.html">geom_textline</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Mercury vapor pressure"</span>, size <span class="op">=</span> <span class="fl">8</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span>,
                 linewidth <span class="op">=</span> <span class="fl">1</span>, linecolor <span class="op">=</span> <span class="st">"red4"</span>, linetype <span class="op">=</span> <span class="fl">2</span>, 
-                color <span class="op">=</span> <span class="st">"deepskyblue4"</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+                color <span class="op">=</span> <span class="st">"deepskyblue4"</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-textline_demo-1.png" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
-<h3 id="geom_textdensity">
-<code>geom_textdensity</code><a class="anchor" aria-label="anchor" href="#geom_textdensity"></a>
+<h3 id="geom_textdensity-and-geom_labeldensity">
+<code>geom_textdensity</code> and <code>geom_labeldensity</code>
+<a class="anchor" aria-label="anchor" href="#geom_textdensity-and-geom_labeldensity"></a>
 </h3>
-<p>This is the analogue of <code>geom_density</code> that allows for smoothly curved labels on density plots</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>These are the analogues of <code>geom_density</code> that allows for smoothly curved labels on density plots</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Sepal.Length</span>, colour <span class="op">=</span> <span class="va">Species</span>, label <span class="op">=</span> <span class="va">Species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="reference/geom_textdensity.html">geom_textdensity</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">6</span>, fontface <span class="op">=</span> <span class="fl">2</span>, hjust <span class="op">=</span> <span class="fl">0.2</span>, vjust <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></code></pre></div>
@@ -160,33 +234,25 @@
 <p>Note that we have been able to “reclaim” the space normally taken up by the legend without leaving any ambiguity in the plot.</p>
 </div>
 <div class="section level3">
-<h3 id="geom_textsmooth">
-<code>geom_textsmooth</code><a class="anchor" aria-label="anchor" href="#geom_textsmooth"></a>
+<h3 id="geom_textsmooth-and-geom_labelsmooth">
+<code>geom_textsmooth</code> and <code>geom_labelsmooth</code>
+<a class="anchor" aria-label="anchor" href="#geom_textsmooth-and-geom_labelsmooth"></a>
 </h3>
-<p>We can use <code>geom_textsmooth</code> to get labelled trend lines through scatterplots:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>We can use these geoms to get labelled trend lines through scatterplots:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Sepal.Length</span>, y <span class="op">=</span> <span class="va">Petal.Length</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="reference/geom_textsmooth.html">geom_textsmooth</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">Species</span>, colour <span class="op">=</span> <span class="va">Species</span><span class="op">)</span>,
                 method <span class="op">=</span> <span class="st">"loess"</span>, formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span>,
                 size <span class="op">=</span> <span class="fl">7</span>, linetype <span class="op">=</span> <span class="fl">3</span>, fontface <span class="op">=</span> <span class="fl">2</span>, linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"forestgreen"</span>, <span class="st">"deepskyblue4"</span>, <span class="st">"tomato4"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-smooth-1.png" width="100%" style="display: block; margin: auto;"></p>
-<p>Another use might be to label lines that are too “noisy” for direct labels to remain legible if they adhere too closely to the line.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">economics</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">unemploy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="st">"grey"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="reference/geom_textsmooth.html">geom_textsmooth</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Decline"</span><span class="op">)</span>, method <span class="op">=</span> <span class="va">loess</span>, formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span>,
-                  hjust <span class="op">=</span> <span class="fl">0.48</span>, size <span class="op">=</span> <span class="fl">5</span>, method.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>span <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>,
-                  text_only <span class="op">=</span> <span class="cn">TRUE</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-smooth2-1.png" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="labelled-contour-lines">Labelled contour lines<a class="anchor" aria-label="anchor" href="#labelled-contour-lines"></a>
 </h3>
-<p>Adding labels to the level of your contour lines is now as simple as calling <code>geom_textcontour</code> instead of <code>geom_contour</code>:</p>
+<p>Adding labels to the level of your contour lines is now as simple as calling <code>geom_textcontour</code> or <code>geom_labelcontour</code> instead of <code>geom_contour</code>:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">volcano</span><span class="op">)</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">volcano</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
@@ -196,25 +262,63 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_contour.html" class="external-link">geom_contour_filled</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">6</span>, alpha <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="reference/geom_textcontour.html">geom_textcontour</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">6</span>, size <span class="op">=</span> <span class="fl">2.5</span>, padding <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="st">"in"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">terrain.colors</a></span><span class="op">(</span><span class="fl">11</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-volcano-1.png" width="100%" style="display: block; margin: auto;"></p>
-<p>We also have <code>geom_textdensity2d</code> for the common use case of 2D density contours:</p>
+<p>We also have <code>geom_textdensity2d</code> and <code>geom_labeldensity2d</code> for the common use case of 2D density contours:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
 
 <span class="va">df</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span>
 
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="reference/geom_textdensity2d.html">geom_textdensity2d</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="reference/geom_textdensity2d.html">geom_textdensity2d</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-density2d-1.png" width="100%" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level3">
+<h3 id="geom_textsf-and-geom_labelsf">
+<code>geom_textsf</code> and <code>geom_labelsf</code>
+<a class="anchor" aria-label="anchor" href="#geom_textsf-and-geom_labelsf"></a>
+</h3>
+<p>These geoms behave much the same way as <code>geom_sf</code>, except linestrings such as rivers and roads can be given (curved) text labels:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4.2518</span>, <span class="op">-</span><span class="fl">3.1883</span><span class="op">)</span>, 
+                 y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">55.8642</span>, <span class="fl">55.9533</span><span class="op">)</span>,
+                 label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Glasgow"</span>, <span class="st">"Edinburgh"</span><span class="op">)</span><span class="op">)</span>
+
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">df</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="reference/geom_textsf.html">geom_textsf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">waterways</span>,
+              <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">name</span><span class="op">)</span>, text_smoothing <span class="op">=</span> <span class="fl">99.5</span>, linecolour <span class="op">=</span> <span class="st">"#8888B3"</span>, 
+              color <span class="op">=</span> <span class="st">"gray30"</span>, hjust <span class="op">=</span> <span class="fl">0.25</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span>, fill <span class="op">=</span> <span class="st">"#E6F0B3"</span>, 
+              alpha <span class="op">=</span> <span class="fl">0.8</span>, fontface <span class="op">=</span> <span class="fl">3</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">df</span>, color <span class="op">=</span> <span class="st">"gray50"</span>, size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, label <span class="op">=</span> <span class="va">label</span><span class="op">)</span>, color <span class="op">=</span> <span class="st">"gray50"</span>,
+                hjust <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.2</span>, <span class="fl">1.2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>panel.grid <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_line</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">lims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">4.7</span>, <span class="op">-</span><span class="fl">3</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">55.62</span>, <span class="fl">56.25</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="reference/figures/README-geom_textsf-1.png" width="100%" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level3">
+<h3 id="reference-lines">Reference lines<a class="anchor" aria-label="anchor" href="#reference-lines"></a>
+</h3>
+<p>Often, a reference line added to a plot requires a text annotation. We can do this directly with <code>geom_textabline</code>, <code>geom_textvline</code> and <code>geom_texthline</code>, or their text-box equivalents <code>geom_labelabline</code>, <code>geom_labelvline</code> and <code>geom_labelhline</code>. Although such lines aren’t curved, there are some benefits to using the <code>geomtextpath</code> functions if a labelled reference line is required: only a single call is needed, co-ordinates are not required for the text label, the text can be put in-line with an appropriate break in the line automatically, and the label will orientate and curve appropriately in polar co-ordinates.</p>
+<p>This example shows all three text-based reference line geoms:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">mtcars</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">mpg</span>, <span class="va">disp</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="reference/geom_textabline.html">geom_texthline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">200</span>, label <span class="op">=</span> <span class="st">"displacement threshold"</span>, 
+                 hjust <span class="op">=</span> <span class="fl">0.8</span>, color <span class="op">=</span> <span class="st">"red4"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="reference/geom_textabline.html">geom_textvline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">20</span>, label <span class="op">=</span> <span class="st">"consumption threshold"</span>, hjust <span class="op">=</span> <span class="fl">0.8</span>,
+                 linetype <span class="op">=</span> <span class="fl">2</span>, vjust <span class="op">=</span> <span class="fl">1.3</span>, color <span class="op">=</span> <span class="st">"blue4"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="reference/geom_textabline.html">geom_textabline</a></span><span class="op">(</span>slope <span class="op">=</span> <span class="fl">15</span>, intercept <span class="op">=</span> <span class="op">-</span><span class="fl">100</span>, label <span class="op">=</span> <span class="st">"partition line"</span>, 
+                  color <span class="op">=</span> <span class="st">"green4"</span>, hjust <span class="op">=</span> <span class="fl">0.6</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.2</span><span class="op">)</span></code></pre></div>
+<p><img src="reference/figures/README-vline-1.png" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="arbitrary-stat-transformations">Arbitrary <code>stat</code> transformations<a class="anchor" aria-label="anchor" href="#arbitrary-stat-transformations"></a>
 </h3>
-<p>Other “stat” transformations can be used directly on <code>geom_textpath</code>. For example, functions can be labelled with paths created in <code>stat_function</code>:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<p>Other “stat” transformations can be used directly on <code>geom_textpath</code> and <code>geom_labelpath</code>. For example, functions can be labelled with paths created in <code>stat_function</code>:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">xlim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_function.html" class="external-link">stat_function</a></span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"textpath"</span>,
@@ -228,30 +332,43 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_function.html" class="external-link">stat_function</a></span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"textpath"</span>,
                 fun <span class="op">=</span> <span class="va">dgamma</span>, color <span class="op">=</span> <span class="st">"green4"</span>,
                 label <span class="op">=</span> <span class="st">"gamma distribution with shape = 3"</span>,
-                size <span class="op">=</span> <span class="fl">5</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.2</span>, hjust <span class="op">=</span> <span class="fl">0.1</span>, args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> </code></pre></div>
+                size <span class="op">=</span> <span class="fl">5</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.2</span>, hjust <span class="op">=</span> <span class="fl">0.1</span>, args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>shape <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-stat_function-1.png" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="controlling-text-position">Controlling text position<a class="anchor" aria-label="anchor" href="#controlling-text-position"></a>
 </h3>
 <p>Just like <code>geom_text</code>, the <code>vjust</code> parameter controls vertical justification of the text, though in <code>geom_textpath</code> and its related geoms, the text is justified relative to the path rather than a single point. If the <code>vjust</code> parameter moves the text above or below the line, the line is automatically “filled in”.</p>
-<p>For short text labels applied to long paths, we need a parameter to control how far along the path the text is placed. For this we use the horizontal justification (<code>hjust</code>) parameter.</p>
-<p>Here is an example of text justified above the line of the path using a small negative value of <code>vjust</code>:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<p>For short text labels applied to long paths, we need a parameter to control how far along the path the text is placed. For this we use the horizontal justification (<code>hjust</code>) parameter. This can be numeric (0 to 1), or can accept position descriptions such as “xmid”, “ymax”, or “auto”.</p>
+<p>Here is an example of text justified above the line of the path using a small negative value of <code>vjust</code>, and the <code>hjust</code> set to “ymax” to place the labels over the peak of each curve:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Sepal.Length</span>, colour <span class="op">=</span> <span class="va">Species</span>, label <span class="op">=</span> <span class="va">Species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span>
 
-<span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="reference/geom_textdensity.html">geom_textdensity</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">6</span>, fontface <span class="op">=</span> <span class="fl">2</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.2</span>, hjust <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></code></pre></div>
+<span class="va">p</span> <span class="op">+</span> 
+  <span class="fu"><a href="reference/geom_textdensity.html">geom_textdensity</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">6</span>, fontface <span class="op">=</span> <span class="fl">2</span>, spacing <span class="op">=</span> <span class="fl">50</span>,
+                   vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.2</span>, hjust <span class="op">=</span> <span class="st">"ymax"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-density_vjust-1.png" width="100%" style="display: block; margin: auto;"></p>
 <p>You can read more about text positioning in the <a href="https://allancameron.github.io/geomtextpath/articles/aesthetics.html">aesthetics vignette</a>.</p>
+</div>
+<div class="section level3">
+<h3 id="smoothing-text-while-preserving-path-details">Smoothing text while preserving path details<a class="anchor" aria-label="anchor" href="#smoothing-text-while-preserving-path-details"></a>
+</h3>
+<p>Some lines may be too “noisy” or too angular for direct labels to remain legible if they adhere too closely to the line. We have therefore added the ability to smooth the text label while keeping the path unaltered, using a <code>text_smoothing</code> parameter, which can be set from 0 (none) to 100 (maximum).</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">economics</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">unemploy</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="reference/geom_textpath.html">geom_textline</a></span><span class="op">(</span>linecolour <span class="op">=</span> <span class="st">"grey"</span>, size <span class="op">=</span> <span class="fl">4</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">2</span>, hjust <span class="op">=</span> <span class="fl">0.47</span>,
+                label <span class="op">=</span> <span class="st">"1990s Decline"</span>, text_smoothing <span class="op">=</span> <span class="fl">97</span><span class="op">)</span></code></pre></div>
+<p><img src="reference/figures/README-smooth2-1.png" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="plotmath-support">
 <code>Plotmath</code> support<a class="anchor" aria-label="anchor" href="#plotmath-support"></a>
 </h3>
 <p>If you want to use plotmath expressions you can do so much as you would with <code>geom_text</code>. Just tell <code>geom_textpath</code> that your labels should be parsed using <code>parse = TRUE</code></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">lab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"y = "</span>, <span class="fu"><a href="https://rdrr.io/r/grDevices/plotmath.html" class="external-link">frac</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">sigma</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">pi</span><span class="op">)</span><span class="op">)</span>, <span class="st">" "</span>,
                             <span class="fu"><a href="https://rdrr.io/r/grDevices/plotmath.html" class="external-link">plain</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span><span class="op">^</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/grDevices/plotmath.html" class="external-link">frac</a></span><span class="op">(</span><span class="op">-</span><span class="op">(</span><span class="va">x</span><span class="op">-</span><span class="va">mu</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">*</span><span class="va">sigma</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">}</span><span class="op">)</span><span class="op">)</span>
 
@@ -265,54 +382,72 @@
 <p>Note that, due to the way the <code>grid</code> package draws plotmath expressions, all plotmath labels will be straight rather than curved. However, as in the example above, they will still be angled according to the gradient of the curve.</p>
 </div>
 <div class="section level3">
+<h3 id="rich-text-support">Rich text support<a class="anchor" aria-label="anchor" href="#rich-text-support"></a>
+</h3>
+<p>The geoms here also feature richtext support. If you want your text labels to be interpreted as rich text, simply pass <code>rich = TRUE</code> as a parameter in the call to the geom layer</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="va">lab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"&lt;span style='color:gray30;font-size:10pt'&gt;Plasma &lt;/span&gt;"</span>,
+             <span class="st">"&lt;strong style='color:red4;font-size:10pt'&gt;Indometacin&lt;/strong&gt;"</span>,
+             <span class="st">"&lt;span style ='color:gray30;font-size:10pt'&gt;Concentration &lt;/span&gt;"</span>,
+             <span class="st">"&lt;i style='color:gray50;font-size:8pt'&gt;&lt;sub&gt;(\u03BCg/l)&lt;/sub&gt;&lt;/i&gt;"</span><span class="op">)</span>
+
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">Indometh</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">conc</span>, group <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="reference/geom_textsmooth.html">geom_textsmooth</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span>, method <span class="op">=</span> <span class="va">loess</span>, 
+                  label <span class="op">=</span> <span class="va">lab</span>, rich <span class="op">=</span> <span class="cn">TRUE</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span>, size <span class="op">=</span> <span class="fl">4.5</span>, 
+                  text_smoothing <span class="op">=</span> <span class="fl">98</span>, linecolor <span class="op">=</span> <span class="st">"red4"</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">xlim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; Warning: Removed 18 rows containing non-finite values (stat_smooth).</span></code></pre></div>
+<p><img src="reference/figures/README-richtext-1.png" width="100%" style="display: block; margin: auto;"></p>
+</div>
+<div class="section level3">
 <h3 id="text-paths-in-polar-coordinates">Text paths in polar coordinates<a class="anchor" aria-label="anchor" href="#text-paths-in-polar-coordinates"></a>
 </h3>
 <p>Straight text paths in Cartesian coordinates become curved in polar coordinates.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1000</span><span class="op">)</span>, y <span class="op">=</span> <span class="fl">1</span>, text <span class="op">=</span> <span class="st">"This is a perfectly flat label"</span><span class="op">)</span>
 
 <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, label <span class="op">=</span> <span class="va">text</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">6</span>, text_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="reference/geom_textpath.html">geom_labelpath</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">6</span>, text_only <span class="op">=</span> <span class="cn">TRUE</span>, fill <span class="op">=</span> <span class="st">"#F6F6FF"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">1.1</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">p</span></code></pre></div>
 <p><img src="reference/figures/README-coords_cartesian-1.png" width="100%" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_polar.html" class="external-link">coord_polar</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-coords_polar-1.png" width="100%" style="display: block; margin: auto;"></p>
 <p>We have included the ability to have <em>point-like</em> text paths. While this sounds paradoxical, it means that <code>geom_textpath</code> can be used as a drop-in for <code>geom_text</code>, and will behave in much the same way, with the exception that the text will automatically curve in polar co-ordinates. The best way to show this is with a head-to-head comparison.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">7</span>, <span class="fl">6</span>, <span class="fl">3</span><span class="op">)</span>,
                  color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"royalblue"</span>, <span class="st">"orangered"</span>, <span class="st">"deepskyblue4"</span>, <span class="st">"violet"</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, color <span class="op">=</span> <span class="va">color</span>, label <span class="op">=</span> <span class="va">color</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span>
        <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_identity.html" class="external-link">scale_color_identity</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">lims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">6</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">8</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span>
+       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">lims</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">6</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">8</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">p_text</span>     <span class="op">&lt;-</span> <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">8</span>, hjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.1</span><span class="op">)</span>
 <span class="va">p_textpath</span> <span class="op">&lt;-</span> <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">8</span>, hjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.1</span><span class="op">)</span></code></pre></div>
 <p>Note that <code>p_text</code> and <code>p_textpath</code> are made with the same base plot and data. In normal Cartesian Co-ordinates they are essentially identical:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p_text</span></code></pre></div>
 <p><img src="reference/figures/README-cartesian_compare-1.png" width="100%" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p_textpath</span></code></pre></div>
 <p><img src="reference/figures/README-cartesian_compare-2.png" width="100%" style="display: block; margin: auto;"></p>
 <p>But note the difference when we switch to polar co-ordinates:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p_text</span> <span class="op">&lt;-</span> <span class="va">p_text</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_polar.html" class="external-link">coord_polar</a></span><span class="op">(</span><span class="op">)</span>
 <span class="va">p_textpath</span> <span class="op">&lt;-</span> <span class="va">p_textpath</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_polar.html" class="external-link">coord_polar</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="va">p_text</span></code></pre></div>
 <p><img src="reference/figures/README-polar_compare-1.png" width="100%" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p_textpath</span></code></pre></div>
 <p><img src="reference/figures/README-polar_compare-2.png" width="100%" style="display: block; margin: auto;"></p>
 <p>By default, any labels that would have been upside down (or even mostly upside down) are automatically flipped to be facing in a legible direction. This can be turned off using <code>upright = FALSE</code> in the call to <code>geom_textpath</code>.</p>
 <p>We can even construct complex diagrammatic plots:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span><span class="op">/</span><span class="fl">6</span> <span class="op">*</span> <span class="va">pi</span>, <span class="va">pi</span><span class="op">/</span><span class="fl">3</span><span class="op">)</span>,
                   <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">10</span><span class="op">/</span><span class="fl">6</span> <span class="op">*</span> <span class="va">pi</span>, <span class="fl">2</span><span class="op">*</span><span class="va">pi</span><span class="op">/</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>,
            y1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">6</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>,
@@ -348,7 +483,7 @@
 <span class="va">p</span></code></pre></div>
 <p><img src="reference/figures/README-fancy_cartesian-1.png" width="100%" style="display: block; margin: auto;"></p>
 <p>That flip nicely to polar co-ordinates.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_polar.html" class="external-link">coord_polar</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-fancy_polar-1.png" width="100%" style="display: block; margin: auto;"></p>
@@ -359,7 +494,7 @@
 <code>coord_curvedpolar</code><a class="anchor" aria-label="anchor" href="#coord_curvedpolar"></a>
 </h2>
 <p>Another function exported from this package is <code>coord_curvedpolar</code>. This behaves identically to <code>coord_polar</code>, except that the circumferential axis labels are curved. For example:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">clock</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span>
   
   <span class="va">hours</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%%</a></span> <span class="fl">12</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">x</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">/</span> <span class="fl">60</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fl">0</span>, <span class="fl">3.5</span><span class="op">)</span>
@@ -379,11 +514,11 @@
 
 <span class="fu">clock</span><span class="op">(</span><span class="fl">03</span><span class="op">:</span><span class="fl">35</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_polar.html" class="external-link">coord_polar</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-coord_curvedpolar-1.png" width="100%" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">clock</span><span class="op">(</span><span class="fl">19</span><span class="op">:</span><span class="fl">15</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="reference/coord_curvedpolar.html">coord_curvedpolar</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-coord_curvedpolar-2.png" width="100%" style="display: block; margin: auto;"></p>
 <p>This can be useful to achieve a particular aesthetic effect (as above), but can also be of practical utility when axis labels are long, which can produce some problems in standard <code>coord_polar</code>:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A long axis label"</span>, <span class="st">"Another long label"</span>,
                        <span class="st">"The longest label of all"</span>, <span class="st">"Yet another label"</span><span class="op">)</span>,
                  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">6</span>, <span class="fl">10</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>
@@ -391,13 +526,12 @@
 <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, fill <span class="op">=</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span>width <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"qual"</span><span class="op">)</span> <span class="op">+</span>
-      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
       <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">15</span><span class="op">)</span>,
             legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span>
 
 <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_polar.html" class="external-link">coord_polar</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-coord_curvedpolar2-1.png" width="100%" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="reference/coord_curvedpolar.html">coord_curvedpolar</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-coord_curvedpolar2-2.png" width="100%" style="display: block; margin: auto;"></p>
 <p>You can see more examples in the <a href="https://allancameron.github.io/geomtextpath/articles/gallery.html">gallery</a> vignette.</p>
@@ -407,7 +541,6 @@
 </h2>
 <p>There are limitations inherent in the plotting of text elements in ggplot due to the way that the underlying <code>grid</code> graphics handles text. A text string is dealt with as a zero-width object, and therefore the rotation and spacing of the letters making up the string can only be dealt with by treating each letter separately.</p>
 <p>It is important to realise that the letters are only rotated, and do not undergo any change in shape. Thus, for example, large text appearing on convex curves will not be deformed so that individual letters are narrower at the bottom and wider at the top. Doing so would require reinterpreting the letters as polygons, which would likely cause more problems than it would solve.</p>
-<p>Many paths will be too noisy or too angular to directly label in a visually appealing fashion if the text adheres too closely to the intricacies of the line. Often, a <code>geom_textsmooth</code> with <code>text_only = TRUE</code> is the best option in such cases, as in the examples above. There is also a <code>straight</code> parameter so that a label is still applied at an appropriate point and angle on the line, but the text will not attempt to follow every bump on the path.</p>
 <p>Other paths may have points of tight curvature, and setting an offset / vjust for the text that is larger than the distance to the focus point of that curve will produce odd effects. The package tries to detect and warn the user when this happens, and will suggest remedies.</p>
 </div>
 </div>
@@ -449,7 +582,7 @@
 <ul class="list-unstyled">
 <li><a href="https://CRAN.R-project.org/package=geomtextpath" class="external-link"><img src="https://www.r-pkg.org/badges/version/geomtextpath" alt="CRAN status"></a></li>
 <li><a href="https://github.com/AllanCameron/geomtextpath/actions" class="external-link"><img src="https://github.com/AllanCameron/geomtextpath/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://codecov.io/gh/AllanCameron/geomtextpath?branch=main" class="external-link"><img src="https://codecov.io/gh/AllanCameron/geomtextpath/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://app.codecov.io/gh/AllanCameron/geomtextpath?branch=main" class="external-link"><img src="https://codecov.io/gh/AllanCameron/geomtextpath/branch/main/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>
 </div>
 

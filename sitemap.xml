@@ -31,13 +31,13 @@
     <loc>https://allancameron.github.io/geomtextpath/news/index.html</loc>
   </url>
   <url>
-    <loc>https://allancameron.github.io/geomtextpath/reference/GeomTextLine.html</loc>
-  </url>
-  <url>
-    <loc>https://allancameron.github.io/geomtextpath/reference/GeomTextPath.html</loc>
+    <loc>https://allancameron.github.io/geomtextpath/reference/GeomTextpath.html</loc>
   </url>
   <url>
     <loc>https://allancameron.github.io/geomtextpath/reference/coord_curvedpolar.html</loc>
+  </url>
+  <url>
+    <loc>https://allancameron.github.io/geomtextpath/reference/geom_textabline.html</loc>
   </url>
   <url>
     <loc>https://allancameron.github.io/geomtextpath/reference/geom_textcontour.html</loc>
@@ -65,6 +65,9 @@
   </url>
   <url>
     <loc>https://allancameron.github.io/geomtextpath/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://allancameron.github.io/geomtextpath/reference/scale_hjust_discrete.html</loc>
   </url>
   <url>
     <loc>https://allancameron.github.io/geomtextpath/reference/static_text_params.html</loc>

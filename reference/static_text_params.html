@@ -54,7 +54,7 @@ during the construction of a grob."><meta property="og:image" content="https://a
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Set static parameters</h1>
-      <small class="dont-index">Source: <a href="https://github.com/AllanCameron/geomtextpath/blob/HEAD/R/utils.R" class="external-link"><code>R/utils.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/AllanCameron/geomtextpath/blob/HEAD/R/text_params.R" class="external-link"><code>R/text_params.R</code></a></small>
       <div class="d-none name"><code>static_text_params.Rd</code></div>
     </div>
 
@@ -74,16 +74,19 @@ during the construction of a grob.</p>
   offset <span class="op">=</span> <span class="cn">NULL</span>,
   parse <span class="op">=</span> <span class="cn">FALSE</span>,
   straight <span class="op">=</span> <span class="cn">FALSE</span>,
-  padding <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.15</span>, <span class="st">"inch"</span><span class="op">)</span>
+  padding <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="st">"inch"</span><span class="op">)</span>,
+  text_smoothing <span class="op">=</span> <span class="fl">0</span>,
+  rich <span class="op">=</span> <span class="cn">FALSE</span>,
+  remove_long <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>.type</dt>
-<dd><p>A <code>character(1)</code> with either <code>"text"</code> or <code>"label"</code>, which decides
-what the default is going to be for the <code>gap</code> argument. If <code>"text"</code> the
-default is <code>NA</code>, which means to dynamically decide. If <code>"label"</code>, the
+<dd><p>A <code>character(1)</code> with either <code>"text"</code> or <code>"label"</code>, which
+decides what the default is going to be for the <code>gap</code> argument. If <code>"text"</code>
+the default is <code>NA</code>, which means to dynamically decide. If <code>"label"</code>, the
 <code>"gap"</code> argument should default to <code>FALSE</code>.</p></dd>
 <dt>text_only</dt>
 <dd><p>A <code>logical(1)</code> indicating whether the path part should be
@@ -119,6 +122,17 @@ follow the curve. This might be helpful for noisy paths.</p></dd>
 <dd><p>A <code><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></code> object of length 1 to determine the
 padding between the text and the path when the <code>gap</code> parameter trims the
 path.</p></dd>
+<dt>text_smoothing</dt>
+<dd><p>a <code>numeric(1)</code> value between 0 and 100 that smooths
+the text without affecting the line portion of the geom. The default value
+of <code>0</code> means no smoothing is applied.</p></dd>
+<dt>rich</dt>
+<dd><p>A <code>logical(1)</code> whether to interpret the text as html/markdown
+formatted rich text. Default: <code>FALSE</code>. See also the rich text section of
+the details in <code><a href="geom_textpath.html">geom_textpath()</a></code>.</p></dd>
+<dt>remove_long</dt>
+<dd><p>if TRUE, labels that are longer than their associated
+path will be removed.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
