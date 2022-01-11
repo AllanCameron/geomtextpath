@@ -147,11 +147,11 @@ test_that("We can spline smooth", {
 
 test_that("We can chunk a path", {
 
-  x <- seq(0, 2 * pi, len = 1000)
+  x <- seq(0, 2 * pi, len = 1024)
   y <- sin(x) + 0.3 * sin(x * 20)
   df <- data.frame(x = x, y = y, id = 1, line_x = x, line_y = y)
   z <- sample_path(df, n = 10)
-  expect_equal(sum(z), 11126.0697)
+  expect_equal(sum(z), 11555.594628984)
 })
 
 test_that("We can smooth a noisy path", {
@@ -264,7 +264,7 @@ test_that("We can apply both smoothing types", {
   id <- c(1, 1, 1)
 
   png("Rplot_test.png", width = 7, height = 7, units = "in", res = 100)
-  grob <- textpathGrob(label, x, y, id, text_smoothing = 100)
+  grob <- textpathGrob(label, x, y, id, text_smoothing = 50)
   grob <- makeContent(grob)
   x <- convertUnit(grob$children[[2]]$x, "npc", valueOnly = TRUE)
   y <- convertUnit(grob$children[[2]]$y, "npc", valueOnly = TRUE)
@@ -272,5 +272,5 @@ test_that("We can apply both smoothing types", {
   unlink("Rplot_test.png")
 
   expect_lt(abs(x - 0.5), 0.001)
-  expect_lt(abs(y - 0.7326), 0.001)
+  expect_lt(abs(y - 0.9775732), 0.001)
 })

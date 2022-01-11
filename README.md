@@ -83,7 +83,6 @@ If we want our text in a box, even when the text is curved, we can use
 `geom_labelpath` instead:
 
 ``` r
-
 set.seed(5)
 
 df <- data.frame(x = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
@@ -103,7 +102,7 @@ foundation of the other geoms in this package. The line-based geoms in
 `ggplot` all have two equivalents in this package:
 
 | **ggplot geom**  | **Text equivalent**  | **Label equivalent**  |
-| :--------------- | :------------------- | :-------------------- |
+|:-----------------|:---------------------|:----------------------|
 | `geom_path`      | `geom_textpath`      | `geom_labelpath`      |
 | `geom_segment`   | `geom_textsegment`   | `geom_labelsegment`   |
 | `geom_line`      | `geom_textline`      | `geom_labelline`      |
@@ -164,16 +163,21 @@ the legend without leaving any ambiguity in the plot.
 We can use these geoms to get labelled trend lines through scatterplots:
 
 ``` r
-ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
-  geom_point(alpha = 0.1) +
-  geom_textsmooth(aes(label = Species, colour = Species),
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
+  geom_point(alpha = 0.3) +
+  geom_labelsmooth(aes(label = Species), text_smoothing = 70, fill = "#F6F6FF",
                 method = "loess", formula = y ~ x,
-                size = 7, linetype = 3, fontface = 2, linewidth = 1) +
+                size = 4, linewidth = 1, boxlinewidth = 0.3) +
   scale_colour_manual(values = c("forestgreen", "deepskyblue4", "tomato4")) +
   theme(legend.position = "none")
 ```
 
 <img src="man/figures/README-smooth-1.png" width="100%" style="display: block; margin: auto;" />
+
+Note that by design, we have not included the standard error ribbon in
+these geoms because the naming of the `fill` aesthetic would clash with
+the fill of the text boxes. If necessary, a standard `geom_smooth` can
+be drawn first to obtain the ribbon.
 
 ### Labelled contour lines
 
@@ -182,13 +186,12 @@ calling `geom_textcontour` or `geom_labelcontour` instead of
 `geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
 ggplot(df, aes(x, y, z = z)) + 
   geom_contour_filled(bins = 6, alpha = 0.6) + 
-  geom_textcontour(bins = 6, size = 2.5, padding = unit(0.05, "in")) + 
+  geom_textcontour(bins = 6, size = 2.5, straight = TRUE) + 
   scale_fill_manual(values = terrain.colors(11)) + 
   theme(legend.position = "none")
 ```
@@ -215,15 +218,14 @@ These geoms behave much the same way as `geom_sf`, except linestrings
 such as rivers and roads can be given (curved) text labels:
 
 ``` r
-
 df <- data.frame(x = c(-4.2518, -3.1883), 
                  y = c(55.8642, 55.9533),
                  label = c("Glasgow", "Edinburgh"))
 
 ggplot(data = df) +
   geom_textsf(data = waterways,
-              aes(label = name), text_smoothing = 99.5, linecolour = "#8888B3", 
-              color = "gray30", hjust = 0.25, vjust = -0.5, fill = "#E6F0B3", 
+              aes(label = name), text_smoothing = 89, linecolour = "#8888B3", 
+              color = "gray30", vjust = -0.8, fill = "#E6F0B3", 
               alpha = 0.8, fontface = 3, size = 3) + 
   geom_point(aes(x, y), data = df, color = "gray50", size = 3) + 
   geom_textpath(aes(x, y, label = label), color = "gray50",
@@ -328,10 +330,9 @@ using a `text_smoothing` parameter, which can be set from 0 (none) to
 100 (maximum).
 
 ``` r
-
 ggplot(economics, aes(date, unemploy)) +
-  geom_textline(linecolour = "grey", size = 4, vjust = -2, hjust = 0.47,
-                label = "1990s Decline", text_smoothing = 97)
+  geom_textline(linecolour = "grey", size = 4, vjust = -1, hjust = 0.45,
+                label = "1990s Decline", text_smoothing = 60)
 ```
 
 <img src="man/figures/README-smooth2-1.png" width="100%" style="display: block; margin: auto;" />
@@ -368,8 +369,7 @@ labels to be interpreted as rich text, simply pass `rich = TRUE` as a
 parameter in the call to the geom layer
 
 ``` r
-
-lab <- paste("<span style='color:gray30;font-size:10pt'>Plasma </span>",
+lab <- paste("<span style='color:gray30;font-size:10pt'>Plasma</span>",
              "<strong style='color:red4;font-size:10pt'>Indometacin</strong>",
              "<span style ='color:gray30;font-size:10pt'>Concentration </span>",
              "<i style='color:gray50;font-size:8pt'><sub>(\u03BCg/l)</sub></i>")
@@ -377,7 +377,7 @@ lab <- paste("<span style='color:gray30;font-size:10pt'>Plasma </span>",
 ggplot(Indometh, aes(time, conc, group = 1)) + 
   geom_textsmooth(formula = y ~ x, method = loess, 
                   label = lab, rich = TRUE, vjust = -0.5, size = 4.5, 
-                  text_smoothing = 98, linecolor = "red4") + 
+                  text_smoothing = 70, linecolor = "red4") + 
   xlim(c(0, 4))
 #> Warning: Removed 18 rows containing non-finite values (stat_smooth).
 ```
@@ -506,7 +506,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 

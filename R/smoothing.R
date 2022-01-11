@@ -26,7 +26,7 @@ spline_smooth <- function(x, n = 4) {
 # Chunk the path into n parts and get the centroid of each chunk
 
 sample_path <- function(data, n = 50) {
-  samp_rows <- seq(1, nrow(data), round(nrow(data) / n))
+  samp_rows <- unique(round(seq(1, nrow(data), len = n)))
 
   if (tail(samp_rows, 1) != nrow(data)) {
     samp_rows <- c(samp_rows, nrow(data))
@@ -34,8 +34,8 @@ sample_path <- function(data, n = 50) {
 
   x           <- spline_smooth(data$x[samp_rows], n = nrow(data) / n)
   y           <- spline_smooth(data$y[samp_rows], n = nrow(data) / n)
-  data$x      <- approx(seq_along(x), x, seq(1, length(x), len = 1000))$y
-  data$y      <- approx(seq_along(y), y, seq(1, length(y), len = 1000))$y
+  data$x      <- approx(seq_along(x), x, seq(1, length(x), len = 1024))$y
+  data$y      <- approx(seq_along(y), y, seq(1, length(y), len = 1024))$y
   data$length <- arclength_from_xy(data$x, data$y, data$id)
 
   data
@@ -47,9 +47,9 @@ sample_path <- function(data, n = 50) {
 smooth_noisy <- function(data, samples = 50) {
   # data is a data frame with an accurate x, y, length and mapped values,
   # representing a *single* corner-smoothed path and the original path
-  # We will munch the path into 1000 pieces to start with
-  n <- seq(nrow(data))
-  t <- seq(1, length(data$x), len = 1000)
+  # We will munch the path into 1024 pieces to start with
+  n    <- seq(nrow(data))
+  t    <- seq(1, length(data$x), len = 1024)
   data <- as.data.frame(lapply(data, function(x) approx(n, x, t)$y))
 
   # Now we sample the path regularly along its length
@@ -204,8 +204,9 @@ path_smoother <- function(path, text_smoothing) {
   text_smoothing[text_smoothing < 0]   <- 0
   path  <- split(path, path$id)
   radii <- 0.1 * text_smoothing / 100
-  samps <- round(400 * (100 - text_smoothing) / 100)
-  samps[samps < 3] <- 3
+  samps <- round(2^((100 - text_smoothing) * 0.08 + 1))
+  samps[samps < 2] <- 2
+  samps[samps > 1024] <- 1024
   path <- Map(smooth_corners, data = path, radius  = radii)
   path <- Map(smooth_noisy,   data = path, samples = samps)
   path <- rbind_dfs(path)
