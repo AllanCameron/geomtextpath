@@ -14,46 +14,24 @@
 # Spline-based smoothing for noisy paths
 #-------------------------------------------------------------------------------
 
-# Simple single-variable spline interpolation
+# Smooth both x and y as a function of path length using a spline smooth
 
-spline_smooth <- function(x, n = 4) {
-  stopifnot("length must be 2 or more for smoothing" = length(x[!is.na(x)]) > 1)
-  t <- seq_along(x)
-  spline(t, x, n = n * length(x))$y
-}
+smooth_noisy <- function(data, spar) {
+  # munch path
+  n           <- seq(nrow(data))
+  t           <- seq(1, length(data$x), len = 1024)
+  data        <- as.data.frame(lapply(data, function(x) approx(n, x, t)$y))
 
+  # create models
+  ymod        <- smooth.spline(data[c("length", "y")], spar = spar)
+  xmod        <- smooth.spline(data[c("length", "x")], spar = spar)
 
-# Chunk the path into n parts and get the centroid of each chunk
-
-sample_path <- function(data, n = 50) {
-  samp_rows <- unique(round(seq(1, nrow(data), len = n)))
-
-  if (tail(samp_rows, 1) != nrow(data)) {
-    samp_rows <- c(samp_rows, nrow(data))
-  }
-
-  x           <- spline_smooth(data$x[samp_rows], n = nrow(data) / n)
-  y           <- spline_smooth(data$y[samp_rows], n = nrow(data) / n)
-  data$x      <- approx(seq_along(x), x, seq(1, length(x), len = 1024))$y
-  data$y      <- approx(seq_along(y), y, seq(1, length(y), len = 1024))$y
-  data$length <- arclength_from_xy(data$x, data$y, data$id)
+  # Get new x and y values then calculate their length
+  data$y      <- predict(ymod, data$length)$y
+  data$x      <- predict(xmod, data$length)$y
+  data$length <- arclength_from_xy(data$x, data$y)
 
   data
-}
-
-
-
-# Spline smooth the centroids of a path split into n chunks
-smooth_noisy <- function(data, samples = 50) {
-  # data is a data frame with an accurate x, y, length and mapped values,
-  # representing a *single* corner-smoothed path and the original path
-  # We will munch the path into 1024 pieces to start with
-  n    <- seq(nrow(data))
-  t    <- seq(1, length(data$x), len = 1024)
-  data <- as.data.frame(lapply(data, function(x) approx(n, x, t)$y))
-
-  # Now we sample the path regularly along its length
-  sample_path(data, n = samples)
 }
 
 
@@ -200,18 +178,18 @@ path_smoother <- function(path, text_smoothing) {
 
   path$x <- as_npc(path$x, "x")
   path$y <- as_npc(path$y, "y")
-  text_smoothing[text_smoothing > 100] <- 100
   text_smoothing[text_smoothing < 0]   <- 0
   path  <- split(path, path$id)
-  radii <- 0.1 * text_smoothing / 100
+  radii <- 0.1 * text_smoothing / 200
   samps <- round(2^((100 - text_smoothing) * 0.08 + 1))
   samps[samps < 2] <- 2
   samps[samps > 1024] <- 1024
   path <- Map(smooth_corners, data = path, radius  = radii)
-  path <- Map(smooth_noisy,   data = path, samples = samps)
+  path <- Map(smooth_noisy,   data = path, spar = text_smoothing / 50)
   path <- rbind_dfs(path)
   cols <- c("x", "y", "line_x", "line_y")
   path[cols] <- lapply(path[cols], unit, unit = "npc")
 
   path
 }
+

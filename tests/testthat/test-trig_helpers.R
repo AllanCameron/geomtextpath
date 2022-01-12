@@ -136,34 +136,17 @@ test_that("We can find the flattest point of a curve", {
 })
 
 
-test_that("We can spline smooth", {
-
-  x <- c(1, 4, 5, 6)
-  y <- c(1, 1.9, 2.6, 3.2, 3.6, 4, 4.3, 4.5,
-         4.7, 4.9, 5, 5.1, 5.3, 5.5, 5.7, 6)
-  z <- round(spline_smooth(x), 1)
-  expect_equal(y, z)
-})
-
-test_that("We can chunk a path", {
-
-  x <- seq(0, 2 * pi, len = 1024)
-  y <- sin(x) + 0.3 * sin(x * 20)
-  df <- data.frame(x = x, y = y, id = 1, line_x = x, line_y = y)
-  z <- sample_path(df, n = 10)
-  expect_equal(sum(z), 11555.594628984)
-})
-
 test_that("We can smooth a noisy path", {
   x <- seq(0, 2 * pi, len = 100)
   y <- sin(x) + 0.3 * sin(x * 20)
   id <- rep(1, 100)
-  df <- data.frame(x = x, y = y, id = id)
+  length <- arclength_from_xy(x, y)
+  df <- data.frame(x = x, y = y, length = length, id = id)
 
   df$x <- grid::unit(x, "npc")
   df$y <- grid::unit(y, "npc")
 
-  a <- smooth_noisy(df, 20)
+  a <- smooth_noisy(df, 1)
 
   x1 <- as.numeric(a$x)
   y1 <- as.numeric(a$y)
@@ -272,5 +255,5 @@ test_that("We can apply both smoothing types", {
   unlink("Rplot_test.png")
 
   expect_lt(abs(x - 0.5), 0.001)
-  expect_lt(abs(y - 0.9775732), 0.001)
+  expect_lt(abs(y - 0.9852688), 0.001)
 })

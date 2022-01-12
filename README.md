@@ -83,7 +83,6 @@ If we want our text in a box, even when the text is curved, we can use
 `geom_labelpath` instead:
 
 ``` r
-
 set.seed(5)
 
 df <- data.frame(x = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
@@ -103,7 +102,7 @@ foundation of the other geoms in this package. The line-based geoms in
 `ggplot` all have two equivalents in this package:
 
 | **ggplot geom**  | **Text equivalent**  | **Label equivalent**  |
-| :--------------- | :------------------- | :-------------------- |
+|:-----------------|:---------------------|:----------------------|
 | `geom_path`      | `geom_textpath`      | `geom_labelpath`      |
 | `geom_segment`   | `geom_textsegment`   | `geom_labelsegment`   |
 | `geom_line`      | `geom_textline`      | `geom_labelline`      |
@@ -166,7 +165,7 @@ We can use these geoms to get labelled trend lines through scatterplots:
 ``` r
 ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
   geom_point(alpha = 0.3) +
-  geom_labelsmooth(aes(label = Species), text_smoothing = 70, fill = "#F6F6FF",
+  geom_labelsmooth(aes(label = Species), text_smoothing = 30, fill = "#F6F6FF",
                 method = "loess", formula = y ~ x,
                 size = 4, linewidth = 1, boxlinewidth = 0.3) +
   scale_colour_manual(values = c("forestgreen", "deepskyblue4", "tomato4")) +
@@ -187,7 +186,6 @@ calling `geom_textcontour` or `geom_labelcontour` instead of
 `geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -220,14 +218,13 @@ These geoms behave much the same way as `geom_sf`, except linestrings
 such as rivers and roads can be given (curved) text labels:
 
 ``` r
-
 df <- data.frame(x = c(-4.2518, -3.1883), 
                  y = c(55.8642, 55.9533),
                  label = c("Glasgow", "Edinburgh"))
 
 ggplot(data = df) +
   geom_textsf(data = waterways,
-              aes(label = name), text_smoothing = 89, linecolour = "#8888B3", 
+              aes(label = name), text_smoothing = 65, linecolour = "#8888B3", 
               color = "gray30", vjust = -0.8, fill = "#E6F0B3", 
               alpha = 0.8, fontface = 3, size = 3) + 
   geom_point(aes(x, y), data = df, color = "gray50", size = 3) + 
@@ -333,10 +330,9 @@ using a `text_smoothing` parameter, which can be set from 0 (none) to
 100 (maximum).
 
 ``` r
-
 ggplot(economics, aes(date, unemploy)) +
-  geom_textline(linecolour = "grey", size = 4, vjust = -1, hjust = 0.45,
-                label = "1990s Decline", text_smoothing = 60)
+  geom_textline(linecolour = "grey", size = 4, vjust = -1,
+                label = "1990s Decline", text_smoothing = 30)
 ```
 
 <img src="man/figures/README-smooth2-1.png" width="100%" style="display: block; margin: auto;" />
@@ -373,7 +369,6 @@ labels to be interpreted as rich text, simply pass `rich = TRUE` as a
 parameter in the call to the geom layer
 
 ``` r
-
 lab <- paste("<span style='color:gray30;font-size:10pt'>Plasma</span>",
              "<strong style='color:red4;font-size:10pt'>Indometacin</strong>",
              "<span style ='color:gray30;font-size:10pt'>Concentration </span>",
@@ -382,7 +377,7 @@ lab <- paste("<span style='color:gray30;font-size:10pt'>Plasma</span>",
 ggplot(Indometh, aes(time, conc, group = 1)) + 
   geom_textsmooth(formula = y ~ x, method = loess, 
                   label = lab, rich = TRUE, vjust = -0.5, size = 4.5, 
-                  text_smoothing = 70, linecolor = "red4") + 
+                  text_smoothing = 40, linecolor = "red4") + 
   xlim(c(0, 4))
 #> Warning: Removed 18 rows containing non-finite values (stat_smooth).
 ```
@@ -511,7 +506,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 
@@ -601,3 +595,22 @@ Other paths may have points of tight curvature, and setting an offset /
 vjust for the text that is larger than the distance to the focus point
 of that curve will produce odd effects. The package tries to detect and
 warn the user when this happens, and will suggest remedies.
+
+### Acknowledgments
+
+The authors would like to thank [Patrick
+Plenefisch](https://github.com/byteit101) for posting the [Stackoverflow
+question](https://stackoverflow.com/questions/69867669/is-there-way-in-ggplot2-to-place-text-on-a-curved-path)
+that prompted them to develop this package, and for raising some
+important issues early in its development.
+
+Of course this package wouldn’t be possible without the brilliant
+[ggplot2](https://github.com/tidyverse/ggplot2) package. Although we’re
+grateful to all the developers on the tidyverse team for creating and
+maintaining such useful open-source software, we’d like to give
+particular thanks to [Claus Wilke](https://github.com/clauswilke) for
+also creating the excellent [gridtext](https://wilkelab.org/gridtext/)
+package from which `geomtextpath` borrows, and [Thomas Lin
+Pedersen](https://github.com/thomasp85), whose
+[textshaping](https://github.com/r-lib/textshaping) package was integral
+to getting the mechanism working.
