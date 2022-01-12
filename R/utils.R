@@ -566,8 +566,7 @@ rd_aesthetics <- function(type, name, check_label_variant = TRUE) {
                    geom = check_subclass(lab_name, "Geom", env = globalenv()),
                    stat = check_subclass(lab_name, "Stat", env = globalenv()))
           },
-          error   = function(cond) {return(NULL)},
-          warning = function(cond) {return(NULL)}
+          error   = function(cond) {return(NULL)}
         )
         if (!is.null(lab_obj)) {
           lab_aes <- rd_aesthetics_item(lab_obj)
