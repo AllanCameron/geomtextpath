@@ -81,7 +81,7 @@ a call to a position adjustment function.}
 \item{ncp}{The number of control points used to draw the curve.
     More control points creates a smoother curve.}
 
-\item{arrow}{specification for arrow heads, as created by arrow().}
+\item{arrow}{Arrow specification, as created by \code{\link[grid:arrow]{grid::arrow()}}.}
 
 \item{lineend}{Line end style (round, butt, square).}
 
@@ -98,6 +98,10 @@ display.}
 rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
+
+\item{label.r}{Radius of rounded corners. Defaults to 0.15 lines.}
+
+\item{label.padding}{Amount of padding around label. Defaults to 0.25 lines.}
 }
 \value{
 A \code{Layer} ggproto object that can be added to a plot.

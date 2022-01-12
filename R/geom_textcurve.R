@@ -6,6 +6,7 @@
 #' the underlying [`grid::curveGrob()`][grid::curveGrob] for the parameters that
 #' control the curve.
 #'
+#' @inheritParams geom_textpath
 #' @inheritParams ggplot2::geom_curve
 #' @eval rd_dots(geom_textcurve, "text_smoothing")
 #' @eval rd_aesthetics("geom", "textcurve")
