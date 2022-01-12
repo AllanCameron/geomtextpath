@@ -541,26 +541,61 @@ rd_aesthetics_item <- function(x) {
 
 # Calculate aesthetics and produce documentation item for given function / topic
 
-rd_aesthetics <- function(type, name) {
-    obj <- switch(type, geom = check_subclass(name, "Geom",
-        env = globalenv()), stat = check_subclass(name, "Stat",
-        env = globalenv()))
+rd_aesthetics <- function(type, name, check_label_variant = TRUE) {
+    obj <- switch(type,
+                  geom = check_subclass(name, "Geom", env = globalenv()),
+                  stat = check_subclass(name, "Stat", env = globalenv()))
     aes <- rd_aesthetics_item(obj)
-    c("@section Aesthetics:",
-      paste0("\\code{", type,
-        "_", name, "()} ",
-        "understands the following aesthetics ",
-        "(required aesthetics are in bold):"),
-        "\\itemize{", paste0("  \\item ", aes), "}",
-        "The `spacing` aesthetic allows fine control of spacing of text,",
-        "which is called 'tracking' in typography.",
-        "The default is 0 and units are measured in 1/1000 em.",
-        "Numbers greater than zero increase the spacing,",
-        "whereas negative numbers decrease the spacing.",
-        "\n\nLearn more about setting these aesthetics ",
-        "in \\code{vignette(\"ggplot2-specs\")}."
+    txt <- "@section Aesthetics:"
+    txt <- c(txt,
+             paste0("\\code{", type,
+                    "_", name, "()} ",
+                    "understands the following aesthetics ",
+                    "(required aesthetics are in bold):"))
+    txt <- c(txt, "\\itemize{", paste0("  \\item ", aes), "}")
 
-      )
+    lab_aes <- NULL
+    if (check_label_variant) {
+      # Check if there is 'text' to be substituted by 'label'
+      lab_name <- gsub("^text", "label", name)
+      if (!(lab_name == name)) {
+        # Check if label variant exists
+        lab_obj <- tryCatch(
+          {
+            switch(type,
+                   geom = check_subclass(lab_name, "Geom", env = globalenv()),
+                   stat = check_subclass(lab_name, "Stat", env = globalenv()))
+          },
+          error   = function(cond) {return(NULL)},
+          warning = function(cond) {return(NULL)}
+        )
+        if (!is.null(lab_obj)) {
+          lab_aes <- rd_aesthetics_item(lab_obj)
+          lab_aes <- setdiff(lab_aes, aes)
+        }
+        if (length(lab_aes)) {
+          txt <- c(txt,
+                   paste0("In addition to aforementioned aesthetics,",
+                          " \\code{", type, "_", lab_name, "()} ",
+                          "also understands:"))
+          txt <- c(txt, "\\itemize{", paste0("  \\item ", lab_aes), "}")
+        }
+      }
+    }
+
+    if (grepl("spacing", aes)) {
+      txt <- c(txt,
+               "The \\code{spacing} aesthetic allows fine control of spacing",
+               " of text, which is called 'tracking' in typography.",
+               "The default is 0 and units are measured in 1/1000 em.",
+               "Numbers greater than zero increase the spacing,",
+               "whereas negative numbers decrease the spacing.")
+    }
+
+    txt <- c(txt,
+             "\n\nLearn more about setting these aesthetics ",
+             "in \\code{vignette(\"ggplot2-specs\")}.")
+    txt
 }
 
 
