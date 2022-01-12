@@ -215,6 +215,9 @@ for more detail.}
 
 \item{label.r}{Radius of rounded corners. Defaults to 0.15 lines.}
 }
+\value{
+A \code{Layer} ggproto object that can be added to a plot.
+}
 \description{
 The existing text-based geom layers in \pkg{ggplot2}
 (\code{\link[ggplot2:geom_text]{geom_text()}} and
@@ -291,8 +294,15 @@ MIT licence. Currently, the supported HTML tags are \verb{<p>}, \verb{<span>}, \
   \item \code{textcolour}
   \item \code{vjust}
 }
-The `spacing` aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography.
+In addition to aforementioned aesthetics, \code{geom_labelpath()} also understands:
+\itemize{
+  \item \code{boxcolour}
+  \item \code{boxlinetype}
+  \item \code{boxlinewidth}
+  \item \code{fill}
+}
+The \code{spacing} aesthetic allows fine control of spacing
+ of text, which is called 'tracking' in typography.
 The default is 0 and units are measured in 1/1000 em.
 Numbers greater than zero increase the spacing,
 whereas negative numbers decrease the spacing.
@@ -300,15 +310,6 @@ whereas negative numbers decrease the spacing.
 
 Learn more about setting these aesthetics 
 in \code{vignette("ggplot2-specs")}.
-
-
-In addition to aforementioned aesthetics, \code{geom_labelpath()} also
-understands the following aesthetics related to the textbox:
-\itemize{
- \item{\code{boxcolour}}
- \item{\code{boxlinetype}}
- \item{\code{boxlinewidth}}
-}
 }
 
 \examples{
@@ -360,5 +361,8 @@ ggplot(Indometh, aes(time, conc)) +
     vjust = -3, size = 8, rich = TRUE
   ) +
   scale_x_log10()
+}
+\seealso{
+Other \link[=sibling_layers]{geom layers} that place text on paths.
 }
 \keyword{datasets}

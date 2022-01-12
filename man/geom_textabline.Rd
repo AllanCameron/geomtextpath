@@ -177,10 +177,6 @@ follow the curve. This might be helpful for noisy paths.}
 }
 \value{
 A \code{Layer} ggproto object that can be added to a plot.
-
-A \code{Layer} ggproto object that can be added to a plot.
-
-A \code{Layer} ggproto object that can be added to a plot.
 }
 \description{
 These geoms add labelled reference lines to a plot, either
@@ -209,98 +205,45 @@ commonly set in the plot. They also do not affect the x and y scales.
 }
 \section{Aesthetics}{
 
-\code{geom_textabline()} understands the following aesthetics (required aesthetics are in bold):
+The \code{geom_textabline()}, \code{geom_texthline()} and \code{geom_textvline()} understand
+the following aesthetics (required aesthetics are in bold):
 \itemize{
-  \item \strong{\code{label}}
-  \item \strong{\code{slope}}
-  \item \strong{\code{intercept}}
-  \item \code{alpha}
-  \item \code{angle}
-  \item \code{colour}
-  \item \code{family}
-  \item \code{fontface}
-  \item \code{group}
-  \item \code{hjust}
-  \item \code{linecolour}
-  \item \code{lineheight}
-  \item \code{linetype}
-  \item \code{linewidth}
-  \item \code{size}
-  \item \code{spacing}
-  \item \code{textcolour}
-  \item \code{vjust}
+\item{\strong{\code{label}}}
+\item{\strong{\code{slope}} (\code{geom_textabline()} and \code{geom_labelabline()})}
+\item{\strong{\code{intercept}} (\code{geom_textabline()} and
+\code{geom_labelabline()})}
+\item{\strong{\code{yintercept}} (\code{geom_texthline()} and
+\code{geom_labelhline()})}
+\item{\strong{\code{xintercept}} (\code{geom_textvline()} and
+\code{geom_labelvline()})}
+\item{\code{alpha}}
+\item{\code{angle}}
+\item{\code{colour}}
+\item{\code{family}}
+\item{\code{fontface}}
+\item{\code{group}}
+\item{\code{hjust}}
+\item{\code{vjust}}
+\item{\code{linecolour}}
+\item{\code{lineheight}}
+\item{\code{linetype}}
+\item{\code{linewidth}}
+\item{\code{size}}
+\item{\code{spacing}}
+\item{\code{textcolour}}
 }
-The `spacing` aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography.
-The default is 0 and units are measured in 1/1000 em.
-Numbers greater than zero increase the spacing,
-whereas negative numbers decrease the spacing.
-
-
-Learn more about setting these aesthetics 
-in \code{vignette("ggplot2-specs")}.
-
-
-\code{geom_texthline()} understands the following aesthetics (required aesthetics are in bold):
+In addition to aforementioned aesthetics, \code{geom_labelabline()},
+\code{geom_labelhline()} and \code{geom_labelvline()} also understand:
 \itemize{
-  \item \strong{\code{yintercept}}
-  \item \strong{\code{label}}
-  \item \code{alpha}
-  \item \code{angle}
-  \item \code{colour}
-  \item \code{family}
-  \item \code{fontface}
-  \item \code{group}
-  \item \code{hjust}
-  \item \code{linecolour}
-  \item \code{lineheight}
-  \item \code{linetype}
-  \item \code{linewidth}
-  \item \code{size}
-  \item \code{spacing}
-  \item \code{textcolour}
-  \item \code{vjust}
+\item{\code{boxcolour}}
+\item{\code{boxlinetype}}
+\item{\code{boxlinewidth}}
+\item{\code{fill}}
 }
-The `spacing` aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography.
-The default is 0 and units are measured in 1/1000 em.
-Numbers greater than zero increase the spacing,
-whereas negative numbers decrease the spacing.
-
-
-Learn more about setting these aesthetics 
-in \code{vignette("ggplot2-specs")}.
-
-
-\code{geom_textvline()} understands the following aesthetics (required aesthetics are in bold):
-\itemize{
-  \item \strong{\code{xintercept}}
-  \item \strong{\code{label}}
-  \item \code{alpha}
-  \item \code{angle}
-  \item \code{colour}
-  \item \code{family}
-  \item \code{fontface}
-  \item \code{group}
-  \item \code{hjust}
-  \item \code{linecolour}
-  \item \code{lineheight}
-  \item \code{linetype}
-  \item \code{linewidth}
-  \item \code{size}
-  \item \code{spacing}
-  \item \code{textcolour}
-  \item \code{vjust}
-}
-The `spacing` aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography.
-The default is 0 and units are measured in 1/1000 em.
-Numbers greater than zero increase the spacing,
-whereas negative numbers decrease the spacing.
-
-
-Learn more about setting these aesthetics 
-in \code{vignette("ggplot2-specs")}.
+The \code{spacing} aesthetic allows fine control of spacing of text, which is
+called 'tracking' in typography. The default is 0 and units are measured in
+1/1000 em. Numbers greater than zero increase the spacing, whereas negative
+numbers decrease the spacing.
 }
 
 \examples{
@@ -312,5 +255,8 @@ geom_textvline(xintercept = 20, label = "consumption threshold", hjust = 0.8,
                linetype = 2, vjust = 1.3, color = "blue4") +
 geom_textabline(slope = 15, intercept = -100, label = "partition line",
                 color = "green4", hjust = 0.6, vjust = -0.2)
+}
+\seealso{
+Other \link[=sibling_layers]{geom layers} that place text on paths.
 }
 \keyword{datasets}

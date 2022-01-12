@@ -61,76 +61,123 @@ a call to a position adjustment function.}
 a warning. If \code{TRUE}, missing values are silently removed.}
 
 \item{show.legend}{logical. Should this layer be included in the legends?
-  `NA`, the default, includes if any aesthetics are mapped.
-  `FALSE` never includes, and `TRUE` always includes.
+\code{NA}, the default, includes if any aesthetics are mapped.
+\code{FALSE} never includes, and \code{TRUE} always includes.
 
-  You can also set this to one of "polygon", "line", and "point" to
-  override the default legend.}
+You can also set this to one of "polygon", "line", and "point" to
+override the default legend.}
 
 \item{inherit.aes}{If \code{FALSE}, overrides the default aesthetics,
 rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 
-\item{...}{Extra arguments passed to [`geom_textpath`][geom_textpath]}
+\item{...}{
+  Arguments passed on to \code{\link[=geom_textpath]{geom_textpath}}, \code{\link[=geom_labelpath]{geom_labelpath}}
+  \describe{
+    \item{\code{text_only}}{A \code{logical(1)} indicating whether the path part should be
+plotted along with the text (\code{FALSE}, the default). If \code{TRUE}, any
+parameters or aesthetics relating to the drawing of the path will be
+ignored.}
+    \item{\code{gap}}{A \code{logical(1)} which if \code{TRUE}, breaks the path into two sections
+with a gap on either side of the label. If \code{FALSE}, the path is plotted
+as a whole. Alternatively, if \code{NA}, the path will be broken if the string
+has a \code{vjust} between 0 and 1, and not otherwise. The default for the label
+variant is \code{FALSE} and for the text variant is \code{NA}.}
+    \item{\code{upright}}{A \code{logical(1)} which if \code{TRUE} (default), inverts any text
+where the majority of letters would upside down along the path, to improve
+legibility. If \code{FALSE}, the path decides the orientation of text.}
+    \item{\code{halign}}{A \code{character(1)} describing how multi-line text should be
+justified. Can either be \code{"center"} (default), \code{"left"} or \code{"right"}.}
+    \item{\code{offset}}{A \code{\link[grid:unit]{unit}} object of length 1 to determine the
+offset of the text from the path. If this is \code{NULL} (default), the \code{vjust}
+parameter decides the offset. If not \code{NULL}, the \code{offset} argument
+overrules the \code{vjust} setting.}
+    \item{\code{parse}}{A \code{logical(1)} which if \code{TRUE}, will coerce the labels into
+expressions, allowing for plotmath syntax to be used.}
+    \item{\code{straight}}{A \code{logical(1)} which if \code{TRUE}, keeps the letters of a label
+on a straight baseline and if \code{FALSE} (default), lets individual letters
+follow the curve. This might be helpful for noisy paths.}
+    \item{\code{padding}}{A \code{\link[grid:unit]{unit}} object of length 1 to determine the
+padding between the text and the path when the \code{gap} parameter trims the
+path.}
+    \item{\code{text_smoothing}}{a \code{numeric(1)} value between 0 and 100 that smooths
+the text without affecting the line portion of the geom. The default value
+of \code{0} means no smoothing is applied.}
+    \item{\code{rich}}{A \code{logical(1)} whether to interpret the text as html/markdown
+formatted rich text. Default: \code{FALSE}. See also the rich text section of
+the details in \code{\link[=geom_textpath]{geom_textpath()}}.}
+    \item{\code{remove_long}}{if TRUE, labels that are longer than their associated
+path will be removed.}
+    \item{\code{label.padding}}{Amount of padding around label. Defaults to 0.25 lines.}
+    \item{\code{label.r}}{Radius of rounded corners. Defaults to 0.15 lines.}
+  }}
+}
+\value{
+A \code{Layer} ggproto object that can be added to a plot.
 }
 \description{
 This set of geom, stat, and coord are used to visualise simple feature (sf)
-objects. For simple plots, you will only need `geom_sf()` as it
-uses `stat_sf()` and adds `coord_sf()` for you. `geom_textsf()` is
+objects. For simple plots, you will only need \code{geom_sf()} as it
+uses \code{stat_sf()} and adds \code{coord_sf()} for you. \code{geom_textsf()} is
 an unusual geom because it will draw different geometric objects depending
 on what simple features are present in the data: you can get points, lines,
 or polygons.
 }
 \section{Geometry aesthetic}{
 
-`geom_textsf()` uses a unique aesthetic: `geometry`, giving an
-column of class `sfc` containing simple features data. There
-are three ways to supply the `geometry` aesthetic:
+\code{geom_textsf()} uses a unique aesthetic: \code{geometry}, giving an
+column of class \code{sfc} containing simple features data. There
+are three ways to supply the \code{geometry} aesthetic:
+\itemize{
+\item Do nothing: by default \code{geom_textsf()} assumes it is stored in
+the \code{geometry} column.
+\item Explicitly pass an \code{sf} object to the \code{data} argument.
+This will use the primary geometry column, no matter what it's called.
+\item Supply your own using \code{aes(geometry = my_column)}
+}
 
-  - Do nothing: by default `geom_textsf()` assumes it is stored in
-    the `geometry` column.
-  - Explicitly pass an `sf` object to the `data` argument.
-    This will use the primary geometry column, no matter what it's called.
-  - Supply your own using `aes(geometry = my_column)`
-
-Unlike other aesthetics, `geometry` will never be inherited from
+Unlike other aesthetics, \code{geometry} will never be inherited from
 the plot.
 }
 
 \section{CRS}{
 
-`coord_sf()` ensures that all layers use a common CRS. You can
-either specify it using the `crs` param, or `coord_sf()` will
+
+\code{coord_sf()} ensures that all layers use a common CRS. You can
+either specify it using the \code{crs} param, or \code{coord_sf()} will
 take it from the first layer that defines a CRS.
+
 }
 
 \section{Combining sf layers and regular geoms}{
 
-Most regular geoms, such as [geom_point()], [geom_path()],
-[geom_text()], [geom_polygon()] etc. will work fine with `coord_sf()`.
-However when using these geoms, two problems arise. First, what CRS should be
-used for the x and y coordinates used by these non-sf geoms? The CRS applied
-to non-sf geoms is set by the `default_crs` parameter, and it defaults to
-`NULL`, which means positions for non-sf geoms are interpreted as projected
-coordinates in the coordinate system set by the `crs` parameter. This setting
+
+Most regular geoms, such as \code{\link[ggplot2:geom_point]{geom_point()}}, \code{\link[ggplot2:geom_path]{geom_path()}},
+\code{\link[ggplot2:geom_text]{geom_text()}}, \code{\link[ggplot2:geom_polygon]{geom_polygon()}} etc. will work fine with \code{coord_sf()}. However
+when using these geoms, two problems arise. First, what CRS should be used
+for the x and y coordinates used by these non-sf geoms? The CRS applied to
+non-sf geoms is set by the \code{default_crs} parameter, and it defaults to
+\code{NULL}, which means positions for non-sf geoms are interpreted as projected
+coordinates in the coordinate system set by the \code{crs} parameter. This setting
 allows you complete control over where exactly items are placed on the plot
 canvas, but it may require some understanding of how projections work and how
 to generate data in projected coordinates. As an alternative, you can set
-`default_crs = sf::st_crs(4326)`, the World Geodetic System 1984 (WGS84).
+\code{default_crs = sf::st_crs(4326)}, the World Geodetic System 1984 (WGS84).
 This means that x and y positions are interpreted as longitude and latitude,
 respectively. You can also specify any other valid CRS as the default CRS for
 non-sf geoms.
 
 The second problem that arises for non-sf geoms is how straight lines
-should be interpreted in projected space when `default_crs` is not set to
-`NULL`. The approach `coord_sf()` takes is to break straight lines into small
-pieces (i.e., segmentize them) and then transform the pieces into projected
-coordinates. For the default setting where x and y are interpreted as
-longitude and latitude, this approach means that horizontal lines follow the
-parallels and vertical lines follow the meridians. If you need a different
-approach to handling straight lines, then you should manually segmentize and
-project coordinates and generate the plot in projected coordinates.
+should be interpreted in projected space when \code{default_crs} is not set to \code{NULL}.
+The approach \code{coord_sf()} takes is to break straight lines into small pieces
+(i.e., segmentize them) and then transform the pieces into projected coordinates.
+For the default setting where x and y are interpreted as longitude and latitude,
+this approach means that horizontal lines follow the parallels and vertical lines
+follow the meridians. If you need a different approach to handling straight lines,
+then you should manually segmentize and project coordinates and generate the plot
+in projected coordinates.
+
 }
 
 \examples{
@@ -141,6 +188,7 @@ ggplot(waterways) +
 
 }
 \seealso{
-[stat_sf_coordinates()]
+\code{\link[ggplot2:stat_sf_coordinates]{stat_sf_coordinates()}}.
+Other \link[=sibling_layers]{geom layers} that place text on paths.
 }
 \keyword{datasets}

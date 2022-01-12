@@ -61,6 +61,9 @@ don't match will be given na.value.}
 
 \item{na.value}{Missing values will be replaced with this value.}
 }
+\value{
+A `Scale` ggproto object that can be added to a plot.
+}
 \description{
 Sometimes text labels on adjacent lines can clash if the lines are not well
 separated vertically. One option for controlling this is to use an hjust or

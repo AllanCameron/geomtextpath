@@ -117,6 +117,9 @@ the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 
 \item{arrow}{Arrow specification, as created by \code{\link[grid:arrow]{grid::arrow()}}.}
 }
+\value{
+A \code{Layer} ggproto object that can be added to a plot.
+}
 \description{
 Line plots of smoothed kernel density estimates are available
 in \pkg{ggplot2} via \code{\link[ggplot2:geom_density]{geom_density}}. This geom
@@ -146,8 +149,15 @@ the density line when used as a drop-in replacement for
   \item \code{textcolour}
   \item \code{vjust}
 }
-The `spacing` aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography.
+In addition to aforementioned aesthetics, \code{geom_label_density()} also understands:
+\itemize{
+  \item \code{boxcolour}
+  \item \code{boxlinetype}
+  \item \code{boxlinewidth}
+  \item \code{fill}
+}
+The \code{spacing} aesthetic allows fine control of spacing
+ of text, which is called 'tracking' in typography.
 The default is 0 and units are measured in 1/1000 em.
 Numbers greater than zero increase the spacing,
 whereas negative numbers decrease the spacing.
@@ -160,5 +170,8 @@ in \code{vignette("ggplot2-specs")}.
 \examples{
 ggplot(iris, aes(Sepal.Length, label = Species, color = Species)) +
   geom_textdensity()
+}
+\seealso{
+Other \link[=sibling_layers]{geom layers} that place text on paths.
 }
 \keyword{datasets}

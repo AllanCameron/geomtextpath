@@ -108,6 +108,9 @@ rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 }
+\value{
+A \code{Layer} ggproto object that can be added to a plot.
+}
 \description{
 Smoothed conditional means are available
 in \pkg{ggplot2} via \code{\link[ggplot2:geom_smooth]{geom_smooth}}. This geom
@@ -137,8 +140,15 @@ this line when used as a drop-in replacement for
   \item \code{textcolour}
   \item \code{vjust}
 }
-The `spacing` aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography.
+In addition to aforementioned aesthetics, \code{geom_label_density()} also understands:
+\itemize{
+  \item \code{boxcolour}
+  \item \code{boxlinetype}
+  \item \code{boxlinewidth}
+  \item \code{fill}
+}
+The \code{spacing} aesthetic allows fine control of spacing
+ of text, which is called 'tracking' in typography.
 The default is 0 and units are measured in 1/1000 em.
 Numbers greater than zero increase the spacing,
 whereas negative numbers decrease the spacing.
@@ -157,4 +167,7 @@ ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
   scale_colour_manual(values = c("forestgreen", "deepskyblue4", "tomato4")) +
   theme_bw() +
   theme(legend.position = "none")
+}
+\seealso{
+Other \link[=sibling_layers]{geom layers} that place text on paths.
 }
