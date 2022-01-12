@@ -583,7 +583,7 @@ rd_aesthetics <- function(type, name, check_label_variant = TRUE) {
       }
     }
 
-    if (grepl("spacing", aes)) {
+    if (any(grepl("spacing", aes))) {
       txt <- c(txt,
                "The \\code{spacing} aesthetic allows fine control of spacing",
                " of text, which is called 'tracking' in typography.",

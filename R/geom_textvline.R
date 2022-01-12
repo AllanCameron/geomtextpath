@@ -4,7 +4,6 @@
 #' @inheritParams geom_textpath
 #' @export
 #' @md
-#' @eval rd_aesthetics("geom", "textvline")
 
 geom_textvline <- function(mapping = NULL,
                            data = NULL,

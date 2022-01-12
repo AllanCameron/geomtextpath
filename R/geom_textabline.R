@@ -43,7 +43,47 @@
 #' @return A `Layer` ggproto object that can be added to a plot.
 #' @export
 #' @md
-#' @eval rd_aesthetics("geom", "textabline")
+#' @section Aesthetics:
+#' The `geom_textabline()`, `geom_texthline()` and `geom_textvline()` understand
+#' the following aesthetics (required aesthetics are in bold):
+#' \itemize{
+#'   \item{\strong{`label`}}
+#'   \item{\strong{`slope`} (`geom_textabline()` and `geom_labelabline()`)}
+#'   \item{\strong{`intercept`} (`geom_textabline()` and
+#'     `geom_labelabline()`)}
+#'   \item{\strong{`yintercept`} (`geom_texthline()` and
+#'     `geom_labelhline()`)}
+#'   \item{\strong{`xintercept`} (`geom_textvline()` and
+#'     `geom_labelvline()`)}
+#'   \item{`alpha`}
+#'   \item{`angle`}
+#'   \item{`colour`}
+#'   \item{`family`}
+#'   \item{`fontface`}
+#'   \item{`group`}
+#'   \item{`hjust`}
+#'   \item{`vjust`}
+#'   \item{`linecolour`}
+#'   \item{`lineheight`}
+#'   \item{`linetype`}
+#'   \item{`linewidth`}
+#'   \item{`size`}
+#'   \item{`spacing`}
+#'   \item{`textcolour`}
+#' }
+#' In addition to aforementioned aesthetics, `geom_labelabline()`,
+#' `geom_labelhline()` and `geom_labelvline()` also understand:
+#' \itemize{
+#'   \item{`boxcolour`}
+#'   \item{`boxlinetype`}
+#'   \item{`boxlinewidth`}
+#'   \item{`fill`}
+#' }
+#' The `spacing` aesthetic allows fine control of spacing of text, which is
+#' called 'tracking' in typography. The default is 0 and units are measured in
+#' 1/1000 em. Numbers greater than zero increase the spacing, whereas negative
+#' numbers decrease the spacing.
+#'
 #' @examples
 #' ggplot(mtcars, aes(mpg, disp)) +
 #' geom_point() +

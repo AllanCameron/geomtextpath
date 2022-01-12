@@ -3,7 +3,6 @@
 #' @param yintercept The value at which the line should intercept the y axis
 #' @export
 #' @md
-#' @eval rd_aesthetics("geom", "texthline")
 
 geom_texthline <- function(mapping = NULL,
                            data = NULL,
