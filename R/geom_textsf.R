@@ -31,7 +31,9 @@
 #'   override the default legend.
 #'
 #' @return A `Layer` ggproto object that can be added to a plot.
-#' @seealso [`stat_sf_coordinates()`][ggplot2::ggplot2::stat_sf_coordinates]
+#' @seealso [`stat_sf_coordinates()`][ggplot2::stat_sf_coordinates].
+#' Other [geom layers][sibling_layers] that place text on paths.
+#' @md
 #' @examples
 #' ggplot(waterways) +
 #'  geom_textsf(label = "Forth and Clyde Canal",

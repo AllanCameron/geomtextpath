@@ -26,6 +26,7 @@
 #' @include utils.R
 #' @export
 #' @md
+#' @seealso Other [geom layers][sibling_layers] that place text on paths.
 #'
 #' @examples
 #' set.seed(1)

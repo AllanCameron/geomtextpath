@@ -21,7 +21,7 @@
 #' @inheritParams ggplot2::geom_smooth
 #' @inheritParams geom_textpath
 #' @return A `Layer` ggproto object that can be added to a plot.
-#'
+#' @seealso Other [geom layers][sibling_layers] that place text on paths.
 #' @eval rd_aesthetics("geom", "text_density")
 #'
 #' @export

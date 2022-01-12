@@ -25,6 +25,7 @@
 #' @export
 #' @md
 #' @eval rd_aesthetics("geom", "textsegment")
+#' @seealso Other [geom layers][sibling_layers] that place text on paths.
 #'
 #' @examples
 #' # The convenience here is that the position and angle

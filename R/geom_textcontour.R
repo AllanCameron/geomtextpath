@@ -24,7 +24,7 @@
 #' @inheritParams geom_textpath
 #' @eval rd_aesthetics("geom", "text_contour")
 #' @return A `Layer` ggproto object that can be added to a plot.
-#'
+#' @seealso Other [geom layers][sibling_layers] that place text on paths.
 #' @include geom_textpath.R
 #' @export
 #' @md

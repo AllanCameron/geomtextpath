@@ -25,6 +25,7 @@
 #'
 #' @eval rd_aesthetics("geom", "text_density")
 #' @return A `Layer` ggproto object that can be added to a plot.
+#' @seealso Other [geom layers][sibling_layers] that place text on paths.
 #' @export
 #' @md
 #' @include geom_textpath.R

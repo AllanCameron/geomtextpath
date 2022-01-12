@@ -39,6 +39,7 @@
 #' @param slope The slope of the abline
 #' @param intercept the point on the y axis at which the abline crosses it.
 #' @inheritParams geom_textpath
+#' @seealso Other [geom layers][sibling_layers] that place text on paths.
 #' @return A `Layer` ggproto object that can be added to a plot.
 #' @export
 #' @md
