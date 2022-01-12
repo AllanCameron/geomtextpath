@@ -42,6 +42,7 @@
 #'   - A function that takes the limits as input and returns breaks
 #'     as output (e.g., a function returned by [scales::extended_breaks()]).
 #'     Also accepts rlang [lambda][rlang::as_function()] function notation.
+#' @return A `Scale` ggproto object that can be added to a plot.
 #' @export
 #' @examples
 #' ggplot(iris, aes(Sepal.Length, color = Species)) +

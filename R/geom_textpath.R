@@ -76,6 +76,7 @@
 #' @export
 #' @md
 #' @include text_params.R
+#' @return A `Layer` ggproto object that can be added to a plot.
 #'
 #' @examples
 #'# Plot text along an arbitrary path

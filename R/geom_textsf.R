@@ -70,7 +70,9 @@
 #'
 #'   You can also set this to one of "polygon", "line", and "point" to
 #'   override the default legend.
-#' @seealso [stat_sf_coordinates()]
+#'
+#' @return A `Layer` ggproto object that can be added to a plot.
+#' @seealso [`stat_sf_coordinates()`][ggplot2::ggplot2::stat_sf_coordinates]
 #' @examples
 #' ggplot(waterways) +
 #'  geom_textsf(label = "Forth and Clyde Canal",

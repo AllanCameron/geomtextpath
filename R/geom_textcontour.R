@@ -23,6 +23,7 @@
 #' @inheritParams ggplot2::geom_contour
 #' @inheritParams geom_textpath
 #' @eval rd_aesthetics("geom", "text_contour")
+#' @return A `Layer` ggproto object that can be added to a plot.
 #'
 #' @include geom_textpath.R
 #' @export

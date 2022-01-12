@@ -21,7 +21,7 @@
 #' @inheritParams ggplot2::stat_density_2d
 #'
 #' @eval rd_aesthetics("geom", "text_density2d")
-#'
+#' @return A `Layer` ggproto object that can be added to a plot.
 #' @include geom_textpath.R
 #' @include utils.R
 #' @export

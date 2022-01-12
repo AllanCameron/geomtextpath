@@ -1,8 +1,6 @@
 #' @rdname geom_textabline
 #' @eval rd_dots(geom_texthline)
 #' @param yintercept The value at which the line should intercept the y axis
-#' @inheritParams geom_textpath
-#' @return A `Layer` ggproto object that can be added to a plot.
 #' @export
 #' @md
 #' @eval rd_aesthetics("geom", "texthline")

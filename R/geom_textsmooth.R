@@ -20,6 +20,7 @@
 #' @eval rd_dots(geom_textsmooth)
 #' @inheritParams ggplot2::geom_smooth
 #' @inheritParams geom_textpath
+#' @return A `Layer` ggproto object that can be added to a plot.
 #'
 #' @eval rd_aesthetics("geom", "text_density")
 #'
