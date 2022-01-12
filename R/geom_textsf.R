@@ -19,7 +19,19 @@
 #' on what simple features are present in the data: you can get points, lines,
 #' or polygons.
 #'
-#' @inheritSection ggplot2::geom_sf Geometry aesthetic
+#' @section Geometry aesthetic:
+#' `geom_textsf()` uses a unique aesthetic: `geometry`, giving an
+#' column of class `sfc` containing simple features data. There
+#' are three ways to supply the `geometry` aesthetic:
+#'
+#'   - Do nothing: by default `geom_textsf()` assumes it is stored in
+#'     the `geometry` column.
+#'   - Explicitly pass an `sf` object to the `data` argument.
+#'     This will use the primary geometry column, no matter what it's called.
+#'   - Supply your own using `aes(geometry = my_column)`
+#'
+#' Unlike other aesthetics, `geometry` will never be inherited from
+#' the plot.
 #' @inheritSection ggplot2::geom_sf CRS
 #' @inheritSection ggplot2::geom_sf Combining sf layers and regular geoms
 #'
@@ -48,7 +60,8 @@ NULL
 #' @export
 #' @rdname geom_textsf
 #' @inheritParams ggplot2::geom_point
-#' @param ... Extra arguments passed to [`geom_textpath`][geom_textpath]
+#' @inheritDotParams geom_textpath -arrow -lineend -linejoin -linemitre
+#' @md
 geom_textsf <- function(mapping = aes(), data = NULL, stat = "sf",
                     position = "identity", na.rm = FALSE, show.legend = NA,
                     inherit.aes = TRUE, ...) {
@@ -73,8 +86,7 @@ geom_textsf <- function(mapping = aes(), data = NULL, stat = "sf",
 #' @export
 #' @rdname geom_textsf
 #' @inheritParams ggplot2::geom_point
-#' @inheritParams geom_labelpath
-#' @param ... Extra arguments passed to [`geom_textpath`][geom_textpath]
+#' @inheritDotParams geom_labelpath -arrow -lineend -linejoin -linemitre
 geom_labelsf <- function(mapping = aes(), data = NULL, stat = "sf",
                     position = "identity", na.rm = FALSE, show.legend = NA,
                     inherit.aes = TRUE, ...) {
