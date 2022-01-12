@@ -15,14 +15,6 @@
 #' @export
 #' @rdname geom_textpath
 #' @inheritParams textpathGrob
-#' @section Aesthetics:
-#' In addition to aforementioned aesthetics, \code{geom_labelpath()} also
-#' understands the following aesthetics related to the textbox:
-#' \itemize{
-#'  \item{\code{boxcolour}}
-#'  \item{\code{boxlinetype}}
-#'  \item{\code{boxlinewidth}}
-#' }
 #' @examples
 #'
 #' # Rich text labels can contain a subset of HTML tags

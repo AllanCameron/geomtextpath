@@ -116,6 +116,9 @@ the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 
 \item{arrow}{Arrow specification, as created by \code{\link[grid:arrow]{grid::arrow()}}.}
 }
+\value{
+A \code{Layer} ggproto object that can be added to a plot.
+}
 \description{
 Contour lines representing 2D density are available already in
 \pkg{ggplot2}, but the native \code{\link[ggplot2:geom_density_2d]{geom_density_2d}}
@@ -144,8 +147,15 @@ does not allow the lines to be labelled with the level of each contour.
   \item \code{textcolour}
   \item \code{vjust}
 }
-The `spacing` aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography.
+In addition to aforementioned aesthetics, \code{geom_label_density2d()} also understands:
+\itemize{
+  \item \code{boxcolour}
+  \item \code{boxlinetype}
+  \item \code{boxlinewidth}
+  \item \code{fill}
+}
+The \code{spacing} aesthetic allows fine control of spacing
+ of text, which is called 'tracking' in typography.
 The default is 0 and units are measured in 1/1000 em.
 Numbers greater than zero increase the spacing,
 whereas negative numbers decrease the spacing.
@@ -163,5 +173,8 @@ df  <- data.frame(x = rnorm(100), y = rnorm(100))
 ggplot(df, aes(x, y)) +
   geom_textdensity2d() +
   theme_classic()
+}
+\seealso{
+Other \link[=sibling_layers]{geom layers} that place text on paths.
 }
 \keyword{datasets}

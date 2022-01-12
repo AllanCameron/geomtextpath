@@ -127,8 +127,15 @@ equivalent of \code{\link[ggplot2:geom_segment]{geom_segment()}}.
   \item \code{textcolour}
   \item \code{vjust}
 }
-The `spacing` aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography.
+In addition to aforementioned aesthetics, \code{geom_labelsegment()} also understands:
+\itemize{
+  \item \code{boxcolour}
+  \item \code{boxlinetype}
+  \item \code{boxlinewidth}
+  \item \code{fill}
+}
+The \code{spacing} aesthetic allows fine control of spacing
+ of text, which is called 'tracking' in typography.
 The default is 0 and units are measured in 1/1000 em.
 Numbers greater than zero increase the spacing,
 whereas negative numbers decrease the spacing.
@@ -160,4 +167,7 @@ ggplot(mapping = aes(x, y)) +
     x = 1, xend = 2, y = 1, yend = 10,
     label = "10x increase", arrow = arrow()
   )
+}
+\seealso{
+Other \link[=sibling_layers]{geom layers} that place text on paths.
 }

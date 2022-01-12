@@ -126,6 +126,9 @@ breaks.}
 
 \item{geom}{The geometric object to use display the data}
 }
+\value{
+A \code{Layer} ggproto object that can be added to a plot.
+}
 \description{
 Contour lines are available already in \pkg{ggplot2}, but the
 native \code{\link[ggplot2:geom_contour]{geom_contour}} does not allow the lines to
@@ -154,8 +157,15 @@ ability.
   \item \code{textcolour}
   \item \code{vjust}
 }
-The `spacing` aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography.
+In addition to aforementioned aesthetics, \code{geom_label_contour()} also understands:
+\itemize{
+  \item \code{boxcolour}
+  \item \code{boxlinetype}
+  \item \code{boxlinewidth}
+  \item \code{fill}
+}
+The \code{spacing} aesthetic allows fine control of spacing
+ of text, which is called 'tracking' in typography.
 The default is 0 and units are measured in 1/1000 em.
 Numbers greater than zero increase the spacing,
 whereas negative numbers decrease the spacing.
@@ -186,5 +196,8 @@ ggplot(df, aes(x, y, z = z)) +
   scale_fill_manual(values = terrain.colors(11)) +
   theme_classic() +
   theme(legend.position = "none")
+}
+\seealso{
+Other \link[=sibling_layers]{geom layers} that place text on paths.
 }
 \keyword{datasets}

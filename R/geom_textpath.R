@@ -76,6 +76,8 @@
 #' @export
 #' @md
 #' @include text_params.R
+#' @return A `Layer` ggproto object that can be added to a plot.
+#' @seealso Other [geom layers][sibling_layers] that place text on paths.
 #'
 #' @examples
 #'# Plot text along an arbitrary path

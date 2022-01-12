@@ -215,6 +215,31 @@ test_that("No changes occurred in autodocumentation of aesthetics", {
   expect_snapshot(txt)
 })
 
+test_that("Nonexisting label variants aren't documented", {
+  GeomTextdummy <- ggproto("GeomTextdummy",  Geom, required_aes = "ABC")
+
+  doc <- rlang::with_bindings(
+    rd_aesthetics("geom", "textdummy"),
+    GeomTextdummy = GeomTextdummy, .env = globalenv()
+  )
+  expect_false(any(grepl("DEF", doc)))
+
+  GeomLabeldummy <- ggproto("GeomLabeldummy", GeomTextdummy,
+                            required_aes = c("ABC", "DEF"))
+
+  doc <- rlang::with_bindings(
+    rd_aesthetics("geom", "textdummy"),
+    GeomTextdummy = GeomTextdummy,
+    GeomLabeldummy = GeomLabeldummy,
+    .env = globalenv()
+  )
+
+  expect_true(any(grepl("DEF", doc)))
+
+  doc <- rd_aesthetics("stat", "text_contour")
+  expect_true(any(grepl("code\\{x\\}", doc)))
+})
+
 test_that("find_global() finds global functions", {
   # Should find because should be visible from here
   test <- find_global("geom_textpath", env = globalenv())

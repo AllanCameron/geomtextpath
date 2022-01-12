@@ -51,6 +51,7 @@ Collate:
     'geom_textsegment.R'
     'geom_textabline.R'
     'geom_textcontour.R'
+    'geom_textcurve.R'
     'geom_textdensity.R'
     'utils.R'
     'geom_textdensity2d.R'

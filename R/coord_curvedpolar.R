@@ -31,6 +31,7 @@
 #'   means no. For details, please see [`coord_cartesian()`].
 #' @inheritParams static_text_params
 #' @export
+#' @return A `Coord` ggproto object that can be added to a plot.
 #' @examples
 #'
 #' # A pie chart = stacked bar chart + polar coordinates

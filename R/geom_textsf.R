@@ -32,37 +32,8 @@
 #'
 #' Unlike other aesthetics, `geometry` will never be inherited from
 #' the plot.
-#'
-#' @section CRS:
-#' `coord_sf()` ensures that all layers use a common CRS. You can
-#' either specify it using the `crs` param, or `coord_sf()` will
-#' take it from the first layer that defines a CRS.
-#'
-#' @section Combining sf layers and regular geoms:
-#' Most regular geoms, such as [geom_point()], [geom_path()],
-#' [geom_text()], [geom_polygon()] etc. will work fine with `coord_sf()`.
-#' However when using these geoms, two problems arise. First, what CRS should be
-#' used for the x and y coordinates used by these non-sf geoms? The CRS applied
-#' to non-sf geoms is set by the `default_crs` parameter, and it defaults to
-#' `NULL`, which means positions for non-sf geoms are interpreted as projected
-#' coordinates in the coordinate system set by the `crs` parameter. This setting
-#' allows you complete control over where exactly items are placed on the plot
-#' canvas, but it may require some understanding of how projections work and how
-#' to generate data in projected coordinates. As an alternative, you can set
-#' `default_crs = sf::st_crs(4326)`, the World Geodetic System 1984 (WGS84).
-#' This means that x and y positions are interpreted as longitude and latitude,
-#' respectively. You can also specify any other valid CRS as the default CRS for
-#' non-sf geoms.
-#'
-#' The second problem that arises for non-sf geoms is how straight lines
-#' should be interpreted in projected space when `default_crs` is not set to
-#' `NULL`. The approach `coord_sf()` takes is to break straight lines into small
-#' pieces (i.e., segmentize them) and then transform the pieces into projected
-#' coordinates. For the default setting where x and y are interpreted as
-#' longitude and latitude, this approach means that horizontal lines follow the
-#' parallels and vertical lines follow the meridians. If you need a different
-#' approach to handling straight lines, then you should manually segmentize and
-#' project coordinates and generate the plot in projected coordinates.
+#' @inheritSection ggplot2::geom_sf CRS
+#' @inheritSection ggplot2::geom_sf Combining sf layers and regular geoms
 #'
 #' @param show.legend logical. Should this layer be included in the legends?
 #'   `NA`, the default, includes if any aesthetics are mapped.
@@ -70,7 +41,11 @@
 #'
 #'   You can also set this to one of "polygon", "line", and "point" to
 #'   override the default legend.
-#' @seealso [stat_sf_coordinates()]
+#'
+#' @return A `Layer` ggproto object that can be added to a plot.
+#' @seealso [`stat_sf_coordinates()`][ggplot2::stat_sf_coordinates].
+#' Other [geom layers][sibling_layers] that place text on paths.
+#' @md
 #' @examples
 #' ggplot(waterways) +
 #'  geom_textsf(label = "Forth and Clyde Canal",
@@ -85,7 +60,8 @@ NULL
 #' @export
 #' @rdname geom_textsf
 #' @inheritParams ggplot2::geom_point
-#' @param ... Extra arguments passed to [`geom_textpath`][geom_textpath]
+#' @inheritDotParams geom_textpath -arrow -lineend -linejoin -linemitre
+#' @md
 geom_textsf <- function(mapping = aes(), data = NULL, stat = "sf",
                     position = "identity", na.rm = FALSE, show.legend = NA,
                     inherit.aes = TRUE, ...) {
@@ -110,8 +86,7 @@ geom_textsf <- function(mapping = aes(), data = NULL, stat = "sf",
 #' @export
 #' @rdname geom_textsf
 #' @inheritParams ggplot2::geom_point
-#' @inheritParams geom_labelpath
-#' @param ... Extra arguments passed to [`geom_textpath`][geom_textpath]
+#' @inheritDotParams geom_labelpath -arrow -lineend -linejoin -linemitre
 geom_labelsf <- function(mapping = aes(), data = NULL, stat = "sf",
                     position = "identity", na.rm = FALSE, show.legend = NA,
                     inherit.aes = TRUE, ...) {

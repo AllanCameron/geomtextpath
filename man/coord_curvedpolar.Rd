@@ -27,6 +27,9 @@ means no. For details, please see [`coord_cartesian()`].}
 \item{halign}{A \code{character(1)} describing how multi-line text should be
 justified. Can either be \code{"center"} (default), \code{"left"} or \code{"right"}.}
 }
+\value{
+A `Coord` ggproto object that can be added to a plot.
+}
 \description{
 Polar co-ordinates in `ggplot2` help to create a range of circular plots,
 which can be used to present data in a visually appealing, user-friendly way.
