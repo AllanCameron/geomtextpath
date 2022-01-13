@@ -72,6 +72,7 @@ label_sf.sfc_LINESTRING <- function(x, label, as_textbox = FALSE) {
 
 # Does the job of actually drawing the textpaths -------------------------------
 
+#' @exportS3Method sf::st_as_grob
 st_as_grob.sfc_labelled <- function(
   x, arrow = NULL, default.units = "npc", name = NULL,
   gp = gpar(), vp = NULL, textpath_vars = list(), ...) {
@@ -120,6 +121,7 @@ st_as_grob.sfc_labelled <- function(
 }
 
 # Draws the textbox grobs
+#' @exportS3Method sf::st_as_grob
 st_as_grob.sfc_textbox <- function(
   x, arrow = NULL, default.units = "npc", name = NULL,
   gp = gpar(), vp = NULL, textpath_vars = list(), ...) {
