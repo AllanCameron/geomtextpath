@@ -7,3 +7,4 @@
 ^docs$
 ^pkgdown$
 ^img
+^cran-comments\.md$

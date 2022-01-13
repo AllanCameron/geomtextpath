@@ -11,13 +11,9 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%",
-  fig.align = "center",
+  fig.width = 7.16,
   fig.height = 6,
-  fig.width = 6,
-  dev = "ragg_png", # <- prevent default Windows device to render plots
-  dpi = 132
+  dev = "ragg_png"
 )
 ```
 
