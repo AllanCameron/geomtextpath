@@ -79,10 +79,10 @@ st_as_grob.sfc_labelled <- function(
   label <- attr(x, "label")
   class(x)[class(x) == "sfc_labelled"] <- "sfc_LINESTRING"
 
-  if (is.null(label)) return(st_as_grob(x))
+  if (is.null(label)) return(sf::st_as_grob(x))
   label <- as.character(label)[1]
 
-  if (!nzchar(label)) return(st_as_grob(x))
+  if (!nzchar(label)) return(sf::st_as_grob(x))
 
   is_e <- nrow_multi(unclass(x)) == 0
   if (any(is_e)) {
@@ -127,11 +127,11 @@ st_as_grob.sfc_textbox <- function(
   label <- attr(x, "label")
   class(x)[class(x) == "sfc_textbox"] <- "sfc_LINESTRING"
 
-  if (is.null(label)) return(st_as_grob(x))
+  if (is.null(label)) return(sf::st_as_grob(x))
 
   label <- as.character(label)[1]
 
-  if (!nzchar(label)) return(st_as_grob(x))
+  if (!nzchar(label)) return(sf::st_as_grob(x))
 
   is_e <- nrow_multi(unclass(x)) == 0
 
@@ -189,7 +189,7 @@ sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
   }
 
   # Get sf types
-  type          <- sf_types[st_geometry_type(x$geometry)]
+  type          <- sf_types[sf::st_geometry_type(x$geometry)]
   is_point      <- type == "point"
   is_line       <- type == "line"
   is_other      <- type == "other"
@@ -270,7 +270,7 @@ sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
     tp_i$gp_text <- tp_i$gp_text[i]
     tp_i$gp_box  <- tp_i$gp_box[i]
     out <- addGrob(out,
-                   st_as_grob(g, pch = pch, gp = gp_line[i], arrow = arrow,
+                   sf::st_as_grob(g, pch = pch, gp = gp_line[i], arrow = arrow,
                               textpath_vars = tp_i))
   }
   out
