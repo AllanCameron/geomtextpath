@@ -28,7 +28,14 @@ library(geomtextpath)
 
 _After a design by George Stilabower_
 
-```{r data, echo=FALSE}
+```{r, results='asis', echo=FALSE}
+output_format <- knitr::pandoc_to()
+if (output_format == "html") {
+  cat("<details>\n  <summary>Data code block</summary>")
+}
+```
+
+```{r data}
 df <- structure(list(xvals = rep(0:25, each = 13), yvals = c(
   9, 0, 0, 2, 0, 9, 10, 13, 0, 0, 0, 0, 0, 9, 0, 0, 2, 0, 9, 
 10, 13, 0, 0, 0, 0, 0, 9, 0, 1, 0, 4, 6, 10, 0, 13, 0, 0, 0, 
@@ -123,6 +130,12 @@ sublabels <- data.frame(x = c(-0.25, 1.5, 2, 6, 9, 15, 16, 18, 18, 20, 20, 25),
 covidpie <- list(df = df, df_text = df_text, fills = fills, 
                  label1 = label1, label2 = label2, label3 = label3, 
                  sep = sep, sublabels = sublabels)
+```
+
+```{r, results='asis', echo=FALSE}
+if (output_format == "html") {
+  cat("</details>")
+}
 ```
 
 ```{r covidpie, out.width = "100%", echo=TRUE}
