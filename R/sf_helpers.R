@@ -53,13 +53,15 @@ sf_defaults <- function() {
   })
 }
 
-# Use S3 classes to store labels only in linestring class ----------------------
+# Store labels only in linestring class ----------------------
 
-label_sf <- function(x, ...) UseMethod("label_sf")
+# Avoided the S3 route here because generics and methods needed to be exported.
+# Dispatch is simple enough to go functional instead of OOP
 
-label_sf.default <- function(x, ...) x
-
-label_sf.sfc_LINESTRING <- function(x, label, as_textbox = FALSE) {
+label_sf <- function(x, label = "", as_textbox = FALSE) {
+  if (!inherits(x, "sfc_LINESTRING")) {
+    return(x)
+  }
   attr(x, "label") <- match_labels(x, label)
   cl <- which(class(x) == "sfc_LINESTRING")
   if (!as_textbox) {
