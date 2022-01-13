@@ -1,4 +1,4 @@
-cairo_pdf(tmp <- tempfile(fileext = ".pdf"))
+png(tmp <- tempfile(fileext = ".png"))
 
 test_that("We can measure plotmath expressions", {
 
