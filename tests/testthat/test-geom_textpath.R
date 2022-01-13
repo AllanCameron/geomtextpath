@@ -13,7 +13,7 @@ test_that("The geom_textline() constructor works", {
   x <- geom_textline()
 
   expect_s3_class(x, "LayerInstance")
-  expect_s3_class(x$geom, "GeomTextLine")
+  expect_s3_class(x$geom, "GeomTextline")
   expect_s3_class(x$stat, "StatIdentity")
 })
 
@@ -22,7 +22,7 @@ test_that("The geom_textdensity() constructor works", {
   x <- geom_textdensity()
 
   expect_s3_class(x, "LayerInstance")
-  expect_s3_class(x$geom, "GeomTextDensity")
+  expect_s3_class(x$geom, "GeomTextdensity")
   expect_s3_class(x$stat, "StatDensity")
 })
 
@@ -68,7 +68,7 @@ test_that("The geom_labelcontour() constructor works", {
 
   expect_s3_class(x, "LayerInstance")
   expect_s3_class(x$geom, "GeomLabelpath")
-  expect_s3_class(x$stat, "StatTextContour")
+  expect_s3_class(x$stat, "StatTextcontour")
 })
 
 test_that("The geom_labeldensity2d() constructor works", {
@@ -76,7 +76,7 @@ test_that("The geom_labeldensity2d() constructor works", {
   x <- geom_labeldensity2d()
 
   expect_s3_class(x, "LayerInstance")
-  expect_s3_class(x$geom, "GeomLabelDensity2d")
+  expect_s3_class(x$geom, "GeomLabeldensity2d")
   expect_s3_class(x$stat, "StatDensity2d")
 })
 

@@ -162,7 +162,7 @@ geom_textabline <- function(mapping = NULL,
   )
 }
 
-#' @rdname geom_textabline
+#' @rdname GeomTextpath
 #' @include geom_textsegment.R
 #' @format NULL
 #' @usage NULL
@@ -269,7 +269,7 @@ geom_labelabline <- function(mapping = NULL,
   )
 }
 
-#' @rdname geom_textabline
+#' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
 #' @export

@@ -23,7 +23,7 @@
 #' @inheritParams geom_textpath
 #' @inheritParams ggplot2::stat_density
 #'
-#' @eval rd_aesthetics("geom", "text_density")
+#' @eval rd_aesthetics("geom", "textdensity")
 #' @return A `Layer` ggproto object that can be added to a plot.
 #' @seealso Other [geom layers][sibling_layers] that place text on paths.
 #' @export
@@ -33,26 +33,26 @@
 #' ggplot(iris, aes(Sepal.Length, label = Species, color = Species)) +
 #'   geom_textdensity()
 
-geom_textdensity    <- function(mapping = NULL,
-                                data = NULL,
-                                stat = "density",
-                                position = "identity",
-                                ...,
-                                bw = "nrd0",
-                                adjust = 1,
-                                kernel = "gaussian",
-                                n = 512,
-                                lineend = "butt",
-                                linejoin = "round",
-                                linemitre = 10,
-                                na.rm = FALSE,
-                                show.legend = NA,
-                                inherit.aes = TRUE) {
+geom_textdensity <- function(mapping = NULL,
+                             data = NULL,
+                             stat = "density",
+                             position = "identity",
+                             ...,
+                             bw = "nrd0",
+                             adjust = 1,
+                             kernel = "gaussian",
+                             n = 512,
+                             lineend = "butt",
+                             linejoin = "round",
+                             linemitre = 10,
+                             na.rm = FALSE,
+                             show.legend = NA,
+                             inherit.aes = TRUE) {
   layer(
     data        = data,
     mapping     = mapping,
     stat        = stat,
-    geom        = GeomTextDensity,
+    geom        = GeomTextdensity,
     position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
@@ -89,7 +89,7 @@ geom_labeldensity <- function(mapping = NULL, data = NULL,
   arrow = NULL
 ) {
   layer(
-    geom        = GeomLabelpath,
+    geom        = GeomLabeldensity,
     mapping     = mapping,
     data        = data,
     stat        = stat,
@@ -114,23 +114,23 @@ geom_labeldensity <- function(mapping = NULL, data = NULL,
 }
 
 
-#' @rdname geom_textdensity
+#' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
 #' @export
 #' @include geom_textpath.R
-GeomTextDensity <- ggproto("GeomTextDensity", GeomTextpath,
+GeomTextdensity <- ggproto("GeomTextdensity", GeomTextpath,
 
   required_aes = c("x", "label")
 )
 
 
-#' @rdname geom_textdensity
+#' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
 #' @export
 #' @include geom_textpath.R
-GeomLabelDensity <- ggproto("GeomLabelDensity", GeomLabelpath,
+GeomLabeldensity <- ggproto("GeomLabeldensity", GeomLabelpath,
 
   required_aes = c("x", "label")
 )

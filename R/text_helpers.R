@@ -377,6 +377,9 @@ x_height <- function(gp) {
 
 text_shape <- function(text, id, gp, res = 72, vjust = 0.5, hjust = 0.5,
                        align = "center", unit = "inch") {
+  # Remedy for https://github.com/r-lib/systemfonts/issues/85
+  vjust[vjust == 1] <- 1 + .Machine$double.eps
+
   txt <- shape_text(
     strings    =  text,
     family     =  gp$fontfamily %||% "",

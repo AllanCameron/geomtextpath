@@ -212,7 +212,7 @@ geom_labelline <- function(
   arrow = NULL, remove_long = TRUE
 ) {
   layer(
-    geom        = GeomLabelpath,
+    geom        = GeomLabelline,
     mapping     = mapping,
     data        = data,
     stat        = stat,
@@ -241,11 +241,11 @@ geom_labelline <- function(
   )
 }
 
-#' @rdname geom_textpath
+#' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
 #' @export
-GeomLabelLine <- ggproto("GeomLabelLine", GeomLabelpath,
+GeomLabelline <- ggproto("GeomLabelLine", GeomLabelpath,
   setup_params = function(data, params) {
     params$flipped_aes <- has_flipped_aes(data, params, ambiguous = TRUE)
     update_params(params, type = "label")

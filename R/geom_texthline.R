@@ -50,7 +50,7 @@ geom_texthline <- function(mapping = NULL,
   )
 }
 
-#' @rdname geom_textabline
+#' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
 #' @export
@@ -128,7 +128,7 @@ geom_labelhline <- function(mapping = NULL,
   )
 }
 
-#' @rdname geom_textabline
+#' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
 #' @export

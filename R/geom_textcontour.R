@@ -22,7 +22,7 @@
 #' @eval rd_dots(geom_textcontour)
 #' @inheritParams ggplot2::geom_contour
 #' @inheritParams geom_textpath
-#' @eval rd_aesthetics("geom", "text_contour")
+#' @eval rd_aesthetics("geom", "textcontour")
 #' @return A `Layer` ggproto object that can be added to a plot.
 #' @seealso Other [geom layers][sibling_layers] that place text on paths.
 #' @include geom_textpath.R
@@ -40,7 +40,7 @@
 #'   theme_classic() +
 #'   theme(legend.position = "none")
 geom_textcontour <- function(
-  mapping = NULL, data = NULL, stat = "text_contour",
+  mapping = NULL, data = NULL, stat = "textcontour",
   position = "identity", na.rm = FALSE, show.legend = NA,
   inherit.aes = TRUE,
   lineend = "butt", linejoin = "round", linemitre = 10,
@@ -48,7 +48,7 @@ geom_textcontour <- function(
   ...
   ) {
 
-  layer(geom = GeomTextContour, mapping = mapping, data = data,
+  layer(geom = GeomTextcontour, mapping = mapping, data = data,
         stat = stat,
         position = position, show.legend = show.legend,
         inherit.aes = inherit.aes,
@@ -69,7 +69,7 @@ geom_textcontour <- function(
 #' @inheritParams geom_labelpath
 #' @export
 geom_labelcontour <- function(
-  mapping = NULL, data = NULL, stat = "text_contour",
+  mapping = NULL, data = NULL, stat = "textcontour",
   position = "identity", na.rm = FALSE, show.legend = NA,
   inherit.aes = TRUE, ...,
   lineend = "butt", linejoin = "round", linemitre = 10,
@@ -79,7 +79,7 @@ geom_labelcontour <- function(
   arrow = NULL
 ) {
   layer(
-    geom        = GeomLabelpath,
+    geom        = GeomLabelcontour,
     mapping     = mapping,
     data        = data,
     stat        = stat,
@@ -119,7 +119,7 @@ geom_labelcontour <- function(
 #'
 #' @rdname geom_textcontour
 stat_textcontour <- function(mapping = NULL, data = NULL,
-                             geom = "text_contour",
+                             geom = "textcontour",
                              position = "identity",
                              ...,
                              bins = NULL,
@@ -131,7 +131,7 @@ stat_textcontour <- function(mapping = NULL, data = NULL,
   layer(
     data        = data,
     mapping     = mapping,
-    stat        = StatTextContour,
+    stat        = StatTextcontour,
     geom        = geom,
     position    = position,
     show.legend = show.legend,
@@ -146,30 +146,30 @@ stat_textcontour <- function(mapping = NULL, data = NULL,
   )
 }
 
-#' @rdname geom_textcontour
+#' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
 #' @export
 #' @include geom_textpath.R
-GeomTextContour <- ggproto("GeomTextContour", GeomTextpath,
+GeomTextcontour <- ggproto("GeomTextcontour", GeomTextpath,
   required_aes = c("x", "y")
 )
 
-#' @rdname geom_textcontour
+#' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
 #' @export
 #' @include geom_textpath.R
-GeomLabelContour <- ggproto("GeomLabelContour", GeomLabelpath,
+GeomLabelcontour <- ggproto("GeomLabelcontour", GeomLabelpath,
   required_aes = c("x", "y")
 )
 
-#' @rdname geom_textcontour
+#' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
 #' @export
 #' @include geom_textpath.R
-StatTextContour <- ggproto("StatTextContour", StatContour,
+StatTextcontour <- ggproto("StatTextcontour", StatContour,
 
   required_aes = c("x", "y", "z"),
 

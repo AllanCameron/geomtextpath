@@ -68,7 +68,7 @@ geom_textsf <- function(mapping = aes(), data = NULL, stat = "sf",
   rlang::check_installed("sf", "for `geom_textsf()`")
   c(
     layer_sf(
-      geom = GeomTextSf,
+      geom = GeomTextsf,
       data = data,
       mapping = mapping,
       stat = stat,
@@ -94,7 +94,7 @@ geom_labelsf <- function(mapping = aes(), data = NULL, stat = "sf",
   rlang::check_installed("sf", "for `geom_labelsf()`")
   c(
     layer_sf(
-      geom = GeomLabelSf,
+      geom = GeomLabelsf,
       data = data,
       mapping = mapping,
       stat = stat,
@@ -111,10 +111,10 @@ geom_labelsf <- function(mapping = aes(), data = NULL, stat = "sf",
 }
 
 #' @export
-#' @rdname geom_textsf
+#' @rdname GeomTextpath
 #' @usage NULL
 #' @format NULL
-GeomTextSf <- ggproto("GeomTextSf", GeomSf,
+GeomTextsf <- ggproto("GeomTextSf", GeomSf,
   required_aes = c("geometry", "label"),
   default_aes = aes(
     shape = NULL,
@@ -151,10 +151,10 @@ GeomTextSf <- ggproto("GeomTextSf", GeomSf,
 
 
 #' @export
-#' @rdname geom_textsf
+#' @rdname GeomTextpath
 #' @usage NULL
 #' @format NULL
-GeomLabelSf <- ggproto("GeomLabelSf", GeomSf,
+GeomLabelsf <- ggproto("GeomLabelSf", GeomSf,
   required_aes = c("geometry", "label"),
   default_aes = aes(
     colour       = "black",
@@ -186,7 +186,7 @@ GeomLabelSf <- ggproto("GeomLabelSf", GeomSf,
 
     data <- coord$transform(data, panel_params)
     sf_textgrob(data, lineend = lineend, linejoin = linejoin,
-                   linemitre = linemitre, text_smoothing = text_smoothing,
-                   arrow = arrow, na.rm = na.rm, as_textbox = TRUE)
+                linemitre = linemitre, text_smoothing = text_smoothing,
+                arrow = arrow, na.rm = na.rm, as_textbox = TRUE)
   }
 )

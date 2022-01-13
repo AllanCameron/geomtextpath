@@ -4,13 +4,9 @@
 \docType{data}
 \name{geom_textabline}
 \alias{geom_textabline}
-\alias{GeomTextabline}
 \alias{geom_labelabline}
-\alias{GeomLabelabline}
 \alias{geom_texthline}
-\alias{GeomTexthline}
 \alias{geom_labelhline}
-\alias{GeomLabelhline}
 \alias{geom_textvline}
 \alias{GeomTextvline}
 \alias{geom_labelvline}
