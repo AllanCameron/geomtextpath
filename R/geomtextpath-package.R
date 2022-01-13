@@ -8,7 +8,7 @@
 #' @importFrom utils head tail
 #' @importFrom graphics strwidth
 #' @importFrom systemfonts glyph_info
-#' @importFrom grDevices dev.size cairo_pdf
+#' @importFrom grDevices dev.size png
 #' @importFrom rlang abort warn `%||%` `:=`
 #' @importFrom scales rescale squish_infinite alpha
 #' @importFrom textshaping shape_text
@@ -31,6 +31,7 @@ NULL
 #' | [`geom_path()`][ggplot2::geom_path] | [`geom_textpath()`] | [`geom_labelpath()`] |
 #' | [`geom_line()`][ggplot2::geom_line] | [`geom_textline()`] | [`geom_labelline()`] |
 #' | [`geom_segment()`][ggplot2::geom_segment] | [`geom_textsegment()`] | [`geom_labelsegment()`] |
+#' | [`geom_curve()`][ggplot2::geom_curve] | [`geom_textcurve`] | [`geom_labelcurve()`] |
 #' | [`geom_abline()`][ggplot2::geom_abline] | [`geom_textabline()`] | [`geom_labelabline()`] |
 #' | [`geom_hline()`][ggplot2::geom_hline] | [`geom_texthline()`] | [`geom_labelhline()`] |
 #' | [`geom_vline()`][ggplot2::geom_vline] | [`geom_textvline()`] | [`geom_labelvline()`] |

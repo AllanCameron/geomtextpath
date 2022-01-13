@@ -16,6 +16,7 @@ function in \pkg{geomtextpath} relate to those in \pkg{ggplot2}.
    \code{\link[ggplot2:geom_path]{geom_path()}} \tab \code{\link[=geom_textpath]{geom_textpath()}} \tab \code{\link[=geom_labelpath]{geom_labelpath()}} \cr
    \code{\link[ggplot2:geom_path]{geom_line()}} \tab \code{\link[=geom_textline]{geom_textline()}} \tab \code{\link[=geom_labelline]{geom_labelline()}} \cr
    \code{\link[ggplot2:geom_segment]{geom_segment()}} \tab \code{\link[=geom_textsegment]{geom_textsegment()}} \tab \code{\link[=geom_labelsegment]{geom_labelsegment()}} \cr
+   \code{\link[ggplot2:geom_segment]{geom_curve()}} \tab \code{\link{geom_textcurve}} \tab \code{\link[=geom_labelcurve]{geom_labelcurve()}} \cr
    \code{\link[ggplot2:geom_abline]{geom_abline()}} \tab \code{\link[=geom_textabline]{geom_textabline()}} \tab \code{\link[=geom_labelabline]{geom_labelabline()}} \cr
    \code{\link[ggplot2:geom_abline]{geom_hline()}} \tab \code{\link[=geom_texthline]{geom_texthline()}} \tab \code{\link[=geom_labelhline]{geom_labelhline()}} \cr
    \code{\link[ggplot2:geom_abline]{geom_vline()}} \tab \code{\link[=geom_textvline]{geom_textvline()}} \tab \code{\link[=geom_labelvline]{geom_labelvline()}} \cr
