@@ -65,6 +65,7 @@ NULL
 geom_textsf <- function(mapping = aes(), data = NULL, stat = "sf",
                     position = "identity", na.rm = FALSE, show.legend = NA,
                     inherit.aes = TRUE, ...) {
+  rlang::check_installed("sf", "for `geom_textsf()`")
   c(
     layer_sf(
       geom = GeomTextSf,
@@ -90,6 +91,7 @@ geom_textsf <- function(mapping = aes(), data = NULL, stat = "sf",
 geom_labelsf <- function(mapping = aes(), data = NULL, stat = "sf",
                     position = "identity", na.rm = FALSE, show.legend = NA,
                     inherit.aes = TRUE, ...) {
+  rlang::check_installed("sf", "for `geom_labelsf()`")
   c(
     layer_sf(
       geom = GeomLabelSf,

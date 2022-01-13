@@ -53,13 +53,15 @@ sf_defaults <- function() {
   })
 }
 
-# Use S3 classes to store labels only in linestring class ----------------------
+# Store labels only in linestring class ----------------------
 
-label_sf <- function(x, ...) UseMethod("label_sf")
+# Avoided the S3 route here because generics and methods needed to be exported.
+# Dispatch is simple enough to go functional instead of OOP
 
-label_sf.default <- function(x, ...) x
-
-label_sf.sfc_LINESTRING <- function(x, label, as_textbox = FALSE) {
+label_sf <- function(x, label = "", as_textbox = FALSE) {
+  if (!inherits(x, "sfc_LINESTRING")) {
+    return(x)
+  }
   attr(x, "label") <- match_labels(x, label)
   cl <- which(class(x) == "sfc_LINESTRING")
   if (!as_textbox) {
@@ -72,6 +74,7 @@ label_sf.sfc_LINESTRING <- function(x, label, as_textbox = FALSE) {
 
 # Does the job of actually drawing the textpaths -------------------------------
 
+#' @exportS3Method sf::st_as_grob
 st_as_grob.sfc_labelled <- function(
   x, arrow = NULL, default.units = "npc", name = NULL,
   gp = gpar(), vp = NULL, textpath_vars = list(), ...) {
@@ -79,10 +82,10 @@ st_as_grob.sfc_labelled <- function(
   label <- attr(x, "label")
   class(x)[class(x) == "sfc_labelled"] <- "sfc_LINESTRING"
 
-  if (is.null(label)) return(st_as_grob(x))
+  if (is.null(label)) return(sf::st_as_grob(x))
   label <- as.character(label)[1]
 
-  if (!nzchar(label)) return(st_as_grob(x))
+  if (!nzchar(label)) return(sf::st_as_grob(x))
 
   is_e <- nrow_multi(unclass(x)) == 0
   if (any(is_e)) {
@@ -120,6 +123,7 @@ st_as_grob.sfc_labelled <- function(
 }
 
 # Draws the textbox grobs
+#' @exportS3Method sf::st_as_grob
 st_as_grob.sfc_textbox <- function(
   x, arrow = NULL, default.units = "npc", name = NULL,
   gp = gpar(), vp = NULL, textpath_vars = list(), ...) {
@@ -127,11 +131,11 @@ st_as_grob.sfc_textbox <- function(
   label <- attr(x, "label")
   class(x)[class(x) == "sfc_textbox"] <- "sfc_LINESTRING"
 
-  if (is.null(label)) return(st_as_grob(x))
+  if (is.null(label)) return(sf::st_as_grob(x))
 
   label <- as.character(label)[1]
 
-  if (!nzchar(label)) return(st_as_grob(x))
+  if (!nzchar(label)) return(sf::st_as_grob(x))
 
   is_e <- nrow_multi(unclass(x)) == 0
 
@@ -189,7 +193,7 @@ sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
   }
 
   # Get sf types
-  type          <- sf_types[st_geometry_type(x$geometry)]
+  type          <- sf_types[sf::st_geometry_type(x$geometry)]
   is_point      <- type == "point"
   is_line       <- type == "line"
   is_other      <- type == "other"
@@ -270,7 +274,7 @@ sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
     tp_i$gp_text <- tp_i$gp_text[i]
     tp_i$gp_box  <- tp_i$gp_box[i]
     out <- addGrob(out,
-                   st_as_grob(g, pch = pch, gp = gp_line[i], arrow = arrow,
+                   sf::st_as_grob(g, pch = pch, gp = gp_line[i], arrow = arrow,
                               textpath_vars = tp_i))
   }
   out

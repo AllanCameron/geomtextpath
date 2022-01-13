@@ -12,7 +12,6 @@
 #' @importFrom rlang abort warn `%||%` `:=`
 #' @importFrom scales rescale squish_infinite alpha
 #' @importFrom textshaping shape_text
-#' @importFrom sf st_as_grob st_geometry_type
 NULL
 
 # The following block is used by usethis to automatically manage

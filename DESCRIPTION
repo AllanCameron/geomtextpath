@@ -21,12 +21,11 @@ BugReports: https://github.com/AllanCameron/geomtextpath/issues
 Encoding: UTF-8
 Depends:
     ggplot2,
-    R (>= 3.5.0)
+    R (>= 3.6.0)
 Imports:
     grid,
     scales,
     systemfonts,
-    sf,
     rlang,
     textshaping
 RoxygenNote: 7.1.2
@@ -37,6 +36,7 @@ Suggests:
     rmarkdown,
     ragg,
     roxygen2,
+    sf,
     xml2,
     markdown
 Config/testthat/edition: 3
