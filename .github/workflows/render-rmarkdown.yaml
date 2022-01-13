@@ -27,6 +27,8 @@ jobs:
         run: Rscript -e 'install.packages("markdown")'
       - name: Install xml2
         run: Rscript -e 'install.packages("xml2")'
+      - name: Install sf
+        run: Rscript -e 'install.packages("sf")'
       - name: Install self
         run: Rscript -e 'remotes::install_github(Sys.getenv("THIS_REPO"))'
       - name: Render README
