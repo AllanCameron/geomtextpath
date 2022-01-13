@@ -2,3 +2,60 @@ url: https://allancameron.github.io/geomtextpath
 template:
   bootstrap: 5
 
+reference:
+- title: "Geoms"
+  desc: >
+    Functions for constructing new geometry layers that can be added to a plot.
+
+- subtitle: Text path
+  desc: >
+    Layers placing (curved) text along a path.
+  contents:
+  - geom_textpath
+  - geom_textline
+  - geom_textsegment
+  - geom_textcurve
+  - geom_textabline
+  - geom_texthline
+  - geom_textvline
+  - geom_textdensity
+  - geom_textsmooth
+  - geom_textcontour
+  - geom_textdensity2d
+  - geom_textsf
+
+- subtitle: Label path
+  desc: >
+    Layers placing (curved) text with a textbox along a path.
+  contents:
+  - geom_labelpath
+  - geom_labelline
+  - geom_labelsegment
+  - geom_labelcurve
+  - geom_labelabline
+  - geom_labelhline
+  - geom_labelvline
+  - geom_labeldensity
+  - geom_labelsmooth
+  - geom_labelcontour
+  - geom_labeldensity2d
+  - geom_labelsf
+
+- title: "Justification Scales"
+  desc: >
+    These functions allow for more finegrained control over text justification.
+  contents:
+  - scale_hjust_discrete
+  - scale_hjust_identity
+  - scale_hjust_manual
+  - scale_vjust_discrete
+  - scale_vjust_identity
+  - scale_vjust_manual
+
+- title: "Other functions"
+  desc: >
+    Functions that can be useful, but do not belong to a larger group of
+    functions.
+  contents:
+  - textpathGrob
+  - coord_curvedpolar
