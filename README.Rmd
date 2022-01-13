@@ -94,6 +94,7 @@ Of course, the point of this package is not to produce such graphical novelties,
 | `geom_abline`    | `geom_textabline`    | `geom_labelabline`     |
 | `geom_hline`     | `geom_texthline`     | `geom_labelhline`      |
 | `geom_vline`     | `geom_textvline`     | `geom_labelvline`      |
+| `geom_curve`     | `geom_textcurve`     | `geom_labelcurve`      |
 | `geom_density`   | `geom_textdensity`   | `geom_labeldensity`    |
 | `geom_smooth`    | `geom_textsmooth`    | `geom_labelsmooth`     |
 | `geom_contour`   | `geom_textcontour`   | `geom_labelcontour`    |
@@ -210,6 +211,21 @@ ggplot(mtcars, aes(mpg, disp)) +
                  linetype = 2, vjust = 1.3, color = "blue4") +
   geom_textabline(slope = 15, intercept = -100, label = "partition line", 
                   color = "green4", hjust = 0.6, vjust = -0.2)
+```
+
+In addition to the straight reference lines, there is also a pair of geom layers for curved reference lines: `geom_textcurve` and `geom_labelcurve`. These are typically used for annotations.
+
+```{r curve}
+df <- data.frame(Activity = c("Work", "Play"), Happiness = c(0.5, 0.7))
+
+ggplot(df, aes(Activity, Happiness)) + 
+  geom_col(fill = "gold", color = "gray50") + 
+  geom_textcurve(data = data.frame(x = 1, xend = 2, y = 0.72, yend = 0.52), 
+                 aes(x, y, xend = xend, yend = yend), hjust = 0.4, 
+                 curvature = -0.8, label = "significant difference") +
+  geom_point(aes(y = Happiness + 0.02)) +
+  scale_y_continuous(limits = c(0, 1))
+
 ```
 
 ### Arbitrary `stat` transformations
