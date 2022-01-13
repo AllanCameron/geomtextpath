@@ -1,4 +1,5 @@
 test_that("We can label an sfc_LINESTRING", {
+  skip_if_not_installed("sf")
 
   multipolygon <- waterways$geometry[1]
   linestring <- waterways$geometry[2]
@@ -72,6 +73,7 @@ test_that("sf objects are converted to correct grob types", {
 })
 
 test_that("We can make grobs from sf features", {
+  skip_if_not_installed("sf")
 
   p <- ggplot(waterways) + geom_textsf(label = "rivers")
   p_built <- ggplot_build(p)
@@ -95,6 +97,7 @@ test_that("We can make grobs from sf features", {
 })
 
 test_that("geom_labelsf constructor wotks", {
+  skip_if_not_installed("sf")
 
   x <- geom_labelsf()
 
