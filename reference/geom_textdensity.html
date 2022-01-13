@@ -205,6 +205,10 @@ the default plot specification, e.g. <code><a href="https://ggplot2.tidyverse.or
 <dd><p>Arrow specification, as created by <code><a href="https://rdrr.io/r/grid/arrow.html" class="external-link">grid::arrow()</a></code>.</p></dd>
 </dl></div>
     <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>A <code>Layer</code> ggproto object that can be added to a plot.</p>
+    </div>
+    <div class="section level2">
     <h2 id="aesthetics">Aesthetics<a class="anchor" aria-label="anchor" href="#aesthetics"></a></h2>
     
 
@@ -225,14 +229,22 @@ the default plot specification, e.g. <code><a href="https://ggplot2.tidyverse.or
 <li><p><code>spacing</code></p></li>
 <li><p><code>textcolour</code></p></li>
 <li><p><code>vjust</code></p></li>
-</ul><p>The `spacing` aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography.
+</ul><p>In addition to aforementioned aesthetics, <code>geom_label_density()</code> also understands:</p><ul><li><p><code>boxcolour</code></p></li>
+<li><p><code>boxlinetype</code></p></li>
+<li><p><code>boxlinewidth</code></p></li>
+<li><p><code>fill</code></p></li>
+</ul><p>The <code>spacing</code> aesthetic allows fine control of spacing
+ of text, which is called 'tracking' in typography.
 The default is 0 and units are measured in 1/1000 em.
 Numbers greater than zero increase the spacing,
 whereas negative numbers decrease the spacing.</p>
 
 <p>Learn more about setting these aesthetics 
 in <code><a href="https://ggplot2.tidyverse.org/articles/ggplot2-specs.html" class="external-link">vignette("ggplot2-specs")</a></code>.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p>Other <a href="sibling_layers.html">geom layers</a> that place text on paths.</p></div>
     </div>
 
     <div class="section level2">

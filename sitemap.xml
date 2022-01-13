@@ -43,6 +43,9 @@
     <loc>https://allancameron.github.io/geomtextpath/reference/geom_textcontour.html</loc>
   </url>
   <url>
+    <loc>https://allancameron.github.io/geomtextpath/reference/geom_textcurve.html</loc>
+  </url>
+  <url>
     <loc>https://allancameron.github.io/geomtextpath/reference/geom_textdensity.html</loc>
   </url>
   <url>
@@ -68,6 +71,9 @@
   </url>
   <url>
     <loc>https://allancameron.github.io/geomtextpath/reference/scale_hjust_discrete.html</loc>
+  </url>
+  <url>
+    <loc>https://allancameron.github.io/geomtextpath/reference/sibling_layers.html</loc>
   </url>
   <url>
     <loc>https://allancameron.github.io/geomtextpath/reference/static_text_params.html</loc>

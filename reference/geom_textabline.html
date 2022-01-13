@@ -252,9 +252,7 @@ follow the curve. This might be helpful for noisy paths.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>Layer</code> ggproto object that can be added to a plot.
-A <code>Layer</code> ggproto object that can be added to a plot.
-A <code>Layer</code> ggproto object that can be added to a plot.</p>
+    <p>A <code>Layer</code> ggproto object that can be added to a plot.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -278,9 +276,15 @@ commonly set in the plot. They also do not affect the x and y scales.</p>
     <h2 id="aesthetics">Aesthetics<a class="anchor" aria-label="anchor" href="#aesthetics"></a></h2>
     
 
-<p><code>geom_textabline()</code> understands the following aesthetics (required aesthetics are in bold):</p><ul><li><p><strong><code>label</code></strong></p></li>
-<li><p><strong><code>slope</code></strong></p></li>
-<li><p><strong><code>intercept</code></strong></p></li>
+<p>The <code>geom_textabline()</code>, <code>geom_texthline()</code> and <code>geom_textvline()</code> understand
+the following aesthetics (required aesthetics are in bold):</p><ul><li><p><strong><code>label</code></strong></p></li>
+<li><p><strong><code>slope</code></strong> (<code>geom_textabline()</code> and <code>geom_labelabline()</code>)</p></li>
+<li><p><strong><code>intercept</code></strong> (<code>geom_textabline()</code> and
+<code>geom_labelabline()</code>)</p></li>
+<li><p><strong><code>yintercept</code></strong> (<code>geom_texthline()</code> and
+<code>geom_labelhline()</code>)</p></li>
+<li><p><strong><code>xintercept</code></strong> (<code>geom_textvline()</code> and
+<code>geom_labelvline()</code>)</p></li>
 <li><p><code>alpha</code></p></li>
 <li><p><code>angle</code></p></li>
 <li><p><code>colour</code></p></li>
@@ -288,6 +292,7 @@ commonly set in the plot. They also do not affect the x and y scales.</p>
 <li><p><code>fontface</code></p></li>
 <li><p><code>group</code></p></li>
 <li><p><code>hjust</code></p></li>
+<li><p><code>vjust</code></p></li>
 <li><p><code>linecolour</code></p></li>
 <li><p><code>lineheight</code></p></li>
 <li><p><code>linetype</code></p></li>
@@ -295,67 +300,19 @@ commonly set in the plot. They also do not affect the x and y scales.</p>
 <li><p><code>size</code></p></li>
 <li><p><code>spacing</code></p></li>
 <li><p><code>textcolour</code></p></li>
-<li><p><code>vjust</code></p></li>
-</ul><p>The `spacing` aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography.
-The default is 0 and units are measured in 1/1000 em.
-Numbers greater than zero increase the spacing,
-whereas negative numbers decrease the spacing.</p>
-
-<p>Learn more about setting these aesthetics 
-in <code><a href="https://ggplot2.tidyverse.org/articles/ggplot2-specs.html" class="external-link">vignette("ggplot2-specs")</a></code>.</p>
-
-<p><code>geom_texthline()</code> understands the following aesthetics (required aesthetics are in bold):</p><ul><li><p><strong><code>yintercept</code></strong></p></li>
-<li><p><strong><code>label</code></strong></p></li>
-<li><p><code>alpha</code></p></li>
-<li><p><code>angle</code></p></li>
-<li><p><code>colour</code></p></li>
-<li><p><code>family</code></p></li>
-<li><p><code>fontface</code></p></li>
-<li><p><code>group</code></p></li>
-<li><p><code>hjust</code></p></li>
-<li><p><code>linecolour</code></p></li>
-<li><p><code>lineheight</code></p></li>
-<li><p><code>linetype</code></p></li>
-<li><p><code>linewidth</code></p></li>
-<li><p><code>size</code></p></li>
-<li><p><code>spacing</code></p></li>
-<li><p><code>textcolour</code></p></li>
-<li><p><code>vjust</code></p></li>
-</ul><p>The `spacing` aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography.
-The default is 0 and units are measured in 1/1000 em.
-Numbers greater than zero increase the spacing,
-whereas negative numbers decrease the spacing.</p>
-
-<p>Learn more about setting these aesthetics 
-in <code><a href="https://ggplot2.tidyverse.org/articles/ggplot2-specs.html" class="external-link">vignette("ggplot2-specs")</a></code>.</p>
-
-<p><code>geom_textvline()</code> understands the following aesthetics (required aesthetics are in bold):</p><ul><li><p><strong><code>xintercept</code></strong></p></li>
-<li><p><strong><code>label</code></strong></p></li>
-<li><p><code>alpha</code></p></li>
-<li><p><code>angle</code></p></li>
-<li><p><code>colour</code></p></li>
-<li><p><code>family</code></p></li>
-<li><p><code>fontface</code></p></li>
-<li><p><code>group</code></p></li>
-<li><p><code>hjust</code></p></li>
-<li><p><code>linecolour</code></p></li>
-<li><p><code>lineheight</code></p></li>
-<li><p><code>linetype</code></p></li>
-<li><p><code>linewidth</code></p></li>
-<li><p><code>size</code></p></li>
-<li><p><code>spacing</code></p></li>
-<li><p><code>textcolour</code></p></li>
-<li><p><code>vjust</code></p></li>
-</ul><p>The `spacing` aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography.
-The default is 0 and units are measured in 1/1000 em.
-Numbers greater than zero increase the spacing,
-whereas negative numbers decrease the spacing.</p>
-
-<p>Learn more about setting these aesthetics 
-in <code><a href="https://ggplot2.tidyverse.org/articles/ggplot2-specs.html" class="external-link">vignette("ggplot2-specs")</a></code>.</p>
+</ul><p>In addition to aforementioned aesthetics, <code>geom_labelabline()</code>,
+<code>geom_labelhline()</code> and <code>geom_labelvline()</code> also understand:</p><ul><li><p><code>boxcolour</code></p></li>
+<li><p><code>boxlinetype</code></p></li>
+<li><p><code>boxlinewidth</code></p></li>
+<li><p><code>fill</code></p></li>
+</ul><p>The <code>spacing</code> aesthetic allows fine control of spacing of text, which is
+called 'tracking' in typography. The default is 0 and units are measured in
+1/1000 em. Numbers greater than zero increase the spacing, whereas negative
+numbers decrease the spacing.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p>Other <a href="sibling_layers.html">geom layers</a> that place text on paths.</p></div>
     </div>
 
     <div class="section level2">

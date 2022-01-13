@@ -289,6 +289,10 @@ for more detail.</p></dd>
 <dd><p>Radius of rounded corners. Defaults to 0.15 lines.</p></dd>
 </dl></div>
     <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>A <code>Layer</code> ggproto object that can be added to a plot.</p>
+    </div>
+    <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     
 <div class="section">
@@ -357,20 +361,23 @@ MIT licence. Currently, the supported HTML tags are <code>&lt;p&gt;</code>, <cod
 <li><p><code>spacing</code></p></li>
 <li><p><code>textcolour</code></p></li>
 <li><p><code>vjust</code></p></li>
-</ul><p>The `spacing` aesthetic allows fine control of spacing of text,
-which is called 'tracking' in typography.
+</ul><p>In addition to aforementioned aesthetics, <code>geom_labelpath()</code> also understands:</p><ul><li><p><code>boxcolour</code></p></li>
+<li><p><code>boxlinetype</code></p></li>
+<li><p><code>boxlinewidth</code></p></li>
+<li><p><code>fill</code></p></li>
+</ul><p>The <code>spacing</code> aesthetic allows fine control of spacing
+ of text, which is called 'tracking' in typography.
 The default is 0 and units are measured in 1/1000 em.
 Numbers greater than zero increase the spacing,
 whereas negative numbers decrease the spacing.</p>
 
 <p>Learn more about setting these aesthetics 
 in <code><a href="https://ggplot2.tidyverse.org/articles/ggplot2-specs.html" class="external-link">vignette("ggplot2-specs")</a></code>.</p>
-
-<p>In addition to aforementioned aesthetics, <code>geom_labelpath()</code> also
-understands the following aesthetics related to the textbox:</p><ul><li><p><code>boxcolour</code></p></li>
-<li><p><code>boxlinetype</code></p></li>
-<li><p><code>boxlinewidth</code></p></li>
-</ul></div>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p>Other <a href="sibling_layers.html">geom layers</a> that place text on paths.</p></div>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
