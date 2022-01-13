@@ -20,7 +20,7 @@
 #' @inheritParams geom_textpath
 #' @inheritParams ggplot2::stat_density_2d
 #'
-#' @eval rd_aesthetics("geom", "text_density2d")
+#' @eval rd_aesthetics("geom", "textdensity2d")
 #' @return A `Layer` ggproto object that can be added to a plot.
 #' @include geom_textpath.R
 #' @include utils.R
@@ -57,7 +57,7 @@ geom_textdensity2d <- function(mapping = NULL,
     data        = data,
     mapping     = mapping,
     stat        = stat,
-    geom        = GeomTextDensity2d,
+    geom        = GeomTextdensity2d,
     position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
@@ -95,7 +95,7 @@ geom_labeldensity2d <- function(mapping = NULL, data = NULL,
   arrow = NULL
 ) {
   layer(
-    geom        = GeomLabelDensity2d,
+    geom        = GeomLabeldensity2d,
     mapping     = mapping,
     data        = data,
     stat        = stat,
@@ -121,12 +121,12 @@ geom_labeldensity2d <- function(mapping = NULL, data = NULL,
   )
 }
 
-#' @rdname geom_textdensity2d
+#' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
 #' @export
 #' @include geom_textpath.R
-GeomTextDensity2d <- ggproto("GeomTextDensity2d", GeomTextpath,
+GeomTextdensity2d <- ggproto("GeomTextdensity2d", GeomTextpath,
 
   required_aes = c("x", "y"),
 
@@ -136,12 +136,12 @@ GeomTextDensity2d <- ggproto("GeomTextDensity2d", GeomTextpath,
   }
 )
 
-#' @rdname geom_textdensity2d
+#' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
 #' @export
 #' @include geom_textpath.R
-GeomLabelDensity2d <- ggproto("GeomLabelDensity2d", GeomLabelpath,
+GeomLabeldensity2d <- ggproto("GeomLabeldensity2d", GeomLabelpath,
 
   required_aes = c("x", "y"),
 

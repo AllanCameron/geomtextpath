@@ -120,7 +120,7 @@ this line when used as a drop-in replacement for
 }
 \section{Aesthetics}{
 
-\code{geom_text_density()} understands the following aesthetics (required aesthetics are in bold):
+\code{geom_textdensity()} understands the following aesthetics (required aesthetics are in bold):
 \itemize{
   \item \strong{\code{x}}
   \item \strong{\code{label}}
@@ -140,7 +140,7 @@ this line when used as a drop-in replacement for
   \item \code{textcolour}
   \item \code{vjust}
 }
-In addition to aforementioned aesthetics, \code{geom_label_density()} also understands:
+In addition to aforementioned aesthetics, \code{geom_labeldensity()} also understands:
 \itemize{
   \item \code{boxcolour}
   \item \code{boxlinetype}

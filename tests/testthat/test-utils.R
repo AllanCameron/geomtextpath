@@ -236,7 +236,7 @@ test_that("Nonexisting label variants aren't documented", {
 
   expect_true(any(grepl("DEF", doc)))
 
-  doc <- rd_aesthetics("stat", "text_contour")
+  doc <- rd_aesthetics("stat", "textcontour")
   expect_true(any(grepl("code\\{x\\}", doc)))
 })
 

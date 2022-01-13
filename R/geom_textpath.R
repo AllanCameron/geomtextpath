@@ -277,7 +277,7 @@ geom_textline <- function(mapping = NULL, data = NULL, stat = "identity",
     data        = data,
     mapping     = mapping,
     stat        = stat,
-    geom        = GeomTextLine,
+    geom        = GeomTextline,
     position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
@@ -296,9 +296,9 @@ geom_textline <- function(mapping = NULL, data = NULL, stat = "identity",
 #' @format NULL
 #' @usage NULL
 #' @export
-#' @rdname geom_textpath
+#' @rdname GeomTextpath
 
-GeomTextLine <- ggproto("GeomTextLine", GeomTextpath,
+GeomTextline <- ggproto("GeomTextline", GeomTextpath,
   setup_params = function(data, params) {
     params$flipped_aes <- has_flipped_aes(data, params, ambiguous = TRUE)
     update_params(params, type = "text")
