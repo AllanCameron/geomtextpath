@@ -59,3 +59,16 @@ reference:
   contents:
   - textpathGrob
   - coord_curvedpolar
+
+- title: "Data"
+  desc: >
+    Data objects included in the package
+  contents:
+  - waterways
+
+- title: "Reference"
+  desc: >
+    Other topics included in documents
+  contents:
+  - sibling_layers
+  - GeomTextpath
