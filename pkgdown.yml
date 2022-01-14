@@ -1,12 +1,12 @@
 pandoc: 2.7.3
-pkgdown: 2.0.1
+pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
   aesthetics: aesthetics.html
   curved_polar: curved_polar.html
   gallery: gallery.html
   geomtextpath: geomtextpath.html
-last_built: 2022-01-13T14:53Z
+last_built: 2022-01-14T00:39Z
 urls:
   reference: https://allancameron.github.io/geomtextpath/reference
   article: https://allancameron.github.io/geomtextpath/articles
