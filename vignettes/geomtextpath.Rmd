@@ -80,7 +80,7 @@ Each of these aims to provide the same functionality as the equivalent ggplot2 g
 
 Although we made an effort to provide text-path equivalents for commonly used stat-based geoms, such as `geom_density()` or `geom_smooth()`, there is not an equivalent for *every* stat-based geom. However, the flexibility of ggplot2 allows that most stats can be combined with any geom. Provided that the stat provides path-like output, this means that for example `stat_ellipse()` can be combined with `geom_textpath()` by setting `geom = "textpath"` or `geom = "labelpath"`.
 
-```{r}
+```{r geom_in_stat}
 ggplot(iris, aes(Sepal.Width, Sepal.Length, colour = Species)) +
   geom_point(alpha = 0.3) +
   stat_ellipse(
@@ -92,7 +92,7 @@ ggplot(iris, aes(Sepal.Width, Sepal.Length, colour = Species)) +
 
 Alternatively, one could also specify the stat inside `geom_textpath()` or `geom_labelpath()`.
 
-```{r}
+```{r stat_in_geom}
 ggplot(data.frame(x = 0)) +
   geom_labelpath(
     stat = "function", 
@@ -120,12 +120,27 @@ p + geom_textpath(
 
 ## How does it work?
 
-At the heart of `geomtextpath` is `textpathGrob`. This is a type of graphical object (known as a "grob"), which is drawn by the `grid` graphics package on which `ggplot2` is built. Everything that you see in your plotting device when you draw a `ggplot` is made up of grobs.
+At the heart of {geomtextpath} is `textpathGrob()`. This is a type of graphical object (known as a "grob"), which is drawn by the {grid} graphics package on which {ggplot2} is built. Everything that you see in your plotting device when you draw a ggplot is made up of grobs.
 
-When a `textpathGrob` is created, it measures the dimensions of the given text label letter-by-letter and stores the result along with the x, y values of the path and any graphics parameters such as color, linewidth and font. 
+```{r textpathgrob}
+grob <- textpathGrob(label = "My\nlabel", x = c(0.25, 0.75), 
+                     y = c(0.25, 0.75), id = c(1, 1))
+grob
+```
 
-When a plot is drawn, or the plotting window is rescaled, the `grid` package always calls `makeContent` for each grob in the current display device. This makes information about the aspect ratio and absolute size of the current viewport available for further calculations to be made on-the-fly if necessary before anything is actually drawn.
+When a `textpathGrob` is created, it measures the dimensions of the given text label letter-by-letter with the {textshaping} package. The measurements are stored, along with the x, y values of the path and any graphics parameters such as color, linewidth and font. 
 
-The `geomtextpath` package was possible because the `makeContent` function is generic, meaning that we were able to create a `makeContent.textpath` function. This takes the letter dimensions stored in the grob, the x, y co-ordinates of the path stored in the grob, and the device dimensions, applying simple(ish) trigonometry to work out where each letter should be placed and at what angle. Once this is known, the path and its associated gap can be calculated. The actual drawing part is then done by dispatching this information to the grid functions `textGrob` and `linesGrob`, which directly draw the graphical objects on the plotting device.
+```{r textmeasurement}
+grob$textpath$label[[1]]
+```
+
+When a plot is drawn, or the plotting window is rescaled, the {grid} package always calls `makeContent` for each grob in the current display device. This makes information about the aspect ratio and absolute size of the current viewport available for further calculations to be made on-the-fly if necessary before anything is actually drawn.
+
+The {geomtextpath} package was possible because the `makeContent` function is generic, meaning that we were able to create a `makeContent.textpath` function. This takes the letter dimensions stored in the grob, the x, y co-ordinates of the path stored in the grob, and the device dimensions, applying simple(ish) trigonometry to work out where each letter should be placed and at what angle. Once this is known, the path and its associated gap can be calculated. The actual drawing part is then done by dispatching this information to the grid functions `textGrob` and `linesGrob`, which directly draw the graphical objects on the plotting device.
+
+```{r grid}
+grid::grid.newpage()
+grid::grid.draw(grob)
+```
 
 We have tried to make any calculations done inside the `makeContent` stage efficient, so that there is not a noticeable lag in the plot being redrawn when the window is rescaled.
