@@ -56,7 +56,9 @@ p + geom_textpath(
 ) + labs(subtitle = "geom_textpath()")
 ```
 
-All of the line-based geom layers in `ggplot2` have their text equivalents and text-box equivalents in the `geomtextpath` package:
+## Overview
+
+All of the line-based geom layers in `ggplot2` indicated below, have text and text-box equivalents in the `geomtextpath` package:
 
 | **ggplot geom**  | **Text equivalent**  | **Label equivalent**   |
 |:-----------------|:---------------------|:-----------------------|
@@ -74,7 +76,33 @@ All of the line-based geom layers in `ggplot2` have their text equivalents and t
 
 Each of these aims to provide the same functionality as the equivalent ggplot2 geom, but with the addition of a `label` aesthetic that will automatically label the line, even if it follows a curved path.
 
-### Correction of angles across different aspect ratios
+## Stat layers
+
+Although we made an effort to provide text-path equivalents for commonly used stat-based geoms, such as `geom_density()` or `geom_smooth()`, there is not an equivalent for *every* stat-based geom. However, the flexibility of ggplot2 allows that most stats can be combined with any geom. Provided that the stat provides path-like output, this means that for example `stat_ellipse()` can be combined with `geom_textpath()` by setting `geom = "textpath"` or `geom = "labelpath"`.
+
+```{r}
+ggplot(iris, aes(Sepal.Width, Sepal.Length, colour = Species)) +
+  geom_point(alpha = 0.3) +
+  stat_ellipse(
+    aes(label = Species),
+    geom = "textpath", hjust = 0.25,
+  ) +
+  theme(legend.position = "none")
+```
+
+Alternatively, one could also specify the stat inside `geom_textpath()` or `geom_labelpath()`.
+
+```{r}
+ggplot(data.frame(x = 0)) +
+  geom_labelpath(
+    stat = "function", 
+    fun = ~ 1 / (1 + exp(-.x)),
+    label = "Sigmoid function"
+  ) +
+  xlim(-6, 6)
+```
+
+## Angles across aspect ratios
 
 The mechanism underlying the text positioning will take account of the plotting window however it is rescaled. This means text continues to stick together and follow the path at the correct angle as the plotting window changes in size or in aspect ratio. This is all done in the background, without the need to call your plotting code again every time the window is resized. For example, here is the same plot drawn with different dimensions:
 
@@ -90,8 +118,7 @@ p + geom_textpath(
 ) + coord_cartesian() + labs(subtitle = "geom_textpath()")
 ```
 
-
-### How does it work?
+## How does it work?
 
 At the heart of `geomtextpath` is `textpathGrob`. This is a type of graphical object (known as a "grob"), which is drawn by the `grid` graphics package on which `ggplot2` is built. Everything that you see in your plotting device when you draw a `ggplot` is made up of grobs.
 
