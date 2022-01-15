@@ -139,7 +139,7 @@ attempt_flip <- function(
   # Invert path and hjust
   path       <- path[rev(seq_len(nrow(path))), ]
   yids       <- unique(label$y_id)
-  offset     <- attr(label, "offset")
+  offset     <- as_inch(attr(label, "offset"))
   offlim     <- range(offset[yids])
   offnew     <- (offset - offlim[1]) - offlim[2]
   off_fix    <- as.numeric(any(yids == 1) && offnew[1] != 0)
