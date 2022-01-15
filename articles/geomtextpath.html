@@ -51,7 +51,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/aesthetics.html">Aesthetics</a>
+    <a class="dropdown-item" href="../articles/aesthetics.html">Aesthetics, Parameters and Scales</a>
     <a class="dropdown-item" href="../articles/curved_polar.html">Curved Text in Polar Co-ordinates</a>
     <a class="dropdown-item" href="../articles/gallery.html">Gallery of Examples</a>
   </div>
@@ -123,7 +123,11 @@
   size  <span class="op">=</span> <span class="fl">4</span>, label <span class="op">=</span> <span class="va">rhyme</span>
 <span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"geom_textpath()"</span><span class="op">)</span></code></pre></div>
 <p><img src="geomtextpath_files/figure-html/textpath_spiral-1.png" width="75%" style="display: block; margin: auto;"></p>
-<p>All of the line-based geom layers in <code>ggplot2</code> have their text equivalents and text-box equivalents in the <code>geomtextpath</code> package:</p>
+</div>
+<div class="section level2">
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h2>
+<p>All of the line-based geom layers in <code>ggplot2</code> indicated below, have text and text-box equivalents in the <code>geomtextpath</code> package:</p>
 <table class="table">
 <thead><tr class="header">
 <th align="left"><strong>ggplot geom</strong></th>
@@ -189,32 +193,75 @@
 </tbody>
 </table>
 <p>Each of these aims to provide the same functionality as the equivalent ggplot2 geom, but with the addition of a <code>label</code> aesthetic that will automatically label the line, even if it follows a curved path.</p>
-<div class="section level3">
-<h3 id="correction-of-angles-across-different-aspect-ratios">Correction of angles across different aspect ratios<a class="anchor" aria-label="anchor" href="#correction-of-angles-across-different-aspect-ratios"></a>
-</h3>
-<p>The mechanism underlying the text positioning will take account of the plotting window however it is rescaled. This means text continues to stick together and follow the path at the correct angle as the plotting window changes in size or in aspect ratio. This is all done in the background, without the need to call your plotting code again every time the window is resized. For example, here is the same plot drawn with different dimensions:</p>
+</div>
+<div class="section level2">
+<h2 id="stat-layers">Stat layers<a class="anchor" aria-label="anchor" href="#stat-layers"></a>
+</h2>
+<p>Although we made an effort to provide text-path equivalents for commonly used stat-based geoms, such as <code><a href="https://ggplot2.tidyverse.org/reference/geom_density.html" class="external-link">geom_density()</a></code> or <code><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth()</a></code>, there is not an equivalent for <em>every</em> stat-based geom. However, the flexibility of ggplot2 allows that most stats can be combined with any geom. Provided that the stat provides path-like output, this means that for example <code><a href="https://ggplot2.tidyverse.org/reference/stat_ellipse.html" class="external-link">stat_ellipse()</a></code> can be combined with <code><a href="../reference/geom_textpath.html">geom_textpath()</a></code> by setting <code>geom = "textpath"</code> or <code>geom = "labelpath"</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">Sepal.Width</span>, <span class="va">Sepal.Length</span>, colour <span class="op">=</span> <span class="va">Species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/stat_ellipse.html" class="external-link">stat_ellipse</a></span><span class="op">(</span>
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">Species</span><span class="op">)</span>,
+    geom <span class="op">=</span> <span class="st">"textpath"</span>, hjust <span class="op">=</span> <span class="fl">0.25</span>,
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></code></pre></div>
+<p><img src="geomtextpath_files/figure-html/geom_in_stat-1.png" width="50%"></p>
+<p>Alternatively, one could also specify the stat inside <code><a href="../reference/geom_textpath.html">geom_textpath()</a></code> or <code><a href="../reference/geom_textpath.html">geom_labelpath()</a></code>.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="../reference/geom_textpath.html">geom_labelpath</a></span><span class="op">(</span>
+    stat <span class="op">=</span> <span class="st">"function"</span>, 
+    fun <span class="op">=</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">.x</span><span class="op">)</span><span class="op">)</span>,
+    label <span class="op">=</span> <span class="st">"Sigmoid function"</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">xlim</a></span><span class="op">(</span><span class="op">-</span><span class="fl">6</span>, <span class="fl">6</span><span class="op">)</span></code></pre></div>
+<p><img src="geomtextpath_files/figure-html/stat_in_geom-1.png" width="50%"></p>
+</div>
+<div class="section level2">
+<h2 id="angles-across-aspect-ratios">Angles across aspect ratios<a class="anchor" aria-label="anchor" href="#angles-across-aspect-ratios"></a>
+</h2>
+<p>The mechanism underlying the text positioning will take account of the plotting window however it is rescaled. This means text continues to stick together and follow the path at the correct angle as the plotting window changes in size or in aspect ratio. This is all done in the background, without the need to call your plotting code again every time the window is resized. For example, here is the same plot drawn with different dimensions:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>
   size  <span class="op">=</span> <span class="fl">4</span>, label <span class="op">=</span> <span class="va">rhyme</span>
 <span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"geom_textpath()"</span><span class="op">)</span>
 <span class="co">#&gt; Coordinate system already present. Adding new coordinate system, which will replace the existing one.</span></code></pre></div>
 <p><img src="geomtextpath_files/figure-html/skinny-1.png" width="50%" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>
   size  <span class="op">=</span> <span class="fl">4</span>, label <span class="op">=</span> <span class="va">rhyme</span>
 <span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_cartesian.html" class="external-link">coord_cartesian</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"geom_textpath()"</span><span class="op">)</span>
 <span class="co">#&gt; Coordinate system already present. Adding new coordinate system, which will replace the existing one.</span></code></pre></div>
 <p><img src="geomtextpath_files/figure-html/wide-1.png" width="100%" style="display: block; margin: auto;"></p>
 </div>
-<div class="section level3">
-<h3 id="how-does-it-work">How does it work?<a class="anchor" aria-label="anchor" href="#how-does-it-work"></a>
-</h3>
-<p>At the heart of <code>geomtextpath</code> is <code>textpathGrob</code>. This is a type of graphical object (known as a “grob”), which is drawn by the <code>grid</code> graphics package on which <code>ggplot2</code> is built. Everything that you see in your plotting device when you draw a <code>ggplot</code> is made up of grobs.</p>
-<p>When a <code>textpathGrob</code> is created, it measures the dimensions of the given text label letter-by-letter and stores the result along with the x, y values of the path and any graphics parameters such as color, linewidth and font.</p>
-<p>When a plot is drawn, or the plotting window is rescaled, the <code>grid</code> package always calls <code>makeContent</code> for each grob in the current display device. This makes information about the aspect ratio and absolute size of the current viewport available for further calculations to be made on-the-fly if necessary before anything is actually drawn.</p>
-<p>The <code>geomtextpath</code> package was possible because the <code>makeContent</code> function is generic, meaning that we were able to create a <code>makeContent.textpath</code> function. This takes the letter dimensions stored in the grob, the x, y co-ordinates of the path stored in the grob, and the device dimensions, applying simple(ish) trigonometry to work out where each letter should be placed and at what angle. Once this is known, the path and its associated gap can be calculated. The actual drawing part is then done by dispatching this information to the grid functions <code>textGrob</code> and <code>linesGrob</code>, which directly draw the graphical objects on the plotting device.</p>
+<div class="section level2">
+<h2 id="how-does-it-work">How does it work?<a class="anchor" aria-label="anchor" href="#how-does-it-work"></a>
+</h2>
+<p>At the heart of {geomtextpath} is <code><a href="../reference/textpathGrob.html">textpathGrob()</a></code>. This is a type of graphical object (known as a “grob”), which is drawn by the {grid} graphics package on which {ggplot2} is built. Everything that you see in your plotting device when you draw a ggplot is made up of grobs.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">grob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/textpathGrob.html">textpathGrob</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"My\nlabel"</span>, x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.25</span>, <span class="fl">0.75</span><span class="op">)</span>, 
+                     y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.25</span>, <span class="fl">0.75</span><span class="op">)</span>, id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<span class="va">grob</span>
+<span class="co">#&gt; textpath[GRID.textpath.286]</span></code></pre></div>
+<p>When a <code>textpathGrob</code> is created, it measures the dimensions of the given text label letter-by-letter with the {textshaping} package. The measurements are stored, along with the x, y values of the path and any graphics parameters such as color, linewidth and font.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">grob</span><span class="op">$</span><span class="va">textpath</span><span class="op">$</span><span class="va">label</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
+<span class="co">#&gt;   glyph       ymin       xmin       xmid       xmax substring y_id</span>
+<span class="co">#&gt; 1     M  0.1162109 0.00000000 0.07183160 0.14366319         1    2</span>
+<span class="co">#&gt; 2     y  0.1162109 0.14388021 0.19314236 0.24240451         1    2</span>
+<span class="co">#&gt; 3     l -0.1162109 0.00000000 0.02300347 0.04600694         1    3</span>
+<span class="co">#&gt; 4     a -0.1162109 0.04622396 0.09722222 0.14822049         1    3</span>
+<span class="co">#&gt; 5     b -0.1162109 0.14843750 0.20138889 0.25434028         1    3</span>
+<span class="co">#&gt; 6     e -0.1162109 0.25434028 0.30555556 0.35677083         1    3</span>
+<span class="co">#&gt; 7     l -0.1162109 0.35698785 0.37999132 0.40299479         1    3</span></code></pre></div>
+<p>When a plot is drawn, or the plotting window is rescaled, the {grid} package always calls <code>makeContent</code> for each grob in the current display device. This makes information about the aspect ratio and absolute size of the current viewport available for further calculations to be made on-the-fly if necessary before anything is actually drawn.</p>
+<p>The {geomtextpath} package was possible because the <code>makeContent</code> function is generic, meaning that we were able to create a <code>makeContent.textpath</code> function. This takes the letter dimensions stored in the grob, the x, y co-ordinates of the path stored in the grob, and the device dimensions, applying simple(ish) trigonometry to work out where each letter should be placed and at what angle. Once this is known, the path and its associated gap can be calculated. The actual drawing part is then done by dispatching this information to the grid functions <code>textGrob</code> and <code>linesGrob</code>, which directly draw the graphical objects on the plotting device.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.newpage.html" class="external-link">grid.newpage</a></span><span class="op">(</span><span class="op">)</span>
+<span class="fu">grid</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grid/grid.draw.html" class="external-link">grid.draw</a></span><span class="op">(</span><span class="va">grob</span><span class="op">)</span></code></pre></div>
+<p><img src="geomtextpath_files/figure-html/grid-1.png" width="50%"></p>
 <p>We have tried to make any calculations done inside the <code>makeContent</code> stage efficient, so that there is not a noticeable lag in the plot being redrawn when the window is rescaled.</p>
-</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

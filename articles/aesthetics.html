@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="geomtextpath">
-<title>Aesthetics • geomtextpath</title>
+<title>Aesthetics, Parameters and Scales • geomtextpath</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <link href="../deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Aesthetics">
+<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Aesthetics, Parameters and Scales">
 <meta property="og:description" content="geomtextpath">
 <meta property="og:image" content="https://allancameron.github.io/geomtextpath/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -51,7 +51,7 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/aesthetics.html">Aesthetics</a>
+    <a class="dropdown-item" href="../articles/aesthetics.html">Aesthetics, Parameters and Scales</a>
     <a class="dropdown-item" href="../articles/curved_polar.html">Curved Text in Polar Co-ordinates</a>
     <a class="dropdown-item" href="../articles/gallery.html">Gallery of Examples</a>
   </div>
@@ -82,7 +82,7 @@
 
 <script src="aesthetics_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <main id="main"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Aesthetics</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Aesthetics, Parameters and Scales</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/AllanCameron/geomtextpath/blob/HEAD/vignettes/aesthetics.Rmd" class="external-link"><code>vignettes/aesthetics.Rmd</code></a></small>
@@ -97,10 +97,10 @@
 <div class="section level2">
 <h2 id="aesthetics">Aesthetics<a class="anchor" aria-label="anchor" href="#aesthetics"></a>
 </h2>
-<p>Like any ggplot2 layer, <code><a href="../reference/geom_textpath.html">geom_textpath()</a></code> recognises several <em>aesthetic mappings</em>. Put simply, an aesthetic mapping is just an instruction you give to ggplot about which columns in your data frame should affect which visual elements of the plot. Thus, you might make a simple scatterplot by mapping one variable to the x aesthetic and another to a y aesthetic.</p>
+<p>Like any ggplot2 layer, <code><a href="../reference/geom_textpath.html">geom_textpath()</a></code> and derivatives recognise several <em>aesthetic mappings</em>. Put simply, an aesthetic mapping is just an instruction you give to ggplot about which columns in your data frame should affect which visual elements of the plot. Thus, you might make a simple scatterplot by mapping one variable to the x aesthetic and another to a y aesthetic.</p>
 <p>Broadly, the aesthetic mappings in <code>geomtextpath</code> can be divided into three categories:</p>
 <ol style="list-style-type: decimal">
-<li>Aesthetics shared with <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text()</a></code>. These include <code>label</code>, <code>alpha</code>, <code>colour</code>, <code>family</code>, <code>fontface</code> and <code>size</code>.</li>
+<li>Aesthetics shared with <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text()</a></code>. These include <code>label</code>, <code>alpha</code>, <code>family</code>, <code>fontface</code> and <code>size</code>. Additionally, the <code>textcolour</code> aesthetic can be used to set the text colour independent of the general colour.</li>
 <li>Aesthetics shared with <code><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_path()</a></code>. These include <code>x</code>, <code>y</code>, <code>group</code> and <code>linetype</code>. Furthermore, to distinguish the text from the path, there are these additional aesthetics:
 <ol style="list-style-type: decimal">
 <li>
@@ -109,7 +109,7 @@
 <code>linecolour</code>, which acts as a <code>colour</code> aesthetic to the path.</li>
 </ol>
 </li>
-<li>Aesthetics that are specific to <code><a href="../reference/geom_textpath.html">geom_textpath()</a></code> or have a slightly altered meaning. This applies to the following aesthetics: <code>hjust</code>, <code>vjust</code> and <code>spacing</code>, which are explained below.</li>
+<li>Aesthetics that are specific to <code><a href="../reference/geom_textpath.html">geom_textpath()</a></code> or have a slightly altered meaning. This applies to the following aesthetics: <a href="#hjust"><code>hjust</code></a>, <a href="#vjust"><code>vjust</code></a> and <a href="#spacing"><code>spacing</code></a>, which are explained below.</li>
 </ol>
 <p>Note that above, <code>group</code> applies to the path, implying that there needs to be one label per path.</p>
 <p>Let’s build a plot for which to examine the aesthetics.</p>
@@ -128,18 +128,31 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_equal</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1000</span>, <span class="fl">1000</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1000</span>, <span class="fl">1000</span><span class="op">)</span><span class="op">)</span>
 <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size  <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></code></pre></div>
 <p><img src="aesthetics_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
-<div class="section level3">
-<h3 id="horizontal-justification">Horizontal justification<a class="anchor" aria-label="anchor" href="#horizontal-justification"></a>
-</h3>
-<p>The <code>hjust</code> parameter in text is understood as the justification of text along the direction of the text, relative to some anchor point. This coincides with horizontal justification when the text angle is exactly zero. In <code><a href="../reference/geom_textpath.html">geom_textpath()</a></code>, there is no anchor point, so the <code>hjust</code> parameter is re-interpreted as justification of text along the curve.</p>
+<p>To start with a straightforward aesthetic, <code><a href="../reference/geom_textpath.html">geom_textpath()</a></code> understands the <code>textcolour</code> and <code>linecolour</code> aesthetics which, when specified, overrule the <code>colour</code> aesthetic that would by default apply to both the text <em>and</em> the line.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size  <span class="op">=</span> <span class="fl">4</span>, textcolour <span class="op">=</span> <span class="st">"#E41A1C"</span>, linecolour <span class="op">=</span> <span class="st">"#377eb8"</span><span class="op">)</span></code></pre></div>
+<p><img src="aesthetics_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
+<p>Likewise, the aesthetics for the textbox default to the <code>colour</code>, <code>linetype</code> and <code>linewidth</code> aesthetics, but can be set independently when the <code>boxcolour</code>, <code>boxlinetype</code> and <code>boxlinewidth</code> aesthetics are set.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_labelpath</a></span><span class="op">(</span>size  <span class="op">=</span> <span class="fl">4</span>, textcolour <span class="op">=</span> <span class="st">"#E41A1C"</span>, boxcolour <span class="op">=</span> <span class="st">"#377eb8"</span>,
+                   fill <span class="op">=</span> <span class="st">"#ffff99"</span>, boxlinetype <span class="op">=</span> <span class="st">"dotted"</span>, linewidth <span class="op">=</span> <span class="fl">1</span>,
+                   boxlinewidth <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></code></pre></div>
+<p><img src="aesthetics_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<div class="section level3">
+<h3 id="hjust">Horizontal justification<a class="anchor" aria-label="anchor" href="#hjust"></a>
+</h3>
+<p>The <code>hjust</code> parameter in text is understood as the justification of text along the direction of the text, relative to some anchor point. This coincides with horizontal justification when the text angle is exactly zero. In <code><a href="../reference/geom_textpath.html">geom_textpath()</a></code>, there is no anchor point, so the <code>hjust</code> parameter is re-interpreted as justification of text along the curve. In addition, there are <a href="#scales">scales for justification</a> to finetune control.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size  <span class="op">=</span> <span class="fl">4</span>, hjust <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"hjust = 0"</span><span class="op">)</span>
 <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size  <span class="op">=</span> <span class="fl">4</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"hjust = 1"</span><span class="op">)</span></code></pre></div>
 <p><img src="aesthetics_files/figure-html/hjust_explain-1.png" width="700"><img src="aesthetics_files/figure-html/hjust_explain-2.png" width="700"></p>
+<div class="section level4">
+<h4 id="alternatives">Alternatives<a class="anchor" aria-label="anchor" href="#alternatives"></a>
+</h4>
 <p>In some situations you may wish to specify particular positions relative to the x and y co-ordinates of the plot. For these circumstances there are some text string aliases that can be used. These are “xmin”, “xmid”, “xmax”, “ymin”, “ymid”, “ymax” and “auto”. The first six are self explanatory. As an example, we can look at the effect of setting <code>hjust = "ymax"</code>. Here we use a different plot to demonstrate:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Sepal.Length</span>, colour <span class="op">=</span> <span class="va">Species</span>, label <span class="op">=</span> <span class="va">Species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1.3</span><span class="op">)</span><span class="op">)</span>
 
@@ -147,15 +160,16 @@
    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"hjust = \"ymax\""</span><span class="op">)</span></code></pre></div>
 <p><img src="aesthetics_files/figure-html/hjust_explain2-1.png" width="576"></p>
 <p>The “auto” <code>hjust</code> setting tries to find the straightest segments of the curves to apply labels:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">i</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textdensity.html">geom_textdensity</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">5</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.2</span>, hjust <span class="op">=</span> <span class="st">"auto"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"hjust = \"auto\""</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"hjust = 'auto'"</span><span class="op">)</span></code></pre></div>
 <p><img src="aesthetics_files/figure-html/hjust_explain3-1.png" width="576"></p>
+</div>
 <div class="section level4">
-<h4 id="justification-of-multi-line-text">Justification of multi-line text<a class="anchor" aria-label="anchor" href="#justification-of-multi-line-text"></a>
+<h4 id="halign">Justification of multi-line text<a class="anchor" aria-label="anchor" href="#halign"></a>
 </h4>
 <p>One potential downside to interpreting <code>hjust</code> this way, is that it can’t be used to control the horizontal justification of multi-line text. Instead, controlling justification among multi-line text occurs through the <code>halign</code> parameter, which can be one of <code>"left"</code>, <code>"center"</code> or <code>"right"</code>. Note that this parameter doesn’t affect single-line text.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Separate text with newline</span>
 <span class="va">rhyme_lines</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span>
   <span class="st">"Like a circle in a spiral, like a wheel within a wheel,"</span>,
@@ -169,50 +183,173 @@
 </div>
 </div>
 <div class="section level3">
-<h3 id="vertical-justification">Vertical justification<a class="anchor" aria-label="anchor" href="#vertical-justification"></a>
+<h3 id="vjust">Vertical justification<a class="anchor" aria-label="anchor" href="#vjust"></a>
 </h3>
-<p>The <code>vjust</code> parameter controls the justification of the text orthogonal to the direction of the text. When the angle of the text is zero, this is the same as vertical justification. In <code><a href="../reference/geom_textpath.html">geom_textpath()</a></code>, there is no single direction of the text as angles vary along the curve. Instead, it is imagined as an offset to the path where text should be placed. In the examples below, <code>vjust = 0</code> aligns the bottom of the text with the curve, whereas <code>vjust = 1</code> aligns the top of the text with the curve.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<p>The <code>vjust</code> parameter controls the justification of the text orthogonal to the direction of the text. When the angle of the text is zero, this is the same as vertical justification. In <code><a href="../reference/geom_textpath.html">geom_textpath()</a></code>, there is no single direction of the text as angles vary along the curve. Instead, it is imagined as an offset to the path where text should be placed. Like for <code>hjust</code>, <code>vjust</code> also has <a href="#scales">justification scales</a>. In the examples below, <code>vjust = 0</code> aligns the bottom of the text with the curve, whereas <code>vjust = 1</code> aligns the top of the text with the curve.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size  <span class="op">=</span> <span class="fl">4</span>, vjust <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"vjust = 0"</span><span class="op">)</span>
 <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size  <span class="op">=</span> <span class="fl">4</span>, vjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"vjust = 1"</span><span class="op">)</span></code></pre></div>
 <p><img src="aesthetics_files/figure-html/vjust_explain-1.png" width="700"><img src="aesthetics_files/figure-html/vjust_explain-2.png" width="700"></p>
 <div class="section level4">
-<h4 id="path-cutting">Path cutting<a class="anchor" aria-label="anchor" href="#path-cutting"></a>
+<h4 id="cut">Path cutting<a class="anchor" aria-label="anchor" href="#cut"></a>
 </h4>
 <p>It should be noted that when <code>vjust</code> is outside the [0,1] interval, text generally shouldn’t intersect the path. As such, the default behaviour no longer cuts the path at the text positions, but this can be turned back on by setting <code>gap = TRUE</code>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size  <span class="op">=</span> <span class="fl">4</span>, vjust <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"vjust = 1.5, default gap"</span><span class="op">)</span>
 <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size  <span class="op">=</span> <span class="fl">4</span>, vjust <span class="op">=</span> <span class="fl">1.5</span>, gap <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"vjust = 1.5, gap = TRUE"</span><span class="op">)</span></code></pre></div>
 <p><img src="aesthetics_files/figure-html/path_cutting_1-1.png" width="700"><img src="aesthetics_files/figure-html/path_cutting_1-2.png" width="700"></p>
 <p>Inversely, you can also turn off path cutting when it is expected to intersect with the text.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size  <span class="op">=</span> <span class="fl">4</span>, vjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"default gap"</span><span class="op">)</span>
 <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size  <span class="op">=</span> <span class="fl">4</span>, vjust <span class="op">=</span> <span class="fl">0.5</span>, gap <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"gap = FALSE"</span><span class="op">)</span></code></pre></div>
 <p><img src="aesthetics_files/figure-html/path_cutting_2-1.png" width="700"><img src="aesthetics_files/figure-html/path_cutting_2-2.png" width="700"></p>
+<p>Moreover, how much path is cut away to make room for the text is determined by the <code>padding</code> parameter. You can set this to a larger <code>unit</code> if you think the space between text and path is too small, or to a negative number if, for some reason, you’d like a part of the path to intersect with the text.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size  <span class="op">=</span> <span class="fl">4</span>, padding <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.5</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"padding = -0.5 cm"</span><span class="op">)</span>
+<span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size  <span class="op">=</span> <span class="fl">4</span>, padding <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">12</span>, <span class="st">"pt"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"padding = 12 pt"</span><span class="op">)</span></code></pre></div>
+<p><img src="aesthetics_files/figure-html/padding-1.png" width="700"><img src="aesthetics_files/figure-html/padding-2.png" width="700"></p>
+</div>
+<div class="section level4">
+<h4 id="offset">Absolute offset<a class="anchor" aria-label="anchor" href="#offset"></a>
+</h4>
+<p>As an alternative to the <code>vjust</code> aesthetic, which is typically multiples of the text height, there is also the <code>offset</code> parameter. The offset parameter can be a <code><a href="https://rdrr.io/r/grid/unit.html" class="external-link">grid::unit()</a></code> object that are used directly, instead of having to deal with multiples of the text height. When the <code>offset</code> parameter is used, the <code>vjust</code> aesthetic is ignored. Note that using the <code>offset</code> parameter instead of <code>vjust</code> makes the auto-guessing of the <code>gap</code> parameter unusable, so we recommend always setting the <code>gap</code> parameter whenever the <code>offset</code> parameter is used.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size  <span class="op">=</span> <span class="fl">4</span>, offset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">1</span>, <span class="st">"mm"</span><span class="op">)</span>, gap <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"offset = 1 mm"</span><span class="op">)</span></code></pre></div>
+<p><img src="aesthetics_files/figure-html/offset1-1.png" width="700"></p>
+<p>This <code>offset</code> parameter can be used to place text at the underline position relative to the path.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">size</span> <span class="op">&lt;-</span> <span class="fl">4</span>
+<span class="va">underline</span> <span class="op">&lt;-</span> <span class="fu">systemfonts</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/systemfonts/man/font_info.html" class="external-link">font_info</a></span><span class="op">(</span>family <span class="op">=</span> <span class="st">""</span>, size <span class="op">=</span> <span class="va">size</span> <span class="op">*</span> <span class="va">.pt</span><span class="op">)</span><span class="op">$</span><span class="va">underline_pos</span>
+<span class="va">underline</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="op">-</span><span class="va">underline</span>, <span class="st">"pt"</span><span class="op">)</span>
+
+<span class="co"># We need to prevent the automatic flipping of the text in this case</span>
+<span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">size</span>, offset <span class="op">=</span> <span class="va">underline</span>, gap <span class="op">=</span> <span class="cn">FALSE</span>, upright <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"offset as underline"</span><span class="op">)</span></code></pre></div>
+<p><img src="aesthetics_files/figure-html/offset2-1.png" width="700"></p>
 </div>
 </div>
 <div class="section level3">
 <h3 id="spacing">Spacing<a class="anchor" aria-label="anchor" href="#spacing"></a>
 </h3>
 <p>While <code><a href="../reference/geom_textpath.html">geom_textpath()</a></code> tries to do a decent job of plotting text along a curve, sometimes the text can feel ‘too tight’ or ‘too loose’. In order to adjust how text is spaced, there is a <code>spacing</code> aesthetic that for positive values increasing the spacing and for negative values decreases the spacing. In typography, this is also known as the ‘tracking’ of a text and the units are measured in 1/1000 em, wherein ‘em’ is the typographical space that the ‘—’ em-dash occupies.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span>, spacing <span class="op">=</span> <span class="fl">100</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"spacing = 100"</span><span class="op">)</span>
 <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">4</span>, spacing <span class="op">=</span> <span class="op">-</span><span class="fl">100</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"spacing = -100"</span><span class="op">)</span></code></pre></div>
 <p><img src="aesthetics_files/figure-html/spacing-1.png" width="700"><img src="aesthetics_files/figure-html/spacing-2.png" width="700"></p>
 </div>
+</div>
+<div class="section level2">
+<h2 id="parameters">Parameters<a class="anchor" aria-label="anchor" href="#parameters"></a>
+</h2>
+<p>In addition to the custom or repurposed aesthetics, there are additional parameters that can be tuned. These are:</p>
+<ul>
+<li><a href="#cut"><code>gap</code></a></li>
+<li><a href="#upright"><code>upright</code></a></li>
+<li><a href="#halign"><code>halign</code></a></li>
+<li><a href="#offset"><code>offset</code></a></li>
+<li><a href="#cut"><code>padding</code></a></li>
+<li><a href="#smooth"><code>text_smoothing</code></a></li>
+<li><a href="#rmlong"><code>remove_long</code></a></li>
+<li><a href="#richtext"><code>rich</code></a></li>
+</ul>
+<p>Several of these have been discussed above already, as they are closely related to aesthetics. Below follows a short explanation of the ones we haven’t seen yet.</p>
 <div class="section level3">
-<h3 id="scales-used-in-geomtextpath">Scales used in <code>geomtextpath</code><a class="anchor" aria-label="anchor" href="#scales-used-in-geomtextpath"></a>
+<h3 id="upright">Text Flipping<a class="anchor" aria-label="anchor" href="#upright"></a>
 </h3>
+<p>Most people using the 26-lettered Latin alphabet are used to reading their text left-to-right with the characters pointing upward. It might happen that the curve orientation of the path runs counter to that expectation: in the first plot below, this is the case for the top three labels. To improve readability, strings for which the majority of letters would be placed in the wrong order or at uncomfortable angles are flipped automatically. If this is for some reason undesired, we can turn off this behaviour by setting <code>upright = FALSE</code>.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>
+  x   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span> <span class="op">*</span> <span class="va">pi</span>, length.out <span class="op">=</span> <span class="fl">11</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span>,
+  y   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sin</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span> <span class="op">*</span> <span class="va">pi</span>, length.out <span class="op">=</span> <span class="fl">11</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span>,
+  lab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Denial"</span>, <span class="st">"Anger"</span>, <span class="st">"Bargaining"</span>, <span class="st">"Depression"</span>, <span class="st">"Acceptance"</span><span class="op">)</span>,
+            each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+<span class="op">)</span>
+
+<span class="va">plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, label <span class="op">=</span> <span class="va">lab</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_equal</a></span><span class="op">(</span><span class="op">)</span>
+
+<span class="va">plot</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>upright <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"upright = FALSE"</span><span class="op">)</span>
+
+<span class="va">plot</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>upright <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"upright = TRUE (default)"</span><span class="op">)</span></code></pre></div>
+<p><img src="aesthetics_files/figure-html/upright-1.png" width="700"><img src="aesthetics_files/figure-html/upright-2.png" width="700"></p>
+</div>
+<div class="section level3">
+<h3 id="smooth">Text smoothing<a class="anchor" aria-label="anchor" href="#smooth"></a>
+</h3>
+<p>Whereas we generally recommend using <code>geom_texpath(stat = "smooth")</code> or <code><a href="../reference/geom_textsmooth.html">geom_textsmooth()</a></code> or preprocessing the data when the paths are too rough, there still might be cases in which that option isn’t available. For example, if you’re already using a stat to calculate a path, we cannot stack another smoothing stat on top of it. Generally, when paths are noisy or have sharp curves and edges, placing text on that path is going to look bad. This is due to the mismatch of what is the numerically correct position to place a letter and what is the correct position for readability purposes.</p>
+<p>To provide a fallback for such cases, we have the <code>text_smoothing</code> parameter that attempts to deal with noisy paths. It takes a value between 0 and 100 to indicate how much smoothing should be applied, wherein 0 is no smoothing and 100 is a lot of smoothing. Depending on the particular level of detail that is desired to retain, the user should tweak this to their liking.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">eco</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">economics</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">date</span>, <span class="va">unemploy</span><span class="op">)</span><span class="op">)</span>
+  
+<span class="va">eco</span> <span class="op">+</span> 
+  <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Unemployment"</span>, 
+                text_smoothing <span class="op">=</span> <span class="fl">0</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span>, hjust <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"text_smoothing = 0 (default)"</span><span class="op">)</span>
+
+<span class="va">eco</span> <span class="op">+</span> 
+  <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>label <span class="op">=</span> <span class="st">"Unemployment"</span>, 
+                text_smoothing <span class="op">=</span> <span class="fl">30</span>, vjust <span class="op">=</span> <span class="op">-</span><span class="fl">0.5</span>, hjust <span class="op">=</span> <span class="fl">0.25</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"text_smoothing = 30"</span><span class="op">)</span></code></pre></div>
+<p><img src="aesthetics_files/figure-html/smoothing-1.png" width="700"><img src="aesthetics_files/figure-html/smoothing-2.png" width="700"></p>
+</div>
+<div class="section level3">
+<h3 id="rmlong">Omitting long strings<a class="anchor" aria-label="anchor" href="#rmlong"></a>
+</h3>
+<p>Sometimes, for reasons beyond someone’s control, paths might be too short to place a label on. When this presents a problem, we can remove labels that are too long with <code>remove_long = TRUE</code>.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>
+  x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,
+  y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>,  <span class="fl">1.5</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,
+  lab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"This label is too long"</span>, <span class="st">"This label fits"</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+<span class="op">)</span>
+
+<span class="va">plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, label <span class="op">=</span> <span class="va">lab</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_equal</a></span><span class="op">(</span><span class="op">)</span>
+
+<span class="va">plot</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">6</span>, remove_long <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"remove_long = FALSE (default)"</span><span class="op">)</span>
+
+<span class="va">plot</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">6</span>, remove_long <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>subtitle <span class="op">=</span> <span class="st">"remove_long = TRUE"</span><span class="op">)</span></code></pre></div>
+<p><img src="aesthetics_files/figure-html/remove_long-1.png" width="700"><img src="aesthetics_files/figure-html/remove_long-2.png" width="700"></p>
+</div>
+<div class="section level3">
+<h3 id="richtext">Rich text<a class="anchor" aria-label="anchor" href="#richtext"></a>
+</h3>
+<p>The <a href="https://wilkelab.org/ggtext/" class="external-link">{ggtext}</a> package started supporting rich text in {ggplot2} through the <a href="https://wilkelab.org/gridtext" class="external-link">{gridtext}</a> package. Through borrowing from the {gridtext} package, {geomtextpath} also allows rich text, enabling a limited subset of Markdown, HTML and CSS to be displayed on curved text.</p>
+<p>This can be useful is parts of a label need to be displayed differently than other parts. Enabling rich text makes it convenient to compose parts of strings with different colours, font families, font sizes, bold/italics or sub- and superscripts.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">3</span>, <span class="fl">3</span>, length.out <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>
+<span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="op">-</span><span class="va">x</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>
+
+<span class="va">labels</span> <span class="op">&lt;-</span> <span class="st">"With &lt;b style='font-family:mono;color:red'&gt;rich = "</span>
+<span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">labels</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"FALSE&lt;/b&gt;"</span>, <span class="st">"TRUE&lt;/b&gt;"</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> 
+
+<span class="va">plot</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">labels</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, rich <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="va">plot</span> <span class="op">+</span> <span class="fu"><a href="../reference/geom_textpath.html">geom_textpath</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">labels</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, rich <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<p><img src="aesthetics_files/figure-html/richtext-1.png" width="700"><img src="aesthetics_files/figure-html/richtext-2.png" width="700"></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="scales">Justification Scales<a class="anchor" aria-label="anchor" href="#scales"></a>
+</h2>
 <p>In order to help avoid clashing of labels when there is more than a single labelled line on a plot, you may want to have each label given its own <code>vjust</code> or <code>hjust</code> value. To make this easier, we have included <code>scale_hjust_discrete</code> and <code>scale_vjust_discrete</code>. This means that vjust and hjust can be used as aesthetic mappings even on non-numeric data.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">iris</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Sepal.Length</span>, colour <span class="op">=</span> <span class="va">Species</span>, label <span class="op">=</span> <span class="va">Species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
        <span class="fu"><a href="../reference/geom_textdensity.html">geom_textdensity</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>vjust <span class="op">=</span> <span class="va">Species</span>, hjust <span class="op">=</span> <span class="va">Species</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">5</span><span class="op">)</span> <span class="op">+</span>
@@ -221,14 +358,13 @@
 <span class="va">i</span> <span class="op">+</span> <span class="fu"><a href="../reference/scale_hjust_discrete.html">scale_vjust_discrete</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
     <span class="fu"><a href="../reference/scale_hjust_discrete.html">scale_hjust_discrete</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="aesthetics_files/figure-html/scales_discrete-1.png" width="576"></p>
-<p>If we want more control over the exact position of each label, we can use <code>scale_hjust_manual</code> and <code>scale_vjust_manual</code></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<p>If we want more control over the exact position of each label, we can use <code><a href="../reference/scale_hjust_discrete.html">scale_hjust_manual()</a></code> and <code><a href="../reference/scale_hjust_discrete.html">scale_vjust_manual()</a></code></p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="va">i</span> <span class="op">+</span> <span class="fu"><a href="../reference/scale_hjust_discrete.html">scale_vjust_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0</span>, <span class="op">-</span><span class="fl">0.5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
     <span class="fu"><a href="../reference/scale_hjust_discrete.html">scale_hjust_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.45</span>, <span class="fl">0.8</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="aesthetics_files/figure-html/scales_manual-1.png" width="576"></p>
 <p>There is also the option for precise control using your input data frame with <code>scale_hjust_identity</code> and <code>scale_vjust_identity</code>, where the numbers in the mapped column are read as literal values for the hjust and vjust of each label.</p>
-</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
