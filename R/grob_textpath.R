@@ -186,7 +186,7 @@ makeContent.textpath <- function(x) {
              x  = v$data$x[remove],
              y  = v$data$y[remove],
              id = v$data$id[remove],
-             gp = gp_subset(v$gp_path, remove)
+             gp = gp_subset(v$gp_path, which(too_long))
       ))
   }
 

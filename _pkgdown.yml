@@ -5,11 +5,9 @@ template:
 reference:
 - title: "Geoms"
   desc: >
-    Functions for constructing new geometry layers that can be added to a plot.
-
-- subtitle: Text path
-  desc: >
-    Layers placing (curved) text along a path.
+    Functions for constructing new geometry layers that place text along a path.
+    These funcions typically come in a 'text' and 'label' variant, for text
+    without and with a textbox respectively.
   contents:
   - geom_textpath
   - geom_textline
@@ -23,23 +21,6 @@ reference:
   - geom_textcontour
   - geom_textdensity2d
   - geom_textsf
-
-- subtitle: Label path
-  desc: >
-    Layers placing (curved) text with a textbox along a path.
-  contents:
-  - geom_labelpath
-  - geom_labelline
-  - geom_labelsegment
-  - geom_labelcurve
-  - geom_labelabline
-  - geom_labelhline
-  - geom_labelvline
-  - geom_labeldensity
-  - geom_labelsmooth
-  - geom_labelcontour
-  - geom_labeldensity2d
-  - geom_labelsf
 
 - title: "Justification Scales"
   desc: >
