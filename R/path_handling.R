@@ -104,6 +104,7 @@ make_gap <- function(path, letters, gap = NA,
     path$y       <- path$line_y
     path$length  <- arclength_from_xy(path$x, path$y, path$id)
   } else {
+    path$id <- discretise(path$id)
 
     # Find length along (smoothed) text path
     path$length <- path$length %||% arclength_from_xy(path$x, path$y, path$id)
