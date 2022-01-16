@@ -83,7 +83,6 @@ If we want our text in a box, even when the text is curved, we can use
 `geom_labelpath` instead:
 
 ``` r
-
 set.seed(5)
 
 df <- data.frame(x = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
@@ -103,7 +102,7 @@ foundation of the other geoms in this package. The line-based geoms in
 `ggplot` all have two equivalents in this package:
 
 | **ggplot geom**  | **Text equivalent**  | **Label equivalent**  |
-| :--------------- | :------------------- | :-------------------- |
+|:-----------------|:---------------------|:----------------------|
 | `geom_path`      | `geom_textpath`      | `geom_labelpath`      |
 | `geom_segment`   | `geom_textsegment`   | `geom_labelsegment`   |
 | `geom_line`      | `geom_textline`      | `geom_labelline`      |
@@ -188,7 +187,6 @@ calling `geom_textcontour` or `geom_labelcontour` instead of
 `geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -221,9 +219,8 @@ These geoms behave much the same way as `geom_sf`, except linestrings
 such as rivers and roads can be given (curved) text labels:
 
 ``` r
-
 library(sf)
-#> Linking to GEOS 3.8.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE
+#> Linking to GEOS 3.9.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE
 
 df <- data.frame(x = c(-4.2518, -3.1883), 
                  y = c(55.8642, 55.9533),
@@ -355,7 +352,6 @@ using a `text_smoothing` parameter, which can be set from 0 (none) to
 100 (maximum).
 
 ``` r
-
 ggplot(economics, aes(date, unemploy)) +
   geom_textline(linecolour = "grey", size = 4, vjust = -1,
                 label = "1990s Decline", text_smoothing = 30)
@@ -395,7 +391,6 @@ labels to be interpreted as rich text, simply pass `rich = TRUE` as a
 parameter in the call to the geom layer
 
 ``` r
-
 lab <- paste("<span style='color:gray30;font-size:10pt'>Plasma</span>",
              "<strong style='color:red4;font-size:10pt'>Indometacin</strong>",
              "<span style ='color:gray30;font-size:10pt'>Concentration </span>",
@@ -438,7 +433,7 @@ We have included the ability to have *point-like* text paths. While this
 sounds paradoxical, it means that `geom_textpath` can be used as a
 drop-in for `geom_text`, and will behave in much the same way, with the
 exception that the text will automatically curve in polar co-ordinates.
-The best way to show this is with a head-to-head comparison.
+Compare `geom_textpath` used in Cartesian co-ordinates:
 
 ``` r
 df <- data.frame(x = 1:4, y = c(4, 7, 6, 3),
@@ -446,51 +441,29 @@ df <- data.frame(x = 1:4, y = c(4, 7, 6, 3),
 
 p <- ggplot(df, aes(x, y, color = color, label = color)) +
        geom_point(size = 1.5) +
+       geom_textpath(size = 8, hjust = -0.1) +
        scale_color_identity() +
-       lims(x = c(0, 6), y = c(0, 8))
+       lims(x = c(0, 6), y = c(0, 8)) 
 
-p_text     <- p + geom_text(size = 8, hjust = -0.1)
-p_textpath <- p + geom_textpath(size = 8, hjust = -0.1)
+p
 ```
 
-Note that `p_text` and `p_textpath` are made with the same base plot and
-data. In normal Cartesian Co-ordinates they are essentially identical:
+<img src="man/figures/README-pointlike-1.png" width="50%" style="display: block; margin: auto;" />
+
+And in polar co-ordinates:
 
 ``` r
-p_text
-```
-
-<img src="man/figures/README-cartesian_compare-1.png" width="100%" style="display: block; margin: auto;" />
-
-``` r
-p_textpath
-```
-
-<img src="man/figures/README-cartesian_compare-2.png" width="100%" style="display: block; margin: auto;" />
-
-But note the difference when we switch to polar co-ordinates:
-
-``` r
-p_text <- p_text + coord_polar()
-p_textpath <- p_textpath + coord_polar()
-
-p_text
+p + coord_polar()
 ```
 
 <img src="man/figures/README-polar_compare-1.png" width="100%" style="display: block; margin: auto;" />
-
-``` r
-p_textpath
-```
-
-<img src="man/figures/README-polar_compare-2.png" width="100%" style="display: block; margin: auto;" />
 
 By default, any labels that would have been upside down (or even mostly
 upside down) are automatically flipped to be facing in a legible
 direction. This can be turned off using `upright = FALSE` in the call to
 `geom_textpath`.
 
-We can even construct complex diagrammatic plots:
+We can even construct diagrams or infographics:
 
 ``` r
 p <- data.frame(x1 = c(seq(0, 10/6 * pi, pi/3),
@@ -533,7 +506,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 
@@ -563,16 +535,10 @@ clock <- function(x) {
             plot.margin = margin(20, 20, 20, 20))
 }
 
-clock(03:35) + coord_polar()
-```
-
-<img src="man/figures/README-coord_curvedpolar-1.png" width="100%" style="display: block; margin: auto;" />
-
-``` r
 clock(19:15) + coord_curvedpolar()
 ```
 
-<img src="man/figures/README-coord_curvedpolar-2.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-coord_curvedpolar-1.png" width="100%" style="display: block; margin: auto;" />
 
 This can be useful to achieve a particular aesthetic effect (as above),
 but can also be of practical utility when axis labels are long, which
@@ -589,16 +555,10 @@ p <- ggplot(df, aes(x, y, fill = x)) +
       theme(axis.text.x = element_text(size = 15),
             legend.position = "none")
 
-p + coord_polar()
-```
-
-<img src="man/figures/README-coord_curvedpolar2-1.png" width="100%" style="display: block; margin: auto;" />
-
-``` r
 p + coord_curvedpolar()
 ```
 
-<img src="man/figures/README-coord_curvedpolar2-2.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-coord_curvedpolar2-1.png" width="100%" style="display: block; margin: auto;" />
 
 You can see more examples in the
 [gallery](https://allancameron.github.io/geomtextpath/articles/gallery.html)
