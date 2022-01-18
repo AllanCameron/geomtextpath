@@ -1,6 +1,6 @@
 Package: geomtextpath
 Type: Package
-Title: Use Curved Text in Ggplot2
+Title: Use Curved Text in 'ggplot2'
 Version: 0.1.0
 Authors@R: c(
     person(given = "Allan",
@@ -12,7 +12,7 @@ Authors@R: c(
            role = c("aut"),
            email = "tahvdbrand@gmail.com",
            comment = c(ORCID = "0000-0002-9335-7468")))
-Description: Allows text to follow curved paths in ggplot2.
+Description: Allows text to follow curved paths in 'ggplot2'.
     This allows for neat labelling of curves and of plots in polar co-ordinates.
 License: MIT + file LICENSE
 LazyData: true

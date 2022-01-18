@@ -264,7 +264,7 @@ plot + geom_textpath(size = 6, remove_long = TRUE) +
 
 ### Rich text {#richtext}
 
-The [{ggtext}](https://wilkelab.org/ggtext/) package started supporting rich text in {ggplot2} through the [{gridtext}](https://wilkelab.org/gridtext) package. Through borrowing from the {gridtext} package, {geomtextpath} also allows rich text, enabling a limited subset of Markdown, HTML and CSS to be displayed on curved text.
+The [{ggtext}](https://wilkelab.org/ggtext/) package started supporting rich text in {ggplot2} through the [{gridtext}](https://wilkelab.org/gridtext/) package. Through borrowing from the {gridtext} package, {geomtextpath} also allows rich text, enabling a limited subset of Markdown, HTML and CSS to be displayed on curved text.
 
 This can be useful is parts of a label need to be displayed differently than other parts. Enabling rich text makes it convenient to compose parts of strings with different colours, font families, font sizes, bold/italics or sub- and superscripts.
 
