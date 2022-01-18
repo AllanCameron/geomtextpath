@@ -4,11 +4,11 @@
 \name{geomtextpath-package}
 \alias{geomtextpath}
 \alias{geomtextpath-package}
-\title{geomtextpath: Use Curved Text in Ggplot2}
+\title{geomtextpath: Curved Text in 'ggplot2'}
 \description{
 \if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
 
-Allows text to follow curved paths in ggplot2. This allows for neat labelling of curves and of plots in polar co-ordinates.
+A 'ggplot2' extension that allows text to follow curved paths. Curved text makes it easier to directly label paths or neatly annotate in polar co-ordinates.
 }
 \seealso{
 Useful links:
