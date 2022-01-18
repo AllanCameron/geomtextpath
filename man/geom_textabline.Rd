@@ -18,14 +18,9 @@ geom_textabline(
   data = NULL,
   slope,
   intercept,
-  stat = "identity",
-  position = "identity",
   ...,
-  arrow = NULL,
-  lineend = "butt",
   na.rm = FALSE,
-  show.legend = NA,
-  inherit.aes = TRUE
+  show.legend = NA
 )
 
 geom_labelabline(
@@ -33,17 +28,12 @@ geom_labelabline(
   data = NULL,
   slope,
   intercept,
-  stat = "identity",
-  position = "identity",
   ...,
-  arrow = NULL,
-  lineend = "butt",
   straight = NULL,
   label.r = unit(0.15, "lines"),
   label.padding = unit(0.25, "lines"),
   na.rm = FALSE,
-  show.legend = NA,
-  inherit.aes = TRUE
+  show.legend = NA
 )
 
 geom_texthline(
@@ -133,17 +123,7 @@ from a \code{formula} (e.g. \code{~ head(.x, 10)}).}
 
 \item{intercept}{the point on the y axis at which the abline crosses it.}
 
-\item{stat}{The statistical transformation to use on the data for this
-layer, as a string.}
-
-\item{position}{Position adjustment, either as a string, or the result of
-a call to a position adjustment function.}
-
 \item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{layer}}. These are often aesthetics, used to set an aesthetic to a fixed value, like \code{colour = "red"} or \code{size = 3}. These can also be the following text-path parameters:\describe{\item{\code{text_only}}{A \code{logical(1)} indicating whether the path part should be plotted along with the text (\code{FALSE}, the default). If \code{TRUE}, any parameters or aesthetics relating to the drawing of the path will be ignored.}\item{\code{gap}}{A \code{logical(1)} which if \code{TRUE}, breaks the path into two sections with a gap on either side of the label. If \code{FALSE}, the path is plotted as a whole. Alternatively, if \code{NA}, the path will be broken if the string has a \code{vjust} between 0 and 1, and not otherwise. The default for the label variant is \code{FALSE} and for the text variant is \code{NA}.}\item{\code{upright}}{A \code{logical(1)} which if \code{TRUE} (default), inverts any text where the majority of letters would upside down along the path, to improve legibility. If \code{FALSE}, the path decides the orientation of text.}\item{\code{halign}}{A \code{character(1)} describing how multi-line text should be justified. Can either be \code{"center"} (default), \code{"left"} or \code{"right"}.}\item{\code{offset}}{A \code{\link[grid:unit]{unit}} object of length 1 to determine the offset of the text from the path. If this is \code{NULL} (default), the \code{vjust} parameter decides the offset. If not \code{NULL}, the \code{offset} argument overrules the \code{vjust} setting.}\item{\code{parse}}{A \code{logical(1)} which if \code{TRUE}, will coerce the labels into expressions, allowing for plotmath syntax to be used.}\item{\code{straight}}{A \code{logical(1)} which if \code{TRUE}, keeps the letters of a label on a straight baseline and if \code{FALSE} (default), lets individual letters follow the curve. This might be helpful for noisy paths.}\item{\code{padding}}{A \code{\link[grid:unit]{unit}} object of length 1 to determine the padding between the text and the path when the \code{gap} parameter trims the path.}\item{\code{text_smoothing}}{a \code{numeric(1)} value between 0 and 100 that smooths the text without affecting the line portion of the geom. The default value of \code{0} means no smoothing is applied.}\item{\code{rich}}{A \code{logical(1)} whether to interpret the text as html/markdown formatted rich text. Default: \code{FALSE}. See also the rich text section of the details in \code{\link[=geom_textpath]{geom_textpath()}}.}\item{\code{remove_long}}{if TRUE, labels that are longer than their associated path will be removed.}}}
-
-\item{arrow}{Arrow specification, as created by \code{\link[grid:arrow]{grid::arrow()}}.}
-
-\item{lineend}{Line end style (round, butt, square).}
 
 \item{na.rm}{If \code{FALSE}, the default, missing values are removed with
 a warning. If \code{TRUE}, missing values are silently removed.}
@@ -154,11 +134,6 @@ a warning. If \code{TRUE}, missing values are silently removed.}
 It can also be a named logical vector to finely select the aesthetics to
 display.}
 
-\item{inherit.aes}{If \code{FALSE}, overrides the default aesthetics,
-rather than combining with them. This is most useful for helper functions
-that define both data and aesthetics and shouldn't inherit behaviour from
-the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
-
 \item{straight}{A \code{logical(1)} which if \code{TRUE}, keeps the letters of a label
 on a straight baseline and if \code{FALSE} (default), lets individual letters
 follow the curve. This might be helpful for noisy paths.}
@@ -168,6 +143,21 @@ follow the curve. This might be helpful for noisy paths.}
 \item{label.padding}{Amount of padding around label. Defaults to 0.25 lines.}
 
 \item{yintercept}{The value at which the line should intercept the y axis}
+
+\item{stat}{The statistical transformation to use on the data for this
+layer, as a string.}
+
+\item{position}{Position adjustment, either as a string, or the result of
+a call to a position adjustment function.}
+
+\item{arrow}{Arrow specification, as created by \code{\link[grid:arrow]{grid::arrow()}}.}
+
+\item{lineend}{Line end style (round, butt, square).}
+
+\item{inherit.aes}{If \code{FALSE}, overrides the default aesthetics,
+rather than combining with them. This is most useful for helper functions
+that define both data and aesthetics and shouldn't inherit behaviour from
+the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 
 \item{xintercept}{The value at which the line should intercept the y axis}
 }

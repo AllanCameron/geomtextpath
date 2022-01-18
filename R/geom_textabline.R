@@ -10,6 +10,8 @@
 ##                                                                           ##
 ##---------------------------------------------------------------------------##
 
+# Constructors ------------------------------------------------------------
+
 #' Labelled reference lines: horizontal, vertical, and diagonal
 #'
 #' These geoms add labelled reference lines to a plot, either
@@ -97,50 +99,115 @@ geom_textabline <- function(mapping = NULL,
                             data = NULL,
                             slope,
                             intercept,
-                            stat        = "identity",
-                            position    = "identity",
                             ...,
-                            arrow       = NULL,
-                            lineend     = "butt",
                             na.rm       = FALSE,
-                            show.legend = NA,
-                            inherit.aes = TRUE) {
+                            show.legend = NA) {
+  construct_abline(
+    mapping = mapping, data = data,
+    slope = slope, intercept = intercept,
+    show.legend = show.legend,
+    na.rm = na.rm, ...,
+    layername = "geom_textabline()", super = GeomTextabline
+  )
+}
+
+#' @rdname geom_textabline
+#' @export
+geom_labelabline <- function(mapping = NULL,
+                             data = NULL,
+                             slope,
+                             intercept,
+                             ...,
+                             straight      = NULL,
+                             label.r       = unit(0.15, "lines"),
+                             label.padding = unit(0.25, "lines"),
+                             na.rm         = FALSE,
+                             show.legend   = NA) {
+  construct_abline(
+    mapping = mapping, data = data, slope = slope, intercept = intercept,
+    show.legend = show.legend,
+    na.rm = na.rm, ...,
+    label.r = label.r, label.padding = label.padding,
+    layername = "geom_labelabline()", super = GeomLabelabline
+  )
+}
+
+# ggproto classes ---------------------------------------------------------
+
+#' @rdname GeomTextpath
+#' @include geom_textsegment.R
+#' @format NULL
+#' @usage NULL
+#' @export
+GeomTextabline <- ggproto(
+  "GeomTextabline", GeomTextsegment,
+  draw_panel = function(data, panel_params, coord, lineend = "butt",
+                        arrow = NULL,
+                        text_params = static_text_params("text")) {
+    abline2path(data, panel_params, coord, super = GeomTextsegment,
+                lineend = lineend, arrow = arrow, text_params = text_params)
+  },
+
+  required_aes = c("label", "slope", "intercept")
+)
+
+#' @rdname GeomTextpath
+#' @format NULL
+#' @usage NULL
+#' @export
+GeomLabelabline <- ggproto(
+  "GeomLabelabline", GeomLabelsegment,
+  draw_panel = function(data, panel_params, coord, lineend = "butt",
+                        arrow = NULL,
+                        text_params = static_text_params("label"),
+                        label.padding = unit(0.25, "lines"),
+                        label.r = unit(0.15, "lines")) {
+    abline2path(data, panel_params, coord, super = GeomLabelsegment,
+                lineend = lineend, arrow = arrow, text_params = text_params,
+                label.padding = label.padding, label.r = label.r)
+  },
+
+  required_aes = c("label", "slope", "intercept")
+)
+
+# Helpers -----------------------------------------------------------------
+
+construct_abline <- function(mapping = NULL, data = NULL,
+                             slope, intercept, ..., show.legend = NA,
+                             layername = "geom_textabline()",
+                             super = GeomTextabline) {
 
   # If nothing set, default to y = x
   if (is.null(mapping) && missing(slope) && missing(intercept)) {
-    slope <- 1
+    slope     <- 1
     intercept <- 0
   }
 
-  # Act like an annotation
   if (!missing(slope) || !missing(intercept)) {
 
-    # Warn if supplied mapping and/or data is going to be overwritten
     if (!is.null(mapping)) {
-      warn_overwritten_args("geom_textabline()", "mapping",
-                            c("slope", "intercept"))
+      warn_overwritten_args(layername, "mapping", c("slope", "intercept"))
     }
     if (!is.null(data)) {
-      warn_overwritten_args("geom_textabline()", "data",
-                            c("slope", "intercept"))
+      warn_overwritten_args(layername, "data", c("slope", "intercept"))
     }
 
-    if (missing(slope)) slope <- 1
+    if (missing(slope))     slope <- 1
     if (missing(intercept)) intercept <- 0
 
     if (is.null(data)) {
-    data <- data_frame(
-      intercept = intercept[1],
-      slope = slope[1]
-    )
+      data <- data_frame(
+        intercept = intercept[1],
+        slope     = slope[1]
+      )
     } else {
-      data$slope <- slope[1]
+      data$slope     <- slope[1]
       data$intercept <- intercept[1]
     }
 
     mapping <- unclass(mapping)
     mapping[["intercept"]] <- intercept
-    mapping[["slope"]] <- slope
+    mapping[["slope"]]     <- slope
     class(mapping) <- "uneval"
     show.legend <- FALSE
   }
@@ -149,155 +216,49 @@ geom_textabline <- function(mapping = NULL,
     data        = data,
     mapping     = mapping,
     stat        = StatIdentity,
-    geom        = GeomTextabline,
     position    = PositionIdentity,
-    show.legend = show.legend,
+    geom        = super,
     inherit.aes = FALSE,
-    params      = list(
-            na.rm   = na.rm,
-            arrow   = arrow,
-            lineend = lineend,
-            ...
-    )
-  )
-}
-
-#' @rdname GeomTextpath
-#' @include geom_textsegment.R
-#' @format NULL
-#' @usage NULL
-#' @export
-GeomTextabline <- ggproto("GeomTextabline", GeomTextsegment,
-  draw_panel = function(data, panel_params, coord, lineend = "butt",
-                        arrow = arrow,
-                        text_params = static_text_params("text")) {
-    ranges <- coord$backtransform_range(panel_params)
-
-    if (coord$clip == "on" && coord$is_linear()) {
-      # Ensure the line extends well outside the panel to avoid visible line
-      # ending for thick lines
-      ranges$x <- ranges$x + c(-1, 1) * diff(ranges$x)
-    }
-
-    data$x    <- ranges$x[1]
-    data$xend <- ranges$x[2]
-    data$y    <- ranges$x[1] * data$slope + data$intercept
-    data$yend <- ranges$x[2] * data$slope + data$intercept
-
-    GeomTextsegment$draw_panel(unique(data), panel_params, coord,
-                               lineend = lineend, text_params = text_params,
-                               arrow = arrow)
-  },
-
-  required_aes = c("label", "slope", "intercept")
-)
-
-#' @rdname geom_textabline
-#' @export
-geom_labelabline <- function(mapping = NULL,
-                            data = NULL,
-                            slope,
-                            intercept,
-                            stat          = "identity",
-                            position      = "identity",
-                            ...,
-                            arrow         = NULL,
-                            lineend       = "butt",
-                            straight      = NULL,
-                            label.r       = unit(0.15, "lines"),
-                            label.padding = unit(0.25, "lines"),
-                            na.rm         = FALSE,
-                            show.legend   = NA,
-                            inherit.aes   = TRUE) {
-
-  # If nothing set, default to y = x
-  if (is.null(mapping) && missing(slope) && missing(intercept)) {
-    slope <- 1
-    intercept <- 0
-  }
-
-  # Act like an annotation
-  if (!missing(slope) || !missing(intercept)) {
-
-    # Warn if supplied mapping and/or data is going to be overwritten
-    if (!is.null(mapping)) {
-      warn_overwritten_args("geom_labelabline()", "mapping",
-                            c("slope", "intercept"))
-    }
-    if (!is.null(data)) {
-      warn_overwritten_args("geom_labelabline()", "data",
-                            c("slope", "intercept"))
-    }
-
-    if (missing(slope)) slope <- 1
-    if (missing(intercept)) intercept <- 0
-
-    if (is.null(data)) {
-    data <- data_frame(
-      intercept = intercept[1],
-      slope = slope[1]
-    )
-    } else {
-      data$slope <- slope[1]
-      data$intercept <- intercept[1]
-    }
-
-    mapping <- unclass(mapping)
-    mapping[["intercept"]] <- intercept
-    mapping[["slope"]] <- slope
-    class(mapping) <- "uneval"
-    show.legend <- FALSE
-  }
-
-  layer(
-    data = data,
-    mapping = mapping,
-    stat = StatIdentity,
-    geom = GeomLabelabline,
-    position = PositionIdentity,
-    show.legend = show.legend,
-    inherit.aes = FALSE,
-    params = list(
-      arrow         = arrow,
-      na.rm         = na.rm,
-      lineend       = lineend,
-      straight      = straight,
-      label.r       = label.r,
-      label.padding = label.padding,
+    params = set_params(
+      .type = if (inherits(super, "GeomLabelpath")) "label" else "text",
       ...
     )
   )
 }
 
-#' @rdname GeomTextpath
-#' @format NULL
-#' @usage NULL
-#' @export
-GeomLabelabline <- ggproto("GeomLabelabline", GeomLabelsegment,
-  draw_panel = function(data, panel_params, coord, lineend = "butt",
-                        arrow = arrow,
-                        text_params = static_text_params("label"),
-                        label.padding = unit(0.25, "lines"),
-                        label.r = unit(0.15, "lines")) {
-    ranges <- coord$backtransform_range(panel_params)
+abline2path <- function(data, panel_params, coord, ...,
+                        super = GeomTextsegment) {
+  ranges <- coord$backtransform_range(panel_params)
+  ranges$xorig <- ranges$x
 
-    if (coord$clip == "on" && coord$is_linear()) {
-      # Ensure the line extends well outside the panel to avoid visible line
-      # ending for thick lines
-      ranges$x <- ranges$x + c(-1, 1) * diff(ranges$x)
-    }
+  if (coord$clip == "on" && coord$is_linear()) {
+    # Ensure the line extends well outside the panel to avoid visible line
+    # ending for thick lines
+    ranges$x <- ranges$x + c(-1, 1) * diff(ranges$x)
+  }
 
-    data$x    <- ranges$x[1]
-    data$xend <- ranges$x[2]
-    data$y    <- ranges$x[1] * data$slope + data$intercept
-    data$yend <- ranges$x[2] * data$slope + data$intercept
+  data$x    <- ranges$x[1]
+  data$xend <- ranges$x[2]
+  data$y    <- ranges$x[1] * data$slope + data$intercept
+  data$yend <- ranges$x[2] * data$slope + data$intercept
 
-    GeomLabelsegment$draw_panel(unique(data), panel_params, coord,
-                               lineend = lineend, text_params = text_params,
-                               arrow = arrow,
-                               label.padding = unit(0.25, "lines"),
-                               label.r = unit(0.15, "lines"))
-  },
+  # Calculated bounded start and endpoints
+  left_x  <- (ranges$y[1] - data$intercept) / data$slope
+  right_x <- (ranges$y[2] - data$intercept) / data$slope
+  xmin <- pmax(pmin(left_x, right_x), ranges$xorig[1])
+  xmax <- pmin(pmax(left_x, right_x), ranges$xorig[2])
+  ymin <- xmin * data$slope + data$intercept
+  ymax <- xmax * data$slope + data$intercept
 
-  required_aes = c("label", "slope", "intercept")
-)
+  # Calculate start and end of visual proportion of the line
+  len <- sqrt((data$xend - data$x)^2 + (data$yend - data$y)^2) # total length
+  justmin <- sqrt((xmin - data$x)^2 + (ymin - data$y)^2) / len # start
+  justmax <- sqrt((xmax - data$x)^2 + (ymax - data$y)^2) / len # end
+
+  # Rescale hjust accordingly
+  if (is.numeric(data$hjust)) {
+    data$hjust <- data$hjust * (justmax - justmin) + justmin
+  }
+
+  super$draw_panel(unique(data), panel_params, coord, ...)
+}

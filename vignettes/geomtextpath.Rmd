@@ -11,11 +11,7 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  dev = "ragg_png",
-  out.width = "50%",
-  dpi = 172,
-  fig.height = 4,
-  fig.width = 4
+  dev = "ragg_png"
 )
 ```
 
@@ -28,7 +24,7 @@ library(geomtextpath)
 
 The goal of the `geomtextpath` package is to directly label line-based plots with text that is able to follow a curved path. It is an extension of the `ggplot2` plotting library. Those already familiar with ggplot2 and the `geom_path()` and `geom_text()` geometries, can easily display a path or some text.
 
-```{r path_and_text_spiral, fig.show = 'hold', out.width="45%"}
+```{r path_and_text_spiral, fig.show = 'hold'}
 t <- seq(5, -1, length.out = 1000) * pi
 spiral <- data.frame(
   x = sin(t) * 1000:1,
@@ -50,7 +46,7 @@ p + geom_text(
 
 The `geomtextpath` extension follows these ggplot2 conventions and displays the path and the text by projecting the text along the curve. 
 
-```{r textpath_spiral, fig.align="center", out.width="75%"}
+```{r textpath_spiral}
 p + geom_textpath(
   size  = 4, label = rhyme
 ) + labs(subtitle = "geom_textpath()")
@@ -106,16 +102,11 @@ ggplot(data.frame(x = 0)) +
 
 The mechanism underlying the text positioning will take account of the plotting window however it is rescaled. This means text continues to stick together and follow the path at the correct angle as the plotting window changes in size or in aspect ratio. This is all done in the background, without the need to call your plotting code again every time the window is resized. For example, here is the same plot drawn with different dimensions:
 
-```{r skinny, fig.width = 3, fig.height = 6, fig.align="center"}
-p + geom_textpath(
-  size  = 4, label = rhyme
-) + coord_cartesian() + labs(subtitle = "geom_textpath()")
-```
+```{r aspratio,  fig.show = 'hold'}
+p2 <- p + geom_textpath(size = 3, label = rhyme)
 
-```{r wide, fig.width = 6, fig.height = 3, out.width = "100%", fig.align="center"}
-p + geom_textpath(
-  size  = 4, label = rhyme
-) + coord_cartesian() + labs(subtitle = "geom_textpath()")
+p2 + theme(aspect.ratio = 0.5) + labs(subtitle = "aspect.ratio = 0.5")
+p2 + theme(aspect.ratio = 2)   + labs(subtitle = "aspect.ratio = 2")
 ```
 
 ## How does it work?
