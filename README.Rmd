@@ -48,7 +48,7 @@ Once installed, we simply call:
 library(geomtextpath)
 ```
 
-The core functions in this package, `geom_textpath` and `geom_labelpath`, work like any other `geom` in `ggplot2`. They take their co-ordinates, their y co-ordinates and their text label from an aesthetic mapping. At its most basic, this allows the `label` to be plotted on an arbitrary path, as shown in the following example:
+The core functions in this package, `geom_textpath` and `geom_labelpath`, work like any other `geom` in `ggplot2`. They take their x co-ordinates, their y co-ordinates and their text label from an aesthetic mapping. At its most basic, this allows the `label` to be plotted on an arbitrary path, as shown in the following example:
 
 ```{r spiral}
 # Set a consistent theme for the plots here
@@ -107,7 +107,7 @@ For the special case of `geom_sf`, which draws different shapes based on the geo
 
 ### `geom_textline` and `geom_labelline`
 
-You can use `geom_textline` and `geom_labelline` as a drop in for `geom_line` if you want it directly labelled. Just pass the `label` you want as an argument to `geom_textline` (or if you have grouped data you can pass the label as an aesthetic mapping). As in the other geoms here, you can specify the line's appearance and the text's appearance separately.
+You can use `geom_textline` and `geom_labelline` as a drop in for `geom_line` if you want it directly labelled. Just pass the `label` you want as an argument to `geom_textline` (or if you have grouped data, you can pass the label as an aesthetic mapping). As in the other geoms here, you can specify the line's appearance and the text's appearance separately.
 
 ```{r textline_demo}
 ggplot(pressure, aes(temperature, pressure)) +
