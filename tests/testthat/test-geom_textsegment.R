@@ -220,3 +220,20 @@ test_that("The geom_labelabline constructor works as expected", {
   expect_equal(unclass(geom_labelabline(slope = 1)$mapping)$intercept, 0)
   expect_equal(unclass(geom_labelabline(intercept = 1)$mapping)$slope, 1)
 })
+
+test_that("THe abline functions rescale hjust accordingly", {
+
+  df <- data.frame(
+    slope = 0, intercept = 0.5, hjust = c(0.25, 0.5, 0.75),
+    lab = LETTERS[1:3]
+  )
+
+  p <- ggplot(df) +
+    geom_textabline(aes(slope = slope, intercept = intercept,
+                        hjust = hjust, label = lab)) +
+    lims(x = c(0, 1), y = c(0, 1))
+  grob <- layer_grob(p)[[1]]
+  hjust <- grob$textpath$params$hjust
+
+  expect_equal(hjust, scales::rescale(df$hjust, to = c(0, 1), from = c(-1, 2)))
+})
