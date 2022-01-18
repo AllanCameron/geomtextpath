@@ -338,7 +338,7 @@ p
 p + coord_polar()
 ```
 
-We have included the ability to have _point-like_ text paths. While this sounds paradoxical, it means that `geom_textpath` can be used as a drop-in for `geom_text`, and will behave in much the same way, with the exception that the text will automatically curve in polar co-ordinates. The best way to show this is with a head-to-head comparison.
+We have included the ability to have _point-like_ text paths. While this sounds paradoxical, it means that `geom_textpath` can be used as a drop-in for `geom_text`, and will behave in much the same way, with the exception that the text will automatically curve in polar co-ordinates. Compare `geom_textpath` used in Cartesian co-ordinates:
 
 ```{r pointlike, out.width = "50%", fig.width = 4, fig.height = 4}
 df <- data.frame(x = 1:4, y = c(4, 7, 6, 3),
@@ -346,33 +346,23 @@ df <- data.frame(x = 1:4, y = c(4, 7, 6, 3),
 
 p <- ggplot(df, aes(x, y, color = color, label = color)) +
        geom_point(size = 1.5) +
+       geom_textpath(size = 8, hjust = -0.1) +
        scale_color_identity() +
-       lims(x = c(0, 6), y = c(0, 8))
+       lims(x = c(0, 6), y = c(0, 8)) 
 
-p_text     <- p + geom_text(size = 8, hjust = -0.1)
-p_textpath <- p + geom_textpath(size = 8, hjust = -0.1)
-```
-
-Note that `p_text` and `p_textpath` are made with the same base plot and data. In normal Cartesian Co-ordinates they are essentially identical:
-
-```{r cartesian_compare}
-p_text
-p_textpath
+p
 
 ```
 
-But note the difference when we switch to polar co-ordinates:
+And in polar co-ordinates:
+
 ```{r polar_compare}
-p_text <- p_text + coord_polar()
-p_textpath <- p_textpath + coord_polar()
-
-p_text
-p_textpath
+p + coord_polar()
 ```
 
 By default, any labels that would have been upside down (or even mostly upside down) are automatically flipped to be facing in a legible direction. This can be turned off using `upright = FALSE` in the call to `geom_textpath`.
 
-We can even construct complex diagrammatic plots:
+We can even construct diagrams or infographics:
 
 ```{r fancy_cartesian}
 p <- data.frame(x1 = c(seq(0, 10/6 * pi, pi/3),
@@ -441,7 +431,6 @@ clock <- function(x) {
             plot.margin = margin(20, 20, 20, 20))
 }
 
-clock(03:35) + coord_polar()
 clock(19:15) + coord_curvedpolar()
 ```
 
@@ -458,7 +447,6 @@ p <- ggplot(df, aes(x, y, fill = x)) +
       theme(axis.text.x = element_text(size = 15),
             legend.position = "none")
 
-p + coord_polar()
 p + coord_curvedpolar()
 ```
 
