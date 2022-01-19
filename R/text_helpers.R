@@ -12,27 +12,11 @@
 
 # Measuring --------------------------------------------------------------------
 
-#' Wrapper for text measurement
-#'
-#' This wrap the `textshaping::shape_text()` function to return positions for
-#' every letter.
-#'
-#' @param label A `character` vector of labels.
-#' @param gp A `grid::gpar()` object.
-#' @param ppi A `numeric(1)` for the resolution in points per inch.
-#' @param vjust,hjust The justification of the text.
-#' @param halign Either `"center"`, `"left"` or `"right"`.
-#' @param straight A `logical(1)` indicating whether it should follow the curves
-#'   of a path
-#' @param rich A `logical(1)` whether to parse as richtext.
-#'
-#' @return A `list` with `data.frame`s, parallel to `label`. Every `data.frame`
-#' has the columns `glyph`, `ymin`, `xmin`, `xmid`, `xmax` and `y_id`. In
-#' addition, every element of the list has `offset` and `metrics` attributes.
-#' @noRd
-#'
-#' @examples
-#' measure_label("Hello there,\nGeneral Kenobi")
+#  Wrapper for text measurement
+#
+# This wrap the `textshaping::shape_text()` function to return positions for
+# every letter.
+
 measure_label <- function(
     label,
     gp       = gpar(),

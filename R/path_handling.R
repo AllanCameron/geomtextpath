@@ -46,46 +46,8 @@ prepare_path <- function(data, label, gp, params) {
 }
 
 
-#' Trim text area from path
-#'
-#' This function splits a path when a string is predicted to intersect with
-#' the path.
-#'
-#' @param path A `data.frame` with at least a numeric `length` column, an
-#'   integer `id` column and `vjust` column. The `id` column must match that in
-#'   the `letters` argument.
-#' @param letters A `data.frame` with at least a numeric `length` column and
-#'   integer `id` column. The `id` column must match that in the `path`
-#'   argument.
-#' @param gap A single logical TRUE or FALSE which if TRUE breaks the path
-#'   into two sections, one on either side of the string and if FALSE leaves the
-#'   path unbroken. The default value is NA, which will break the line if the
-#'   string has a vjust of between 0 and 1
-#' @param vjust_lim A `numeric` of length two setting the lower and upper limits
-#'   of the `vjust` column in the `path` argument, which is used to decide
-#'   whether a path should be trimmed or not when `gap = NA`.
-#'
-#' @details We probably want the option to draw the path itself, since this will
-#'   be less work for the end-user. If the `vjust` is between 0 and 1 then the
-#'   path will clash with the text, so we want to remove the segment where the
-#'   text is. This function will get the correct segments in either case,
-#'   but it needs the whole path data *and* the calculated string data to do it.
-#'
-#' @return The `path` data.frame filtered for clashing segments and including
-#'   a `section` column indicated it was not clipped ("all"), before ("pre") or
-#'   after ("post") clipping.
-#' @noRd
-#'
-#' @examples
-#' xy <- data.frame(
-#'   x =  1:10,
-#'   y = (1:10)^2,
-#'   id = 1
-#' )
-#'
-#' xy <- .add_path_data(xy)
-#' glyphs <- .get_path_points(xy)
-#' make_gap(xy, glyphs)
+# Trim text area from path
+
 make_gap <- function(path, letters, gap = NA,
                      padding = 0.05, vjust = 0.5,
                      vjust_lim = c(0, 1)) {

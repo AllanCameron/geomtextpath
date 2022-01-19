@@ -34,12 +34,53 @@ vignette.
 
 ## Installation
 
-You can install the development version of geomtextpath from
-[GitHub](https://github.com/) with:
+You can install geomtextpath from CRAN using
+
+``` r
+install.packages(geomtextpath)
+```
+
+Alternatively, you can install the latest development version of
+geomtextpath from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("remotes")
 remotes::install_github("AllanCameron/geomtextpath")
+#> Using github PAT from envvar GITHUB_PAT
+#> Downloading GitHub repo AllanCameron/geomtextpath@HEAD
+#> Warning in untar2(tarfile, files, list, exdir): skipping pax global extended
+#> headers
+
+#> Warning in untar2(tarfile, files, list, exdir): skipping pax global extended
+#> headers
+#> glue   (1.5.0 -> 1.6.0) [CRAN]
+#> fansi  (0.5.0 -> 1.0.2) [CRAN]
+#> tibble (3.1.5 -> 3.1.6) [CRAN]
+#> Installing 3 packages: glue, fansi, tibble
+#> Installing packages into 'C:/Users/Administrator/AppData/Local/Temp/2/Rtmpc1O22t/temp_libpath12c86b3b2cde'
+#> (as 'lib' is unspecified)
+#> 
+#>   There is a binary version available but the source version is later:
+#>       binary source needs_compilation
+#> fansi  0.5.0  1.0.2              TRUE
+#> 
+#>   Binaries will be installed
+#> package 'glue' successfully unpacked and MD5 sums checked
+#> package 'fansi' successfully unpacked and MD5 sums checked
+#> package 'tibble' successfully unpacked and MD5 sums checked
+#> 
+#> The downloaded binary packages are in
+#>  C:\Users\Administrator\AppData\Local\Temp\2\Rtmpy0y94W\downloaded_packages
+#>          checking for file      checking for file 'C:\Users\Administrator\AppData\Local\Temp\2\Rtmpy0y94W\remotes16e89d472d7\AllanCameron-geomtextpath-dae5d94/DESCRIPTION'     checking for file 'C:\Users\Administrator\AppData\Local\Temp\2\Rtmpy0y94W\remotes16e89d472d7\AllanCameron-geomtextpath-dae5d94/DESCRIPTION' ...     checking for file 'C:\Users\Administrator\AppData\Local\Temp\2\Rtmpy0y94W\remotes16e89d472d7\AllanCameron-geomtextpath-dae5d94/DESCRIPTION' ...   v  checking for file 'C:\Users\Administrator\AppData\Local\Temp\2\Rtmpy0y94W\remotes16e89d472d7\AllanCameron-geomtextpath-dae5d94/DESCRIPTION' (412ms)
+#>       -  preparing 'geomtextpath': (606ms)
+#> v  checking DESCRIPTION meta-information
+#>       -  checking for LF line-endings in source and make files and shell scripts
+#>               checking for empty or unneeded directories  -  checking for empty or unneeded directories
+#>       -  building 'geomtextpath_0.1.0.tar.gz'
+#>      
+#> 
+#> Installing package into 'C:/Users/Administrator/AppData/Local/Temp/2/Rtmpc1O22t/temp_libpath12c86b3b2cde'
+#> (as 'lib' is unspecified)
 ```
 
 ## Using **geomtextpath**
@@ -83,7 +124,6 @@ If we want our text in a box, even when the text is curved, we can use
 `geom_labelpath` instead:
 
 ``` r
-
 set.seed(5)
 
 df <- data.frame(x = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
@@ -103,7 +143,7 @@ foundation of the other geoms in this package. The line-based geoms in
 `ggplot` all have two equivalents in this package:
 
 | **ggplot geom**  | **Text equivalent**  | **Label equivalent**  |
-| :--------------- | :------------------- | :-------------------- |
+|:-----------------|:---------------------|:----------------------|
 | `geom_path`      | `geom_textpath`      | `geom_labelpath`      |
 | `geom_segment`   | `geom_textsegment`   | `geom_labelsegment`   |
 | `geom_line`      | `geom_textline`      | `geom_labelline`      |
@@ -188,7 +228,6 @@ calling `geom_textcontour` or `geom_labelcontour` instead of
 `geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -221,9 +260,8 @@ These geoms behave much the same way as `geom_sf`, except linestrings
 such as rivers and roads can be given (curved) text labels:
 
 ``` r
-
 library(sf)
-#> Linking to GEOS 3.8.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE
+#> Linking to GEOS 3.9.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE
 
 df <- data.frame(x = c(-4.2518, -3.1883), 
                  y = c(55.8642, 55.9533),
@@ -355,7 +393,6 @@ using a `text_smoothing` parameter, which can be set from 0 (none) to
 100 (maximum).
 
 ``` r
-
 ggplot(economics, aes(date, unemploy)) +
   geom_textline(linecolour = "grey", size = 4, vjust = -1,
                 label = "1990s Decline", text_smoothing = 30)
@@ -395,7 +432,6 @@ labels to be interpreted as rich text, simply pass `rich = TRUE` as a
 parameter in the call to the geom layer
 
 ``` r
-
 lab <- paste("<span style='color:gray30;font-size:10pt'>Plasma</span>",
              "<strong style='color:red4;font-size:10pt'>Indometacin</strong>",
              "<span style ='color:gray30;font-size:10pt'>Concentration </span>",
@@ -511,7 +547,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 

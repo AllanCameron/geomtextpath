@@ -34,9 +34,16 @@ Using geomtextpath, your text can follow any path, and will remain correctly spa
 
 ## Installation
 
-You can install the development version of geomtextpath from [GitHub](https://github.com/) with:
+You can install geomtextpath from CRAN using
 
-``` r
+```{r CRAN, eval=FALSE}
+install.packages(geomtextpath)
+
+```
+
+Alternatively, you can install the latest development version of geomtextpath from [GitHub](https://github.com/) with:
+
+```{r github}
 # install.packages("remotes")
 remotes::install_github("AllanCameron/geomtextpath")
 ```

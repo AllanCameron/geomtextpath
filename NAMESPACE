@@ -3,8 +3,6 @@
 S3method(makeContent,labelpath)
 S3method(makeContent,textcurve)
 S3method(makeContent,textpath)
-S3method(sf::st_as_grob,sfc_labelled)
-S3method(sf::st_as_grob,sfc_textbox)
 export(GeomLabelabline)
 export(GeomLabelcontour)
 export(GeomLabelcurve)

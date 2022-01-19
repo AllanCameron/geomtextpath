@@ -226,11 +226,6 @@ has_corners <- function(x, y) {
 # Rounds corners of a closed x,y polygon with some radius at positions marked
 # by the 'at' variable by making 'n' new points on a circle. Doesn't round first
 # or last point.
-# Example:
-# # Make rectangle
-# x <- c(0, 1, 1, 0, 0)
-# y <- c(0, 0, 1, 1, 0)
-# plot(round_corners(x, y, 0.2, c(2, 4)), type = 'l')
 
 round_corners <- function(x, y, radius, at, n = 10) {
   len  <- arclength_from_xy(x, y)

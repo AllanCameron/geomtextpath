@@ -12,43 +12,8 @@
 
 # Main function -----------------------------------------------------------
 
-#' Interpolate path at text locations
-#'
-#' This function aids in specifying the `x`, `y` and angle components of where
-#' individual letters should be placed, of a single path-label pair.
-#'
-#' @param path A `data.frame` with the numeric columns `x`, `y`.
-#' @param label A `data.frame` with measured text, such as one produced by the
-#'   `measure_text()` function.
-#' @param hjust A `numeric(1)` scalar specifying horizontal justification along
-#'   the path.
-#'
-#' @return A `data.frame` with numerical values interpolated at the points where
-#'   the letters in `label` argument should be placed, along with a `label`
-#'   column containing individual glyphs of the string.
-#' @noRd
-#'
-#' @details This is another helper function for the draw_panel function.
-#' This is where
-#' the text gets split into its component parts and assigned x, y and angle
-#' components. This function also takes one group subset of the main panel data
-#' frame at a time after .add_path_data() has been called, and returns a
-#' modified data frame.
-#'
-#' The hjust is also applied here. Actually, although it's called hjust, this
-#' parameter is really just analogous to hjust, and never gets passed to grid.
-#' It determines how far along the path the string will be placed. The
-#' individual letters all have an hjust of 0.5.
-#'
-#' @examples
-#' xy <- data.frame(
-#'   x =  1:10,
-#'   y = (1:10)^2
-#' )
-#'
-#' label <- measure_text("To be or not to be")[[1]]
-#'
-#' place_text(xy, label)
+# Interpolate path at text locations
+
 place_text <- function(
   path,
   label = "placeholder",
@@ -110,21 +75,8 @@ place_text <- function(
 
 # Helpers -----------------------------------------------------------------
 
-#' Maybe flip text
-#'
-#' This function is just to capture the logic behind whether text ought to be
-#' flipped.
-#'
-#' @inheritParams place_text
-#' @param angle A `numeric` vector with text angles in
-#'
-#' @return Either `NULL`, when text shouldn't be flipped, or a `data.frame` with
-#'   flipped text if it should have been flipped.
-#' @md
-#' @noRd
-#'
-#' @examples
-#' NULL
+# Maybe flip text
+
 attempt_flip <- function(
   path, label = "placeholder", angle = 0,
   hjust = 0, halign = "left", upright = FALSE
@@ -162,25 +114,7 @@ attempt_flip <- function(
   out
 }
 
-#' Get anchor points
-#'
-#' This is a helper function that calculates for every offset what the anchor
-#' position of text along the arc-length of an (offset) path should be.
-#'
-#' @param arc_length A `matrix` with `numeric` values, giving the arc-length of
-#'   the original path in the first column, and a column for every offset-path.
-#' @param text_width A `numeric` with the total width of the text.
-#' @param hjust A `numeric` specifying horizontal justification of the text
-#'   within the path.
-#' @param halign A `character` specifying horizontal justification of the text
-#'   among different lines in a multi-line text.
-#' @return A `numeric` vector of length `ncol(arc_length)` with anchor points.
-#' @md
-#' @noRd
-#'
-#' @examples
-#' arclength <- cbind(0:5, 0:5 * 2)
-#' anchor_points(arclength, 2.5, 0.5, "left")
+
 anchor_points <- function(
   offset, text_width, hjust = 0.5, halign = "center"
 ) {
@@ -235,28 +169,8 @@ interpret_hjust <- function(hjust, offset, width) {
   )
 }
 
-#' Project text onto path
-#'
-#' This is a helper function that converts the position of letters from
-#' arc-length space to Cartesian coordinates and calculates the appropriate
-#' angle of the text.
-#'
-#' @param text A `list` with a row for every letter and at least the
-#'   following columns: `xmin`, `xmid`, `xmax` for the positions of the glyph
-#'   along the arc-length of a path and `y_id` for to which offset a letter
-#'   belongs.
-#' @param offset A `list` with at least 3 `matrix` elements describing the
-#'   x, y positions and arc-lengths. Every row in these matrices correspond to
-#'   a point on a path and every column holds an offsetted position, starting
-#'   with no offset at the first column.
-#'
-#' @return A `data.frame` with the following columns: `label`, `length`,
-#'   `angle`, `x` and `y` and `nrow(text)` rows.
-#' @md
-#' @noRd
-#'
-#' @examples
-#' NULL
+# Project text onto path
+
 project_text <- function(text, offset, xpos = c("xmin", "xmid", "xmax")) {
   arclength  <- offset$arc_length
   index <- x <- unlist(text[, xpos], FALSE, FALSE)
