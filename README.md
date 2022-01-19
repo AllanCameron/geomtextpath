@@ -47,7 +47,7 @@ geomtextpath from [GitHub](https://github.com/) with:
 # install.packages("remotes")
 remotes::install_github("AllanCameron/geomtextpath")
 #> Using github PAT from envvar GITHUB_PAT
-#> Skipping install of 'geomtextpath' from a github remote, the SHA1 (a72de6da) has not changed since last install.
+#> Skipping install of 'geomtextpath' from a github remote, the SHA1 (640a9216) has not changed since last install.
 #>   Use `force = TRUE` to force installation
 ```
 
@@ -62,7 +62,7 @@ library(geomtextpath)
 
 The core functions in this package, `geom_textpath` and
 `geom_labelpath`, work like any other `geom` in `ggplot2`. They take
-their co-ordinates, their y co-ordinates and their text label from an
+their x co-ordinates, their y co-ordinates and their text label from an
 aesthetic mapping. At its most basic, this allows the `label` to be
 plotted on an arbitrary path, as shown in the following example:
 
@@ -139,7 +139,7 @@ the geometry objects drawn, the equivalent `geom_textsf` and
 
 You can use `geom_textline` and `geom_labelline` as a drop in for
 `geom_line` if you want it directly labelled. Just pass the `label` you
-want as an argument to `geom_textline` (or if you have grouped data you
+want as an argument to `geom_textline` (or if you have grouped data, you
 can pass the label as an aesthetic mapping). As in the other geoms here,
 you can specify the line’s appearance and the text’s appearance
 separately.
