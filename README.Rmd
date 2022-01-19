@@ -45,7 +45,7 @@ Alternatively, you can install the latest development version of geomtextpath fr
 
 ```{r github}
 # install.packages("remotes")
-remotes::install_github("AllanCameron/geomtextpath")
+remotes::install_github("AllanCameron/geomtextpath", quiet = TRUE)
 ```
 ## Using **geomtextpath**
 
