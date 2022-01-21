@@ -457,7 +457,6 @@ p <- ggplot(df, aes(x, y, fill = x)) +
 p + coord_curvedpolar()
 ```
 
-You can see more examples in the [gallery](https://allancameron.github.io/geomtextpath/articles/gallery.html) vignette.
 
 ## Tips
 

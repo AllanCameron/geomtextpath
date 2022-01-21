@@ -165,7 +165,8 @@ This `offset` parameter can be used to place text at the underline position rela
 
 ```{r offset2}
 size <- 4
-underline <- systemfonts::font_info(family = "", size = size * .pt)$underline_pos
+underline <- systemfonts::font_info(family = "fallback", 
+                                    size = size * .pt)$underline_pos
 underline <- unit(-underline, "pt")
 
 # We need to prevent the automatic flipping of the text in this case

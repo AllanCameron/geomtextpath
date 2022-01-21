@@ -26,8 +26,8 @@ test_that("Composite glyphs are joined", {
 })
 
 test_that("Bidirectional text is flipped", {
-  # I'm guessing default font on macOS doesn't have hebrew glyphs or something?
-  skip_on_os("mac")
+
+  skip_on_cran()
 
   case <- "Sarah is \u05e9\u05e8\u05d4 with \u05e9 on R"
 

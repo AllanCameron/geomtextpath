@@ -1,9 +1,23 @@
-# CRAN communication log
+Pre-submission checks - 21st January 2022
 
-Pre-submission check - 19th January 2022
+Initial incoming checks failed on 19th January due to:
+1) Issue with systemfonts dependency not detecting any fonts on the Windows development computer. This has been fixed by including two open source / free to use font files which are registered with systemfonts via `.onLoad` as a fallback. The fonts should never be required except on the CRAN machine, since this problem seems to be peculiar to it as far as we can tell.
+2) Non-standard formatting of MIT license - now changed
+3) Failure of single test on Debian due to its standard Sans font not appearing to support Hebrew glyphs - this test has been skipped.
+  
+```
+devtools::check_win_devel()
 
-## R CMD check results
+# 0 errors  | 0 warnings  | 1 note 
+```
 
-0 errors | 0 warnings | 1 note
+```
+devtools::check(remote = TRUE, manual = TRUE)
 
-* This is a new release.
+# checking CRAN incoming feasibility ... NOTE
+# Maintainer: 'Allan Cameron <Allan.Cameron@nhs.scot>'
+# 
+# New submission
+#
+# 0 errors  | 0 warnings  | 1 note 
+```

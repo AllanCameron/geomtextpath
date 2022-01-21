@@ -63,6 +63,7 @@ Collate:
     'geomtextpath-package.R'
     'grob_labelpath.R'
     'grob_textpath.R'
+    'onload.R'
     'path_handling.R'
     'scales.R'
     'sf_helpers.R'

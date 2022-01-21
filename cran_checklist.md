@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 First release:
 
 * [X] `usethis::use_cran_comments()`
@@ -19,7 +24,7 @@ Prepare for release:
 
 Submit to CRAN:
 
-* [ ] `usethis::use_version('minor')`
+* [X] `usethis::use_version('minor')`
 * [ ] `devtools::submit_cran()`
 * [ ] Approve email
 

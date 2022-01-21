@@ -10,6 +10,13 @@
 ##                                                                           ##
 ##---------------------------------------------------------------------------##
 
+# replace non-zero characters with alternatives
+`%nz%` <- function(a, b) {
+  a[!nzchar(a)] <- b[1]
+  a
+}
+
+
 # Measuring --------------------------------------------------------------------
 
 #  Wrapper for text measurement
@@ -201,14 +208,14 @@ index_cache <- new.env(parent = emptyenv())
 # table and stores it in the cache.
 glyph_index <- function(family = "") {
   # Empty character is invalid name
-  name <- if (family == "") "_default_" else family
+  name <- if (family == "") "fallback" else family
 
   # Retrieve from cache if it exists there
   if (name %in% names(index_cache)) return(index_cache[[name]])
 
   # Get all unicode characters
   idx     <- intToUtf8(1:65535, multiple = TRUE)
-  idx     <- systemfonts::glyph_info(idx, family = family)
+  idx     <- systemfonts::glyph_info(idx, family = name)
   idx$int <- 1:65535
 
   # Filter invalid glyphs
@@ -229,7 +236,8 @@ glyph_index <- function(family = "") {
 # over the indices.
 
 translate_glyph <- function(index, id, gp = gpar()) {
-  ints <- lapply(gp$fontfamily %||% "", glyph_index)
+
+  ints <- lapply(gp$fontfamily %nz% "fallback", glyph_index)
   split(index, id) <- Map(
     function(int, idx) int[idx + 1],
     int = ints,
@@ -332,7 +340,7 @@ parse_richtext <- function(text, gp, md = TRUE, id = seq_along(text),
 
 font_info_gp <- function(gp = gpar(), res = 72, unit = "inch") {
   info <- systemfonts::font_info(
-    family =  gp$fontfamily %||% "",
+    family =  gp$fontfamily %nz% "fallback",
     italic = (gp$font       %||% 1) %in% c(3, 4),
     bold   = (gp$font       %||% 1) %in% c(2, 4),
     size   =  gp$fontsize   %||% 12,
@@ -351,8 +359,10 @@ font_info_gp <- function(gp = gpar(), res = 72, unit = "inch") {
 x_height <- function(gp) {
   len <- max(lengths(gp))
   systemfonts::string_metrics_dev(
-    rep("x", len), family = gp$fontfamily %||% "", face = gp$fontface %||% 1,
-    size = gp$fontsize %||% 12, unit = "inches"
+    rep("x", len),
+    family = gp$fontfamily %nz% "fallback",
+    face   = gp$fontface     %||% 1,
+    size   = gp$fontsize     %||% 12, unit = "inches"
   )$ascent
 }
 
@@ -366,7 +376,7 @@ text_shape <- function(text, id, gp, res = 72, vjust = 0.5, hjust = 0.5,
 
   txt <- shape_text(
     strings    =  text,
-    family     =  gp$fontfamily %||% "",
+    family     =  gp$fontfamily %nz% "fallback",
     size       =  gp$fontsize   %||% 12,
     italic     = (gp$font       %||% 1) %in% c(3, 4),
     bold       = (gp$font       %||% 1) %in% c(2, 4),

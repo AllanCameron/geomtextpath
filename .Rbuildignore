@@ -9,3 +9,4 @@
 ^img
 ^cran-comments\.md$
 ^cran_checklist\.md$
+^CRAN-SUBMISSION$
