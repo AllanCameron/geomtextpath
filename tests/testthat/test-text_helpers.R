@@ -28,6 +28,7 @@ test_that("Composite glyphs are joined", {
 test_that("Bidirectional text is flipped", {
 
   skip_on_cran()
+  skip_on_os("mac")
 
   case <- "Sarah is \u05e9\u05e8\u05d4 with \u05e9 on R"
 
