@@ -1,6 +1,10 @@
 # geomtextpath (development version)
 
+No changes yet.
+
 # geomtextpath 0.1.0
+
+Initial version released on CRAN.
 
 * Added a `NEWS.md` file to track changes to the package.
 * Plot text atop curve for readability purposes.
@@ -12,15 +16,16 @@
 * Text angles are now correct for straight paths.
 * Duplicated labels are now allowed.
 * Multi-line text can be justified horizontally using the `halign` parameter.
-* Added support for bidirectional text and composite Unicode glyphs.
-* Added plotmath support.
-* Added richtext support.
-* Added `coord_curvedpolar` for curved polar axis labels.
+* Added support for bidirectional text and composite Unicode glyphs (#).
+* Added plotmath support (#25).
+* Added richtext support (#39).
+* Added `coord_curvedpolar` for curved polar axis labels (#5).
 * Labels on single points will now be placed on paths to allow them to curve in 
   polar co-ordinates. This means `geom_textpath` can be used as a drop-in for
   `geom_text` in most circumstances.
 * Added text and label equivalents of all line based geom layers.
-* Added `geom_textsf` and `geom_labelsf`
+* Added `geom_textsf` and `geom_labelsf` (#41)
 * Added vignettes to cover use cases, aesthetics, polar co-ordinates and an 
   introduction to the package.
+* Added smoothing options (#11, #21)
 * Created website based on vignettes via `pkgdown`
