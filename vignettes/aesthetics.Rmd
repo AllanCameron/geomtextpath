@@ -123,6 +123,8 @@ p + geom_textpath(size  = 4, vjust = 1) +
   labs(subtitle = "vjust = 1")
 ```
 
+> Note: While the `vjust` parameter spiritually does the same thing as vanilla `geom_text()`'s `vjust` does, they are not identical for flat text.
+
 #### Path cutting {#cut}
 
 It should be noted that when `vjust` is outside the [0,1] interval, text generally shouldn't intersect the path. As such, the default behaviour no longer cuts the path at the text positions, but this can be turned back on by setting `gap = TRUE`.
