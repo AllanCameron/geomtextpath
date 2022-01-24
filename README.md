@@ -46,7 +46,6 @@ geomtextpath from [GitHub](https://github.com/) with:
 ``` r
 # install.packages("remotes")
 remotes::install_github("AllanCameron/geomtextpath", quiet = TRUE)
-#> Running `R CMD build`...
 ```
 
 ## Using **geomtextpath**
