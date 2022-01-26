@@ -37,14 +37,13 @@ vignette.
 You can install geomtextpath from CRAN using
 
 ``` r
-install.packages(geomtextpath)
+install.packages("geomtextpath")
 ```
 
 Alternatively, you can install the latest development version of
 geomtextpath from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("remotes")
 remotes::install_github("AllanCameron/geomtextpath", quiet = TRUE)
 ```
 
@@ -89,7 +88,6 @@ If we want our text in a box, even when the text is curved, we can use
 `geom_labelpath` instead:
 
 ``` r
-
 set.seed(5)
 
 df <- data.frame(x = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
@@ -109,7 +107,7 @@ foundation of the other geoms in this package. The line-based geoms in
 `ggplot` all have two equivalents in this package:
 
 | **ggplot geom**  | **Text equivalent**  | **Label equivalent**  |
-| :--------------- | :------------------- | :-------------------- |
+|:-----------------|:---------------------|:----------------------|
 | `geom_path`      | `geom_textpath`      | `geom_labelpath`      |
 | `geom_segment`   | `geom_textsegment`   | `geom_labelsegment`   |
 | `geom_line`      | `geom_textline`      | `geom_labelline`      |
@@ -194,7 +192,6 @@ calling `geom_textcontour` or `geom_labelcontour` instead of
 `geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -227,9 +224,8 @@ These geoms behave much the same way as `geom_sf`, except linestrings
 such as rivers and roads can be given (curved) text labels:
 
 ``` r
-
 library(sf)
-#> Linking to GEOS 3.8.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE
+#> Linking to GEOS 3.9.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE
 
 df <- data.frame(x = c(-4.2518, -3.1883), 
                  y = c(55.8642, 55.9533),
@@ -286,7 +282,7 @@ df <- data.frame(Activity = c("Work", "Play"), Happiness = c(0.5, 0.7))
 ggplot(df, aes(Activity, Happiness)) + 
   geom_col(fill = "gold", color = "gray50") + 
   geom_textcurve(data = data.frame(x = 1, xend = 2, y = 0.72, yend = 0.52), 
-                 aes(x, y, xend = xend, yend = yend), hjust = 0.4, 
+                 aes(x, y, xend = xend, yend = yend), hjust = 0.35, ncp = 20,
                  curvature = -0.8, label = "significant difference") +
   geom_point(aes(y = Happiness + 0.02)) +
   scale_y_continuous(limits = c(0, 1))
@@ -361,9 +357,8 @@ using a `text_smoothing` parameter, which can be set from 0 (none) to
 100 (maximum).
 
 ``` r
-
 ggplot(economics, aes(date, unemploy)) +
-  geom_textline(linecolour = "grey", size = 4, vjust = -1,
+  geom_textline(linecolour = "grey", size = 4, vjust = -1.5,
                 label = "1990s Decline", text_smoothing = 30)
 ```
 
@@ -401,7 +396,6 @@ labels to be interpreted as rich text, simply pass `rich = TRUE` as a
 parameter in the call to the geom layer
 
 ``` r
-
 lab <- paste("<span style='color:gray30;font-size:10pt'>Plasma</span>",
              "<strong style='color:red4;font-size:10pt'>Indometacin</strong>",
              "<span style ='color:gray30;font-size:10pt'>Concentration </span>",
@@ -459,7 +453,7 @@ p <- ggplot(df, aes(x, y, color = color, label = color)) +
 p
 ```
 
-<img src="man/figures/README-pointlike-1.png" width="50%" style="display: block; margin: auto;" />
+<img src="man/figures/README-pointlike-1.png" width="100%" style="display: block; margin: auto;" />
 
 And in polar co-ordinates:
 
@@ -517,7 +511,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 

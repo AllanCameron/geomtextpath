@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
   dpi = 132
 )
 
-
+library(geomtextpath)
 ```
 
 # geomtextpath <img src='man/figures/logo.png' align="right" height="137" />
@@ -37,22 +37,22 @@ Using geomtextpath, your text can follow any path, and will remain correctly spa
 You can install geomtextpath from CRAN using
 
 ```{r CRAN, eval=FALSE}
-install.packages(geomtextpath)
+install.packages("geomtextpath")
 
 ```
 
 Alternatively, you can install the latest development version of geomtextpath from [GitHub](https://github.com/) with:
 
-```{r github}
-# install.packages("remotes")
+```{r github, eval=FALSE}
 remotes::install_github("AllanCameron/geomtextpath", quiet = TRUE)
 ```
 ## Using **geomtextpath**
 
 Once installed, we simply call:
 
-```{r library}
+```{r library, eval=FALSE}
 library(geomtextpath)
+#> Loading required package: ggplot2
 ```
 
 The core functions in this package, `geom_textpath` and `geom_labelpath`, work like any other `geom` in `ggplot2`. They take their x co-ordinates, their y co-ordinates and their text label from an aesthetic mapping. At its most basic, this allows the `label` to be plotted on an arbitrary path, as shown in the following example:
@@ -230,7 +230,7 @@ df <- data.frame(Activity = c("Work", "Play"), Happiness = c(0.5, 0.7))
 ggplot(df, aes(Activity, Happiness)) + 
   geom_col(fill = "gold", color = "gray50") + 
   geom_textcurve(data = data.frame(x = 1, xend = 2, y = 0.72, yend = 0.52), 
-                 aes(x, y, xend = xend, yend = yend), hjust = 0.4, 
+                 aes(x, y, xend = xend, yend = yend), hjust = 0.35, ncp = 20,
                  curvature = -0.8, label = "significant difference") +
   geom_point(aes(y = Happiness + 0.02)) +
   scale_y_continuous(limits = c(0, 1))
@@ -285,7 +285,7 @@ Some lines may be too "noisy" or too angular for direct labels to remain legible
 ```{r smooth2}
 
 ggplot(economics, aes(date, unemploy)) +
-  geom_textline(linecolour = "grey", size = 4, vjust = -1,
+  geom_textline(linecolour = "grey", size = 4, vjust = -1.5,
                 label = "1990s Decline", text_smoothing = 30)
 ```
 
@@ -347,7 +347,7 @@ p + coord_polar()
 
 We have included the ability to have _point-like_ text paths. While this sounds paradoxical, it means that `geom_textpath` can be used as a drop-in for `geom_text`, and will behave in much the same way, with the exception that the text will automatically curve in polar co-ordinates. Compare `geom_textpath` used in Cartesian co-ordinates:
 
-```{r pointlike, out.width = "50%", fig.width = 4, fig.height = 4}
+```{r pointlike}
 df <- data.frame(x = 1:4, y = c(4, 7, 6, 3),
                  color = c("royalblue", "orangered", "deepskyblue4", "violet"))
 
