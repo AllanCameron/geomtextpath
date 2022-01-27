@@ -3,7 +3,7 @@
 ##  geom_textsmooth.R                                                        ##
 ##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
@@ -37,19 +37,23 @@
 #'   theme_bw() +
 #'   theme(legend.position = "none")
 
-geom_textsmooth <- function(mapping = NULL, data = NULL,
-                           stat = "smooth", position = "identity",
-                           ...,
-                           method = NULL,
-                           formula = NULL,
-                           na.rm = FALSE,
-                           method.args = list(),
-                           orientation = NA,
-                           show.legend = NA,
-                           inherit.aes = TRUE) {
+geom_textsmooth <- function(
+  mapping     = NULL,
+  data        = NULL,
+  stat        = "smooth",
+  position    = "identity",
+  ...,
+  method      = NULL,
+  formula     = NULL,
+  na.rm       = FALSE,
+  method.args = list(),
+  orientation = NA,
+  show.legend = NA,
+  inherit.aes = TRUE
+) {
 
   params <- set_params(
-    na.rm = na.rm,
+    na.rm       = na.rm,
     orientation = orientation,
     method.args = method.args,
     ...
@@ -60,14 +64,14 @@ geom_textsmooth <- function(mapping = NULL, data = NULL,
   }
 
   layer(
-    data = data,
-    mapping = mapping,
-    stat = stat,
-    geom = GeomTextpath,
-    position = position,
+    data        = data,
+    mapping     = mapping,
+    stat        = stat,
+    geom        = GeomTextpath,
+    position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = params
+    params      = params
   )
 }
 
@@ -76,19 +80,23 @@ geom_textsmooth <- function(mapping = NULL, data = NULL,
 #' @inheritParams ggplot2::geom_smooth
 #' @inheritParams geom_labelpath
 #' @export
-geom_labelsmooth <- function(mapping = NULL, data = NULL,
-   stat = "smooth", position = "identity",
-    method = NULL,
-    formula = NULL,
-    na.rm = FALSE,
-    method.args = list(),
-    orientation = NA,
-    show.legend = NA,
-    inherit.aes = TRUE,
-    ...) {
+geom_labelsmooth <- function(
+  mapping     = NULL,
+  data        = NULL,
+  stat        = "smooth",
+  position    = "identity",
+  method      = NULL,
+  formula     = NULL,
+  na.rm       = FALSE,
+  method.args = list(),
+  orientation = NA,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  ...
+) {
 
   params <- set_params(
-    na.rm = na.rm,
+    na.rm       = na.rm,
     orientation = orientation,
     method.args = method.args,
     ...

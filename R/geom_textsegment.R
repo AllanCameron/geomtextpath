@@ -3,7 +3,7 @@
 ##  geom_textsegment.R                                                       ##
 ##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
@@ -50,37 +50,39 @@
 #'     label = "10x increase", arrow = arrow()
 #'   )
 geom_textsegment <- function(
-  mapping  = NULL,
-  data     = NULL,
-  stat     = "identity",
-  position = "identity",
+  mapping     = NULL,
+  data        = NULL,
+  stat        = "identity",
+  position    = "identity",
   ...,
-  arrow    = NULL,
-  lineend  = "butt",
-  linejoin = "round",
-  na.rm    = FALSE,
+  arrow       = NULL,
+  lineend     = "butt",
+  linejoin    = "round",
+  na.rm       = FALSE,
   show.legend = NA,
   inherit.aes = TRUE,
   straight    = NULL
 ) {
+
   layer(
-    data     = data,
-    mapping  = mapping,
-    stat     = stat,
-    geom     = GeomTextsegment,
-    position = position,
+    data        = data,
+    mapping     = mapping,
+    stat        = stat,
+    geom        = GeomTextsegment,
+    position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = set_params(
-      arrow     = arrow,
-      na.rm     = na.rm,
-      lineend   = lineend,
-      linejoin  = linejoin,
-      straight  = straight,
-      ...
+    params      = set_params(
+                    arrow     = arrow,
+                    na.rm     = na.rm,
+                    lineend   = lineend,
+                    linejoin  = linejoin,
+                    straight  = straight,
+                    ...
     )
   )
 }
+
 
 #' @export
 #' @rdname geom_textsegment
@@ -100,26 +102,28 @@ geom_labelsegment <- function(
   label.r     = unit(0.15, "lines"),
   label.padding = unit(0.25, "lines")
 ) {
+
   layer(
-    data     = data,
-    mapping  = mapping,
-    stat     = stat,
-    geom     = GeomLabelsegment,
-    position = position,
+    data        = data,
+    mapping     = mapping,
+    stat        = stat,
+    geom        = GeomLabelsegment,
+    position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = set_params(
-      arrow     = arrow,
-      na.rm     = na.rm,
-      lineend   = lineend,
-      linejoin  = linejoin,
-      straight  = straight,
-      label.r   = label.r,
-      label.padding = label.padding,
-      ...
+    params      = set_params(
+                    arrow     = arrow,
+                    na.rm     = na.rm,
+                    lineend   = lineend,
+                    linejoin  = linejoin,
+                    straight  = straight,
+                    label.r   = label.r,
+                    label.padding = label.padding,
+                    ...
     )
   )
 }
+
 
 # ggproto class -----------------------------------------------------------
 
@@ -127,9 +131,10 @@ geom_labelsegment <- function(
 #' @usage NULL
 #' @export
 #' @rdname GeomTextpath
-GeomTextsegment <- ggproto(
-  "GeomTextsegment", GeomTextpath,
+GeomTextsegment <- ggproto("GeomTextsegment", GeomTextpath,
+
   required_aes = c("x", "y", "xend", "yend", "label"),
+
   draw_panel = function(
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
@@ -143,13 +148,15 @@ GeomTextsegment <- ggproto(
   }
 )
 
+
 #' @format NULL
 #' @usage NULL
 #' @export
 #' @rdname GeomTextpath
-GeomLabelsegment <- ggproto(
-  "GeomLabelsegment", GeomLabelpath,
+GeomLabelsegment <- ggproto("GeomLabelsegment", GeomLabelpath,
+
   required_aes = c("x", "y", "xend", "yend", "label"),
+
   draw_panel = function(
     data, panel_params, coord,
     lineend = "butt", linejoin = "round", linemitre = 10,
@@ -166,6 +173,7 @@ GeomLabelsegment <- ggproto(
   }
 )
 
+
 # Helper ------------------------------------------------------------------
 
 #' Since the text/label variants are *almost* identical but have different
@@ -177,6 +185,7 @@ GeomLabelsegment <- ggproto(
 #' @param ... Other arguments
 #' @noRd
 segment2path <- function(data, super, params, coord, ...) {
+
   if (is.null(data) || nrow(data) == 0 || ncol(data) == 0) {
     return(zeroGrob())
   }

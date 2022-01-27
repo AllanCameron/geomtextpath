@@ -3,14 +3,14 @@
 ##  grob_textpath.R                                                          ##
 ##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
 ##                                                                           ##
 ##---------------------------------------------------------------------------##
 
-# Grob --------------------------------------------------------------------
+# Grob -------------------------------------------------------------------------
 
 #' Draw text on a path.
 #'
@@ -69,32 +69,32 @@
 #' grid.newpage(); grid.draw(grob)
 textpathGrob <- function(
   label,
-  x = 0.5,
-  y = 0.5,
-  id = 1L,
-  just = "centre",
-  hjust = NULL,
-  vjust = NULL,
-  halign = "left",
-  angle = 0,
-  straight = FALSE,
-  rich     = FALSE,
-  gp_text = gpar(),
-  gp_path = gpar(),
-  gp_box  = gpar(),
-  gap = NA,
-  upright = TRUE,
+  x              = 0.5,
+  y              = 0.5,
+  id             = 1L,
+  just           = "centre",
+  hjust          = NULL,
+  vjust          = NULL,
+  halign         = "left",
+  angle          = 0,
+  straight       = FALSE,
+  rich           = FALSE,
+  gp_text        = gpar(),
+  gp_path        = gpar(),
+  gp_box         = gpar(),
+  gap            = NA,
+  upright        = TRUE,
   text_smoothing = 0,
-  polar_params = NULL,
-  padding = unit(0.05, "inch"),
-  label.padding = unit(0.25, "lines"),
-  label.r = unit(0.15, "lines"),
-  remove_long = FALSE,
-  arrow = NULL,
-  default.units = "npc",
-  name = NULL,
-  vp = NULL,
-  as_label = FALSE
+  polar_params   = NULL,
+  padding        = unit(0.05, "inch"),
+  label.padding  = unit(0.25, "lines"),
+  label.r        = unit(0.15, "lines"),
+  remove_long    = FALSE,
+  arrow          = NULL,
+  default.units  = "npc",
+  name           = NULL,
+  vp             = NULL,
+  as_label       = FALSE
 ) {
 
   cl <- if (as_label) "labelpath" else "textpath"
@@ -153,7 +153,7 @@ textpathGrob <- function(
   )
 }
 
-# makeContent -------------------------------------------------------------
+# makeContent ------------------------------------------------------------------
 
 #' @export
 makeContent.textpath <- function(x) {
@@ -211,6 +211,7 @@ makeContent.textpath <- function(x) {
 
 
 check_grob_input <- function(x, y, id, n_label, angle) {
+
   stopifnot(
     "`x` is not of the same length as `id`" =
       length(x) == length(id),

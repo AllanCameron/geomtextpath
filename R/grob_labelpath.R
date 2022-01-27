@@ -3,7 +3,7 @@
 ##  grob_labelpath.R                                                         ##
 ##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
@@ -12,6 +12,7 @@
 
 #' @export
 makeContent.labelpath <- function(x) {
+
   if (is.null(x$textpath)) return(zeroGrob())
 
   v          <- x$textpath
@@ -115,6 +116,7 @@ makeContent.labelpath <- function(x) {
   x
 }
 
+
 #' Making a curved textbox
 #'
 #' @param path A `data.frame` containing `x` and `y` columns with numeric values
@@ -137,6 +139,7 @@ curved_textbox <- function(
   padding = unit(0.25, "lines"),
   radius  = unit(0.15, "lines")
 ) {
+
   padding <- as_inch(padding)
   metrics <- attr(label, "metrics")
   height  <- c(0, 1) * metrics$height + c(-1, 1) * padding

@@ -3,7 +3,7 @@
 ##  geom_textsf.R                                                            ##
 ##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
@@ -56,83 +56,96 @@
 NULL
 
 
-
 #' @export
 #' @rdname geom_textsf
 #' @inheritParams ggplot2::geom_point
 #' @inheritDotParams geom_textpath -arrow -lineend -linejoin -linemitre
 #' @md
-geom_textsf <- function(mapping = aes(), data = NULL, stat = "sf",
-                    position = "identity", na.rm = FALSE, show.legend = NA,
-                    inherit.aes = TRUE, ...) {
+geom_textsf <- function(
+  mapping     = aes(),
+  data        = NULL,
+  stat        = "sf",
+  position    = "identity",
+  na.rm       = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  ...
+) {
+
   rlang::check_installed("sf", "for `geom_textsf()`")
   c(
     layer_sf(
-      geom = GeomTextsf,
-      data = data,
-      mapping = mapping,
-      stat = stat,
-      position = position,
+      geom        = GeomTextsf,
+      data        = data,
+      mapping     = mapping,
+      stat        = stat,
+      position    = position,
       show.legend = show.legend,
       inherit.aes = inherit.aes,
-      params = list(
-        na.rm = na.rm,
-        ...
-      )
+      params      = list(na.rm = na.rm, ...)
     ),
     coord_sf(default = TRUE)
   )
 }
 
+
 #' @export
 #' @rdname geom_textsf
 #' @inheritParams ggplot2::geom_point
 #' @inheritDotParams geom_labelpath -arrow -lineend -linejoin -linemitre
-geom_labelsf <- function(mapping = aes(), data = NULL, stat = "sf",
-                    position = "identity", na.rm = FALSE, show.legend = NA,
-                    inherit.aes = TRUE, ...) {
+geom_labelsf <- function(
+  mapping     = aes(),
+  data        = NULL,
+  stat        = "sf",
+  position    = "identity",
+  na.rm       = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  ...
+) {
+
   rlang::check_installed("sf", "for `geom_labelsf()`")
   c(
     layer_sf(
-      geom = GeomLabelsf,
-      data = data,
-      mapping = mapping,
-      stat = stat,
-      position = position,
+      geom        = GeomLabelsf,
+      data        = data,
+      mapping     = mapping,
+      stat        = stat,
+      position    = position,
       show.legend = show.legend,
       inherit.aes = inherit.aes,
-      params = list(
-        na.rm = na.rm,
-        ...
-      )
+      params = list(na.rm = na.rm, ...)
     ),
     coord_sf(default = TRUE)
   )
 }
+
 
 #' @export
 #' @rdname GeomTextpath
 #' @usage NULL
 #' @format NULL
 GeomTextsf <- ggproto("GeomTextSf", GeomSf,
+
   required_aes = c("geometry", "label"),
+
   default_aes = aes(
-    shape = NULL,
-    colour = "gray30",
-    fill = "gray90",
-    linetype = 1,
-    stroke = 0.5,
-    size = 3.88,
-    hjust = 0.5,
-    vjust = 0.5,
-    family = "",
-    fontface = 1,
+    shape      = NULL,
+    colour     = "gray30",
+    fill       = "gray90",
+    linetype   = 1,
+    stroke     = 0.5,
+    size       = 3.88,
+    hjust      = 0.5,
+    vjust      = 0.5,
+    family     = "",
+    fontface   = 1,
     lineheight = 1.2,
-    alpha = 1,
-    linewidth = 0.5,
-    spacing = 0,
+    alpha      = 1,
+    linewidth  = 0.5,
+    spacing    = 0,
     linecolour = "gray30",
-    angle = 0),
+    angle      = 0),
 
   draw_panel = function(data, panel_params, coord, legend = NULL,
                         lineend = "butt", linejoin = "round", linemitre = 10,
@@ -155,7 +168,9 @@ GeomTextsf <- ggproto("GeomTextSf", GeomSf,
 #' @usage NULL
 #' @format NULL
 GeomLabelsf <- ggproto("GeomLabelSf", GeomSf,
+
   required_aes = c("geometry", "label"),
+
   default_aes = aes(
     colour       = "black",
     alpha        = 1,
