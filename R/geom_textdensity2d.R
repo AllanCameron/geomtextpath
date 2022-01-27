@@ -2,7 +2,7 @@
 ##                                                                           ##
 ##  geom_textdensity2d                                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
@@ -37,22 +37,24 @@
 #'   geom_textdensity2d() +
 #'   theme_classic()
 
+geom_textdensity2d <- function(
+  mapping     = NULL,
+  data        = NULL,
+  stat        = "density_2d",
+  position    = "identity",
+  ...,
+  contour_var = "density",
+  n           = 100,
+  h           = NULL,
+  adjust      = c(1, 1),
+  lineend     = "butt",
+  linejoin    = "round",
+  linemitre   = 10,
+  na.rm       = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE
+) {
 
-geom_textdensity2d <- function(mapping = NULL,
-                                data = NULL,
-                                stat = "density_2d",
-                                position = "identity",
-                                ...,
-                                contour_var = "density",
-                                n = 100,
-                                h = NULL,
-                                adjust = c(1, 1),
-                                lineend = "butt",
-                                linejoin = "round",
-                                linemitre = 10,
-                                na.rm = FALSE,
-                                show.legend = NA,
-                                inherit.aes = TRUE) {
   layer(
     data        = data,
     mapping     = mapping,
@@ -76,24 +78,33 @@ geom_textdensity2d <- function(mapping = NULL,
   )
 }
 
+
 #' @rdname geom_textdensity2d
 #' @inheritParams geom_textdensity2d
 #' @inheritParams geom_labelpath
 #' @export
-geom_labeldensity2d <- function(mapping = NULL, data = NULL,
-  stat = "density_2d", position = "identity",
-  na.rm = FALSE, show.legend = NA,
-  inherit.aes = TRUE,
+
+geom_labeldensity2d <- function(
+  mapping       = NULL,
+  data          = NULL,
+  stat          = "density_2d",
+  position      = "identity",
+  na.rm         = FALSE,
+  show.legend   = NA,
+  inherit.aes   = TRUE,
   ...,
-  contour_var = "density",
-  n = 100,
-  h = NULL,
-  adjust = c(1, 1),
-  lineend = "butt", linejoin = "round", linemitre = 10,
+  contour_var   = "density",
+  n             = 100,
+  h             = NULL,
+  adjust        = c(1, 1),
+  lineend       = "butt",
+  linejoin      = "round",
+  linemitre     = 10,
   label.padding = unit(0.25, "lines"),
-  label.r = unit(0.15, "lines"),
-  arrow = NULL
+  label.r       = unit(0.15, "lines"),
+  arrow         = NULL
 ) {
+
   layer(
     geom        = GeomLabeldensity2d,
     mapping     = mapping,
@@ -121,11 +132,13 @@ geom_labeldensity2d <- function(mapping = NULL, data = NULL,
   )
 }
 
+
 #' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
 #' @export
 #' @include geom_textpath.R
+
 GeomTextdensity2d <- ggproto("GeomTextdensity2d", GeomTextpath,
 
   required_aes = c("x", "y"),
@@ -136,11 +149,13 @@ GeomTextdensity2d <- ggproto("GeomTextdensity2d", GeomTextpath,
   }
 )
 
+
 #' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
 #' @export
 #' @include geom_textpath.R
+
 GeomLabeldensity2d <- ggproto("GeomLabeldensity2d", GeomLabelpath,
 
   required_aes = c("x", "y"),

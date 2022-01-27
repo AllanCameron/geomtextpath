@@ -3,14 +3,14 @@
 ##  geom_labelpath.R                                                         ##
 ##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
 ##                                                                           ##
 ##---------------------------------------------------------------------------##
 
-# Constructor -------------------------------------------------------------
+# Constructor ------------------------------------------------------------------
 
 #' @export
 #' @rdname geom_textpath
@@ -37,22 +37,33 @@
 #'   ) +
 #'   scale_x_log10()
 geom_labelpath <- function(
-  mapping = NULL, data = NULL,
-  stat = "identity", position = "identity",
-  na.rm = FALSE, show.legend = NA,
-  inherit.aes = TRUE,
+  mapping        = NULL,
+  data           = NULL,
+  stat           = "identity",
+  position       = "identity",
+  na.rm          = FALSE,
+  show.legend    = NA,
+  inherit.aes    = TRUE,
   ...,
-  lineend = "butt", linejoin = "round", linemitre = 10,
-  text_only = FALSE, gap = FALSE, upright = TRUE,
-  halign = "center", offset = NULL, parse = FALSE,
-  straight = FALSE,
-  padding = unit(0.05, "inch"),
+  lineend        = "butt",
+  linejoin       = "round",
+  linemitre      = 10,
+  text_only      = FALSE,
+  gap            = FALSE,
+  upright        = TRUE,
+  halign         = "center",
+  offset         = NULL,
+  parse          = FALSE,
+  straight       = FALSE,
+  padding        = unit(0.05, "inch"),
   text_smoothing = 0,
-  rich = FALSE,
-  label.padding = unit(0.25, "lines"),
-  label.r = unit(0.15, "lines"),
-  arrow = NULL, remove_long = FALSE
+  rich           = FALSE,
+  label.padding  = unit(0.25, "lines"),
+  label.r        = unit(0.15, "lines"),
+  arrow          = NULL,
+  remove_long    = FALSE
 ) {
+
   layer(
     geom        = GeomLabelpath,
     mapping     = mapping,
@@ -85,7 +96,8 @@ geom_labelpath <- function(
   )
 }
 
-# ggproto class -----------------------------------------------------------
+
+# ggproto class ----------------------------------------------------------------
 
 #' @export
 #' @rdname GeomTextpath
@@ -194,23 +206,37 @@ GeomLabelpath <- ggproto(
   }
 )
 
+
 #' @rdname geom_textpath
 #' @inheritParams ggplot2::geom_line
 #' @inheritParams textpathGrob
 #' @export
 geom_labelline <- function(
-  mapping = NULL, data = NULL, stat = "identity",
-  position = "identity", na.rm = FALSE, show.legend = NA,
-  inherit.aes = TRUE, ...,
-  lineend = "butt", linejoin = "round", linemitre = 10,
-  text_only = FALSE, gap = FALSE, upright = TRUE,
-  halign = "center", offset = NULL, parse = FALSE,
-  straight = FALSE,
-  padding = unit(0.05, "inch"),
+  mapping       = NULL,
+  data          = NULL,
+  stat          = "identity",
+  position      = "identity",
+  na.rm         = FALSE,
+  show.legend   = NA,
+  inherit.aes   = TRUE,
+  ...,
+  lineend       = "butt",
+  linejoin      = "round",
+  linemitre     = 10,
+  text_only     = FALSE,
+  gap           = FALSE,
+  upright       = TRUE,
+  halign        = "center",
+  offset        = NULL,
+  parse         = FALSE,
+  straight      = FALSE,
+  padding       = unit(0.05, "inch"),
   label.padding = unit(0.25, "lines"),
-  label.r = unit(0.15, "lines"),
-  arrow = NULL, remove_long = TRUE
+  label.r       = unit(0.15, "lines"),
+  arrow         = NULL,
+  remove_long   = TRUE
 ) {
+
   layer(
     geom        = GeomLabelline,
     mapping     = mapping,
@@ -219,33 +245,35 @@ geom_labelline <- function(
     position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = set_params(
-      na.rm         = na.rm,
-      lineend       = lineend,
-      linejoin      = linejoin,
-      linemitre     = linemitre,
-      text_only     = text_only,
-      gap           = gap,
-      upright       = upright,
-      halign        = halign,
-      offset        = offset,
-      parse         = parse,
-      straight      = straight,
-      padding       = padding,
-      label.padding = label.padding,
-      label.r       = label.r,
-      arrow         = arrow,
-      remove_long   = remove_long,
-      ...
+    params      = set_params(
+                    na.rm         = na.rm,
+                    lineend       = lineend,
+                    linejoin      = linejoin,
+                    linemitre     = linemitre,
+                    text_only     = text_only,
+                    gap           = gap,
+                    upright       = upright,
+                    halign        = halign,
+                    offset        = offset,
+                    parse         = parse,
+                    straight      = straight,
+                    padding       = padding,
+                    label.padding = label.padding,
+                    label.r       = label.r,
+                    arrow         = arrow,
+                    remove_long   = remove_long,
+                    ...
     )
   )
 }
+
 
 #' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
 #' @export
 GeomLabelline <- ggproto("GeomLabelLine", GeomLabelpath,
+
   setup_params = function(data, params) {
     params$flipped_aes <- has_flipped_aes(data, params, ambiguous = TRUE)
     update_params(params, type = "label")

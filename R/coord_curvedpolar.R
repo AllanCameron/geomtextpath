@@ -3,7 +3,7 @@
 ##  coord_curvedpolar.R                                                      ##
 ##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
@@ -144,6 +144,7 @@ coord_curvedpolar <- function(theta = "x", start = 0,
 # non-exported functions
 
 theta_rescale <- function(coord, x, panel_params) {
+
     x      <- scales::squish_infinite(x, panel_params$theta.range)
     rotate <- function(x) (x + coord$start) %% (2 * pi) * coord$direction
     rotate(scales::rescale(x, c(0, 2 * pi), panel_params$theta.range))

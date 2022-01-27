@@ -3,14 +3,14 @@
 ##  geom_textabline.R                                                        ##
 ##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
 ##                                                                           ##
 ##---------------------------------------------------------------------------##
 
-# Constructors ------------------------------------------------------------
+# Constructors -----------------------------------------------------------------
 
 #' Labelled reference lines: horizontal, vertical, and diagonal
 #'
@@ -95,42 +95,60 @@
 #'                linetype = 2, vjust = 1.3, color = "blue4") +
 #' geom_textabline(slope = 15, intercept = -100, label = "partition line",
 #'                 color = "green4", hjust = 0.6, vjust = -0.2)
-geom_textabline <- function(mapping = NULL,
-                            data = NULL,
-                            slope,
-                            intercept,
-                            ...,
-                            na.rm       = FALSE,
-                            show.legend = NA) {
+geom_textabline <- function(
+  mapping     = NULL,
+  data        = NULL,
+  slope,
+  intercept,
+  ...,
+  na.rm       = FALSE,
+  show.legend = NA
+) {
+
   construct_abline(
-    mapping = mapping, data = data,
-    slope = slope, intercept = intercept,
+    mapping     = mapping,
+    data        = data,
+    slope       = slope,
+    intercept   = intercept,
     show.legend = show.legend,
-    na.rm = na.rm, ...,
-    layername = "geom_textabline()", super = GeomTextabline
+    na.rm       = na.rm,
+    ...,
+    layername   = "geom_textabline()",
+    super       = GeomTextabline
   )
 }
 
+
 #' @rdname geom_textabline
 #' @export
-geom_labelabline <- function(mapping = NULL,
-                             data = NULL,
-                             slope,
-                             intercept,
-                             ...,
-                             straight      = NULL,
-                             label.r       = unit(0.15, "lines"),
-                             label.padding = unit(0.25, "lines"),
-                             na.rm         = FALSE,
-                             show.legend   = NA) {
+geom_labelabline <- function(
+  mapping       = NULL,
+  data          = NULL,
+  slope,
+  intercept,
+  ...,
+  straight      = NULL,
+  label.r       = unit(0.15, "lines"),
+  label.padding = unit(0.25, "lines"),
+  na.rm         = FALSE,
+  show.legend   = NA
+) {
+
   construct_abline(
-    mapping = mapping, data = data, slope = slope, intercept = intercept,
-    show.legend = show.legend,
-    na.rm = na.rm, ...,
-    label.r = label.r, label.padding = label.padding,
-    layername = "geom_labelabline()", super = GeomLabelabline
+    mapping       = mapping,
+    data          = data,
+    slope         = slope,
+    intercept     = intercept,
+    show.legend   = show.legend,
+    na.rm         = na.rm,
+    ...,
+    label.r       = label.r,
+    label.padding = label.padding,
+    layername     = "geom_labelabline()",
+    super         = GeomLabelabline
   )
 }
+
 
 # ggproto classes ---------------------------------------------------------
 
@@ -139,8 +157,8 @@ geom_labelabline <- function(mapping = NULL,
 #' @format NULL
 #' @usage NULL
 #' @export
-GeomTextabline <- ggproto(
-  "GeomTextabline", GeomTextsegment,
+GeomTextabline <- ggproto("GeomTextabline", GeomTextsegment,
+
   draw_panel = function(data, panel_params, coord, lineend = "butt",
                         arrow = NULL,
                         text_params = static_text_params("text")) {
@@ -151,12 +169,13 @@ GeomTextabline <- ggproto(
   required_aes = c("label", "slope", "intercept")
 )
 
+
 #' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
 #' @export
-GeomLabelabline <- ggproto(
-  "GeomLabelabline", GeomLabelsegment,
+GeomLabelabline <- ggproto("GeomLabelabline", GeomLabelsegment,
+
   draw_panel = function(data, panel_params, coord, lineend = "butt",
                         arrow = NULL,
                         text_params = static_text_params("label"),
@@ -170,12 +189,19 @@ GeomLabelabline <- ggproto(
   required_aes = c("label", "slope", "intercept")
 )
 
-# Helpers -----------------------------------------------------------------
 
-construct_abline <- function(mapping = NULL, data = NULL,
-                             slope, intercept, ..., show.legend = NA,
-                             layername = "geom_textabline()",
-                             super = GeomTextabline) {
+# Helpers ----------------------------------------------------------------------
+
+construct_abline <- function(
+  mapping     = NULL,
+  data        = NULL,
+  slope,
+  intercept,
+  ...,
+  show.legend = NA,
+  layername   = "geom_textabline()",
+  super       = GeomTextabline
+) {
 
   # If nothing set, default to y = x
   if (is.null(mapping) && missing(slope) && missing(intercept)) {
@@ -219,15 +245,22 @@ construct_abline <- function(mapping = NULL, data = NULL,
     position    = PositionIdentity,
     geom        = super,
     inherit.aes = FALSE,
-    params = set_params(
+    params      = set_params(
       .type = if (inherits(super, "GeomLabelpath")) "label" else "text",
       ...
     )
   )
 }
 
-abline2path <- function(data, panel_params, coord, ...,
-                        super = GeomTextsegment) {
+
+abline2path <- function(
+  data,
+  panel_params,
+  coord,
+  ...,
+  super = GeomTextsegment
+) {
+
   ranges <- coord$backtransform_range(panel_params)
   ranges$xorig <- ranges$x
 

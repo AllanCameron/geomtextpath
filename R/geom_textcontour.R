@@ -3,14 +3,14 @@
 ##  geom_textcontour.R                                                       ##
 ##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
 ##                                                                           ##
 ##---------------------------------------------------------------------------##
 
-# Constructor -------------------------------------------------------------
+# Constructor ------------------------------------------------------------------
 
 #' Produce labelled contour lines in  \pkg{ggplot2}
 #'
@@ -40,44 +40,67 @@
 #'   theme_classic() +
 #'   theme(legend.position = "none")
 geom_textcontour <- function(
-  mapping = NULL, data = NULL, stat = "textcontour",
-  position = "identity", na.rm = FALSE, show.legend = NA,
+  mapping     = NULL,
+  data        = NULL,
+  stat        = "textcontour",
+  position    = "identity",
+  na.rm       = FALSE,
+  show.legend = NA,
   inherit.aes = TRUE,
-  lineend = "butt", linejoin = "round", linemitre = 10,
-  bins = NULL, binwidth = NULL, breaks = NULL,
+  lineend     = "butt",
+  linejoin    = "round",
+  linemitre   = 10,
+  bins        = NULL,
+  binwidth    = NULL,
+  breaks      = NULL,
   ...
-  ) {
+) {
 
-  layer(geom = GeomTextcontour, mapping = mapping, data = data,
-        stat = stat,
-        position = position, show.legend = show.legend,
+  layer(geom        = GeomTextcontour,
+        mapping     = mapping,
+        data        = data,
+        stat        = stat,
+        position    = position,
+        show.legend = show.legend,
         inherit.aes = inherit.aes,
         params = set_params(
-          na.rm     = na.rm,
-          lineend   = lineend,
-          linejoin  = linejoin,
-          linemitre = linemitre,
-          bins      = bins,
-          binwidth  = binwidth,
-          breaks    = breaks,
-          ...
-        ))
+                    na.rm     = na.rm,
+                    lineend   = lineend,
+                    linejoin  = linejoin,
+                    linemitre = linemitre,
+                    bins      = bins,
+                    binwidth  = binwidth,
+                    breaks    = breaks,
+                    ...
+                    )
+        )
 }
+
 
 #' @rdname geom_textcontour
 #' @inheritParams geom_textcontour
 #' @inheritParams geom_labelpath
 #' @export
 geom_labelcontour <- function(
-  mapping = NULL, data = NULL, stat = "textcontour",
-  position = "identity", na.rm = FALSE, show.legend = NA,
-  inherit.aes = TRUE, ...,
-  lineend = "butt", linejoin = "round", linemitre = 10,
-  bins = NULL, binwidth = NULL, breaks = NULL,
+  mapping       = NULL,
+  data          = NULL,
+  stat          = "textcontour",
+  position      = "identity",
+  na.rm         = FALSE,
+  show.legend   = NA,
+  inherit.aes   = TRUE,
+  ...,
+  lineend       = "butt",
+  linejoin      = "round",
+  linemitre     = 10,
+  bins          = NULL,
+  binwidth      = NULL,
+  breaks        = NULL,
   label.padding = unit(0.25, "lines"),
-  label.r = unit(0.15, "lines"),
-  arrow = NULL
+  label.r       = unit(0.15, "lines"),
+  arrow         = NULL
 ) {
+
   layer(
     geom        = GeomLabelcontour,
     mapping     = mapping,
@@ -86,19 +109,19 @@ geom_labelcontour <- function(
     position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = set_params(
-                na.rm         = na.rm,
-                lineend       = lineend,
-                linejoin      = linejoin,
-                linemitre     = linemitre,
-                bins          = bins,
-                binwidth      = binwidth,
-                breaks        = breaks,
-                label.padding = label.padding,
-                label.r       = label.r,
-                arrow         = arrow,
-                ...
-              )
+    params      = set_params(
+                    na.rm         = na.rm,
+                    lineend       = lineend,
+                    linejoin      = linejoin,
+                    linemitre     = linemitre,
+                    bins          = bins,
+                    binwidth      = binwidth,
+                    breaks        = breaks,
+                    label.padding = label.padding,
+                    label.r       = label.r,
+                    arrow         = arrow,
+                    ...
+                  )
   )
 }
 
@@ -118,16 +141,20 @@ geom_labelcontour <- function(
 #'
 #'
 #' @rdname geom_textcontour
-stat_textcontour <- function(mapping = NULL, data = NULL,
-                             geom = "textcontour",
-                             position = "identity",
-                             ...,
-                             bins = NULL,
-                             binwidth = NULL,
-                             breaks = NULL,
-                             na.rm = FALSE,
-                             show.legend = NA,
-                             inherit.aes = TRUE) {
+stat_textcontour <- function(
+  mapping     = NULL,
+  data        = NULL,
+  geom        = "textcontour",
+  position    = "identity",
+  ...,
+  bins        = NULL,
+  binwidth    = NULL,
+  breaks      = NULL,
+  na.rm       = FALSE,
+  show.legend = NA,
+  inherit.aes = TRUE
+) {
+
   layer(
     data        = data,
     mapping     = mapping,
@@ -146,6 +173,7 @@ stat_textcontour <- function(mapping = NULL, data = NULL,
   )
 }
 
+
 #' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
@@ -155,6 +183,7 @@ GeomTextcontour <- ggproto("GeomTextcontour", GeomTextpath,
   required_aes = c("x", "y")
 )
 
+
 #' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
@@ -163,6 +192,7 @@ GeomTextcontour <- ggproto("GeomTextcontour", GeomTextpath,
 GeomLabelcontour <- ggproto("GeomLabelcontour", GeomLabelpath,
   required_aes = c("x", "y")
 )
+
 
 #' @rdname GeomTextpath
 #' @format NULL

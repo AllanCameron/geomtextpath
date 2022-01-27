@@ -1,4 +1,16 @@
-# Constructors ------------------------------------------------------------
+##---------------------------------------------------------------------------##
+##                                                                           ##
+##  geom_textcurve.R                                                         ##
+##  Part of the geomtextpath R package                                       ##
+##                                                                           ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
+##                                                                           ##
+##  Licensed under the MIT license - see https://mit-license.org             ##
+##  or the LICENSE file in the project root directory                        ##
+##                                                                           ##
+##---------------------------------------------------------------------------##
+
+# Constructors -----------------------------------------------------------------
 
 #' Text on a curve
 #'
@@ -37,81 +49,85 @@
 #'   ) +
 #'   coord_equal(xlim = c(-1.1, 1.1), ylim = c(-1.1, 1.1))
 geom_textcurve <- function(
-  mapping  = NULL,
-  data     = NULL,
-  stat     = "identity",
-  position = "identity",
+  mapping     = NULL,
+  data        = NULL,
+  stat        = "identity",
+  position    = "identity",
   ...,
-  curvature = 0.5,
-  angle     = 90,
-  ncp       = 5,
-  arrow     = NULL,
-  lineend = "butt",
-  na.rm = FALSE,
-  show.legend= NA,
+  curvature   = 0.5,
+  angle       = 90,
+  ncp         = 5,
+  arrow       = NULL,
+  lineend     = "butt",
+  na.rm       = FALSE,
+  show.legend = NA,
   inherit.aes = TRUE
 ) {
+
   layer(
-    data    = data,
-    mapping = mapping,
-    stat    = stat,
-    geom    = GeomTextcurve,
-    position = position,
+    data        = data,
+    mapping     = mapping,
+    stat        = stat,
+    geom        = GeomTextcurve,
+    position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = set_params(
-      arrow     = arrow,
-      curvature = curvature,
-      angle     = angle,
-      ncp       = ncp,
-      lineend   = lineend,
-      na.rm     = na.rm,
-      ...
+    params      = set_params(
+                    arrow     = arrow,
+                    curvature = curvature,
+                    angle     = angle,
+                    ncp       = ncp,
+                    lineend   = lineend,
+                    na.rm     = na.rm,
+                    ...
     )
   )
 }
+
 
 #' @rdname geom_textcurve
 #' @export
 geom_labelcurve <- function(
-    mapping  = NULL,
-    data     = NULL,
-    stat     = "identity",
-    position = "identity",
+    mapping       = NULL,
+    data          = NULL,
+    stat          = "identity",
+    position      = "identity",
     ...,
-    curvature = 0.5,
-    angle     = 90,
-    ncp       = 5,
-    arrow     = NULL,
-    lineend   = "butt",
-    label.r   = unit(0.15, "lines"),
+    curvature     = 0.5,
+    angle         = 90,
+    ncp           = 5,
+    arrow         = NULL,
+    lineend       = "butt",
+    label.r       = unit(0.15, "lines"),
     label.padding = unit(0.25, "lines"),
-    na.rm = FALSE,
-    show.legend= NA,
-    inherit.aes = TRUE
+    na.rm         = FALSE,
+    show.legend   = NA,
+    inherit.aes   = TRUE
 ) {
+
   layer(
-    data    = data,
-    mapping = mapping,
-    stat    = stat,
-    geom    = GeomLabelcurve,
-    position = position,
+    data        = data,
+    mapping     = mapping,
+    stat        = stat,
+    geom        = GeomLabelcurve,
+    position    = position,
     show.legend = show.legend,
     inherit.aes = inherit.aes,
-    params = set_params(
-      arrow     = arrow,
-      curvature = curvature,
-      angle     = angle,
-      ncp       = ncp,
-      lineend   = lineend,
-      na.rm     = na.rm,
-      .type     = "label",
-      ...
-    )
+    params      = set_params(
+                    arrow     = arrow,
+                    curvature = curvature,
+                    angle     = angle,
+                    ncp       = ncp,
+                    lineend   = lineend,
+                    na.rm     = na.rm,
+                    .type     = "label",
+                    ...
+                  )
   )
 }
 
-# ggproto classes ---------------------------------------------------------
+
+# ggproto classes --------------------------------------------------------------
 
 #' @export
 #' @rdname GeomTextpath
@@ -133,8 +149,7 @@ GeomTextcurve <- ggproto(
       warn("geom_textcurve is not implemented for non-linear coordinates")
     }
 
-    trans <- coord$transform(data, panel_params)
-
+    trans   <- coord$transform(data, panel_params)
     text_gp <- data_to_text_gp(data)
     path_gp <- data_to_path_gp(data, lineend = lineend)
 
@@ -145,33 +160,41 @@ GeomTextcurve <- ggproto(
     }
 
     textcurveGrob(
-      trans$x, trans$xend, trans$y, trans$yend, label,
-      hjust  = trans$hjust,
-      vjust  = text_params$offset %||% trans$vjust,
-      halign = text_params$halign,
-      gap    = text_params$gap,
-      rich   = text_params$rich,
-      gp_text = text_gp,
-      gp_path = path_gp,
-      straight = text_params$straight,
-      upright  = text_params$upright,
-      padding  = text_params$padding,
+      x1             = trans$x,
+      x2             = trans$xend,
+      y1             = trans$y,
+      y2             = trans$yend,
+      label          = label,
+      hjust          = trans$hjust,
+      vjust          = text_params$offset %||% trans$vjust,
+      halign         = text_params$halign,
+      gap            = text_params$gap,
+      rich           = text_params$rich,
+      gp_text        = text_gp,
+      gp_path        = path_gp,
+      straight       = text_params$straight,
+      upright        = text_params$upright,
+      padding        = text_params$padding,
       text_smoothing = text_params$text_smoothing,
-      default.units = "npc",
-      arrow = arrow,
-      curvature = curvature, angle = angle, ncp = ncp,
-      square = FALSE, squareShape = 1, inflect = FALSE,
-      open = TRUE
+      default.units  = "npc",
+      arrow          = arrow,
+      curvature      = curvature,
+      angle          = angle,
+      ncp            = ncp,
+      square         = FALSE,
+      squareShape    = 1,
+      inflect        = FALSE,
+      open           = TRUE
     )
   }
 )
+
 
 #' @export
 #' @rdname GeomTextpath
 #' @format NULL
 #' @usage NULL
-GeomLabelcurve <- ggproto(
-  "GeomLabelcurve", GeomLabelpath,
+GeomLabelcurve <- ggproto("GeomLabelcurve", GeomLabelpath,
 
   required_aes = c("x", "xend", "y", "yend", "label"),
 
@@ -200,68 +223,101 @@ GeomLabelcurve <- ggproto(
     }
 
     textcurveGrob(
-      trans$x, trans$xend, trans$y, trans$yend, label,
-      hjust    = trans$hjust,
-      vjust    = text_params$offset %||% trans$vjust,
-      gp_text  = text_gp,
-      gp_path  = path_gp,
-      gp_box   = box_gp,
-      halign   = text_params$halign,
-      gap      = text_params$gap,
-      rich     = text_params$rich,
-      straight = text_params$straight,
-      upright  = text_params$upright,
-      padding  = text_params$padding,
+      x1             = trans$x,
+      x2             = trans$xend,
+      y1             = trans$y,
+      y2             = trans$yend,
+      label          = label,
+      hjust          = trans$hjust,
+      vjust          = text_params$offset %||% trans$vjust,
+      gp_text        = text_gp,
+      gp_path        = path_gp,
+      gp_box         = box_gp,
+      halign         = text_params$halign,
+      gap            = text_params$gap,
+      rich           = text_params$rich,
+      straight       = text_params$straight,
+      upright        = text_params$upright,
+      padding        = text_params$padding,
       text_smoothing = text_params$text_smoothing,
-      default.units = "npc",
-      arrow = arrow,
-      as_label = TRUE,
-      curvature = curvature, angle = angle, ncp = ncp,
-      square = FALSE, squareShape = 1, inflect = FALSE, open = TRUE
+      default.units  = "npc",
+      arrow          = arrow,
+      as_label       = TRUE,
+      curvature      = curvature,
+      angle          = angle,
+      ncp            = ncp,
+      square         = FALSE,
+      squareShape    = 1,
+      inflect        = FALSE,
+      open           = TRUE
     )
   }
 )
 
-# Grob constructor --------------------------------------------------------
+
+# Grob constructor -------------------------------------------------------------
 
 textcurveGrob <- function(
-    x1, x2, y1, y2, label,
-    curvature = 1, angle = 90, ncp = 1,
-    square = FALSE, squareShape = 1, inflect = FALSE,
-    open = TRUE, shape = 0.5,
+    x1, x2, y1, y2,
+    label,
+    curvature     = 1,
+    angle         = 90,
+    ncp           = 1,
+    square        = FALSE,
+    squareShape   = 1,
+    inflect       = FALSE,
+    open          = TRUE,
+    shape         = 0.5,
     ...,
-    default.units = "npc", name = NULL, vp = NULL
+    default.units = "npc",
+    name          = NULL,
+    vp            = NULL
 ) {
+
   # Construct textpathGrob with dummy variables
   n_label  <- length(label)
   dummy_x  <- rep(c(0, 1), n_label)
   dummy_y  <- rep(c(0, 1), n_label)
   dummy_id <- rep(seq_len(n_label), each = 2)
 
-  textgrob <- textpathGrob(label, dummy_x, dummy_y, dummy_id, ...,
-                           default.units = default.units)
+  textgrob <- textpathGrob(
+    label,
+    dummy_x,
+    dummy_y,
+    dummy_id,
+    ...,
+    default.units = default.units
+    )
 
   # Create curveGrob in parallel
   curvegrob <- curveGrob(
-    x1, y1, x2, y2, default.units = default.units,
-    curvature = curvature, angle = angle, ncp = ncp, shape = shape,
-    square = square, squareShape = squareShape, inflect = inflect,
-    open = open
+    x1, y1, x2, y2,
+    default.units = default.units,
+    curvature     = curvature,
+    angle         = angle,
+    ncp           = ncp,
+    shape         = shape,
+    square        = square,
+    squareShape   = squareShape,
+    inflect       = inflect,
+    open          = open
   )
 
   gTree(
     textpath = textgrob,
     curve    = curvegrob,
-    name = name,
-    vp   = vp,
-    cl = "textcurve"
+    name     = name,
+    vp       = vp,
+    cl       = "textcurve"
   )
 }
 
-# makeContent -------------------------------------------------------------
+
+# makeContent ------------------------------------------------------------------
 
 #' @export
 makeContent.textcurve <- function(x) {
+
   # Extract and clear grobs
   text  <- x$textpath
   x$textpath <- NULL

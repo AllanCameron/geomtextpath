@@ -19,6 +19,7 @@
 # Tag processing ----------------------------------------------------------
 
 process_tags <- function(node, drawing_context) {
+
   new  <- lapply(seq_along(node), function(i) {
     dispatch_tag(node[[i]], names(node)[i], drawing_context)
   })
@@ -31,6 +32,7 @@ process_tags <- function(node, drawing_context) {
 # simply by writing an appropriately named method
 
 dispatch_tag <- function(node, tag, drawing_context) {
+
   if (is.null(tag) || tag == "") return(process_text(node, drawing_context))
 
   call_name <- paste("process_tag", tag, sep = "_")
@@ -48,6 +50,7 @@ dispatch_tag <- function(node, tag, drawing_context) {
 # Departs from gridtext:::process_text in that it returns a list-matrix
 
 process_text <- function(node, drawing_context) {
+
   cbind(list(unlist(node)),
         list(drawing_context$gp),
         list(drawing_context$yoff))
@@ -55,23 +58,27 @@ process_text <- function(node, drawing_context) {
 
 
 process_tag_p <- process_tag_span <-  function(node, drawing_context) {
+
   process_tags(node, drawing_context)
 }
 
 
 process_tag_b <- process_tag_strong <- function(node, drawing_context) {
+
   drawing_context <- set_context_font(drawing_context, 2)
   process_tags(node, drawing_context)
 }
 
 
 process_tag_i <- process_tag_em <- function(node, drawing_context) {
+
   drawing_context <- set_context_font(drawing_context, 3)
   process_tags(node, drawing_context)
 }
 
 
 process_tag_sub <- function(node, drawing_context) {
+
   drawing_context <- set_context_size(drawing_context, 0.8)
   drawing_context <- set_context_offset(drawing_context, -0.5)
   process_tags(node, drawing_context)
@@ -79,6 +86,7 @@ process_tag_sub <- function(node, drawing_context) {
 
 
 process_tag_sup <- function(node, drawing_context) {
+
   drawing_context <- set_context_size(drawing_context, 0.8)
   drawing_context <- set_context_offset(drawing_context,  0.5)
   process_tags(node, drawing_context)
@@ -87,8 +95,15 @@ process_tag_sup <- function(node, drawing_context) {
 
 # Context -----------------------------------------------------------------
 
-setup_context <- function(fontsize = 12, fontfamily = "", fontface = "plain",
-                          colour = "black", lineheight = 1.2, gp = NULL) {
+setup_context <- function(
+  fontsize   = 12,
+  fontfamily = "",
+  fontface   = "plain",
+  colour     = "black",
+  lineheight = 1.2,
+  gp         = NULL
+) {
+
   if (is.null(gp)) {
     gp <- gpar(
       fontsize   = fontsize,
@@ -105,6 +120,7 @@ setup_context <- function(fontsize = 12, fontfamily = "", fontface = "plain",
 
 
 update_gpar <- function(gp, gp_new) {
+
   names_new <- names(gp_new)
   names_old <- names(gp)
   gp[c(intersect(names_old, names_new), "fontface")] <- NULL
@@ -114,12 +130,14 @@ update_gpar <- function(gp, gp_new) {
 
 
 set_context_gp <- function(drawing_context, gp = NULL) {
+
   gp <- update_gpar(drawing_context$gp, gp)
   update_context(drawing_context, ascent = x_height(gp), gp = gp)
 }
 
 
 set_context_font <- function(drawing_context, font = 1, overwrite = FALSE) {
+
   font_old <- drawing_context$gp$font
   old_bold <- font_old %in% c(2, 4)
   new_bold <- font     %in% c(2, 4)
@@ -139,18 +157,21 @@ set_context_font <- function(drawing_context, font = 1, overwrite = FALSE) {
 
 
 set_context_size <- function(drawing_context, size = 1) {
+
   fontsize        <- size * drawing_context$gp$fontsize
   set_context_gp(drawing_context, gpar(fontsize = fontsize))
 }
 
 
 set_context_offset <- function(drawing_context, offset = 0) {
+
   drawing_context$yoff <- drawing_context$yoff + drawing_context$ascent * offset
   drawing_context
 }
 
 
 update_context <- function(drawing_context, ...) {
+
   dc_new    <- list(...)
   names_new <- names(dc_new)
   names_old <- names(drawing_context)
@@ -181,12 +202,14 @@ set_style <- function(drawing_context, style = NULL) {
 # CSS parsing -------------------------------------------------------------
 
 parse_css <- function(text) {
+
   lines <- strsplit(text, ";", fixed = TRUE)[[1]]
   unlist(lapply(lines, parse_css_line), FALSE)
 }
 
 
 parse_css_line <- function(line) {
+
   pattern <- "\\s*(\\S+)\\s*:\\s*(\"(.*)\"|'(.*)'|(\\S*))\\s*"
   m       <- attributes(regexpr(pattern, line, perl = TRUE))
   start   <- m$capture.start
@@ -213,6 +236,7 @@ parse_css_line <- function(line) {
 
 
 parse_css_unit <- function(x) {
+
   pattern <- "^((-?\\d+\\.?\\d*)(%|[a-zA-Z]+)|(0))$"
   m       <- attributes(regexpr(pattern, x, perl = TRUE))
   start   <- m$capture.start
@@ -234,6 +258,7 @@ parse_css_unit <- function(x) {
 
 
 convert_css_unit_pt <- function(x) {
+
   u <- parse_css_unit(x)
   switch(
     u$unit,

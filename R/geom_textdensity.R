@@ -3,14 +3,14 @@
 ##  geom_textdensity.R                                                       ##
 ##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
 ##                                                                           ##
 ##---------------------------------------------------------------------------##
 
-# Constructor -------------------------------------------------------------
+# Constructor ------------------------------------------------------------------
 
 #' Produce smoothly labelled density plots in \pkg{ggplot2}
 #'
@@ -33,21 +33,24 @@
 #' ggplot(iris, aes(Sepal.Length, label = Species, color = Species)) +
 #'   geom_textdensity()
 
-geom_textdensity <- function(mapping = NULL,
-                             data = NULL,
-                             stat = "density",
-                             position = "identity",
-                             ...,
-                             bw = "nrd0",
-                             adjust = 1,
-                             kernel = "gaussian",
-                             n = 512,
-                             lineend = "butt",
-                             linejoin = "round",
-                             linemitre = 10,
-                             na.rm = FALSE,
-                             show.legend = NA,
-                             inherit.aes = TRUE) {
+geom_textdensity <- function(
+   mapping     = NULL,
+   data        = NULL,
+   stat        = "density",
+   position    = "identity",
+   ...,
+   bw          = "nrd0",
+   adjust      = 1,
+   kernel      = "gaussian",
+   n           = 512,
+   lineend     = "butt",
+   linejoin    = "round",
+   linemitre   = 10,
+   na.rm       = FALSE,
+   show.legend = NA,
+   inherit.aes = TRUE
+) {
+
   layer(
     data        = data,
     mapping     = mapping,
@@ -70,24 +73,33 @@ geom_textdensity <- function(mapping = NULL,
   )
 }
 
+
 #' @rdname geom_textdensity
 #' @inheritParams geom_textdensity
 #' @inheritParams geom_labelpath
 #' @export
-geom_labeldensity <- function(mapping = NULL, data = NULL,
-  stat = "density", position = "identity",
-  na.rm = FALSE, show.legend = NA,
-  inherit.aes = TRUE,
+
+geom_labeldensity <- function(
+  mapping       = NULL,
+  data          = NULL,
+  stat          = "density",
+  position      = "identity",
+  na.rm         = FALSE,
+  show.legend   = NA,
+  inherit.aes   = TRUE,
   ...,
-  lineend = "butt", linejoin = "round", linemitre = 10,
-  bw = "nrd0",
-  adjust = 1,
-  kernel = "gaussian",
-  n = 512,
+  lineend       = "butt",
+  linejoin      = "round",
+  linemitre     = 10,
+  bw            = "nrd0",
+  adjust        = 1,
+  kernel        = "gaussian",
+  n             = 512,
   label.padding = unit(0.25, "lines"),
-  label.r = unit(0.15, "lines"),
-  arrow = NULL
+  label.r       = unit(0.15, "lines"),
+  arrow         = NULL
 ) {
+
   layer(
     geom        = GeomLabeldensity,
     mapping     = mapping,
@@ -119,6 +131,7 @@ geom_labeldensity <- function(mapping = NULL, data = NULL,
 #' @usage NULL
 #' @export
 #' @include geom_textpath.R
+
 GeomTextdensity <- ggproto("GeomTextdensity", GeomTextpath,
 
   required_aes = c("x", "label")
@@ -130,6 +143,7 @@ GeomTextdensity <- ggproto("GeomTextdensity", GeomTextpath,
 #' @usage NULL
 #' @export
 #' @include geom_textpath.R
+
 GeomLabeldensity <- ggproto("GeomLabeldensity", GeomLabelpath,
 
   required_aes = c("x", "label")

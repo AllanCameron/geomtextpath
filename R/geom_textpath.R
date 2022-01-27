@@ -3,14 +3,14 @@
 ##  geom_textpath.R                                                          ##
 ##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
 ##                                                                           ##
 ##---------------------------------------------------------------------------##
 
-# Constructor -------------------------------------------------------------
+# Constructor ------------------------------------------------------------------
 
 #' Add Curved Text Along Paths in \pkg{ggplot2}
 #'
@@ -111,14 +111,29 @@
 
 
 geom_textpath <- function(
-  mapping = NULL, data = NULL, stat = "identity",
-  position = "identity", na.rm = FALSE, show.legend = NA,
-  inherit.aes = TRUE,  ...,
-  lineend = "butt", linejoin = "round", linemitre = 10,
-  text_only = FALSE, gap = NA, upright = TRUE,
-  halign = "center", offset = NULL, parse = FALSE, straight = FALSE,
-  padding = unit(0.05, "inch"), text_smoothing = 0, rich = FALSE, arrow = NULL,
-  remove_long = FALSE
+  mapping        = NULL,
+  data           = NULL,
+  stat           = "identity",
+  position       = "identity",
+  na.rm          = FALSE,
+  show.legend    = NA,
+  inherit.aes    = TRUE,
+  ...,
+  lineend        = "butt",
+  linejoin       = "round",
+  linemitre      = 10,
+  text_only      = FALSE,
+  gap            = NA,
+  upright        = TRUE,
+  halign         = "center",
+  offset         = NULL,
+  parse          = FALSE,
+  straight       = FALSE,
+  padding        = unit(0.05, "inch"),
+  text_smoothing = 0,
+  rich           = FALSE,
+  arrow          = NULL,
+  remove_long    = FALSE
   ) {
 
   layer(geom        = GeomTextpath,
@@ -266,13 +281,25 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   }
 )
 
+
 #' @export
 #' @rdname geom_textpath
-geom_textline <- function(mapping = NULL, data = NULL, stat = "identity",
-                      position = "identity", na.rm = FALSE, orientation = NA,
-                      show.legend = NA, inherit.aes = TRUE, ...,
-                      lineend = "butt", linejoin = "round", linemitre = 10,
-                      arrow = NULL) {
+geom_textline <- function(
+  mapping     = NULL,
+  data        = NULL,
+  stat        = "identity",
+  position    = "identity",
+  na.rm       = FALSE,
+  orientation = NA,
+  show.legend = NA,
+  inherit.aes = TRUE,
+  ...,
+  lineend     = "butt",
+  linejoin    = "round",
+  linemitre   = 10,
+  arrow       = NULL
+) {
+
   layer(
     data        = data,
     mapping     = mapping,
@@ -299,6 +326,7 @@ geom_textline <- function(mapping = NULL, data = NULL, stat = "identity",
 #' @rdname GeomTextpath
 
 GeomTextline <- ggproto("GeomTextline", GeomTextpath,
+
   setup_params = function(data, params) {
     params$flipped_aes <- has_flipped_aes(data, params, ambiguous = TRUE)
     update_params(params, type = "text")
