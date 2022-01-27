@@ -3,7 +3,7 @@
 ##  sf_helpers.R                                                             ##
 ##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
@@ -11,6 +11,7 @@
 ##---------------------------------------------------------------------------##
 
 # Lookup table for geometry types
+
 sf_types <- c(GEOMETRY           = "other",
               POINT              = "point",
               LINESTRING         = "line",
@@ -30,9 +31,12 @@ sf_types <- c(GEOMETRY           = "other",
               TIN                = "other",
               TRIANGLE           = "other")
 
+
 # Gets default graphics parameters for sf objects. This could be a static object
 # but writing it as a function allows for changes in ggplot defaults over time
+
 sf_defaults <- function() {
+
   point_aes          <- GeomPoint$default_aes
   textpath_aes       <- GeomTextpath$default_aes
   polygon_aes        <- GeomPolygon$default_aes
@@ -53,12 +57,14 @@ sf_defaults <- function() {
   })
 }
 
+
 # Store labels only in linestring class ----------------------
 
 # Avoided the S3 route here because generics and methods needed to be exported.
 # Dispatch is simple enough to go functional instead of OOP
 
 label_sf <- function(x, label = "", as_textbox = FALSE) {
+
   if (!inherits(x, "sfc_LINESTRING")) {
     return(x)
   }
@@ -72,11 +78,19 @@ label_sf <- function(x, label = "", as_textbox = FALSE) {
   x
 }
 
+
 # Does the job of actually drawing the textpaths -------------------------------
 
 st_as_grob.sfc_labelled <- function(
-  x, arrow = NULL, default.units = "npc", name = NULL,
-  gp = gpar(), vp = NULL, textpath_vars = list(), ...) {
+  x,
+  arrow         = NULL,
+  default.units = "npc",
+  name          = NULL,
+  gp            = gpar(),
+  vp            = NULL,
+  textpath_vars = list(),
+  ...
+) {
 
   label <- attr(x, "label")
   class(x)[class(x) == "sfc_labelled"] <- "sfc_LINESTRING"
@@ -121,11 +135,19 @@ st_as_grob.sfc_labelled <- function(
   }
 }
 
+
 # Draws the textbox grobs
 
 st_as_grob.sfc_textbox <- function(
-  x, arrow = NULL, default.units = "npc", name = NULL,
-  gp = gpar(), vp = NULL, textpath_vars = list(), ...) {
+  x,
+  arrow         = NULL,
+  default.units = "npc",
+  name          = NULL,
+  gp            = gpar(),
+  vp            = NULL,
+  textpath_vars = list(),
+  ...
+) {
 
   label <- attr(x, "label")
   class(x)[class(x) == "sfc_textbox"] <- "sfc_LINESTRING"
@@ -174,12 +196,21 @@ st_as_grob.sfc_textbox <- function(
   }
 }
 
+
 # ------------------------------------------------------------------------------
 # Gathers the appropriate GPs, labels linestrings and dispatches grob drawing
 
-sf_textgrob <- function(x, lineend = "butt", linejoin = "round",
-                        linemitre = 10, arrow = NULL, na.rm = TRUE,
-                        as_textbox = FALSE, text_smoothing = 0) {
+sf_textgrob <- function(
+  x,
+  lineend        = "butt",
+  linejoin       = "round",
+  linemitre      = 10,
+  arrow          = NULL,
+  na.rm          = TRUE,
+  as_textbox     = FALSE,
+  text_smoothing = 0
+) {
+
   # Match labels to data
   labels <- x$label %||% ""
   labels <- match_labels(x, labels)

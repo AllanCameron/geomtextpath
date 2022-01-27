@@ -3,7 +3,7 @@
 ##  scales.R                                                                 ##
 ##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
@@ -49,6 +49,7 @@
 #'   geom_textdensity(aes(label = Species, hjust = Species), size = 6) +
 #'   scale_hjust_discrete()
 scale_hjust_discrete <- function(..., range = c(0, 1), guide = "none") {
+
   discrete_scale(
     "hjust",
     "hjust_d",
@@ -61,8 +62,14 @@ scale_hjust_discrete <- function(..., range = c(0, 1), guide = "none") {
 
 #' @rdname scale_hjust_discrete
 #' @export
-scale_hjust_manual <- function(..., values, breaks = waiver(),
-                               guide = "none", na.value = NA) {
+scale_hjust_manual <- function(
+  ...,
+  values,
+  breaks   = waiver(),
+  guide    = "none",
+  na.value = NA
+) {
+
     manual_scale("hjust",
                  values,
                  breaks,
@@ -75,6 +82,7 @@ scale_hjust_manual <- function(..., values, breaks = waiver(),
 #' @rdname scale_hjust_discrete
 #' @export
 scale_hjust_identity <- function(..., guide = "none") {
+
     continuous_scale("hjust",
                      "identity",
                      identity_pal(),
@@ -87,6 +95,7 @@ scale_hjust_identity <- function(..., guide = "none") {
 #' @rdname scale_hjust_discrete
 #' @export
 scale_vjust_discrete <- function(..., guide = "none", range = c(-0.5, 1.5)) {
+
   discrete_scale(
     "vjust",
     "vjust_d",
@@ -101,6 +110,7 @@ scale_vjust_discrete <- function(..., guide = "none", range = c(-0.5, 1.5)) {
 #' @export
 scale_vjust_manual <- function(..., values, breaks = waiver(),
                               guide = "none", na.value = NA) {
+
     manual_scale("vjust",
                  values,
                  breaks,
@@ -124,36 +134,43 @@ scale_vjust_identity <- function(..., guide = "none") {
 
 
 # Non-exported ggplot2 function
-manual_scale <- function(aesthetic, values = NULL,
-                         breaks = waiver(), ..., limits = NULL) {
-    force(values)
+manual_scale <- function(
+  aesthetic,
+  values = NULL,
+  breaks = waiver(),
+  ...,
+  limits = NULL
+) {
 
-    if (is.null(limits)) {
-        limits <- names(values)
-    }
-    if (is.vector(values) && is.null(names(values)) &&
-        !inherits(breaks, "waiver") &&
-        !is.null(breaks) && !is.function(breaks)) {
-        if (length(breaks) <= length(values)) {
-            names(values) <- breaks
-        }
-        else {
-            names(values) <- breaks[seq_along(values)]
-        }
-    }
-    pal <- function(n) {
-        if (n > length(values)) {
-            rlang::abort(
-              paste0("Insufficient values in manual scale. ", n,
-                     " needed but only ", length(values), " provided."))
-        }
-        values
-    }
-    discrete_scale(aesthetic, "manual", pal, breaks = breaks,
-        limits = limits, ...)
+  force(values)
+
+  if (is.null(limits)) {
+      limits <- names(values)
+  }
+  if (is.vector(values) && is.null(names(values)) &&
+      !inherits(breaks, "waiver") &&
+      !is.null(breaks) && !is.function(breaks)) {
+      if (length(breaks) <= length(values)) {
+          names(values) <- breaks
+      }
+      else {
+          names(values) <- breaks[seq_along(values)]
+      }
+  }
+  pal <- function(n) {
+      if (n > length(values)) {
+          rlang::abort(
+            paste0("Insufficient values in manual scale. ", n,
+                   " needed but only ", length(values), " provided."))
+      }
+      values
+  }
+  discrete_scale(aesthetic, "manual", pal, breaks = breaks,
+      limits = limits, ...)
 }
 
 
 identity_pal <- function() {
+
   function(x) x
 }

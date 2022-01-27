@@ -17,6 +17,7 @@
 # Smooth both x and y as a function of path length using a spline smooth
 
 smooth_noisy <- function(data, spar) {
+
   # munch path
   n           <- seq(nrow(data))
   t           <- seq(1, length(data$x), len = 1024)
@@ -42,6 +43,7 @@ smooth_noisy <- function(data, spar) {
 # Quadratic Bezier function
 
 quad_bezier <- function(p0, p1, p2, t) {
+
   (1 - t)^2 * p0 + 2 * t * (1 - t) * p1 + t^2 * p2
 }
 
@@ -50,6 +52,7 @@ quad_bezier <- function(p0, p1, p2, t) {
 # p1 and p2 are length-2 vectors representing x1, y1 and x2, y2
 
 linear_smooth <- function(p1, p2, n) {
+
   x   <- seq(p1[1], p2[1], len = n)
   y   <- seq(p1[2], p2[2], len = n)
   len <- cumsum(c(0, sqrt(diff(x)^2 + diff(y)^2)))
@@ -65,6 +68,7 @@ linear_smooth <- function(p1, p2, n) {
 # Pythagorean distance between two x-y pairs given as length-2 vectors
 
 point_dist <- function(p0, p1) {
+
   sqrt((p1[1] - p0[1])^2 + (p1[2] - p0[2])^2)
 }
 
@@ -73,6 +77,7 @@ point_dist <- function(p0, p1) {
 # on the adjacent segments : (x0, y0) and (x2, y2)
 
 corner_smoother <- function(p0, p1, p2, p = 20) {
+
   if (all(p0 == p1) && all(p1 == p2)) return(linear_smooth(p1, p1, p))
   if (all(p0 == p1)) return(linear_smooth(p1, p2, p))
   if (all(p1 == p2)) return(linear_smooth(p0, p1, p))
@@ -104,6 +109,7 @@ corner_smoother <- function(p0, p1, p2, p = 20) {
 # have to be given in the order they appear along the path.
 
 segment_control_points <- function(x, y, len, ang, radius) {
+
     if (len < 2 * radius) {
       cbind(c(x, x + 0.5 * cos(ang) * len),
             c(y, y + 0.5 * sin(ang) * len))
@@ -118,6 +124,7 @@ segment_control_points <- function(x, y, len, ang, radius) {
 # that will give Bezier curves with the given radius
 
 find_control_points <- function(data, radius = 0.1) {
+
   lens <- diff(arclength_from_xy(data$x, data$y))
   angs <- angle_from_xy(data$x, data$y)
   segs <- Map(f      = segment_control_points,
@@ -140,6 +147,7 @@ find_control_points <- function(data, radius = 0.1) {
 # Co-ordinates the above functions to generate a Bezier-smoothed curve
 
 smooth_corners <- function(data, n = 20, radius = 0.1) {
+
   cps      <- find_control_points(data, radius = radius)
   sections <- lapply(seq(1, nrow(cps) - 2, 2), function(x) cps[x + 0:2, ])
   out      <- lapply(sections, function(x) corner_smoother(c(x[1, 1], x[1, 2]),

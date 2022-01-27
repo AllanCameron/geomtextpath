@@ -10,8 +10,10 @@
 ##                                                                           ##
 ##---------------------------------------------------------------------------##
 
-# replace non-zero characters with alternatives
+# replace zero-length characters with alternatives (useful for fallback fonts)
+
 `%nz%` <- function(a, b) {
+
   a[!nzchar(a)] <- b[1]
   a
 }
@@ -34,6 +36,7 @@ measure_label <- function(
     straight = FALSE,
     rich     = FALSE
 ) {
+
   n_label <- length(label)
   gp      <- rep_gp(gp_fill_defaults(gp), n_label)
 
@@ -77,6 +80,7 @@ measure_curved <- function(
     halign = "center",
     old_gp = gpar()
 ) {
+
   label$text <- as.character(label$text)
 
   halign     <- match(halign, c("center", "left", "right"), nomatch = 2L)
@@ -140,8 +144,9 @@ measure_curved <- function(
 }
 
 
-# TODO: Interpret unit-vjusts
+
 measure_language <- function(label, gp = gpar(), ppi = 72, vjust = 0.5, ...) {
+
   width  <- measure_text_dim(label$text, gp, "width")
   height <- measure_text_dim(label$text, gp, "height")
   ymin   <- - (height * (vjust - 0.5))
@@ -173,6 +178,7 @@ measure_language <- function(label, gp = gpar(), ppi = 72, vjust = 0.5, ...) {
 # This first calls the curved variant, then restructures the data
 
 measure_straight <- function(...) {
+
   meas   <- measure_curved(...)
   meas[] <- lapply(meas, function(df) {
     metrics <- attr(df, "metrics")
@@ -203,10 +209,13 @@ measure_straight <- function(...) {
 
 index_cache <- new.env(parent = emptyenv())
 
+
 # This function retrieves index lookup tables for fonts. If the font has been
 # seen before, it is retrieved from the cache. If not, it looks up the index
 # table and stores it in the cache.
+
 glyph_index <- function(family = "") {
+
   # Empty character is invalid name
   name <- if (family == "") "fallback" else family
 
@@ -248,6 +257,7 @@ translate_glyph <- function(index, id, gp = gpar()) {
 
 
 cluster_glyphs <- function(shape, vars = c("glyph", "metric_id", "string_id")) {
+
   shape$clusters <- group_id(shape, vars)
   shape$letter   <- ave(
     shape$letter, shape$clusters,
@@ -258,10 +268,8 @@ cluster_glyphs <- function(shape, vars = c("glyph", "metric_id", "string_id")) {
 }
 
 
-filter_glyphs <- function(
-  shape, n,
-  forbidden = c("\r", "\n", "\t", "")
-) {
+filter_glyphs <- function(shape, n, forbidden = c("\r", "\n", "\t", "")) {
+
   keep  <- shape$letter %in% forbidden
   keep  <- !(keep | duplicated(shape$clusters))
   shape <- shape[keep, , drop = FALSE]
@@ -279,8 +287,13 @@ filter_glyphs <- function(
 
 # Rich text --------------------------------------------------------------------
 
-parse_richtext <- function(text, gp, md = TRUE, id = seq_along(text),
-                           inner = FALSE) {
+parse_richtext <- function(
+  text,
+  gp,
+  md    = TRUE,
+  id    = seq_along(text),
+  inner = FALSE
+) {
 
   text <- as.character(text)
 
@@ -339,6 +352,7 @@ parse_richtext <- function(text, gp, md = TRUE, id = seq_along(text),
 # Helpers -----------------------------------------------------------------
 
 font_info_gp <- function(gp = gpar(), res = 72, unit = "inch") {
+
   info <- systemfonts::font_info(
     family =  gp$fontfamily %nz% "fallback",
     italic = (gp$font       %||% 1) %in% c(3, 4),
@@ -357,6 +371,7 @@ font_info_gp <- function(gp = gpar(), res = 72, unit = "inch") {
 
 
 x_height <- function(gp) {
+
   len <- max(lengths(gp))
   systemfonts::string_metrics_dev(
     rep("x", len),
@@ -371,6 +386,7 @@ x_height <- function(gp) {
 
 text_shape <- function(text, id, gp, res = 72, vjust = 0.5, hjust = 0.5,
                        align = "center", unit = "inch") {
+
   # Remedy for https://github.com/r-lib/systemfonts/issues/85
   vjust[vjust == 1] <- 1 + .Machine$double.eps
 
@@ -396,11 +412,13 @@ text_shape <- function(text, id, gp, res = 72, vjust = 0.5, hjust = 0.5,
 
 
 resolution_to_unit <- function(res = 72, unit = "inch") {
+
   convertUnit(unit(1, "inch"), unitTo = unit, valueOnly = TRUE) / res
 }
 
 
 measure_text_dim <- function(labels, gp = gpar(), dim = "height") {
+
   dimfun <- list(height = grobHeight, width  = grobWidth)
   gp     <- lapply(seq_along(labels), function(i) recycle_gp(gp, `[`, i))
   grobs  <- Map(textGrob, gp = gp, label = labels)

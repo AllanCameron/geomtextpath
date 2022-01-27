@@ -3,24 +3,25 @@
 ##  text_placement.R                                                         ##
 ##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
 ##                                                                           ##
 ##---------------------------------------------------------------------------##
 
-# Main function -----------------------------------------------------------
+# Main function ----------------------------------------------------------------
 
 # Interpolate path at text locations
 
 place_text <- function(
   path,
-  label = "placeholder",
-  hjust = 0.5,
-  halign = "center",
+  label   = "placeholder",
+  hjust   = 0.5,
+  halign  = "center",
   upright = FALSE
 ) {
+
   # We need a copy for a potential flip
   letters <- label
 
@@ -73,14 +74,20 @@ place_text <- function(
   df[!is.na(df$angle), ]
 }
 
+
 # Helpers -----------------------------------------------------------------
 
 # Maybe flip text
 
 attempt_flip <- function(
-  path, label = "placeholder", angle = 0,
-  hjust = 0, halign = "left", upright = FALSE
+  path,
+  label   = "placeholder",
+  angle   = 0,
+  hjust   = 0,
+  halign  = "left",
+  upright = FALSE
 ) {
+
   if (!upright)  return(NULL)
 
   angle       <- angle %% 360
@@ -116,8 +123,12 @@ attempt_flip <- function(
 
 
 anchor_points <- function(
-  offset, text_width, hjust = 0.5, halign = "center"
+  offset,
+  text_width,
+  hjust  = 0.5,
+  halign = "center"
 ) {
+
   # Convert halign to a weight
   halign <- (match(halign, c("right", "center", "left")) - 1) / 2
 
@@ -140,6 +151,7 @@ anchor_points <- function(
 
 
 interpret_hjust <- function(hjust, offset, width) {
+
   x          <- offset$x[, 1]
   y          <- offset$y[, 1]
   path       <- offset$arc_length[, 1]
@@ -169,9 +181,11 @@ interpret_hjust <- function(hjust, offset, width) {
   )
 }
 
+
 # Project text onto path
 
 project_text <- function(text, offset, xpos = c("xmin", "xmid", "xmax")) {
+
   arclength  <- offset$arc_length
   index <- x <- unlist(text[, xpos], FALSE, FALSE)
   membr <- rep(text$y_id, 3)
@@ -220,9 +234,11 @@ project_text <- function(text, offset, xpos = c("xmin", "xmid", "xmax")) {
   )
 }
 
+
 # Grob constructor --------------------------------------------------------
 
 add_text_grob <- function(grob, text, gp) {
+
   sub       <- unlist(text$substring, FALSE, FALSE) %||% text$id
   text_lens <- run_len(sub)
 

@@ -3,14 +3,14 @@
 ##  trige_helpers.R                                                          ##
 ##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021-2022 by Allan Cameron & Teun van den Brand            ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
 ##                                                                           ##
 ##---------------------------------------------------------------------------##
 
-# Constants ---------------------------------------------------------------
+# Constants --------------------------------------------------------------------
 
 .rad2deg <- 180 / pi
 .deg2rad <- pi / 180
@@ -21,7 +21,9 @@
 
 # We can only define paths if they have two or more valid numeric points, and no
 # path can contain any infinite values
+
 check_xy <- function(x, y) {
+
   stopifnot(
     "x and y must be the same length" =
       (n <- length(x)) == length(y),
@@ -34,12 +36,14 @@ check_xy <- function(x, y) {
   )
 }
 
-# Angles ------------------------------------------------------------------
+
+# Angles -----------------------------------------------------------------------
 
 # This is a safe way to get the direction along a path (or its norm)
 # in radians or degrees, whether in grid units or bare numbers.
 
 angle_from_xy <- function(x, y, degrees = FALSE, norm = FALSE) {
+
   x <- as_npc(x, "x")
   y <- as_npc(y, "y")
 
@@ -55,10 +59,13 @@ angle_from_xy <- function(x, y, degrees = FALSE, norm = FALSE) {
   rads
 }
 
-# Arclength ---------------------------------------------------------------
+
+# Arclength --------------------------------------------------------------------
 
 # Get the cumulative length of an x, y path safely, by group (id) if needed
+
 arclength_from_xy <- function(x, y, id = NULL) {
+
   # Handle length-1 paths (including NAs) correctly
   if (length(x) == 1 || length(y) == 1) return(0 * x[1] + 0 * y[1])
 
@@ -86,6 +93,7 @@ arclength_from_xy <- function(x, y, id = NULL) {
   ave(dist, id, FUN = cumsum)
 }
 
+
 # Before / After ---------------------------------------------------------------
 
 # We sometimes need to compare angles along a path, but ensure that the first
@@ -93,11 +101,13 @@ arclength_from_xy <- function(x, y, id = NULL) {
 # allow a shorthand method of doing this.
 
 before <- function(x) {
+
   if (length(x) == 0) x else x[c(1, seq_along(x))]
 }
 
 
 after <- function(x) {
+
   if (length(x) == 0) x else x[c(seq_along(x), length(x))]
 }
 
@@ -108,6 +118,7 @@ after <- function(x) {
 # it. The offset path is the set of points where adjacent offset lines meet.
 
 get_offset <- function(x, y, d = 0) {
+
   # Get angle normal to each segment of the path
   theta <- angle_from_xy(x, y, norm = TRUE)
 
@@ -136,6 +147,7 @@ get_offset <- function(x, y, d = 0) {
 # Produces kernel-based smoothing of paths for use with straight labels
 
 get_smooth_offset <- function(x, y, d, width = 0.02) {
+
   dist <- arclength_from_xy(x, y)
   sd   <- max(dist) * width
 
@@ -153,12 +165,13 @@ get_smooth_offset <- function(x, y, d, width = 0.02) {
 }
 
 
-# Curvature ---------------------------------------------------------------
+# Curvature --------------------------------------------------------------------
 
 # Finds the curvature (change in angle per change in arc length)
 # This in effect finds 1/R, where R is the radius of the curve
 
 get_curvature <- function(x, y) {
+
   if (length(x) < 3) return(rep(0, length(x)))
 
   dx   <- diff(x)
@@ -178,6 +191,7 @@ get_curvature <- function(x, y) {
 # Detects whether the distance d ever exceeds curvature of an [x, y] path
 
 exceeds_curvature <- function(x, y, d, tolerance = 0.1) {
+
   curve_radius <- 1 / get_curvature(x, y)
   as.numeric(apply(outer(curve_radius, d,
         FUN = function(a, b) {
@@ -189,6 +203,7 @@ exceeds_curvature <- function(x, y, d, tolerance = 0.1) {
 # A rollmean that returns the same length vector as was input
 
 safe_rollmean <- function(vec, k = 10) {
+
   if (k < 2) return(vec)
   mat <- sapply(seq_along(vec) - k / 2, function(x) x + 0:(k - 1))
   mat[mat < 1] <- 1
@@ -203,6 +218,7 @@ safe_rollmean <- function(vec, k = 10) {
 # Returns the index of the flattest point of an x, y path.
 
 which.min_curvature <- function(x, y, k = 10) {
+
   len       <- arclength_from_xy(x, y)
   len       <- len / max(len)
   curv      <- abs(get_curvature(x, y))
@@ -212,12 +228,13 @@ which.min_curvature <- function(x, y, k = 10) {
 }
 
 
-# Rounding corners --------------------------------------------------------
+# Rounding corners -------------------------------------------------------------
 
 # Checks whether path contains any angles greater than 12 degrees, which is an
 # approximate value beyond which paths appear cornered or angular.
 
 has_corners <- function(x, y) {
+
   angles <- angle_from_xy(x, y, degrees = TRUE)
   any(abs(diff(angles)) > 12)
 }
@@ -228,6 +245,7 @@ has_corners <- function(x, y) {
 # or last point.
 
 round_corners <- function(x, y, radius, at, n = 10) {
+
   len  <- arclength_from_xy(x, y)
 
   # Find surrounding points around corners at radius distance

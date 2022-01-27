@@ -3,13 +3,12 @@
 ##  text_params.R                                                            ##
 ##  Part of the geomtextpath R package                                       ##
 ##                                                                           ##
-##  Copyright (C) 2021 by Allan Cameron & Teun van den Brand                 ##
+##  Copyright (C) 2021 - 2022 by Allan Cameron & Teun van den Brand          ##
 ##                                                                           ##
 ##  Licensed under the MIT license - see https://mit-license.org             ##
 ##  or the LICENSE file in the project root directory                        ##
 ##                                                                           ##
 ##---------------------------------------------------------------------------##
-
 
 #' Set static parameters
 #'
@@ -72,6 +71,7 @@ static_text_params <- function(
   rich           = FALSE,
   remove_long    = FALSE
 ) {
+
   if (is.null(gap)) {
     gap <- switch(.type, text = NA, FALSE)
   }
@@ -97,8 +97,11 @@ static_text_params <- function(
   )
 }
 
+
 # Automatically capture static text parameters
+
 set_params <- function(...) {
+
   params      <- list(...)
   text_names  <- names(formals(static_text_params))
   text_names  <- intersect(text_names, names(params))
@@ -108,7 +111,9 @@ set_params <- function(...) {
   params
 }
 
+
 update_params <- function(params, type = "text") {
+
   text_params <- params$text_params %||% static_text_params(.type = type)
   text_names  <- names(formals(static_text_params))
   text_names  <- intersect(text_names, names(params))
@@ -120,12 +125,20 @@ update_params <- function(params, type = "text") {
   params
 }
 
+
 # This function is to check that user input is what we would expect it to be.
 # It checks `value` for being of a particular class `type` and have `length`
 # length. Optionally, one can allow NAs or NULLs.
-assert <- function(value, type, length = 1L,
-                   allow_NAs = FALSE, allow_NULL = FALSE,
-                   argname = deparse(substitute(value))) {
+
+assert <- function(
+  value,
+  type,
+  length     = 1L,
+  allow_NAs  = FALSE,
+  allow_NULL = FALSE,
+  argname    = deparse(substitute(value))
+) {
+
   if (is.null(value) && allow_NULL) {
     return(NULL)
   }
