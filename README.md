@@ -10,6 +10,8 @@ status](https://www.r-pkg.org/badges/version/geomtextpath)](https://CRAN.R-proje
 [![R-CMD-check](https://github.com/AllanCameron/geomtextpath/workflows/R-CMD-check/badge.svg)](https://github.com/AllanCameron/geomtextpath/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/AllanCameron/geomtextpath/branch/main/graph/badge.svg)](https://app.codecov.io/gh/AllanCameron/geomtextpath?branch=main)
+[![metacran
+downloads](https://cranlogs.r-pkg.org/badges/geomtextpath)](https://cran.r-project.org/package=geomtextpath)
 <!-- badges: end -->
 
 ## Create curved text in ggplot2
@@ -88,14 +90,16 @@ If we want our text in a box, even when the text is curved, we can use
 `geom_labelpath` instead:
 
 ``` r
-
 set.seed(5)
-
-df <- data.frame(x = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
-                 y = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
+x  <- runif(5)
+y  <- runif(5)
+df <- data.frame(x = spline(1:5, x, xout = seq(1, 5, 1/100))$y,
+                 y = spline(1:5, y, runif(5), xout = seq(1, 5, 1/100))$y,
                  z = "A curved textbox on an arbitrary path")
 
-ggplot(df, aes(x, y, label = z)) + geom_labelpath(size = 5, fill = "#F6F6FF")
+ggplot(df, aes(x, y, label = z)) + 
+  geom_labelpath(size = 5, fill = "#F6F6FF", hjust = 0.55) +
+  geom_point(data = data.frame(x = x, y = y, z = 1))
 ```
 
 <img src="man/figures/README-intro_label-1.png" width="100%" style="display: block; margin: auto;" />
@@ -108,7 +112,7 @@ foundation of the other geoms in this package. The line-based geoms in
 `ggplot` all have two equivalents in this package:
 
 | **ggplot geom**  | **Text equivalent**  | **Label equivalent**  |
-| :--------------- | :------------------- | :-------------------- |
+|:-----------------|:---------------------|:----------------------|
 | `geom_path`      | `geom_textpath`      | `geom_labelpath`      |
 | `geom_segment`   | `geom_textsegment`   | `geom_labelsegment`   |
 | `geom_line`      | `geom_textline`      | `geom_labelline`      |
@@ -193,7 +197,6 @@ calling `geom_textcontour` or `geom_labelcontour` instead of
 `geom_contour`:
 
 ``` r
-
 df <- expand.grid(x = seq(nrow(volcano)), y = seq(ncol(volcano)))
 df$z <- as.vector(volcano)
 
@@ -226,9 +229,8 @@ These geoms behave much the same way as `geom_sf`, except linestrings
 such as rivers and roads can be given (curved) text labels:
 
 ``` r
-
 library(sf)
-#> Linking to GEOS 3.8.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE
+#> Linking to GEOS 3.9.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE
 
 df <- data.frame(x = c(-4.2518, -3.1883), 
                  y = c(55.8642, 55.9533),
@@ -360,7 +362,6 @@ using a `text_smoothing` parameter, which can be set from 0 (none) to
 100 (maximum).
 
 ``` r
-
 ggplot(economics, aes(date, unemploy)) +
   geom_textline(linecolour = "grey", size = 4, vjust = -1.5,
                 label = "1990s Decline", text_smoothing = 30)
@@ -400,7 +401,6 @@ labels to be interpreted as rich text, simply pass `rich = TRUE` as a
 parameter in the call to the geom layer
 
 ``` r
-
 lab <- paste("<span style='color:gray30;font-size:10pt'>Plasma</span>",
              "<strong style='color:red4;font-size:10pt'>Indometacin</strong>",
              "<span style ='color:gray30;font-size:10pt'>Concentration </span>",
@@ -516,7 +516,6 @@ p
 That flip nicely to polar co-ordinates.
 
 ``` r
-
 p + coord_polar()
 ```
 

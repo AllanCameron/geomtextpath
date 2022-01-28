@@ -24,6 +24,7 @@ library(geomtextpath)
 [![CRAN status](https://www.r-pkg.org/badges/version/geomtextpath)](https://CRAN.R-project.org/package=geomtextpath)
 [![R-CMD-check](https://github.com/AllanCameron/geomtextpath/workflows/R-CMD-check/badge.svg)](https://github.com/AllanCameron/geomtextpath/actions)
 [![Codecov test coverage](https://codecov.io/gh/AllanCameron/geomtextpath/branch/main/graph/badge.svg)](https://app.codecov.io/gh/AllanCameron/geomtextpath?branch=main)
+[![metacran downloads](https://cranlogs.r-pkg.org/badges/geomtextpath)](https://cran.r-project.org/package=geomtextpath)
 <!-- badges: end -->
 
 ## Create curved text in ggplot2
@@ -82,12 +83,15 @@ If we want our text in a box, even when the text is curved, we can use `geom_lab
 ```{r intro_label}
 
 set.seed(5)
-
-df <- data.frame(x = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
-                 y = spline(1:5, runif(5), xout = seq(1, 5, 1/100))$y,
+x  <- runif(5)
+y  <- runif(5)
+df <- data.frame(x = spline(1:5, x, xout = seq(1, 5, 1/100))$y,
+                 y = spline(1:5, y, runif(5), xout = seq(1, 5, 1/100))$y,
                  z = "A curved textbox on an arbitrary path")
 
-ggplot(df, aes(x, y, label = z)) + geom_labelpath(size = 5, fill = "#F6F6FF")
+ggplot(df, aes(x, y, label = z)) + 
+  geom_labelpath(size = 5, fill = "#F6F6FF", hjust = 0.55) +
+  geom_point(data = data.frame(x = x, y = y, z = 1))
 
 ```
 
