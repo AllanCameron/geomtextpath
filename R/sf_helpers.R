@@ -265,6 +265,7 @@ sf_textgrob <- function(
   lwd          <- (x$linewidth    %||% defaults$linewidth[type_ind]) * 3.779528
   fontsize     <- size
   family       <- x$family        %||% defaults$family[type_ind]
+  family       <- family          %nz% "fallback"
   fontface     <- x$fontface      %||% defaults$fontface[type_ind]
   pch          <- x$shape         %||% defaults$shape[type_ind]
   lty          <- x$linetype      %||% defaults$linetype[type_ind]
@@ -278,11 +279,11 @@ sf_textgrob <- function(
                   linejoin  = linejoin,
                   linemitre = linemitre)
 
-  gp_text <- gpar(col       = textcol,
-                  fontsize  = fontsize,
-                  family    = family,
-                  fontface  = fontface,
-                  alpha     = alpha)
+  gp_text <- gpar(col           = textcol,
+                  fontsize      = fontsize,
+                  fontfamily    = family,
+                  fontface      = fontface,
+                  alpha         = alpha)
 
   gp_box  <- gpar(col       = boxcolour,
                   lty       = boxlinetype,
