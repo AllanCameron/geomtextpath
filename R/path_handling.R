@@ -248,17 +248,17 @@ tailor_arrow <- function(data, arrow) {
   arrow[] <- lapply(arrow, function(x) {
     x[pmin(id, length(x))]
   })
-  angle <- arrow$angle
   ends  <- arrow$ends
+  lens  <- arrow$length
 
   # Ends are 1 = "first", 2 = "last", 3 = "both".
-  # We 'hide' an arrow by setting an NA angle
-  angle[ends == 2 & sides == "pre"]  <- NA_integer_
-  angle[ends == 1 & sides == "post"] <- NA_integer_
-  ends[ends == 3 & sides == "pre"]   <- 1L
-  ends[ends == 3 & sides == "post"]  <- 2L
-  arrow$angle <- angle
-  arrow$ends  <- ends
+  # We 'hide' an arrow by setting a zero length
+  lens[ends == 2 & sides == "pre"]  <- unit(0, "pt")
+  lens[ends == 1 & sides == "post"] <- unit(0, "pt")
+  ends[ends == 3 & sides == "pre"]  <- 1L
+  ends[ends == 3 & sides == "post"] <- 2L
+  arrow$ends   <- ends
+  arrow$length <- lens
   arrow
 }
 
