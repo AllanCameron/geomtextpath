@@ -1,6 +1,6 @@
 # geomtextpath (development version)
 
-No changes yet.
+* Fixed a bug in the windows graphics device when using arrows (#66).
 
 # geomtextpath 0.1.0
 

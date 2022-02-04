@@ -186,22 +186,22 @@ test_that("arrows are expanded correctly", {
 
   test <- tailor_arrow(data, arrow(ends = "last"))
   # Angle should be NA when section is 'pre'
-  expect_equal(test$angle, c(NA, 30, NA, 30, 30))
+  expect_equal(as.numeric(test$length), c(0, 0.25, 0, 0.25, 0.25))
   expect_equal(test$ends, rep(2L, 5))
 
   test <- tailor_arrow(data, arrow(ends = "first"))
   # Angle should be NA when section is 'post'
-  expect_equal(test$angle, c(30, NA, 30, NA, 30))
+  expect_equal(as.numeric(test$length), c(0.25, 0, 0.25, 0, 0.25))
   expect_equal(test$ends, rep(1L, 5))
 
   # Angles should be preserved, but ends should be set correctly
   test <- tailor_arrow(data, arrow(ends = "both"))
-  expect_equal(test$angle, rep(30, 5))
+  expect_equal(as.numeric(test$length), rep(0.25, 5))
   expect_equal(test$ends, c(1L, 2L, 1L, 2L, 3L))
 
   # Test that we can use a mix of ends
   test <- tailor_arrow(data, arrow(ends = c("first", "last", "first")))
-  expect_equal(test$angle, c(30, NA, NA, 30, 30))
+  expect_equal(as.numeric(test$length), c(0.25, 0, 0, 0.25, 0.25))
   expect_equal(test$ends, c(1L, 1L, 2L, 2L, 1L))
 })
 
