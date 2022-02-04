@@ -28,7 +28,7 @@ jobs:
       - name: Install xml2
         run: Rscript -e 'install.packages("xml2")'
       - name: Install sf
-        run: Rscript -e 'install.packages("sf")'
+        run: Rscript -e 'install.packages("sf", type = "mac.binary")'
       - name: Install self
         run: Rscript -e 'remotes::install_github(Sys.getenv("THIS_REPO"))'
       - name: Render README
