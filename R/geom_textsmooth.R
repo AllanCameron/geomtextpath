@@ -46,7 +46,6 @@ geom_textsmooth <- function(
   method      = NULL,
   formula     = NULL,
   na.rm       = FALSE,
-  method.args = list(),
   orientation = NA,
   show.legend = NA,
   inherit.aes = TRUE
@@ -55,7 +54,6 @@ geom_textsmooth <- function(
   params <- set_params(
     na.rm       = na.rm,
     orientation = orientation,
-    method.args = method.args,
     ...
   )
   if (identical(stat, "smooth")) {
@@ -88,7 +86,6 @@ geom_labelsmooth <- function(
   method      = NULL,
   formula     = NULL,
   na.rm       = FALSE,
-  method.args = list(),
   orientation = NA,
   show.legend = NA,
   inherit.aes = TRUE,
@@ -98,7 +95,6 @@ geom_labelsmooth <- function(
   params <- set_params(
     na.rm       = na.rm,
     orientation = orientation,
-    method.args = method.args,
     ...
   )
 
