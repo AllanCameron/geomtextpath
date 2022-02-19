@@ -14,7 +14,6 @@ geom_textsmooth(
   method = NULL,
   formula = NULL,
   na.rm = FALSE,
-  method.args = list(),
   orientation = NA,
   show.legend = NA,
   inherit.aes = TRUE
@@ -28,7 +27,6 @@ geom_labelsmooth(
   method = NULL,
   formula = NULL,
   na.rm = FALSE,
-  method.args = list(),
   orientation = NA,
   show.legend = NA,
   inherit.aes = TRUE,
@@ -88,9 +86,6 @@ observations and \code{formula = y ~ s(x, bs = "cs")} otherwise.}
 
 \item{na.rm}{If \code{FALSE}, the default, missing values are removed with
 a warning. If \code{TRUE}, missing values are silently removed.}
-
-\item{method.args}{List of additional arguments passed on to the modelling
-function defined by \code{method}.}
 
 \item{orientation}{The orientation of the layer. The default (\code{NA})
 automatically determines the orientation from the aesthetic mapping. In the
