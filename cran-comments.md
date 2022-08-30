@@ -4,6 +4,16 @@ Invalid html newly detected; this has been fixed by updating Roxygen2, which was
 used to create the Rd files from which the html was generated.
 Patched to new 0.1.1
 
+```
+devtools::check(remote = TRUE, manual = TRUE)
+
+-- R CMD check results --------------------------------- geomtextpath 0.1.1 ----
+Duration: 2m 4.5s
+
+0 errors v | 0 warnings v | 0 notes v
+```
+
+---
 
 Pre-submission checks - 21st January 2022
 
