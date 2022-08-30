@@ -2,6 +2,7 @@ Fixing CRAN note - 29 August 2022
 
 Invalid html newly detected; this has been fixed by updating Roxygen2, which was
 used to create the Rd files from which the html was generated.
+Patched to new 0.1.1
 
 
 Pre-submission checks - 21st January 2022

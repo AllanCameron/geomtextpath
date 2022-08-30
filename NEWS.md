@@ -1,6 +1,7 @@
-# geomtextpath (development version)
+# geomtextpath 0.1.1
 
 * Fixed a bug in the windows graphics device when using arrows (#66).
+* Fixed HTML5 bug by updating Roxygen2 
 
 # geomtextpath 0.1.0
 
