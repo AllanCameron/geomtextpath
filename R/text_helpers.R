@@ -318,7 +318,7 @@ parse_richtext <- function(
 
   if (md) {
     text <- markdown::markdownToHTML(text = text,
-              options = c("use_xhtml", "fragment_only"))
+              options = "-standalone")
 
   }
   # Deal with <br> now, they are a pain to handle after parsing
