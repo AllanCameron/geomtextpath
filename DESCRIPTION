@@ -39,7 +39,7 @@ Suggests:
     roxygen2,
     sf,
     xml2,
-    markdown
+    markdown (>= 1.3)
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Collate: 
