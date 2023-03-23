@@ -68,6 +68,11 @@ plotted on an arbitrary path, as shown in the following example:
 # Set a consistent theme for the plots here
 theme_set(theme_minimal() + 
           theme(axis.line = element_line(size = 0.25, colour = "gray75")))
+#> Warning: The `size` argument of `element_line()` is deprecated as of ggplot2 3.4.0.
+#> ℹ Please use the `linewidth` argument instead.
+#> This warning is displayed once every 8 hours.
+#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+#> generated.
 
 t <- seq(5, -1, length.out = 1000) * pi
 
@@ -416,7 +421,7 @@ ggplot(Indometh, aes(time, conc, group = 1)) +
                   label = lab, rich = TRUE, vjust = -0.5, size = 4.5, 
                   text_smoothing = 40, linecolor = "red4") + 
   xlim(c(0, 4))
-#> Warning: Removed 18 rows containing non-finite values (stat_smooth).
+#> Warning: Removed 18 rows containing non-finite values (`stat_smooth()`).
 ```
 
 <img src="man/figures/README-richtext-1.png" width="100%" style="display: block; margin: auto;" />
@@ -512,6 +517,11 @@ p <- data.frame(x1 = c(seq(0, 10/6 * pi, pi/3),
   scale_alpha_identity() +
   theme_void() +
   theme(legend.position = "none") 
+#> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+#> ℹ Please use `linewidth` instead.
+#> This warning is displayed once every 8 hours.
+#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+#> generated.
 
 p
 ```
