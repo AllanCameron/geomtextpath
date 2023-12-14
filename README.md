@@ -492,7 +492,7 @@ p <- data.frame(x1 = c(seq(0, 10/6 * pi, pi/3),
   ggplot(aes(x1, y1)) +
   geom_rect(aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2, fill = group,
                 alpha = alpha),
-            color = "white", size = 2) +
+            color = "white", linewidth = 2) +
   geom_textpath(data = data.frame(x1 = seq(0, 2 * pi, length = 300),
            y1 = rep(0.5, 300),
            label = rep(c("stats", "effects", "polar"), each = 100)),
@@ -512,11 +512,6 @@ p <- data.frame(x1 = c(seq(0, 10/6 * pi, pi/3),
   scale_alpha_identity() +
   theme_void() +
   theme(legend.position = "none") 
-#> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-#> i Please use `linewidth` instead.
-#> This warning is displayed once every 8 hours.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-#> generated.
 
 p
 ```
@@ -546,7 +541,7 @@ clock <- function(x) {
 
   ggplot(as.data.frame(rbind(hours, minutes)), aes(V1, V3)) + 
       geom_segment(aes(xend = V2, yend = V4), 
-                   size = c(3, 2), lineend = "round") +
+                   linewidth = c(3, 2), lineend = "round") +
       geom_point(x = 0, y = 0, size = 6) +
       scale_x_continuous(limits = c(0, 12), breaks = 1:12,
                          label = as.roman) +
