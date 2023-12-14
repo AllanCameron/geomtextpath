@@ -233,7 +233,7 @@ such as rivers and roads can be given (curved) text labels:
 ``` r
 
 library(sf)
-#> Linking to GEOS 3.9.3, GDAL 3.5.2, PROJ 8.2.1; sf_use_s2() is TRUE
+#> Linking to GEOS 3.11.0, GDAL 3.5.3, PROJ 9.1.0; sf_use_s2() is TRUE
 
 df <- data.frame(x = c(-4.2518, -3.1883), 
                  y = c(55.8642, 55.9533),
@@ -513,7 +513,7 @@ p <- data.frame(x1 = c(seq(0, 10/6 * pi, pi/3),
   theme_void() +
   theme(legend.position = "none") 
 #> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
-#> i Please use `linewidth` instead.
+#> ℹ Please use `linewidth` instead.
 #> This warning is displayed once every 8 hours.
 #> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 #> generated.
