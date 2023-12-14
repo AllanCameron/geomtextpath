@@ -61,7 +61,7 @@ The core functions in this package, `geom_textpath` and `geom_labelpath`, work l
 ```{r spiral}
 # Set a consistent theme for the plots here
 theme_set(theme_minimal() + 
-          theme(axis.line = element_line(size = 0.25, colour = "gray75")))
+          theme(axis.line = element_line(linewidth = 0.25, colour = "gray75")))
 
 t <- seq(5, -1, length.out = 1000) * pi
 

@@ -193,7 +193,7 @@ GeomLabelpath <- ggproto(
       upright        = text_params$upright,
       default.units  = "npc",
       angle          = data$angle,
-      polar_params   = get_polar_params(coord),
+      polar_params   = get_polar_params(coord, panel_params),
       padding        = text_params$padding,
       text_smoothing = text_params$text_smoothing,
       rich           = text_params$rich,

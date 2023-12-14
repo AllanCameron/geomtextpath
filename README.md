@@ -67,12 +67,7 @@ plotted on an arbitrary path, as shown in the following example:
 ``` r
 # Set a consistent theme for the plots here
 theme_set(theme_minimal() + 
-          theme(axis.line = element_line(size = 0.25, colour = "gray75")))
-#> Warning: The `size` argument of `element_line()` is deprecated as of ggplot2 3.4.0.
-#> ℹ Please use the `linewidth` argument instead.
-#> This warning is displayed once every 8 hours.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-#> generated.
+          theme(axis.line = element_line(linewidth = 0.25, colour = "gray75")))
 
 t <- seq(5, -1, length.out = 1000) * pi
 
@@ -238,7 +233,7 @@ such as rivers and roads can be given (curved) text labels:
 ``` r
 
 library(sf)
-#> Linking to GEOS 3.10.2, GDAL 3.4.2, PROJ 8.2.1; sf_use_s2() is TRUE
+#> Linking to GEOS 3.11.0, GDAL 3.5.3, PROJ 9.1.0; sf_use_s2() is TRUE
 
 df <- data.frame(x = c(-4.2518, -3.1883), 
                  y = c(55.8642, 55.9533),
