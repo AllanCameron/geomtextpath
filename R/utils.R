@@ -336,13 +336,16 @@ make_label <- function(x) {
 
 # Allows information about co-ordinate system to be passed to grob
 
-get_polar_params <- function(coord) {
+get_polar_params <- function(coord, params) {
 
   if (inherits(coord, "CoordPolar")) {
-      list(x = 0.5, y = 0.5, theta = coord$theta)
-    } else  {
-      NULL
-    }
+    list(x = 0.5, y = 0.5, theta = coord$theta)
+  } else if (inherits(coord, "CoordRadial")) {
+    data <- coord$transform(data.frame(x = -Inf, y = -Inf), params)
+    list(x = data$x, y = data$y, theta = coord$theta)
+  } else {
+    NULL
+  }
 }
 
 
