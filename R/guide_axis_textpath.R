@@ -12,6 +12,10 @@
 #' @export
 #'
 #' @examples
+#' ggplot(mpg, aes(class, displ)) +
+#'   geom_boxplot(staplewidth = 0.5) +
+#'   coord_radial() +
+#'   guides(theta = "axis_textpath")
 guide_axis_textpath <- function(title = waiver(), halign = "center",
                                 rich = FALSE, minor.ticks = FALSE,
                                 cap = "none", order = 0, position = waiver()) {
@@ -51,25 +55,24 @@ guide_axis_textpath <- function(title = waiver(), halign = "center",
 #' @format NULL
 #' @usage NULL
 GuideAxisTextpath <- ggproto(
-  NULL, ggplot2:::GuideAxisTheta,
+  NULL, GuideAxisTheta,
 
   params = c(
-    ggplot2:::GuideAxisTheta$params,
+    GuideAxisTheta$params,
     list(halign = "center", rich = FALSE)
   ),
 
   transform = function(self, params, coord, panel_params) {
     params$polar_params <- get_polar_params(coord, panel_params)
-    ggplot2:::GuideAxisTheta$transform(params, coord, panel_params)
+    GuideAxisTheta$transform(params, coord, panel_params)
   },
 
   build_labels = function(key, elements, params) {
-
     if (inherits(elements$text, "element_blank")) {
       return(zeroGrob())
     }
-    key <- key[!detect_missing(key, ".label"), , drop = FALSE]
 
+    key <- key[!detect_missing(key, ".label"), , drop = FALSE]
     labels <- key$.label
     theta  <- key$theta
     if (length(labels) < 1) {
@@ -112,8 +115,10 @@ GuideAxisTextpath <- ggproto(
     if (is.null(params$stack_offset)) {
       return(NULL)
     }
+    # When this axis is part of a stack of axes we need to know the height
+    # of the text
     labels <- grobs$labels$textpath$label
-    if (length(labels) < 1) {
+    if (length(labels) < 1 || inherits(labels, "zeroGrob")) {
       return(elements$offset)
     }
     heights <- numapply(labels, function(x) attr(x, "metrics")$height)
