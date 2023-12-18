@@ -341,8 +341,11 @@ get_polar_params <- function(coord, params) {
   if (inherits(coord, "CoordPolar")) {
     list(x = 0.5, y = 0.5, theta = coord$theta)
   } else if (inherits(coord, "CoordRadial")) {
-    data <- coord$transform(data.frame(x = -Inf, y = -Inf), params)
-    list(x = data$x, y = data$y, theta = coord$theta)
+    list(
+      x = rescale(0.5, from = params$bbox$x),
+      y = rescale(0.5, from = params$bbox$y),
+      theta = coord$theta
+    )
   } else {
     NULL
   }
