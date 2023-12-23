@@ -68,8 +68,10 @@ test_that("wrapping first and last labels works as expected", {
 
   expect_equal(axis_labels$textpath$label[[9]]$glyph, c("1", "/", "1", "0"))
 
-  out <- ggplot_gtable(ggplot_build(p + scale_x_continuous(breaks = 1:10,
-                                                      labels = as.expression)))
+  out <- ggplot_gtable(ggplot_build(
+    p + scale_x_continuous(breaks = seq(1, 10, by = 1),
+                           labels = as.expression)
+  ))
   panel <- out$grobs[[which(out$layout$name == "panel")]]
   axis_labels <- panel$children[[5]]$children[[1]]
 
