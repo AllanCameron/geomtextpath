@@ -276,6 +276,10 @@ ggplot(mtcars, aes(mpg, disp)) +
                  linetype = 2, vjust = 1.3, color = "blue4") +
   geom_textabline(slope = 15, intercept = -100, label = "partition line", 
                   color = "green4", hjust = 0.6, vjust = -0.2)
+#> Warning in geom_texthline(yintercept = 200, label = "displacement threshold", : All aesthetics have length 1, but the data has 32 rows.
+#> ℹ Did you mean to use `annotate()`?
+#> Warning in geom_textvline(xintercept = 20, label = "consumption threshold", : All aesthetics have length 1, but the data has 32 rows.
+#> ℹ Did you mean to use `annotate()`?
 ```
 
 <img src="man/figures/README-vline-1.png" width="100%" style="display: block; margin: auto;" />
@@ -416,7 +420,8 @@ ggplot(Indometh, aes(time, conc, group = 1)) +
                   label = lab, rich = TRUE, vjust = -0.5, size = 4.5, 
                   text_smoothing = 40, linecolor = "red4") + 
   xlim(c(0, 4))
-#> Warning: Removed 18 rows containing non-finite values (`stat_smooth()`).
+#> Warning: Removed 18 rows containing non-finite outside the scale range
+#> (`stat_smooth()`).
 ```
 
 <img src="man/figures/README-richtext-1.png" width="100%" style="display: block; margin: auto;" />
