@@ -4,7 +4,7 @@
 #' This is a specialised guide used in \code{coord_radial()} to represent
 #' the theta position scale.
 #'
-#' @inheritParams guide_axis_theta
+#' @inheritParams ggplot2::guide_axis_theta
 #' @inheritParams geom_textpath
 #'
 #' @return A \code{Guide} ggproto object that can be added to a plot through a
@@ -46,11 +46,7 @@ guide_axis_textpath <- function(title = waiver(), halign = "center",
   )
 }
 
-#' The Guide object for an axis textpath.
-#'
-#' This is the \code{ggproto} class that creates the axis textpath. It is not
-#' intended t o be used directly by the end user.
-#'
+#' @rdname GeomTextpath
 #' @export
 #' @format NULL
 #' @usage NULL
