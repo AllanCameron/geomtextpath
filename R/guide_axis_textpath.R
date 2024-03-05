@@ -91,14 +91,22 @@ GuideAxisTextpath <- ggproto(
       elem[names(elem) != "margin"],
       rep, length.out = length(labels)
     )
+
+    vjust <- switch(
+      params$position,
+      theta = 1, theta.sec = 0,
+      elem$vjust
+    )
+
     textpathGrob(
       labels,
       x = unit(key$x, "npc") + xoffset,
       y = unit(key$y, "npc") + yoffset,
       id = seq_len(nrow(key)),
       hjust = elem$hjust,
-      vjust = elem$vjust,
+      vjust = vjust,
       gp_text = gpar(
+        col        = elem$colour,
         fontsize   = elem$size,
         fontface   = elem$fontface %||% elem$font,
         fontfamily = elem$family,
