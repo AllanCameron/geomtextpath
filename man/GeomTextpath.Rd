@@ -2,7 +2,7 @@
 % Please edit documentation in R/geom_textpath.R, R/geom_labelpath.R,
 %   R/geom_textsegment.R, R/geom_textabline.R, R/geom_textcontour.R,
 %   R/geom_textcurve.R, R/geom_textdensity.R, R/geom_textdensity2d.R,
-%   R/geom_texthline.R, R/geom_textsf.R
+%   R/geom_texthline.R, R/geom_textsf.R, R/guide_axis_textpath.R
 \docType{data}
 \name{GeomTextpath}
 \alias{GeomTextpath}
@@ -26,6 +26,7 @@
 \alias{GeomLabelhline}
 \alias{GeomTextsf}
 \alias{GeomLabelsf}
+\alias{GuideAxisTextpath}
 \title{The Geom object for a textpath}
 \description{
 This is the \code{ggproto} class that creates the textpath layer. It is not
