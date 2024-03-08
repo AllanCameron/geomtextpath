@@ -51,9 +51,8 @@
 scale_hjust_discrete <- function(..., range = c(0, 1), guide = "none") {
 
   discrete_scale(
-    "hjust",
-    "hjust_d",
-    function(n) seq(range[1], range[2], length.out = n),
+    aesthetics = "hjust",
+    palette = function(n) seq(range[1], range[2], length.out = n),
     guide = guide,
     ...
   )
@@ -83,9 +82,8 @@ scale_hjust_manual <- function(
 #' @export
 scale_hjust_identity <- function(..., guide = "none") {
 
-    continuous_scale("hjust",
-                     "identity",
-                     identity_pal(),
+    continuous_scale(aesthetics = "hjust",
+                     palette = identity_pal(),
                      ...,
                      guide = guide,
                      super = ScaleContinuousIdentity)
@@ -97,9 +95,8 @@ scale_hjust_identity <- function(..., guide = "none") {
 scale_vjust_discrete <- function(..., guide = "none", range = c(-0.5, 1.5)) {
 
   discrete_scale(
-    "vjust",
-    "vjust_d",
-    function(n) seq(range[1], range[2], length.out = n),
+    aesthetics = "vjust",
+    palette = function(n) seq(range[1], range[2], length.out = n),
     guide = guide,
     ...
   )
@@ -124,9 +121,8 @@ scale_vjust_manual <- function(..., values, breaks = waiver(),
 #' @export
 scale_vjust_identity <- function(..., guide = "none") {
 
-    continuous_scale("vjust",
-                     "identity",
-                     identity_pal(),
+    continuous_scale(aesthetics = "vjust",
+                     palette = identity_pal(),
                      ...,
                      guide = guide,
                      super = ScaleContinuousIdentity)
@@ -165,8 +161,9 @@ manual_scale <- function(
       }
       values
   }
-  discrete_scale(aesthetic, "manual", pal, breaks = breaks,
-      limits = limits, ...)
+  discrete_scale(aesthetics = aesthetic,
+                 palette = pal, breaks = breaks,
+                 limits = limits, ...)
 }
 
 

@@ -76,7 +76,7 @@ static_text_params <- function(
     gap <- switch(.type, text = NA, FALSE)
   }
   halign <- rlang::arg_match0(halign, c("center", "left", "right"))
-  if (!isFALSE(rich) && !isFALSE(parse)) {
+  if (!base::isFALSE(rich) && !base::isFALSE(parse)) {
     warn(paste0("Plotmath expressions are incompatible with rich text.\n",
                 "Setting `rich = FALSE`. for now."))
     rich <- FALSE
@@ -156,7 +156,7 @@ assert <- function(
       paste0("`", argname, "` must be of length ", length, ".")
     )
   }
-  if (isFALSE(allow_NAs) && anyNA(value)) {
+  if (base::isFALSE(allow_NAs) && anyNA(value)) {
     message <- c(
       message,
       paste0("`", argname, "` contains NAs whereas it cannot.")

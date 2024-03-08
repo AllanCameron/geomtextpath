@@ -20,11 +20,11 @@ guide_axis_textpath <- function(title = waiver(), halign = "center",
                                 rich = FALSE, minor.ticks = FALSE,
                                 cap = "none", order = 0, position = waiver()) {
 
-  if (!(isTRUE(minor.ticks) || isFALSE(minor.ticks))) {
+  if (!(base::isTRUE(minor.ticks) || base::isFALSE(minor.ticks))) {
     abort("`minor.ticks` must be either `TRUE` or `FALSE.")
   }
   if (is.logical(cap)) {
-    if (!(isTRUE(cap) || isFALSE(cap))) {
+    if (!(base::isTRUE(cap) || base::isFALSE(cap))) {
       abort("`cap` must be either `TRUE`, `FALSE` or a <character>.")
     }
     cap <- if (cap) "both" else "none"
