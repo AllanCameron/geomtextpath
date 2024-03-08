@@ -1,3 +1,18 @@
+Fixing CRAN errors - 8 March 2024
+
+Multiple tests failing on latest R version which have been patched.
+Dependencies updated to ggplot 3.5.0.
+Version bumped to 0.1.2
+
+```
+devtools::check(remote = TRUE, manual = TRUE)
+
+-- R CMD check results --------------------------------- geomtextpath 0.1.2 ----
+Duration: 2m 32.4s
+
+0 errors v | 0 warnings v | 0 notes v
+```
+
 Fixing CRAN note - 29 August 2022
 
 Invalid html newly detected; this has been fixed by updating Roxygen2, which was
