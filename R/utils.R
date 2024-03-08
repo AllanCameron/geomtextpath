@@ -244,37 +244,23 @@ find_missing <- function(x, layer) {
 
 # Label utilities --------------------------------------------------------------
 
-# S3 generic to ensure label vector matches to given object
+# Ensure label vector matches to given object
 
-match_labels <- function(x, ...) {
+match_labels <- function(x, labels) {
 
-  UseMethod("match_labels")
-}
-
-
-#S3 method to ensure labels are same length as data frame
-
-match_labels.data.frame <- function(x, labels) {
-
-  if (length(labels) == 1) labels <- rep(labels, nrow(x))
-  if (nrow(x) != length(labels)) {
-    stop("Could not match labels to object ", deparse(substitute(x)))
+  if(is.data.frame(x)) {
+    if (length(labels) == 1) labels <- rep(labels, nrow(x))
+    if (nrow(x) != length(labels)) {
+      stop("Could not match labels to object ", deparse(substitute(x)))
+    }
+    return(labels)
   }
-  labels
-}
-
-
-# match labels to vector or list
-
-match_labels.default <- function(x, labels) {
-
   if (length(labels) == 1) labels <- rep(labels, length(x))
   if (length(x) != length(labels)) {
     stop("Could not match labels to object ", deparse(substitute(x)))
   }
   labels
 }
-
 
 # Similar to ggplot's rename function
 
