@@ -1,3 +1,11 @@
+Fixing new CRAN error 12 March 2024
+
+Failing test on some Linux machines due to different error message being produced on these machines when testing code for syntax errors
+
+Patched and bumped version
+
+
+
 Fixing CRAN errors - 8 March 2024
 
 Multiple tests failing on latest R version which have been patched.
