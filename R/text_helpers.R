@@ -388,7 +388,7 @@ text_shape <- function(text, id, gp, res = 72, vjust = 0.5, hjust = 0.5,
   # Remedy for https://github.com/r-lib/systemfonts/issues/85
   vjust[vjust == 1] <- 1 + .Machine$double.eps
 
-  txt <- shape_text(
+  txt <- list(
     strings    =  text,
     family     =  gp$fontfamily %nz% "fallback",
     size       =  gp$fontsize   %||% 12,
@@ -399,8 +399,20 @@ text_shape <- function(text, id, gp, res = 72, vjust = 0.5, hjust = 0.5,
     id         =  id,
     res = res, vjust = vjust, hjust = hjust, align = align
   )
+  # Compatibility with future textshaping 0.4.0 (#116)
+  if ("weight" %in% rlang::fn_fmls_names(shape_text)) {
+    txt$weight <- ifelse(txt$bold, "bold", "normal")
+    txt$bold   <- NULL
+  }
+  txt         <- do.call(shape_text, txt)
   adj         <- resolution_to_unit(res = res, unit = unit)
   shape_vars  <- c("x_offset", "y_offset", "x_midpoint")
+
+  # Compatibility with future textshaping 0.4.0 (#116)
+  if (!"x_midpoint" %in% colnames(txt$shape)) {
+    txt$shape$x_midpoint <- txt$shape$advance / 2
+  }
+
   metric_vars <- c("width", "height", "left_bearing", "right_bearing",
                    "top_bearing", "left_border", "top_border", "pen_x", "pen_y")
   txt$shape[, shape_vars]    <- txt$shape[, shape_vars]    * adj
