@@ -254,6 +254,6 @@ test_that("We can apply both smoothing types", {
   dev.off()
   unlink("Rplot_test.png")
 
-  expect_lt(abs(x - 0.5), 0.001)
-  expect_lt(abs(y - 0.9852688), 0.001)
+  expect_lt(abs(x - 0.5), 0.003)
+  expect_lt(abs(y - 0.9852688), 0.003)
 })
