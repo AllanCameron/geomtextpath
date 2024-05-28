@@ -44,6 +44,7 @@ test_that("Bidirectional text is flipped", {
 })
 
 test_that("Warn/error upon font fallback issues", {
+  skip_if(packageVersion("textshaping") > "0.3.7", "updates to font fallback")
 
   expect_error(measure_label("\u3053"), "No glyphs")
   expect_warning(measure_label(c("ABC", "\u3053")), "Not all glyphs")

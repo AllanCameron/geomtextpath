@@ -385,22 +385,31 @@ x_height <- function(gp) {
 text_shape <- function(text, id, gp, res = 72, vjust = 0.5, hjust = 0.5,
                        align = "center", unit = "inch") {
 
-  # Remedy for https://github.com/r-lib/systemfonts/issues/85
-  vjust[vjust == 1] <- 1 + .Machine$double.eps
+  bold <- ifelse((gp$font %||% 1) %in% c(2, 4), "bold", "normal")
+  italic <- (gp$font %||% 1) %in% c(3, 4)
 
-  txt <- shape_text(
+  font_path <- systemfonts::match_fonts(
+    gp$fontfamily %||% "", italic = italic, weight = bold
+  )
+  font_info <- systemfonts::font_info(path = font_path$path)
+
+  txt <- list(
     strings    =  text,
-    family     =  gp$fontfamily %nz% "fallback",
+    path       =  font_info$path,
     size       =  gp$fontsize   %||% 12,
-    italic     = (gp$font       %||% 1) %in% c(3, 4),
-    bold       = (gp$font       %||% 1) %in% c(2, 4),
+    italic     =  italic,
+    weight     =  bold,
     lineheight =  gp$lineheight %||% 1.2,
     tracking   =  gp$tracking   %||% 0,
+    width      =  font_info$width,
     id         =  id,
     res = res, vjust = vjust, hjust = hjust, align = align
   )
+  txt         <- do.call(shape_text, txt)
+  txt$shape$x_midpoint <- txt$shape$advance / 2
   adj         <- resolution_to_unit(res = res, unit = unit)
   shape_vars  <- c("x_offset", "y_offset", "x_midpoint")
+
   metric_vars <- c("width", "height", "left_bearing", "right_bearing",
                    "top_bearing", "left_border", "top_border", "pen_x", "pen_y")
   txt$shape[, shape_vars]    <- txt$shape[, shape_vars]    * adj
