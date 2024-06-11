@@ -1,3 +1,12 @@
+Hotfix 0.1.4 - 11 June 2024
+
+Bumped {textshaping} requirement for compatibility.
+We checked 8 reverse dependencies, comparing R CMD check results across CRAN and dev versions of this package.
+
+ * We saw 0 new problems
+ * We failed to check 0 packages
+
+
 Fixing new CRAN error 12 March 2024
 
 Failing test on some Linux machines due to different error message being produced on these machines when testing code for syntax errors
