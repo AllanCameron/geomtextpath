@@ -1,3 +1,15 @@
+# geomtextpath (development version)
+
+* Fix for compatibility with textshaping 0.4.0.
+
+# geomtextpath 0.1.3
+
+* Fix for compatibility with ggplot2 3.5.0.
+
+# geomtextpath 0.1.2
+
+* Fixed invalid html
+
 # geomtextpath 0.1.1
 
 * Fixed a bug in the windows graphics device when using arrows (#66).
