@@ -1,4 +1,4 @@
-# geomtextpath (development version)
+# geomtextpath 0.1.4
 
 * Fix for compatibility with textshaping 0.4.0.
 
