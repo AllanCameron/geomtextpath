@@ -1,7 +1,7 @@
 Package: geomtextpath
 Type: Package
 Title: Curved Text in 'ggplot2'
-Version: 0.1.4
+Version: 0.1.4.9000
 Authors@R: c(
     person(given = "Allan",
            family = "Cameron",
