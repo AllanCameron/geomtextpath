@@ -10,10 +10,11 @@ geom_textsf(
   data = NULL,
   stat = "sf",
   position = "identity",
+  ...,
+  remove_long = TRUE,
   na.rm = FALSE,
   show.legend = NA,
-  inherit.aes = TRUE,
-  ...
+  inherit.aes = TRUE
 )
 
 geom_labelsf(
@@ -21,10 +22,11 @@ geom_labelsf(
   data = NULL,
   stat = "sf",
   position = "identity",
+  ...,
+  remove_long = TRUE,
   na.rm = FALSE,
   show.legend = NA,
-  inherit.aes = TRUE,
-  ...
+  inherit.aes = TRUE
 )
 }
 \arguments{

@@ -59,6 +59,7 @@ NULL
 #' @export
 #' @rdname geom_textsf
 #' @inheritParams ggplot2::geom_point
+#' @inheritParams static_text_params
 #' @inheritDotParams geom_textpath -arrow -lineend -linejoin -linemitre
 #' @md
 geom_textsf <- function(
@@ -66,10 +67,11 @@ geom_textsf <- function(
   data        = NULL,
   stat        = "sf",
   position    = "identity",
+  ...,
+  remove_long = TRUE,
   na.rm       = FALSE,
   show.legend = NA,
-  inherit.aes = TRUE,
-  ...
+  inherit.aes = TRUE
 ) {
 
   rlang::check_installed("sf", "for `geom_textsf()`")
@@ -82,7 +84,11 @@ geom_textsf <- function(
       position    = position,
       show.legend = show.legend,
       inherit.aes = inherit.aes,
-      params      = set_params(na.rm = na.rm, ...)
+      params      = set_params(
+        na.rm = na.rm,
+        remove_long = remove_long,
+        ...
+      )
     ),
     coord_sf(default = TRUE)
   )
@@ -92,16 +98,18 @@ geom_textsf <- function(
 #' @export
 #' @rdname geom_textsf
 #' @inheritParams ggplot2::geom_point
+#' @inheritParams static_text_params
 #' @inheritDotParams geom_labelpath -arrow -lineend -linejoin -linemitre
 geom_labelsf <- function(
   mapping     = aes(),
   data        = NULL,
   stat        = "sf",
   position    = "identity",
+  ...,
+  remove_long = TRUE,
   na.rm       = FALSE,
   show.legend = NA,
-  inherit.aes = TRUE,
-  ...
+  inherit.aes = TRUE
 ) {
 
   rlang::check_installed("sf", "for `geom_labelsf()`")
@@ -114,7 +122,11 @@ geom_labelsf <- function(
       position    = position,
       show.legend = show.legend,
       inherit.aes = inherit.aes,
-      params      = set_params(na.rm = na.rm, ...)
+      params      = set_params(
+        na.rm = na.rm,
+        remove_long = remove_long,
+        ...
+      )
     ),
     coord_sf(default = TRUE)
   )
