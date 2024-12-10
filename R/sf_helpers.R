@@ -303,9 +303,7 @@ sf_textgrob <- function(
                   fill      = boxfill)
 
   # Allow extra textpath / labelpath parameters to be passed to st_as_grob
-  tp_vars <- list(hjust          = x$hjust %||% 0.5,
-                  vjust          = x$vjust %||% 0.5,
-                  text_params    = text_params,
+  tp_vars <- list(text_params    = text_params,
                   gp_text        = gp_text,
                   gp_box         = gp_box)
   # Build grobs
@@ -314,6 +312,8 @@ sf_textgrob <- function(
   for (i in seq_along(x$geometry)) {
     g   <- label_sf(x$geometry[i], labels[i], as_textbox = as_textbox)
     tp_i <- tp_vars
+    tp_i$hjust <- x$hjust[i] %||% 0.5
+    tp_i$vjust <- x$vjust[i] %||% 0.5
     tp_i$gp_text <- tp_i$gp_text[i]
     tp_i$gp_box  <- tp_i$gp_box[i]
     out <- addGrob(out,
