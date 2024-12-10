@@ -27,7 +27,7 @@ makeContent.labelpath <- function(x) {
                    max(arclength_from_xy(d$line_x, d$line_y))})
     too_long  <- text_lens > path_lens
   } else {
-    too_long  <- rep(FALSE, length(v$label))
+    too_long  <- rep(FALSE, length(path))
   }
 
   ss <- v$data$id %in% which(too_long)
@@ -41,6 +41,13 @@ makeContent.labelpath <- function(x) {
   }
 
   if (!all(too_long)) {
+    label <- v$label[!too_long]
+    if (length(label) < 1) {
+      x <- add_path_grob(x, path[!too_long], NULL,
+                         gp_subset(attr(path, "gp"), !too_long), params, v$arrow)
+      return(x)
+    }
+
     # Get the actual text string positions and angles for each group
     text <- Map(
         f       = place_text,

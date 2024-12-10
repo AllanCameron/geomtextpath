@@ -62,6 +62,9 @@ make_gap <- function(
   vjust     = 0.5,
   vjust_lim = c(0, 1)
 ) {
+  if (length(letters) == 0) {
+    return(path)
+  }
 
   padding <- as_inch(padding)
   if (is.unit(vjust)) {
