@@ -82,7 +82,7 @@ geom_textsf <- function(
       position    = position,
       show.legend = show.legend,
       inherit.aes = inherit.aes,
-      params      = list(na.rm = na.rm, ...)
+      params      = set_params(na.rm = na.rm, ...)
     ),
     coord_sf(default = TRUE)
   )
@@ -114,7 +114,7 @@ geom_labelsf <- function(
       position    = position,
       show.legend = show.legend,
       inherit.aes = inherit.aes,
-      params = list(na.rm = na.rm, ...)
+      params      = set_params(na.rm = na.rm, ...)
     ),
     coord_sf(default = TRUE)
   )
@@ -149,7 +149,7 @@ GeomTextsf <- ggproto("GeomTextSf", GeomSf,
 
   draw_panel = function(data, panel_params, coord, legend = NULL,
                         lineend = "butt", linejoin = "round", linemitre = 10,
-                        text_smoothing = 0,
+                        text_params = static_text_params("text"),
                         arrow = NULL, na.rm = TRUE) {
     if (!inherits(coord, "CoordSf")) {
       abort("geom_sf() must be used with coord_sf()")
@@ -157,7 +157,7 @@ GeomTextsf <- ggproto("GeomTextSf", GeomSf,
 
     data <- coord$transform(data, panel_params)
     sf_textgrob(data, lineend = lineend, linejoin = linejoin,
-                   linemitre = linemitre, text_smoothing = text_smoothing,
+                   linemitre = linemitre, text_params = text_params,
                    arrow = arrow, na.rm = na.rm)
   }
 )
@@ -194,14 +194,15 @@ GeomLabelsf <- ggproto("GeomLabelSf", GeomSf,
 
   draw_panel = function(data, panel_params, coord, legend = NULL,
                         lineend = "butt", linejoin = "round", linemitre = 10,
-                        arrow = NULL, text_smoothing = 0, na.rm = TRUE) {
+                        arrow = NULL, text_params = static_text_params("labels"),
+                        na.rm = TRUE) {
     if (!inherits(coord, "CoordSf")) {
       abort("geom_sf() must be used with coord_sf()")
     }
 
     data <- coord$transform(data, panel_params)
     sf_textgrob(data, lineend = lineend, linejoin = linejoin,
-                linemitre = linemitre, text_smoothing = text_smoothing,
+                linemitre = linemitre, text_params = text_params,
                 arrow = arrow, na.rm = na.rm, as_textbox = TRUE)
   }
 )
