@@ -279,11 +279,10 @@ sf_textgrob <- function(
                   linejoin  = linejoin,
                   linemitre = linemitre)
 
-  gp_text <- gpar(col           = textcol,
+  gp_text <- gpar(col           = alpha(textcol, alpha),
                   fontsize      = fontsize,
                   fontfamily    = family,
-                  fontface      = fontface,
-                  alpha         = alpha)
+                  fontface      = fontface)
 
   gp_box  <- gpar(col       = boxcolour,
                   lty       = boxlinetype,
