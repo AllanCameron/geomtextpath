@@ -59,8 +59,8 @@ place_text <- function(
   df             <- approx_multi(path$length, df, xout = letters$base_length)
   df             <- cbind(df, letters, id = path$id[1] %||% 1L)
   df$substring   <- label$substring %||% df$id
-  df$xoffset     <- label$xoff
-  df$yoffset     <- label$yoff
+  df$xoffset     <- label$xoffset
+  df$yoffset     <- label$yoffset
 
   if (any(df$exceed != 0) & !is.multichar(label$glyph)) {
 
