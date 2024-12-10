@@ -246,6 +246,10 @@ tailor_arrow <- function(data, arrow) {
   if (is.null(arrow)) {
     return(arrow)
   }
+  if (nrow(data) == 0 || ncol(data) == 0) {
+    return(data)
+  }
+
   keep  <- !duplicated(data$new_id)
   sides <- data$section[keep]
   id    <- data$id[keep]
