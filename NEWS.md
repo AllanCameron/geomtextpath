@@ -1,5 +1,12 @@
 # geomtextpath (development version)
 
+* Improved handling of empty data (#76, #100).
+* The default `alpha` is no longer `1` but `NA` (#95).
+* Fixed bug where `show.legend` was not working in `geom_textabline()` (#96).
+* Fixed some partially matching arguments (#98)
+* Labels placed in polar coordinates at `r = 0` are now drawn horizontally
+  instead of throwing errors (#104).
+
 # geomtextpath 0.1.4
 
 * Fix for compatibility with textshaping 0.4.0.
