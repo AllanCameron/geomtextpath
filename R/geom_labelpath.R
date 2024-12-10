@@ -109,7 +109,7 @@ GeomLabelpath <- ggproto(
 
   default_aes = aes(
     colour       = "black",
-    alpha        = 1,
+    alpha        = NA,
     size         = 3.88,
     hjust        = 0.5,
     vjust        = 0.5,
