@@ -30,11 +30,17 @@ prepare_path <- function(data, label, gp, params) {
 
   if (any(singletons)) {
     width <- numapply(label, function(x) 1.2 * max(x$xmax, na.rm = TRUE))
+    if (length(params$angle) == nrow(data)) {
+      index <- which(!duplicated(data$id))[singletons]
+      angle <- params$angle[index]
+    } else {
+      angle <- params$angle
+    }
 
     path[singletons] <- Map(pathify,
                             data    = path[singletons],
                             hjust   = params$hjust[singletons],
-                            angle   = params$angle,
+                            angle   = angle,
                             width   = width[singletons],
                             polar_x = list(params$polar_params$x),
                             polar_y = list(params$polar_params$y),
