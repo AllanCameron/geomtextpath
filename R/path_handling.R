@@ -30,11 +30,17 @@ prepare_path <- function(data, label, gp, params) {
 
   if (any(singletons)) {
     width <- numapply(label, function(x) 1.2 * max(x$xmax, na.rm = TRUE))
+    if (length(params$angle) == nrow(data)) {
+      index <- which(!duplicated(data$id))[singletons]
+      angle <- params$angle[index]
+    } else {
+      angle <- params$angle
+    }
 
     path[singletons] <- Map(pathify,
                             data    = path[singletons],
                             hjust   = params$hjust[singletons],
-                            angle   = params$angle,
+                            angle   = angle,
                             width   = width[singletons],
                             polar_x = list(params$polar_params$x),
                             polar_y = list(params$polar_params$y),
@@ -56,6 +62,9 @@ make_gap <- function(
   vjust     = 0.5,
   vjust_lim = c(0, 1)
 ) {
+  if (length(letters) == 0) {
+    return(path)
+  }
 
   padding <- as_inch(padding)
   if (is.unit(vjust)) {
@@ -202,7 +211,15 @@ pathify <- function(
     polar_y    <- as_inch(polar_y, "y")
     angle      <- angle - (as.numeric(thet == "y") * pi / 2)
     r          <- sqrt((data$x - polar_x)^2 + (data$y - polar_y)^2)
-    width      <- width / r
+
+    if (r == 0) {
+      # Make small horizontal path
+      data <- data[c(1, 1), ]
+      data$x <- data$x + c(-0.1, 0.1)
+      return(data)
+    }
+
+    width      <- width / (if (r == 0) 1 else r)
     theta      <- atan2(data$y - polar_y, data$x - polar_x)
     theta_min  <- theta + cos(angle + pi) * width * hjust
     theta_max  <- theta + cos(angle) * width * (1 - hjust)
@@ -240,6 +257,10 @@ tailor_arrow <- function(data, arrow) {
   if (is.null(arrow)) {
     return(arrow)
   }
+  if (nrow(data) == 0 || ncol(data) == 0) {
+    return(data)
+  }
+
   keep  <- !duplicated(data$new_id)
   sides <- data$section[keep]
   id    <- data$id[keep]

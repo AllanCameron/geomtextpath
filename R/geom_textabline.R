@@ -245,6 +245,7 @@ construct_abline <- function(
     position    = PositionIdentity,
     geom        = super,
     inherit.aes = FALSE,
+    show.legend = show.legend,
     params      = set_params(
       .type = if (inherits(super, "GeomLabelpath")) "label" else "text",
       ...

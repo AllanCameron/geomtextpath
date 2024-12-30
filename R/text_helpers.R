@@ -66,7 +66,9 @@ measure_label <- function(
     halign = halign,
     old_gp = gp)
 
-  attr(ans, "gp") <- attr(ans, "gp") %||% gp_new
+  if (!is.null(ans)) {
+    attr(ans, "gp") <- attr(ans, "gp") %||% gp_new
+  }
   ans
 }
 
@@ -95,6 +97,9 @@ measure_curved <- function(
 
   txt <- text_shape(label$text, label$id, gp, res = ppi, vjust = vjust,
                     hjust = hjust, align = halign)
+  if (nrow(txt$shape) == 0) {
+    return(NULL)
+  }
 
   # We use the original gp here because the new gp may have altered font size
   # due to super/subscripts etc.
@@ -123,6 +128,10 @@ measure_curved <- function(
     xmax      = (txt$x_offset + txt$x_midpoint * 2),
     substring = group_id(txt, c("metric_id", "string_id"))
   )
+
+  if (nrow(ans) < 1) {
+    return(ans)
+  }
 
   ans <- split(ans, txt$metric_id)
   ans <- lapply(seq_along(ans), function(i) {
@@ -245,6 +254,9 @@ glyph_index <- function(family = "") {
 # over the indices.
 
 translate_glyph <- function(index, id, gp = gpar()) {
+  if (length(index) == 0) {
+    return(character())
+  }
 
   ints <- lapply(gp$fontfamily %nz% "fallback", glyph_index)
   split(index, id) <- Map(
@@ -269,6 +281,9 @@ cluster_glyphs <- function(shape, vars = c("glyph", "metric_id", "string_id")) {
 
 
 filter_glyphs <- function(shape, n, forbidden = c("\r", "\n", "\t", "")) {
+  if (nrow(shape) == 0) {
+    return(shape)
+  }
 
   keep  <- shape$letter %in% forbidden
   keep  <- !(keep | duplicated(shape$clusters))
