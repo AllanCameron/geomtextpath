@@ -10,11 +10,10 @@ geom_textsf(
   data = NULL,
   stat = "sf",
   position = "identity",
-  ...,
-  remove_long = TRUE,
   na.rm = FALSE,
   show.legend = NA,
-  inherit.aes = TRUE
+  inherit.aes = TRUE,
+  ...
 )
 
 geom_labelsf(
@@ -22,11 +21,10 @@ geom_labelsf(
   data = NULL,
   stat = "sf",
   position = "identity",
-  ...,
-  remove_long = TRUE,
   na.rm = FALSE,
   show.legend = NA,
-  inherit.aes = TRUE
+  inherit.aes = TRUE,
+  ...
 )
 }
 \arguments{
@@ -50,31 +48,30 @@ the plot data. The return value must be a \code{data.frame}, and
 will be used as the layer data. A \code{function} can be created
 from a \code{formula} (e.g. \code{~ head(.x, 10)}).}
 
-\item{stat}{The statistical transformation to use on the data for this layer.
-When using a \verb{geom_*()} function to construct a layer, the \code{stat}
-argument can be used the override the default coupling between geoms and
-stats. The \code{stat} argument accepts the following:
-\itemize{
-\item A \code{Stat} ggproto subclass, for example \code{StatCount}.
-\item A string naming the stat. To give the stat as a string, strip the
-function name of the \code{stat_} prefix. For example, to use \code{stat_count()},
-give the stat as \code{"count"}.
-\item For more information and other ways to specify the stat, see the
-\link[ggplot2:layer_stats]{layer stat} documentation.
-}}
+\item{stat}{The statistical transformation to use on the data for this
+layer, either as a \code{ggproto} \code{Geom} subclass or as a string naming the
+stat stripped of the \code{stat_} prefix (e.g. \code{"count"} rather than
+\code{"stat_count"})}
 
-\item{position}{A position adjustment to use on the data for this layer. This
-can be used in various ways, including to prevent overplotting and
-improving the display. The \code{position} argument accepts the following:
-\itemize{
-\item The result of calling a position function, such as \code{position_jitter()}.
-This method allows for passing extra arguments to the position.
-\item A string naming the position adjustment. To give the position as a
-string, strip the function name of the \code{position_} prefix. For example,
-to use \code{position_jitter()}, give the position as \code{"jitter"}.
-\item For more information and other ways to specify the position, see the
-\link[ggplot2:layer_positions]{layer position} documentation.
-}}
+\item{position}{Position adjustment, either as a string naming the adjustment
+(e.g. \code{"jitter"} to use \code{position_jitter}), or the result of a call to a
+position adjustment function. Use the latter if you need to change the
+settings of the adjustment.}
+
+\item{na.rm}{If \code{FALSE}, the default, missing values are removed with
+a warning. If \code{TRUE}, missing values are silently removed.}
+
+\item{show.legend}{logical. Should this layer be included in the legends?
+\code{NA}, the default, includes if any aesthetics are mapped.
+\code{FALSE} never includes, and \code{TRUE} always includes.
+
+You can also set this to one of "polygon", "line", and "point" to
+override the default legend.}
+
+\item{inherit.aes}{If \code{FALSE}, overrides the default aesthetics,
+rather than combining with them. This is most useful for helper functions
+that define both data and aesthetics and shouldn't inherit behaviour from
+the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 
 \item{...}{
   Arguments passed on to \code{\link[=geom_textpath]{geom_textpath}}, \code{\link[=geom_labelpath]{geom_labelpath}}
@@ -111,27 +108,11 @@ of \code{0} means no smoothing is applied.}
     \item{\code{rich}}{A \code{logical(1)} whether to interpret the text as html/markdown
 formatted rich text. Default: \code{FALSE}. See also the rich text section of
 the details in \code{\link[=geom_textpath]{geom_textpath()}}.}
+    \item{\code{remove_long}}{if TRUE, labels that are longer than their associated
+path will be removed.}
     \item{\code{label.padding}}{Amount of padding around label. Defaults to 0.25 lines.}
     \item{\code{label.r}}{Radius of rounded corners. Defaults to 0.15 lines.}
   }}
-
-\item{remove_long}{if TRUE, labels that are longer than their associated
-path will be removed.}
-
-\item{na.rm}{If \code{FALSE}, the default, missing values are removed with
-a warning. If \code{TRUE}, missing values are silently removed.}
-
-\item{show.legend}{logical. Should this layer be included in the legends?
-\code{NA}, the default, includes if any aesthetics are mapped.
-\code{FALSE} never includes, and \code{TRUE} always includes.
-
-You can also set this to one of "polygon", "line", and "point" to
-override the default legend.}
-
-\item{inherit.aes}{If \code{FALSE}, overrides the default aesthetics,
-rather than combining with them. This is most useful for helper functions
-that define both data and aesthetics and shouldn't inherit behaviour from
-the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 }
 \value{
 A \code{Layer} ggproto object that can be added to a plot.

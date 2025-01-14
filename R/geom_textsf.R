@@ -59,7 +59,6 @@ NULL
 #' @export
 #' @rdname geom_textsf
 #' @inheritParams ggplot2::geom_point
-#' @inheritParams static_text_params
 #' @inheritDotParams geom_textpath -arrow -lineend -linejoin -linemitre
 #' @md
 geom_textsf <- function(
@@ -67,11 +66,10 @@ geom_textsf <- function(
   data        = NULL,
   stat        = "sf",
   position    = "identity",
-  ...,
-  remove_long = TRUE,
   na.rm       = FALSE,
   show.legend = NA,
-  inherit.aes = TRUE
+  inherit.aes = TRUE,
+  ...
 ) {
 
   rlang::check_installed("sf", "for `geom_textsf()`")
@@ -84,11 +82,7 @@ geom_textsf <- function(
       position    = position,
       show.legend = show.legend,
       inherit.aes = inherit.aes,
-      params      = set_params(
-        na.rm = na.rm,
-        remove_long = remove_long,
-        ...
-      )
+      params      = list(na.rm = na.rm, ...)
     ),
     coord_sf(default = TRUE)
   )
@@ -98,18 +92,16 @@ geom_textsf <- function(
 #' @export
 #' @rdname geom_textsf
 #' @inheritParams ggplot2::geom_point
-#' @inheritParams static_text_params
 #' @inheritDotParams geom_labelpath -arrow -lineend -linejoin -linemitre
 geom_labelsf <- function(
   mapping     = aes(),
   data        = NULL,
   stat        = "sf",
   position    = "identity",
-  ...,
-  remove_long = TRUE,
   na.rm       = FALSE,
   show.legend = NA,
-  inherit.aes = TRUE
+  inherit.aes = TRUE,
+  ...
 ) {
 
   rlang::check_installed("sf", "for `geom_labelsf()`")
@@ -122,11 +114,7 @@ geom_labelsf <- function(
       position    = position,
       show.legend = show.legend,
       inherit.aes = inherit.aes,
-      params      = set_params(
-        na.rm = na.rm,
-        remove_long = remove_long,
-        ...
-      )
+      params = list(na.rm = na.rm, ...)
     ),
     coord_sf(default = TRUE)
   )
@@ -161,7 +149,7 @@ GeomTextsf <- ggproto("GeomTextSf", GeomSf,
 
   draw_panel = function(data, panel_params, coord, legend = NULL,
                         lineend = "butt", linejoin = "round", linemitre = 10,
-                        text_params = static_text_params("text"),
+                        text_smoothing = 0,
                         arrow = NULL, na.rm = TRUE) {
     if (!inherits(coord, "CoordSf")) {
       abort("geom_sf() must be used with coord_sf()")
@@ -169,7 +157,7 @@ GeomTextsf <- ggproto("GeomTextSf", GeomSf,
 
     data <- coord$transform(data, panel_params)
     sf_textgrob(data, lineend = lineend, linejoin = linejoin,
-                   linemitre = linemitre, text_params = text_params,
+                   linemitre = linemitre, text_smoothing = text_smoothing,
                    arrow = arrow, na.rm = na.rm)
   }
 )
@@ -206,15 +194,14 @@ GeomLabelsf <- ggproto("GeomLabelSf", GeomSf,
 
   draw_panel = function(data, panel_params, coord, legend = NULL,
                         lineend = "butt", linejoin = "round", linemitre = 10,
-                        arrow = NULL, text_params = static_text_params("labels"),
-                        na.rm = TRUE) {
+                        arrow = NULL, text_smoothing = 0, na.rm = TRUE) {
     if (!inherits(coord, "CoordSf")) {
       abort("geom_sf() must be used with coord_sf()")
     }
 
     data <- coord$transform(data, panel_params)
     sf_textgrob(data, lineend = lineend, linejoin = linejoin,
-                linemitre = linemitre, text_params = text_params,
+                linemitre = linemitre, text_smoothing = text_smoothing,
                 arrow = arrow, na.rm = na.rm, as_textbox = TRUE)
   }
 )

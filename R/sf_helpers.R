@@ -105,9 +105,9 @@ st_as_grob.sfc_labelled <- function(
       gp <- gp[!is_e]
       x <- x[!is_e]
   }
-  params         <- textpath_vars$text_params
   hjust          <- textpath_vars$hjust %||% 0.5
-  vjust          <- params$offset %||% textpath_vars$vjust %||% 0.5
+  vjust          <- textpath_vars$vjust %||% 0.5
+  text_smoothing <- textpath_vars$text_smoothing %||% 0
 
   if (length(x)) {
       x        <- unclass(x)
@@ -122,18 +122,12 @@ st_as_grob.sfc_labelled <- function(
                    arrow          = arrow,
                    hjust          = hjust,
                    vjust          = vjust,
-                   halign         = params$halign %||% "left",
-                   gap            = params$gap %||% NA,
                    default.units  = default.units,
                    name           = name,
                    gp_path        = gp,
                    gp_text        = textpath_vars$gp_text,
-                   straight       = params$straight %||% FALSE,
-                   upright        = params$upright %||% TRUE,
-                   text_smoothing = params$text_smoothing %||% 0,
-                   padding        = params$padding %||% unit(0.05, "inch"),
-                   rich           = params$rich %||% FALSE,
-                   remove_long    = params$remove_long %||% TRUE,
+                   text_smoothing = text_smoothing,
+                   remove_long    = TRUE,
                    vp             = vp
                    )
   } else {
@@ -170,9 +164,9 @@ st_as_grob.sfc_textbox <- function(
       gp <- gp[!is_e]
       x  <- x[!is_e]
   }
-  params         <- textpath_vars$text_params
   hjust          <- textpath_vars$hjust %||% 0.5
-  vjust          <- params$offset %||% textpath_vars$vjust %||% 0.5
+  vjust          <- textpath_vars$vjust %||% 0.5
+  text_smoothing <- textpath_vars$text_smoothing %||% 0
 
   if (length(x)) {
       x        <- unclass(x)
@@ -187,19 +181,13 @@ st_as_grob.sfc_textbox <- function(
                    arrow          = arrow,
                    hjust          = hjust,
                    vjust          = vjust,
-                   halign         = params$halign %||% "left",
-                   gap            = params$gap %||% NA,
                    default.units  = default.units,
                    name           = name,
                    gp_path        = gp,
                    gp_text        = textpath_vars$gp_text,
                    gp_box         = textpath_vars$gp_box,
-                   straight       = params$straight %||% FALSE,
-                   upright        = params$upright %||% TRUE,
-                   text_smoothing = params$text_smoothing %||% 0,
-                   padding        = params$padding %||% unit(0.05, "inch"),
-                   rich           = params$rich %||% FALSE,
-                   remove_long    = params$remove_long %||% TRUE,
+                   text_smoothing = text_smoothing,
+                   remove_long    = TRUE,
                    vp             = vp,
                    as_label       = TRUE
                    )
@@ -220,7 +208,7 @@ sf_textgrob <- function(
   arrow          = NULL,
   na.rm          = TRUE,
   as_textbox     = FALSE,
-  text_params    = static_text_params("text")
+  text_smoothing = 0
 ) {
 
   # Match labels to data
@@ -302,7 +290,9 @@ sf_textgrob <- function(
                   fill      = boxfill)
 
   # Allow extra textpath / labelpath parameters to be passed to st_as_grob
-  tp_vars <- list(text_params    = text_params,
+  tp_vars <- list(hjust          = x$hjust %||% 0.5,
+                  vjust          = x$vjust %||% 0.5,
+                  text_smoothing = text_smoothing %||% 0,
                   gp_text        = gp_text,
                   gp_box         = gp_box)
   # Build grobs
@@ -311,8 +301,6 @@ sf_textgrob <- function(
   for (i in seq_along(x$geometry)) {
     g   <- label_sf(x$geometry[i], labels[i], as_textbox = as_textbox)
     tp_i <- tp_vars
-    tp_i$hjust <- x$hjust[i] %||% 0.5
-    tp_i$vjust <- x$vjust[i] %||% 0.5
     tp_i$gp_text <- tp_i$gp_text[i]
     tp_i$gp_box  <- tp_i$gp_box[i]
     out <- addGrob(out,
