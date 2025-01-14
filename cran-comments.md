@@ -1,3 +1,16 @@
+Version 0.1.5 - 14th January 2025
+
+Getting Additional Issues warnings on CRAN when using gcc-ASAN and clang-ASAN.
+These appear to be due to memory allocation overlaps when the agg device is used to render graphics when building the vignettes.
+There doesn't seem to be anything we can do at this end other than switch to the default png device for vignette graphics output.
+There were no other problems found on any of the standard builds.
+Also some patches to fix minor user-level bugs as documented in NEWS.md
+Minor version bumped
+
+R CMD check succeeded with 0 errors | 0 warnings | 0 notes
+
+--------------------------------------------------------------------------------
+
 Hotfix 0.1.4 - 11 June 2024
 
 Bumped {textshaping} requirement for compatibility.
