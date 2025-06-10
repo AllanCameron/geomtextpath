@@ -28,7 +28,8 @@ Imports:
     scales,
     systemfonts,
     rlang,
-    textshaping (>= 0.4.0)
+    textshaping (>= 0.4.0),
+    vctrs
 RoxygenNote: 7.3.2
 Suggests: 
     testthat (>= 3.0.0),
