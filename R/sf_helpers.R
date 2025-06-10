@@ -37,9 +37,9 @@ sf_types <- c(GEOMETRY           = "other",
 
 sf_defaults <- function() {
 
-  point_aes          <- GeomPoint$default_aes
-  textpath_aes       <- GeomTextpath$default_aes
-  polygon_aes        <- GeomPolygon$default_aes
+  point_aes          <- get_geom_defaults(GeomPoint)
+  textpath_aes       <- get_geom_defaults(GeomTextpath)
+  polygon_aes        <- get_geom_defaults(GeomPolygon)
   polygon_aes$fill   <- "grey90"
   polygon_aes$colour <- "grey35"
   collection_aes     <- rename(textpath_aes,
