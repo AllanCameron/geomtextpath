@@ -10,5 +10,5 @@
     Code
       make_label(axis_labels$textpath$label[[9]]$glyph)
     Output
-      [1] "1" "/" "1" "0"
+      expression(paste(1, "/", 10))
 
