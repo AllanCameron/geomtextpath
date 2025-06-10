@@ -233,7 +233,7 @@ such as rivers and roads can be given (curved) text labels:
 ``` r
 
 library(sf)
-#> Linking to GEOS 3.11.0, GDAL 3.5.3, PROJ 9.1.0; sf_use_s2() is TRUE
+#> Linking to GEOS 3.13.0, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE
 
 df <- data.frame(x = c(-4.2518, -3.1883), 
                  y = c(55.8642, 55.9533),
