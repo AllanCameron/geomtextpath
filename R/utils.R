@@ -740,3 +740,16 @@ warn_overwritten_args <- function (
               ": Ignoring ", overwritten_arg_text, " because ",
               provided_arg_text, " ", verb, " provided."))
 }
+
+ticker <- local({
+  i <- NULL
+  function(nseconds = getOption("geomtextpath_warninterval", 5)) {
+    old <- i
+    new <- Sys.time()
+    i <<- new
+    if (is.null(old)) {
+      return(TRUE)
+    }
+    (new - old) > nseconds
+  }
+})

@@ -62,7 +62,7 @@ place_text <- function(
   df$xoffset     <- label$xoffset
   df$yoffset     <- label$yoffset
 
-  if (any(df$exceed != 0) & !is.multichar(label$glyph)) {
+  if (any(df$exceed != 0) & !is.multichar(label$glyph) && ticker()) {
 
     warn(paste(
       "The text offset exceeds the curvature in one or more paths.",
