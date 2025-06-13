@@ -141,20 +141,16 @@ GeomTextsf <- ggproto("GeomTextSf", GeomSf,
 
   required_aes = c("geometry", "label"),
 
+
+
   default_aes = aes(
-    shape      = NULL,
-    colour     = "gray30",
-    fill       = "gray90",
-    linetype   = 1,
-    stroke     = 0.5,
-    size       = 3.88,
+    !!!GeomSf$default_aes[-which(names(GeomSf$default_aes) %in% c("size", "linewidth"))],
+    !!!GeomText$default_aes[c("family", "size")],
+    linewidth  = !!GeomLine$default_aes$linewidth,
     hjust      = 0.5,
     vjust      = 0.5,
-    family     = "",
     fontface   = 1,
     lineheight = 1.2,
-    alpha      = NA,
-    linewidth  = 0.5,
     spacing    = 0,
     linecolour = "gray30",
     angle      = 0),

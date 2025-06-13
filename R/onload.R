@@ -28,4 +28,7 @@
     systemfonts::register_font("fallback", systemfonts::font_info("")$path[1])
   }
 
+  # Only register once sf is loaded
+  vctrs::s3_register("sf::st_as_grob", "sfc_labelled")
+  vctrs::s3_register("sf::st_as_grob", "sfc_textbox")
 }
