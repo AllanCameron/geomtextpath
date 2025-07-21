@@ -1,3 +1,5 @@
+# geomtextpath 0.2.0
+
 # geomtextpath 0.1.5
 
 * Improved handling of empty data (#76, #100).
