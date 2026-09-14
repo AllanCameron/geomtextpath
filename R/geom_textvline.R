@@ -39,14 +39,12 @@ geom_textvline <- function(
     }
     if (!is.null(data)) {
       warn_overwritten_args("geom_textvline()", "data", "xintercept")
-      data$xintercept <- xintercept
     }
-    mapping <- unclass(mapping)
-    mapping[["xintercept"]] <- xintercept
-    class(mapping) <- "uneval"
 
+    data <- data_frame(xintercept = xintercept)
     mapping <- aes(xintercept = xintercept)
     show.legend <- FALSE
+    inherit.aes = FALSE
   }
 
   layer(
@@ -56,7 +54,7 @@ geom_textvline <- function(
     geom        = GeomTextvline,
     position    = PositionIdentity,
     show.legend = show.legend,
-    inherit.aes = FALSE,
+    inherit.aes = inherit.aes,
     params = list(
       na.rm = na.rm,
       arrow = arrow,
@@ -120,14 +118,12 @@ geom_labelvline <- function(
     }
     if (!is.null(data)) {
       warn_overwritten_args("geom_labelvline()", "data", "xintercept")
-      data$xintercept <- xintercept
     }
-    mapping <- unclass(mapping)
-    mapping[["xintercept"]] <- xintercept
-    class(mapping) <- "uneval"
 
+    data <- data_frame(xintercept = xintercept)
     mapping <- aes(xintercept = xintercept)
     show.legend <- FALSE
+    inherit.aes = FALSE
   }
 
   layer(
@@ -137,7 +133,7 @@ geom_labelvline <- function(
     geom        = GeomLabelvline,
     position    = PositionIdentity,
     show.legend = show.legend,
-    inherit.aes = FALSE,
+    inherit.aes = inherit.aes,
     params = set_params(
                 arrow     = arrow,
                 na.rm     = na.rm,

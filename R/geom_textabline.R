@@ -221,21 +221,26 @@ construct_abline <- function(
     if (missing(slope))     slope <- 1
     if (missing(intercept)) intercept <- 0
 
-    if (is.null(data)) {
-      data <- data_frame(
-        intercept = intercept[1],
-        slope     = slope[1]
-      )
-    } else {
-      data$slope     <- slope[1]
-      data$intercept <- intercept[1]
+    n_lines <- max(length(slope), length(intercept))
+
+    # Only scalar values may be recycled
+    if (
+      !length(slope) %in% c(1L, n_lines) ||
+      !length(intercept) %in% c(1L, n_lines)
+    ) {
+      stop("`slope` and `intercept` must have compatible lengths.")
     }
 
-    mapping <- unclass(mapping)
-    mapping[["intercept"]] <- intercept
-    mapping[["slope"]]     <- slope
-    class(mapping) <- "uneval"
-    show.legend <- FALSE
+    data <- data_frame(
+      intercept = rep(intercept, length.out = n_lines),
+      slope = rep(slope, length.out = n_lines)
+    )
+
+    mapping <- aes(
+      intercept = intercept,
+      slope = slope
+    )
+
   }
 
   layer(
