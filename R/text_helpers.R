@@ -365,11 +365,13 @@ parse_richtext <- function(
 # Helpers -----------------------------------------------------------------
 
 font_info_gp <- function(gp = gpar(), res = 72, unit = "inch") {
+  weight <- rep.int("normal", max(length(gp$font), 1L))
+  weight[(gp$font %||% 1) %in% c(2, 4)] <- "bold"
 
   info <- systemfonts::font_info(
     family =  gp$fontfamily %nz% "fallback",
     italic = (gp$font       %||% 1) %in% c(3, 4),
-    bold   = (gp$font       %||% 1) %in% c(2, 4),
+    weight = weight,
     size   =  gp$fontsize   %||% 12,
     res    = res
   )

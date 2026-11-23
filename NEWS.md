@@ -1,3 +1,7 @@
+# geomtextpath (development version)
+
+* Fix for compatibility with S7 1.0.0.
+
 # geomtextpath 0.2.0
 
 # geomtextpath 0.1.5
