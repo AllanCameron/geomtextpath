@@ -84,7 +84,7 @@ ggplot(spiral, aes(x, y, label = text)) +
   coord_equal(xlim = c(-1500, 1500), ylim = c(-1500, 1500))
 ```
 
-<img src="man/figures/README-spiral-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-spiral-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 If we want our text in a box, even when the text is curved, we can use
 `geom_labelpath` instead:
@@ -103,7 +103,7 @@ ggplot(df, aes(x, y, label = z)) +
   geom_point(data = data.frame(x = x, y = y, z = 1))
 ```
 
-<img src="man/figures/README-intro_label-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-intro_label-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Of course, the point of this package is not to produce such graphical
 novelties, but to provide an easy and visually appealing way to present
@@ -152,7 +152,7 @@ ggplot(pressure, aes(temperature, pressure)) +
                 color = "deepskyblue4")
 ```
 
-<img src="man/figures/README-textline_demo-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-textline_demo-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### `geom_textdensity` and `geom_labeldensity`
 
@@ -165,7 +165,7 @@ ggplot(iris, aes(x = Sepal.Length, colour = Species, label = Species)) +
   theme(legend.position = "none")
 ```
 
-<img src="man/figures/README-density_demo-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-density_demo-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that we have been able to “reclaim” the space normally taken up by
 the legend without leaving any ambiguity in the plot.
@@ -184,7 +184,7 @@ ggplot(iris, aes(x = Sepal.Length, y = Petal.Length, color = Species)) +
   theme(legend.position = "none")
 ```
 
-<img src="man/figures/README-smooth-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-smooth-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that by design, we have not included the standard error ribbon in
 these geoms because the naming of the `fill` aesthetic would clash with
@@ -209,7 +209,7 @@ ggplot(df, aes(x, y, z = z)) +
   theme(legend.position = "none")
 ```
 
-<img src="man/figures/README-volcano-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-volcano-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We also have `geom_textdensity2d` and `geom_labeldensity2d` for the
 common use case of 2D density contours:
@@ -223,7 +223,7 @@ ggplot(df, aes(x, y)) +
   geom_textdensity2d()
 ```
 
-<img src="man/figures/README-density2d-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-density2d-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### `geom_textsf` and `geom_labelsf`
 
@@ -233,7 +233,7 @@ such as rivers and roads can be given (curved) text labels:
 ``` r
 
 library(sf)
-#> Linking to GEOS 3.13.0, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE
+#> Linking to GEOS 3.14.1, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE
 
 df <- data.frame(x = c(-4.2518, -3.1883), 
                  y = c(55.8642, 55.9533),
@@ -251,7 +251,7 @@ ggplot(data = df) +
   lims(x = c(-4.7, -3), y = c(55.62, 56.25))
 ```
 
-<img src="man/figures/README-geom_textsf-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-geom_textsf-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### Reference lines
 
@@ -284,7 +284,7 @@ ggplot(mtcars, aes(mpg, disp)) +
 #>   a single row.
 ```
 
-<img src="man/figures/README-vline-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-vline-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 In addition to the straight reference lines, there is also a pair of
 geom layers for curved reference lines: `geom_textcurve` and
@@ -302,7 +302,7 @@ ggplot(df, aes(Activity, Happiness)) +
   scale_y_continuous(limits = c(0, 1))
 ```
 
-<img src="man/figures/README-curve-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-curve-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### Arbitrary `stat` transformations
 
@@ -327,7 +327,7 @@ ggplot() +
                 size = 5, vjust = -0.2, hjust = 0.1, args = list(shape = 3))
 ```
 
-<img src="man/figures/README-stat_function-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-stat_function-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### Controlling text position
 
@@ -357,7 +357,7 @@ p +
   ylim(c(0, 1.3))
 ```
 
-<img src="man/figures/README-density_vjust-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-density_vjust-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 You can read more about text positioning in the [aesthetics
 vignette](https://allancameron.github.io/geomtextpath/articles/aesthetics.html).
@@ -377,7 +377,7 @@ ggplot(economics, aes(date, unemploy)) +
                 label = "1990s Decline", text_smoothing = 30)
 ```
 
-<img src="man/figures/README-smooth2-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-smooth2-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### `Plotmath` support
 
@@ -397,7 +397,7 @@ ggplot(df, aes(x, y)) +
   geom_textpath(aes(label = z), vjust = -0.2, hjust = 0.1, size = 8, parse = TRUE)
 ```
 
-<img src="man/figures/README-plotmath-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-plotmath-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 Note that, due to the way the `grid` package draws plotmath expressions,
 all plotmath labels will be straight rather than curved. However, as in
@@ -426,7 +426,7 @@ ggplot(Indometh, aes(time, conc, group = 1)) +
 #> (`stat_smooth()`).
 ```
 
-<img src="man/figures/README-richtext-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-richtext-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ### Text paths in polar coordinates
 
@@ -443,13 +443,13 @@ p <- ggplot(df, aes(x, y, label = text)) +
 p
 ```
 
-<img src="man/figures/README-coords_cartesian-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-coords_cartesian-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ``` r
 p + coord_polar()
 ```
 
-<img src="man/figures/README-coords_polar-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-coords_polar-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 We have included the ability to have *point-like* text paths. While this
 sounds paradoxical, it means that `geom_textpath` can be used as a
@@ -470,7 +470,7 @@ p <- ggplot(df, aes(x, y, color = color, label = color)) +
 p
 ```
 
-<img src="man/figures/README-pointlike-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-pointlike-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 And in polar co-ordinates:
 
@@ -478,7 +478,7 @@ And in polar co-ordinates:
 p + coord_polar()
 ```
 
-<img src="man/figures/README-polar_compare-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-polar_compare-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 By default, any labels that would have been upside down (or even mostly
 upside down) are automatically flipped to be facing in a legible
@@ -523,7 +523,7 @@ p <- data.frame(x1 = c(seq(0, 10/6 * pi, pi/3),
 p
 ```
 
-<img src="man/figures/README-fancy_cartesian-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-fancy_cartesian-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 That flip nicely to polar co-ordinates.
 
@@ -532,7 +532,7 @@ That flip nicely to polar co-ordinates.
 p + coord_polar()
 ```
 
-<img src="man/figures/README-fancy_polar-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-fancy_polar-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## `coord_curvedpolar`
 
@@ -561,7 +561,7 @@ clock <- function(x) {
 clock(19:15) + coord_curvedpolar()
 ```
 
-<img src="man/figures/README-coord_curvedpolar-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-coord_curvedpolar-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 This can be useful to achieve a particular aesthetic effect (as above),
 but can also be of practical utility when axis labels are long, which
@@ -581,7 +581,7 @@ p <- ggplot(df, aes(x, y, fill = x)) +
 p + coord_curvedpolar()
 ```
 
-<img src="man/figures/README-coord_curvedpolar2-1.png" width="100%" style="display: block; margin: auto;" />
+<img src="man/figures/README-coord_curvedpolar2-1.png" alt="" width="100%" style="display: block; margin: auto;" />
 
 ## Tips
 
