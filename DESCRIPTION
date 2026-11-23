@@ -21,7 +21,7 @@ URL: https://allancameron.github.io/geomtextpath/
 BugReports: https://github.com/AllanCameron/geomtextpath/issues
 Encoding: UTF-8
 Depends:
-    ggplot2 (>= 3.5.2),
+    ggplot2 (>= 4.0.0),
     R (>= 3.6.0)
 Imports:
     grid,
@@ -30,7 +30,7 @@ Imports:
     rlang,
     textshaping (>= 0.4.0),
     vctrs
-RoxygenNote: 7.3.2
+RoxygenNote: 8.1.1
 Suggests: 
     testthat (>= 3.0.0),
     covr,

@@ -681,7 +681,7 @@ rd_dots <- function(fun, exclude = character()) {
   # `static_text_params()` function above.
   keep <- vapply(doc, function(x) {
     keywords <- roxygen2::block_get_tag_value(x, "keywords")
-    isTRUE(grepl("rd_dots", keywords))
+    "rd_dots" %in% unlist(keywords)
   }, logical(1))
   doc  <- doc[[which(keep)[1]]]
 
