@@ -108,24 +108,24 @@ GeomLabelpath <- ggproto(
   "GeomLabelpath", GeomTextpath,
 
   default_aes = aes(
-    colour       = "black",
+    colour       = from_theme(colour %||% ink),
     alpha        = NA,
-    size         = 3.88,
+    size         = from_theme(fontsize),
     hjust        = 0.5,
     vjust        = 0.5,
-    family       = "",
+    family       = from_theme(family),
     fontface     = 1,
     lineheight   = 1.2,
-    linewidth    = 0.5,
-    linetype     = 1,
+    linewidth    = from_theme(linewidth),
+    linetype     = from_theme(linetype),
     spacing      = 0,
     angle        = 0,
-    fill         = "white",
+    fill         =  from_theme(fill %||% paper),
     linecolour   = NULL,
     textcolour   = NULL,
     boxcolour    = NULL,
-    boxlinetype  = 1,
-    boxlinewidth = NULL
+    boxlinetype  = from_theme(bordertype),
+    boxlinewidth = from_theme(borderwidth * 0.5)
   ),
 
   extra_params = c("na.rm", names(formals(static_text_params))[-1]),
