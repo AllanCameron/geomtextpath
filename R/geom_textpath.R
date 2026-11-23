@@ -205,9 +205,6 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
   },
 
   setup_data = function(data, params) {
-    if (isTRUE(params$text_params$text_only)) {
-      data$linetype <- 0
-    }
     if (all(data$group == -1) && !is.null(data$label)) {
       data$group <- discretise(data$label)
     }
@@ -224,6 +221,10 @@ GeomTextpath <- ggproto("GeomTextpath", Geom,
     lineend = "butt", linejoin = "round", linemitre = 10,
     text_params = static_text_params("text"), arrow = NULL
   ) {
+    if (isTRUE(text_params$text_only)) {
+      data$linetype <- 0
+    }
+
     # We need to change groups to numeric to order them appropriately
     data$group <- discretise(data$group)
 

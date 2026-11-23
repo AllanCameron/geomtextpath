@@ -43,9 +43,8 @@ geom_textvline <- function(
     }
     mapping <- unclass(mapping)
     mapping[["xintercept"]] <- xintercept
-    class(mapping) <- "uneval"
+    mapping <- aes(!!!mapping)
 
-    mapping <- aes(xintercept = xintercept)
     show.legend <- FALSE
   }
 
@@ -124,9 +123,7 @@ geom_labelvline <- function(
     }
     mapping <- unclass(mapping)
     mapping[["xintercept"]] <- xintercept
-    class(mapping) <- "uneval"
-
-    mapping <- aes(xintercept = xintercept)
+    mapping <- aes(!!!mapping)
     show.legend <- FALSE
   }
 
