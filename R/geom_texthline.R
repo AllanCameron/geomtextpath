@@ -27,7 +27,7 @@ geom_texthline <- function(mapping = NULL,
     }
     mapping <- unclass(mapping)
     mapping[["yintercept"]] <- yintercept
-    class(mapping) <- "uneval"
+    mapping <- aes(!!!mapping)
 
     mapping <- aes(yintercept = yintercept)
     show.legend <- FALSE
@@ -102,9 +102,7 @@ geom_labelhline <- function(mapping = NULL,
     }
     mapping <- unclass(mapping)
     mapping[["yintercept"]] <- yintercept
-    class(mapping) <- "uneval"
-
-    mapping <- aes(yintercept = yintercept)
+    mapping <- aes(!!!mapping)
     show.legend <- FALSE
   }
 
