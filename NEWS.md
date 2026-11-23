@@ -1,3 +1,7 @@
+# geomtextpath (development version)
+
+* Fixed disobedience of `text_only` argument when `linetype` was passed as fixed aesthetic (#132).
+
 # geomtextpath 0.2.0
 
 # geomtextpath 0.1.5
