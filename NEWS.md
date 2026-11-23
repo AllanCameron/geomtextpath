@@ -1,3 +1,7 @@
+# geomtextpath (development version)
+
+* Adopted ggplot2 4.0.0 `element_geom()` settings (#131).
+
 # geomtextpath 0.2.0
 
 # geomtextpath 0.1.5
