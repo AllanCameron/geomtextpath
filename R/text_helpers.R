@@ -232,8 +232,11 @@ glyph_index <- function(family = "") {
   if (name %in% names(index_cache)) return(index_cache[[name]])
 
   # Get all unicode characters
-  idx     <- intToUtf8(1:65535, multiple = TRUE)
-  idx     <- systemfonts::glyph_info(idx, family = name)
+  idx  <- intToUtf8(1:65535, multiple = TRUE)
+  font <- systemfonts::match_fonts(name)
+  idx  <- systemfonts::glyph_info(
+    idx, path = font$path, index = font$index
+  )
   idx$int <- 1:65535
 
   # Filter invalid glyphs
