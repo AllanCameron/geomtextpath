@@ -1,3 +1,10 @@
+Version 0.2.1 24th November 2026
+
+Fixed test failures. 
+These were caused by stricter class management in the latest version of S7.
+The code has been updated to use classes canonically.
+
+
 Version 0.1.5 - 14th January 2025
 
 Getting Additional Issues warnings on CRAN when using gcc-ASAN and clang-ASAN.
