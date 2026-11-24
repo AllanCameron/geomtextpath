@@ -41,12 +41,6 @@ of the plot, correcting automatically for resizing to preserve letter spacing
 and size.
 }
 \examples{
-
-# A pie chart = stacked bar chart + polar coordinates
-pie <- ggplot(mtcars, aes(x = factor(1), fill = factor(cyl))) +
- geom_bar(width = 1)
- pie + coord_curvedpolar(theta = "y")
-
 # Demonstrating curved category labels
 p <- ggplot(data.frame(x = paste("Category label", 1:5), y = runif(5)),
             aes(x, y, fill = x)) +
