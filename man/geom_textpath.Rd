@@ -263,7 +263,7 @@ A \code{Layer} ggproto object that can be added to a plot.
 \description{
 The existing text-based geom layers in \pkg{ggplot2}
 (\code{\link[ggplot2:geom_text]{geom_text()}} and
-\code{\link[ggplot2:geom_text]{geom_label()}}) are ideal for the majority of plots,
+\code{\link[ggplot2:geom_label]{geom_label()}}) are ideal for the majority of plots,
 since typically textual annotations are short, straight and in line with the
 axes of the plot. However, there are some occasions when it is useful to have
 text follow a curved path. This may be to create or recreate a specific

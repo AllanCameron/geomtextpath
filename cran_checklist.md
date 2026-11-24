@@ -19,7 +19,7 @@ Prepare for release:
 * [X] `urlchecker::url_check()`
 * [X] `devtools::check(remote = TRUE, manual = TRUE)`
 * [X] `devtools::check_win_devel()`
-* [X] `rhub::check_for_cran()`
+* [X] `rhub::rhub_check()`
 * [X] Review pkgdown reference index for, e.g., missing topics
 
 Submit to CRAN:

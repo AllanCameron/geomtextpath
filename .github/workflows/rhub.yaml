@@ -1,4 +1,4 @@
-# R-hub's generic GitHub Actions workflow file. It's canonical location is at
+# R-hub's generic GitHub Actions workflow file. Its canonical location is at
 # https://github.com/r-hub/actions/blob/v1/workflows/rhub.yaml
 # You can update this file to a newer version using the rhub2 package:
 #
@@ -7,20 +7,24 @@
 # It is unlikely that you need to modify this file manually.
 
 name: R-hub
-run-name: "${{ github.event.inputs.id }}: ${{ github.event.inputs.name || format('Manually run by {0}', github.triggering_actor) }}"
+run-name: >-
+  ${{ github.event.inputs.id || format('Manual run by @{0}', github.triggering_actor) }}:
+  ${{ github.event.inputs.name || github.event.inputs.config }}
 
 on:
   workflow_dispatch:
     inputs:
       config:
-        description: 'A comma separated list of R-hub platforms to use.'
+        description: >-
+          Comma-separated list of R-hub platforms to use.
+          Full list: summary(rhub::rhub_platforms())
         type: string
         default: 'linux,windows,macos'
       name:
-        description: 'Run name. You can leave this empty now.'
+        description: 'Run name. You can leave this empty.'
         type: string
       id:
-        description: 'Unique ID. You can leave this empty now.'
+        description: 'Unique ID. You can leave this empty.'
         type: string
 
 jobs:

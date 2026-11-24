@@ -233,7 +233,7 @@ such as rivers and roads can be given (curved) text labels:
 ``` r
 
 library(sf)
-#> Linking to GEOS 3.14.1, GDAL 3.8.5, PROJ 9.5.1; sf_use_s2() is TRUE
+#> Linking to GEOS 3.14.1, GDAL 3.12.1, PROJ 9.7.1; sf_use_s2() is TRUE
 
 df <- data.frame(x = c(-4.2518, -3.1883), 
                  y = c(55.8642, 55.9533),
@@ -277,10 +277,10 @@ ggplot(mtcars, aes(mpg, disp)) +
   geom_textabline(slope = 15, intercept = -100, label = "partition line", 
                   color = "green4", hjust = 0.6, vjust = -0.2)
 #> Warning in geom_texthline(yintercept = 200, label = "displacement threshold", : All aesthetics have length 1, but the data has 32 rows.
-#> ℹ Please consider using `annotate()` or provide this layer with data containing
+#> i Please consider using `annotate()` or provide this layer with data containing
 #>   a single row.
 #> Warning in geom_textvline(xintercept = 20, label = "consumption threshold", : All aesthetics have length 1, but the data has 32 rows.
-#> ℹ Please consider using `annotate()` or provide this layer with data containing
+#> i Please consider using `annotate()` or provide this layer with data containing
 #>   a single row.
 ```
 

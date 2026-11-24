@@ -77,8 +77,13 @@ to use \code{position_jitter()}, give the position as \code{"jitter"}.
 }}
 
 \item{...}{
-  Arguments passed on to \code{\link[=geom_textpath]{geom_textpath}}, \code{\link[=geom_labelpath]{geom_labelpath}}
+  Arguments passed on to \code{\link{geom_textpath}}, \code{\link{geom_labelpath}}
   \describe{
+    \item{\code{orientation}}{The orientation of the layer. The default (NA)
+automatically determines the orientation from the aesthetic mapping.
+In the rare event that this fails it can be given explicitly by
+setting orientation to either "x" or "y". See the Orientation section
+for more detail.}
     \item{\code{text_only}}{A \code{logical(1)} indicating whether the path part should be
 plotted along with the text (\code{FALSE}, the default). If \code{TRUE}, any
 parameters or aesthetics relating to the drawing of the path will be

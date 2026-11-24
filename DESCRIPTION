@@ -1,7 +1,7 @@
 Package: geomtextpath
 Type: Package
 Title: Curved Text in 'ggplot2'
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: c(
     person(given = "Allan",
            family = "Cameron",
@@ -30,7 +30,6 @@ Imports:
     rlang,
     textshaping (>= 0.4.0),
     vctrs
-RoxygenNote: 8.1.1
 Suggests: 
     testthat (>= 3.0.0),
     covr,
@@ -73,3 +72,4 @@ Collate:
     'text_helpers.R'
     'text_placement.R'
     'trig_helpers.R'
+Config/roxygen2/version: 8.1.1

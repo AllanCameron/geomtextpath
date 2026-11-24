@@ -23,6 +23,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Allan Cameron \email{Allan.Cameron@nhs.scot}
   \item Teun van den Brand \email{tahvdbrand@gmail.com} (\href{https://orcid.org/0000-0002-9335-7468}{ORCID})
 }
 

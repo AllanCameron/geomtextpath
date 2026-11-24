@@ -63,27 +63,37 @@ export(stat_textcontour)
 export(textpathGrob)
 import(ggplot2)
 import(grid)
-importFrom(grDevices,dev.size)
-importFrom(grDevices,png)
+importFrom(grDevices,
+  dev.size,
+  png
+)
 importFrom(graphics,strwidth)
-importFrom(rlang,`%||%`)
-importFrom(rlang,`:=`)
-importFrom(rlang,abort)
-importFrom(rlang,warn)
-importFrom(scales,alpha)
-importFrom(scales,rescale)
-importFrom(scales,squish_infinite)
-importFrom(stats,approx)
-importFrom(stats,approxfun)
-importFrom(stats,ave)
-importFrom(stats,bw.nrd)
-importFrom(stats,complete.cases)
-importFrom(stats,dnorm)
-importFrom(stats,predict)
-importFrom(stats,setNames)
-importFrom(stats,smooth.spline)
-importFrom(stats,spline)
+importFrom(rlang,
+  "%||%",
+  ":=",
+  abort,
+  warn
+)
+importFrom(scales,
+  alpha,
+  rescale,
+  squish_infinite
+)
+importFrom(stats,
+  approx,
+  approxfun,
+  ave,
+  bw.nrd,
+  complete.cases,
+  dnorm,
+  predict,
+  setNames,
+  smooth.spline,
+  spline
+)
 importFrom(systemfonts,glyph_info)
 importFrom(textshaping,shape_text)
-importFrom(utils,head)
-importFrom(utils,tail)
+importFrom(utils,
+  head,
+  tail
+)

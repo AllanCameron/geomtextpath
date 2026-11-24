@@ -1,4 +1,4 @@
-# geomtextpath (development version)
+# geomtextpath 0.3.0
 * Adopted ggplot2 4.0.0 `element_geom()` settings (#131).
 * Fixed disobedience of `text_only` argument when `linetype` was passed as fixed aesthetic (#132).
 * Fix for compatibility with S7 1.0.0.

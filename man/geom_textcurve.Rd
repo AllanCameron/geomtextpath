@@ -130,7 +130,7 @@ A \code{Layer} ggproto object that can be added to a plot.
 }
 \description{
 \code{geom_textcurve()} and \code{geom_labelcurve()} draw text on curved lines. See
-the underlying \code{\link[grid:grid.curve]{grid::curveGrob()}} for the parameters that
+the underlying \code{\link[grid:curveGrob]{grid::curveGrob()}} for the parameters that
 control the curve.
 }
 \section{Aesthetics}{

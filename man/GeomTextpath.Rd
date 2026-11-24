@@ -3,7 +3,6 @@
 %   R/geom_textsegment.R, R/geom_textabline.R, R/geom_textcontour.R,
 %   R/geom_textcurve.R, R/geom_textdensity.R, R/geom_textdensity2d.R,
 %   R/geom_texthline.R, R/geom_textsf.R, R/guide_axis_textpath.R
-\docType{data}
 \name{GeomTextpath}
 \alias{GeomTextpath}
 \alias{GeomTextline}
@@ -32,4 +31,3 @@
 This is the \code{ggproto} class that creates the textpath layer. It is not
 intended to be used directly by the end user.
 }
-\keyword{datasets}
